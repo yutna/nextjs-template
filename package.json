@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "format": "prettier --write .",
     "start": "next start",
     "lint": "eslint"
   },
@@ -14,12 +15,13 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "24.10.13",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "prettier": "3.8.1",
     "typescript": "^5"
   }
 }
