@@ -1,9 +1,11 @@
 {
   "HomePage": {
     "title": "To get started, edit the page.tsx file.",
-    "description": "Looking for a starting point or more instructions? Head over to {templates} or the {learning} center.",
+    "description": "Looking for a starting point or more instructions? Head over to",
     "templates": "Templates",
     "learning": "Learning",
+    "or": "or the",
+    "center": "center.",
     "deployNow": "Deploy Now",
     "documentation": "Documentation"
   }

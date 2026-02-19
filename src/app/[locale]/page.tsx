@@ -26,26 +26,23 @@ export default async function Home({ params }: Props) {
         <div className={styles.intro}>
           <h1>{t("title")}</h1>
           <p>
-            {t.rich("description", {
-              templates: (chunks) => (
-                <a
-                  href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {chunks}
-                </a>
-              ),
-              learning: (chunks) => (
-                <a
-                  href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {chunks}
-                </a>
-              ),
-            })}
+            {t("description")}{" "}
+            <a
+              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("templates")}
+            </a>{" "}
+            {t("or")}{" "}
+            <a
+              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("learning")}
+            </a>{" "}
+            {t("center")}
           </p>
         </div>
         <div className={styles.ctas}>

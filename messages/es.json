@@ -1,9 +1,11 @@
 {
   "HomePage": {
     "title": "Para comenzar, edita el archivo page.tsx.",
-    "description": "¿Buscas un punto de partida o más instrucciones? Dirígete a {templates} o al centro de {learning}.",
+    "description": "¿Buscas un punto de partida o más instrucciones? Dirígete a",
     "templates": "Plantillas",
     "learning": "Aprendizaje",
+    "or": "o al",
+    "center": "centro.",
     "deployNow": "Desplegar Ahora",
     "documentation": "Documentación"
   }
