@@ -8,7 +8,7 @@ node_modules
 out
 build
 
-# Environment Variables (Always ignore for security)
+# Environment variables (exclude from formatting to avoid changing env files)
 .env*
 
 # Testing & Coverage
