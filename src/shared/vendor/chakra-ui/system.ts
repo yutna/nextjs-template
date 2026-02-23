@@ -1,6 +1,11 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 const customConfig = defineConfig({
+  globalCss: {
+    "html, body": {
+      fontFamily: "var(--font-noto-sans-thai), sans-serif",
+    },
+  },
   theme: {
     tokens: {
       fonts: {

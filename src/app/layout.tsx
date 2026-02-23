@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       className={`${notoSansThai.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body>
+      <body className={notoSansThai.className}>
         <NuqsAdapter>
           <Provider>
             {children}
