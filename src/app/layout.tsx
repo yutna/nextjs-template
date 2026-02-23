@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={notoSansThai.variable}>
+      <body className={notoSansThai.className}>
         <NuqsAdapter>{children}</NuqsAdapter>
       </body>
     </html>
