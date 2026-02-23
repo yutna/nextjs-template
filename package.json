@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "build:analyze": "cross-env ANALYZE=true next build",
+    "check-types": "tsc --noEmit",
     "format": "prettier --write .",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "0.13.10",
