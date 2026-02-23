@@ -1,7 +1,7 @@
 import "server-only";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import { notoSansThai } from "@/shared/config/fonts";
+import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { Provider } from "@/shared/vendor/chakra-ui/provider";
 
 import type { Metadata } from "next";
@@ -19,8 +19,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={notoSansThai.className}>
+    <html
+      lang="en"
+      className={`${notoSansThai.variable} ${jetBrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body>
         <NuqsAdapter>
           <Provider>{children}</Provider>
         </NuqsAdapter>
