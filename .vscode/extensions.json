@@ -2,6 +2,7 @@
   "recommendations": [
     "davidanson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
+    "dotjoshjohnson.xml",
     "esbenp.prettier-vscode",
     "richie5um2.vscode-sort-json"
   ]
