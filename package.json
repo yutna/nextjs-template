@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "build:analyze": "cross-env ANALYZE=true next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "build:analyze": "cross-env ANALYZE=true next build --webpack",
     "check-types": "tsc --noEmit",
     "format": "prettier --write .",
     "start": "next start",

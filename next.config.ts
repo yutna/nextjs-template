@@ -9,7 +9,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    optimizePackageImports: ["@chakra-ui/react"],
+  },
   reactCompiler: true,
 };
 
