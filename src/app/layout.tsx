@@ -1,4 +1,6 @@
 import "server-only";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
 import { notoSansThai } from "@/shared/config/fonts";
 
 import type { Metadata } from "next";
@@ -17,7 +19,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body className={notoSansThai.variable}>{children}</body>
+      <body className={notoSansThai.variable}>
+        <NuqsAdapter>{children}</NuqsAdapter>
+      </body>
     </html>
   );
 }
