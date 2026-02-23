@@ -1,0 +1,15 @@
+import _dayjs from "dayjs";
+import buddhistEra from "dayjs/plugin/buddhistEra";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import "dayjs/locale/th";
+
+_dayjs.extend(utc);
+_dayjs.extend(timezone);
+_dayjs.extend(buddhistEra);
+_dayjs.extend(customParseFormat);
+_dayjs.locale("th");
+_dayjs.tz.setDefault("Asia/Bangkok");
+
+export const dayjs = _dayjs;
