@@ -13,6 +13,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@chakra-ui/react": "3.33.0",
+    "@emotion/react": "11.14.0",
     "@t3-oss/env-nextjs": "0.13.10",
     "clsx": "2.1.1",
     "dayjs": "1.11.19",
