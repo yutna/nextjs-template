@@ -3,6 +3,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { Provider } from "@/shared/vendor/chakra-ui/provider";
+import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
     >
       <body>
         <NuqsAdapter>
-          <Provider>{children}</Provider>
+          <Provider>
+            {children}
+            <Toaster />
+          </Provider>
         </NuqsAdapter>
       </body>
     </html>
