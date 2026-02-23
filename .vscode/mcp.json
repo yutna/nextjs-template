@@ -6,6 +6,11 @@
       "command": "npx",
       "env": {},
       "type": "stdio"
+    },
+    "next-devtools": {
+      "args": ["-y", "next-devtools-mcp@latest"],
+      "command": "npx",
+      "type": "stdio"
     }
   }
 }
