@@ -1,7 +1,9 @@
 import "server-only";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import { notoSansThai } from "@/shared/config/fonts";
+import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
+import { Provider } from "@/shared/vendor/chakra-ui/provider";
+import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -18,9 +20,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${notoSansThai.variable} ${jetBrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className={notoSansThai.className}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <Provider>
+            {children}
+            <Toaster />
+          </Provider>
+        </NuqsAdapter>
       </body>
     </html>
   );
