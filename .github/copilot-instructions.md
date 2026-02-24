@@ -209,6 +209,8 @@ const bg = useColorModeValue("white", "gray.800"); // light, dark
 | `noOfLines`   | `lineClamp`    |
 | `truncated`   | `truncate`     |
 
+> **Note:** `colorScheme="light"` / `colorScheme="dark"` on `<Span className="chakra-theme ...">` is a Chakra v3 internal mechanism for forcing color mode context in a subtree — this is different from the deprecated `colorScheme` color palette prop and is intentional in `src/shared/vendor/chakra-ui/color-mode.tsx`.
+
 ### Component Renames
 
 | v2 (❌)    | v3 (✅)       |
