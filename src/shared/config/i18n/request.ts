@@ -2,7 +2,7 @@ import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
 import { routing } from "@/shared/config/i18n/routing";
-import { messages } from "@/shared/messages";
+import { messages } from "@/messages";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;

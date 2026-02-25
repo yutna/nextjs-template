@@ -1,7 +1,7 @@
 import { common } from "./common";
-import { components } from "./components";
+import { shared } from "./shared";
 
 export const th = {
   common,
-  components,
+  shared,
 };

@@ -17,7 +17,10 @@ import { ButtonGoBack } from "./button-go-back";
 
 export async function NotFoundPage() {
   const locale = await getLocale();
-  const t = await getTranslations({ locale, namespace: "components.notFound" });
+  const t = await getTranslations({
+    locale,
+    namespace: "shared.components.notFound",
+  });
 
   return (
     <Flex
