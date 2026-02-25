@@ -1,13 +1,11 @@
 import "server-only";
-import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
-import { Provider } from "@/shared/vendor/chakra-ui/provider";
-import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
+import { AppProvider } from "@/shared/providers/app-provider";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -48,14 +46,7 @@ export default async function LayoutLocale({
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>
-        <NextIntlClientProvider>
-          <NuqsAdapter>
-            <Provider>
-              {children}
-              <Toaster />
-            </Provider>
-          </NuqsAdapter>
-        </NextIntlClientProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );
