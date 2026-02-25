@@ -46,7 +46,7 @@ export default async function LayoutLocale({
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>
-        <AppProvider>{children}</AppProvider>
+        <AppProvider locale={locale}>{children}</AppProvider>
       </body>
     </html>
   );

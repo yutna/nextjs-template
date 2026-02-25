@@ -8,9 +8,9 @@ import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 
 import type { AppProviderProps } from "./types";
 
-export function AppProvider({ children }: AppProviderProps) {
+export function AppProvider({ children, locale }: AppProviderProps) {
   return (
-    <NextIntlClientProvider>
+    <NextIntlClientProvider locale={locale}>
       <NuqsAdapter>
         <Provider>
           {children}
