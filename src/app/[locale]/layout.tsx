@@ -1,5 +1,6 @@
 import "server-only";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
@@ -11,26 +12,34 @@ import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-interface RootLayoutProps {
+interface LayoutLocaleProps {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }
 
+// TODO: translate this metadata
 export const metadata: Metadata = {
   title: "Next.js Template",
   description:
     "A Next.js starter designed for developers building in the AI-driven era.",
 };
 
-export default async function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LayoutLocale({
   children,
   params,
-}: Readonly<RootLayoutProps>) {
+}: Readonly<LayoutLocaleProps>) {
   const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  // Enable static rendering
+  setRequestLocale(locale);
 
   return (
     <html
