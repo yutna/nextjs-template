@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
 };
 
 const withNextIntl = createNextIntlPlugin(
-  "./src/shared/config/i18n/request.ts",
+  "./src/shared/config/i18n/request.tsx",
 );
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));

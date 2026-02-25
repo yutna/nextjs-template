@@ -3,6 +3,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
+import { formats } from "@/shared/config/i18n/formats";
 import { Provider } from "@/shared/vendor/chakra-ui/provider";
 import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 
@@ -15,7 +16,12 @@ export function AppProvider({
   timeZone,
 }: AppProviderProps) {
   return (
-    <NextIntlClientProvider locale={locale} now={now} timeZone={timeZone}>
+    <NextIntlClientProvider
+      formats={formats}
+      locale={locale}
+      now={now}
+      timeZone={timeZone}
+    >
       <NuqsAdapter>
         <Provider>
           {children}

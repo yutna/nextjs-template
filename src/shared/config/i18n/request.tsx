@@ -7,6 +7,8 @@ import { TIME_ZONE } from "@/shared/constants/timezone";
 import { logger } from "@/shared/lib/logger";
 import { messages } from "@/messages";
 
+import type { ReactNode } from "react";
+
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
   const locale = hasLocale(routing.locales, requested)
@@ -14,6 +16,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
     : routing.defaultLocale;
 
   return {
+    defaultTranslationValues: {
+      b: (chunks: ReactNode) => <strong>{chunks}</strong>,
+      i: (chunks: ReactNode) => <em>{chunks}</em>,
+      br: () => <br />,
+    },
     formats,
     getMessageFallback({ key, namespace }) {
       return [namespace, key].filter(Boolean).join(".");
