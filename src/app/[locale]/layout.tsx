@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
+import { TIME_ZONE } from "@/shared/constants/timezone";
 import { AppProvider } from "@/shared/providers/app-provider";
 
 import type { Metadata } from "next";
@@ -46,7 +47,9 @@ export default async function LayoutLocale({
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>
-        <AppProvider locale={locale}>{children}</AppProvider>
+        <AppProvider locale={locale} now={new Date()} timeZone={TIME_ZONE}>
+          {children}
+        </AppProvider>
       </body>
     </html>
   );

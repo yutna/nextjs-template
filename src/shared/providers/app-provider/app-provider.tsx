@@ -8,9 +8,14 @@ import { Toaster } from "@/shared/vendor/chakra-ui/toaster";
 
 import type { AppProviderProps } from "./types";
 
-export function AppProvider({ children, locale }: AppProviderProps) {
+export function AppProvider({
+  children,
+  locale,
+  now,
+  timeZone,
+}: AppProviderProps) {
   return (
-    <NextIntlClientProvider locale={locale}>
+    <NextIntlClientProvider locale={locale} now={now} timeZone={timeZone}>
       <NuqsAdapter>
         <Provider>
           {children}
