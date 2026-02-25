@@ -80,13 +80,13 @@ export async function NotFoundPage() {
 
         {/* Actions */}
         <HStack flexWrap="wrap" gap={4} justify="center">
+          <ButtonGoBack label={t("goBack")} />
           <Button asChild colorPalette="blue" size="lg">
             <Link href="/">
               <LuHouse />
               {t("goHome")}
             </Link>
           </Button>
-          <ButtonGoBack label={t("goBack")} />
         </HStack>
       </VStack>
     </Flex>
