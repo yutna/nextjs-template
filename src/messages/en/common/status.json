@@ -1,0 +1,22 @@
+{
+  "active": "Active",
+  "approved": "Approved",
+  "archived": "Archived",
+  "cancelled": "Cancelled",
+  "closed": "Closed",
+  "disabled": "Disabled",
+  "draft": "Draft",
+  "enabled": "Enabled",
+  "error": "Error",
+  "inactive": "Inactive",
+  "info": "Info",
+  "loading": "Loading",
+  "offline": "Offline",
+  "online": "Online",
+  "open": "Open",
+  "pending": "Pending",
+  "published": "Published",
+  "rejected": "Rejected",
+  "success": "Success",
+  "warning": "Warning"
+}

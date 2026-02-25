@@ -1,9 +1,6 @@
-import "server-only";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <main>
-      <h1>Welcome to Next.js template!</h1>
-    </main>
-  );
+// This page only renders when the app is built statically (output: 'export')
+export default function RootPage() {
+  redirect("/en");
 }

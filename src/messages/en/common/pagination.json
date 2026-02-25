@@ -1,0 +1,14 @@
+{
+  "first": "First",
+  "goToPage": "Go to page",
+  "last": "Last",
+  "loadMore": "Load more",
+  "next": "Next",
+  "noResults": "No results found",
+  "page": "Page {page} of {total}",
+  "perPage": "Per page",
+  "previous": "Previous",
+  "showing": "Showing {from}–{to} of {total}",
+  "showingAll": "Showing all {total} results",
+  "total": "{total} results"
+}
