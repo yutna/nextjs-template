@@ -1,6 +1,7 @@
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
+import { formats } from "@/shared/config/i18n/formats";
 import { routing } from "@/shared/config/i18n/routing";
 import { TIME_ZONE } from "@/shared/constants/timezone";
 import { logger } from "@/shared/lib/logger";
@@ -13,6 +14,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     : routing.defaultLocale;
 
   return {
+    formats,
     getMessageFallback({ key, namespace }) {
       return [namespace, key].filter(Boolean).join(".");
     },
