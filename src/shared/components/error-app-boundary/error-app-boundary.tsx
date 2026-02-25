@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 import { LuHouse, LuRefreshCw, LuTriangleAlert } from "react-icons/lu";
 
 import { Link } from "@/shared/lib/navigation";
+import { routes } from "@/shared/routes";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
@@ -69,7 +70,7 @@ export function ErrorAppBoundary({ reset }: NextErrorProps) {
         {/* Actions */}
         <HStack flexWrap="wrap" gap={4} justify="center">
           <Button asChild size="lg" variant="outline">
-            <Link href="/">
+            <Link href={routes.root.path()}>
               <LuHouse />
               {t("goHome")}
             </Link>

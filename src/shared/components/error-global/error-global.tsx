@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { routes } from "@/shared/routes";
+
 import styles from "./error-global.module.css";
 
 import type { NextErrorProps } from "@/shared/types/next";
@@ -17,7 +19,7 @@ export function ErrorGlobal({ reset }: NextErrorProps) {
           A critical error occurred. Please try again or refresh the page.
         </p>
         <div className={styles.actions}>
-          <Link className={styles.buttonOutline} href="/">
+          <Link className={styles.buttonOutline} href={routes.root.path()}>
             ⌂ Back to Home
           </Link>
           <button className={styles.buttonSolid} onClick={reset}>
