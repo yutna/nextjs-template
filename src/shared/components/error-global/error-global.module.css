@@ -1,0 +1,102 @@
+.root {
+  align-items: center;
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+  box-sizing: border-box;
+  display: flex;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  height: 100dvh;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  padding: 2rem;
+  width: 100dvw;
+}
+
+.container {
+  max-width: 32rem;
+  text-align: center;
+  width: 100%;
+}
+
+.number {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-image: linear-gradient(to right, #ef4444, #b91c1c);
+  color: transparent;
+  font-size: clamp(6rem, 20vw, 11rem);
+  font-weight: 900;
+  line-height: 1;
+  user-select: none;
+}
+
+.divider {
+  background-image: linear-gradient(to right, #ef4444, #b91c1c);
+  border-radius: 9999px;
+  height: 4px;
+  margin: 1.5rem auto;
+  width: 4rem;
+}
+
+.heading {
+  color: #111827;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  margin: 0 auto 2.5rem;
+  max-width: 24rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.buttonOutline {
+  align-items: center;
+  background: transparent;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #374151;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  text-decoration: none;
+}
+
+.buttonOutline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.buttonSolid {
+  align-items: center;
+  background: linear-gradient(to right, #ef4444, #b91c1c);
+  border: none;
+  border-radius: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+}
+
+.buttonSolid:hover {
+  background: linear-gradient(to right, #dc2626, #991b1b);
+}

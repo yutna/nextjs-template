@@ -1,64 +1,53 @@
-import "server-only";
+"use client";
+
 import {
   Box,
   Button,
   Flex,
   HStack,
   Heading,
+  Icon,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { getLocale, getTranslations } from "next-intl/server";
-import { LuHouse } from "react-icons/lu";
+import { useTranslations } from "next-intl";
+import { LuHouse, LuRefreshCw, LuTriangleAlert } from "react-icons/lu";
 
 import { Link } from "@/shared/lib/navigation";
 
-import { ButtonGoBack } from "./button-go-back";
+import type { NextErrorProps } from "@/shared/types/next";
 
-export async function NotFound() {
-  const locale = await getLocale();
-  const t = await getTranslations({
-    locale,
-    namespace: "shared.components.notFound",
-  });
+export function ErrorAppBoundary({ reset }: NextErrorProps) {
+  const t = useTranslations("shared.components.error");
 
   return (
     <Flex
       align="center"
       bgGradient="to-br"
-      gradientFrom={{ base: "gray.50", _dark: "gray.950" }}
-      gradientTo={{ base: "purple.50", _dark: "blue.950" }}
+      gradientFrom={{ base: "orange.50", _dark: "gray.950" }}
+      gradientTo={{ base: "red.50", _dark: "red.950" }}
       justify="center"
       minH="100vh"
       px={6}
       py={16}
     >
       <VStack gap={8} maxW="lg" textAlign="center">
-        {/* 404 gradient number */}
-        <Box
-          bgClip="text"
-          bgGradient="to-r"
-          css={{ color: "transparent" }}
-          fontSize={{ base: "8rem", md: "11rem" }}
-          fontWeight="black"
-          gradientFrom="blue.400"
-          gradientTo="purple.500"
-          lineHeight={1}
-          userSelect="none"
-        >
-          404
+        {/* Error icon */}
+        <Box color="orange.500" _dark={{ color: "orange.400" }}>
+          <Icon fontSize={{ base: "8rem", md: "11rem" }}>
+            <LuTriangleAlert />
+          </Icon>
         </Box>
 
         {/* Decorative divider */}
         <Box
           bgGradient="to-r"
           borderRadius="full"
-          gradientFrom="blue.400"
-          gradientTo="purple.500"
+          gradientFrom="orange.400"
+          gradientTo="red.500"
           h={1}
           w={16}
         />
-
         {/* Heading */}
         <VStack gap={3}>
           <Heading
@@ -77,15 +66,17 @@ export async function NotFound() {
             {t("description")}
           </Text>
         </VStack>
-
         {/* Actions */}
         <HStack flexWrap="wrap" gap={4} justify="center">
-          <ButtonGoBack label={t("goBack")} />
-          <Button asChild colorPalette="blue" size="lg">
+          <Button asChild size="lg" variant="outline">
             <Link href="/">
               <LuHouse />
               {t("goHome")}
             </Link>
+          </Button>
+          <Button colorPalette="orange" onClick={reset} size="lg">
+            <LuRefreshCw />
+            {t("tryAgain")}
           </Button>
         </HStack>
       </VStack>

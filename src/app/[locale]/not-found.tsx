@@ -1,7 +1,7 @@
 import "server-only";
 
-import { NotFoundPage } from "@/shared/components/not-found";
+import { NotFound as NotFoundComponent } from "@/shared/components/not-found";
 
 export default function NotFound() {
-  return <NotFoundPage />;
+  return <NotFoundComponent />;
 }
