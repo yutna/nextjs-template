@@ -1,4 +1,5 @@
 import bundleAnalyzer from "@next/bundle-analyzer";
+import createNextIntlPlugin from "next-intl/plugin";
 
 import "./src/shared/config/env";
 
@@ -15,4 +16,8 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
 };
 
-export default withBundleAnalyzer(nextConfig);
+const withNextIntl = createNextIntlPlugin(
+  "./src/shared/config/i18n/request.ts",
+);
+
+export default withBundleAnalyzer(withNextIntl(nextConfig));

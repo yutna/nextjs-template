@@ -1,4 +1,5 @@
 import "server-only";
+import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
@@ -26,12 +27,14 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>
-        <NuqsAdapter>
-          <Provider>
-            {children}
-            <Toaster />
-          </Provider>
-        </NuqsAdapter>
+        <NextIntlClientProvider>
+          <NuqsAdapter>
+            <Provider>
+              {children}
+              <Toaster />
+            </Provider>
+          </NuqsAdapter>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
