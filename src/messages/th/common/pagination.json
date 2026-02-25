@@ -1,0 +1,14 @@
+{
+  "first": "หน้าแรก",
+  "goToPage": "ไปที่หน้า",
+  "last": "หน้าสุดท้าย",
+  "loadMore": "โหลดเพิ่มเติม",
+  "next": "ถัดไป",
+  "noResults": "ไม่พบผลลัพธ์",
+  "page": "หน้า {page} จาก {total}",
+  "perPage": "ต่อหน้า",
+  "previous": "ก่อนหน้า",
+  "showing": "แสดง {from}–{to} จากทั้งหมด {total} รายการ",
+  "showingAll": "แสดงทั้งหมด {total} รายการ",
+  "total": "{total} รายการ"
+}
