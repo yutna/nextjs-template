@@ -17,10 +17,40 @@ export const FEATURE_ICONS = [
 ] as const;
 
 export const FEATURE_COLORS = [
-  { from: "blue.400", to: "cyan.400" },
-  { from: "purple.400", to: "pink.400" },
-  { from: "green.400", to: "teal.400" },
-  { from: "orange.400", to: "yellow.400" },
-  { from: "indigo.400", to: "purple.400" },
-  { from: "red.400", to: "orange.400" },
+  {
+    lightBg: "blue.100",
+    darkBg: "blue.500/20",
+    lightIcon: "blue.600",
+    darkIcon: "blue.300",
+  },
+  {
+    lightBg: "purple.100",
+    darkBg: "purple.500/20",
+    lightIcon: "purple.600",
+    darkIcon: "purple.300",
+  },
+  {
+    lightBg: "green.100",
+    darkBg: "green.500/20",
+    lightIcon: "green.600",
+    darkIcon: "green.300",
+  },
+  {
+    lightBg: "orange.100",
+    darkBg: "orange.500/20",
+    lightIcon: "orange.600",
+    darkIcon: "orange.300",
+  },
+  {
+    lightBg: "cyan.100",
+    darkBg: "cyan.500/20",
+    lightIcon: "cyan.600",
+    darkIcon: "cyan.300",
+  },
+  {
+    lightBg: "red.100",
+    darkBg: "red.500/20",
+    lightIcon: "red.600",
+    darkIcon: "red.300",
+  },
 ] as const;

@@ -86,6 +86,8 @@ export async function SectionFeatures({
             <MotionReveal key={feature.title} variant="fadeInUp">
               <GlassCard
                 h="full"
+                bg={{ base: "white/90", _dark: "gray.800/70" }}
+                borderColor={{ base: "gray.200/80", _dark: "gray.700/60" }}
                 _hover={{
                   boxShadow: `0 0 24px rgba(139, 92, 246, 0.15)`,
                   borderColor: { base: "purple.200", _dark: "purple.700/50" },
@@ -93,17 +95,23 @@ export async function SectionFeatures({
                 }}
               >
                 <VStack align="start" gap={4}>
-                  {/* Icon with gradient background */}
+                  {/* Icon with color-adaptive background */}
                   <Box
                     p={3}
                     borderRadius="xl"
-                    bgGradient="to-br"
-                    gradientFrom={feature.color.from}
-                    gradientTo={feature.color.to}
-                    color="white"
-                    boxShadow={`0 4px 14px rgba(0, 0, 0, 0.1)`}
+                    bg={{
+                      base: feature.color.lightBg,
+                      _dark: feature.color.darkBg,
+                    }}
                   >
-                    <Icon asChild boxSize={5}>
+                    <Icon
+                      asChild
+                      boxSize={5}
+                      color={{
+                        base: feature.color.lightIcon,
+                        _dark: feature.color.darkIcon,
+                      }}
+                    >
                       <feature.icon />
                     </Icon>
                   </Box>
