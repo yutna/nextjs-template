@@ -2,38 +2,14 @@ import "server-only";
 
 import { Box, Grid, Heading, Icon, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
-import {
-  LuGlobe,
-  LuLock,
-  LuMoon,
-  LuPalette,
-  LuRoute,
-  LuShield,
-} from "react-icons/lu";
 
 import { GlassCard } from "@/modules/static-pages/components/glass-card";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { MotionStagger } from "@/modules/static-pages/components/motion-stagger";
 
-import { type SectionFeaturesProps } from "./types";
+import { FEATURE_COLORS, FEATURE_ICONS } from "./constants";
 
-const FEATURE_ICONS = [
-  LuRoute,
-  LuPalette,
-  LuShield,
-  LuGlobe,
-  LuMoon,
-  LuLock,
-] as const;
-
-const FEATURE_COLORS = [
-  { from: "blue.400", to: "cyan.400" },
-  { from: "purple.400", to: "pink.400" },
-  { from: "green.400", to: "teal.400" },
-  { from: "orange.400", to: "yellow.400" },
-  { from: "indigo.400", to: "purple.400" },
-  { from: "red.400", to: "orange.400" },
-] as const;
+import type { SectionFeaturesProps } from "./types";
 
 export async function SectionFeatures({
   locale,
