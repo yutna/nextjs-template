@@ -3,38 +3,7 @@
 import { Box } from "@chakra-ui/react";
 import { motion } from "motion/react";
 
-const blobs = [
-  {
-    size: { base: "300px", md: "500px" },
-    top: "-10%",
-    left: "-5%",
-    lightFrom: "purple.300",
-    lightTo: "blue.300",
-    darkFrom: "purple.900",
-    darkTo: "blue.900",
-    duration: 20,
-  },
-  {
-    size: { base: "250px", md: "400px" },
-    top: "30%",
-    right: "-10%",
-    lightFrom: "pink.300",
-    lightTo: "purple.300",
-    darkFrom: "pink.900",
-    darkTo: "indigo.900",
-    duration: 25,
-  },
-  {
-    size: { base: "200px", md: "350px" },
-    bottom: "10%",
-    left: "20%",
-    lightFrom: "cyan.300",
-    lightTo: "blue.300",
-    darkFrom: "cyan.900",
-    darkTo: "blue.950",
-    duration: 22,
-  },
-];
+import { GRADIENT_MESH_BLOBS } from "./constants";
 
 export function GradientMesh() {
   return (
@@ -46,7 +15,7 @@ export function GradientMesh() {
       overflow="hidden"
       aria-hidden="true"
     >
-      {blobs.map((blob, i) => (
+      {GRADIENT_MESH_BLOBS.map((blob, i) => (
         <motion.div
           key={i}
           animate={{
@@ -60,10 +29,10 @@ export function GradientMesh() {
           }}
           style={{
             position: "absolute",
-            top: typeof blob.top === "string" ? blob.top : undefined,
-            left: typeof blob.left === "string" ? blob.left : undefined,
-            right: typeof blob.right === "string" ? blob.right : undefined,
-            bottom: typeof blob.bottom === "string" ? blob.bottom : undefined,
+            top: blob.top,
+            left: blob.left,
+            right: blob.right,
+            bottom: blob.bottom,
             willChange: "transform",
           }}
         >
