@@ -21,7 +21,6 @@
   "featuresSubheading": "A carefully curated stack of modern tools and best practices, ready out of the box.",
   "footerBuiltWith": "Built with Next.js, Chakra UI, and TypeScript",
   "footerCopyright": "© {year} Next.js Template. All rights reserved.",
-  "footerDocs": "Documentation",
   "footerGithub": "GitHub",
   "heroSubtitle": "A production-ready Next.js template with App Router, Chakra UI v3, TypeScript strict mode, and everything you need to launch modern web applications.",
   "heroTitle": "Build Faster. Ship Smarter.",
