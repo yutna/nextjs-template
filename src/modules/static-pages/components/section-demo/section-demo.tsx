@@ -6,7 +6,8 @@ import { getTranslations } from "next-intl/server";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 
 import { DemoContent } from "./demo-content";
-import { type SectionDemoProps } from "./types";
+
+import type { SectionDemoProps } from "./types";
 
 export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
   const t = await getTranslations({
