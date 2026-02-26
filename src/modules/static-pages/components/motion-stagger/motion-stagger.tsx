@@ -2,12 +2,12 @@
 
 import { motion } from "motion/react";
 
-import { type MotionStaggerProps } from "./types";
+import type { MotionStaggerProps } from "./types";
 
 export function MotionStagger({
   children,
-  staggerDelay = 0.1,
   className,
+  staggerDelay = 0.1,
 }: Readonly<MotionStaggerProps>) {
   return (
     <motion.div
