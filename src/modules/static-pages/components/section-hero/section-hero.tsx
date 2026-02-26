@@ -8,7 +8,7 @@ import { FloatingShapes } from "@/modules/static-pages/components/floating-shape
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
 
-import { type SectionHeroProps } from "./types";
+import type { SectionHeroProps } from "./types";
 
 export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
   const t = await getTranslations({
