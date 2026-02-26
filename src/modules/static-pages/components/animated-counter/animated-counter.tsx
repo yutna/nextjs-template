@@ -7,11 +7,11 @@ import { useEffect, useRef, useState } from "react";
 import type { AnimatedCounterProps } from "./types";
 
 export function AnimatedCounter({
-  target,
-  suffix = "",
-  prefix = "",
   duration = 2,
-  ...textProps
+  prefix = "",
+  suffix = "",
+  target,
+  ...props
 }: Readonly<AnimatedCounterProps>) {
   const ref = useRef<HTMLParagraphElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
@@ -32,7 +32,7 @@ export function AnimatedCounter({
   }, [isInView, target, duration]);
 
   return (
-    <Text ref={ref} {...textProps}>
+    <Text ref={ref} {...props}>
       {prefix}
       {displayValue}
       {suffix}
