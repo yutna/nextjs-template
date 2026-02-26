@@ -2,7 +2,7 @@
 
 import { Box } from "@chakra-ui/react";
 
-import { type MarqueeRowProps } from "./types";
+import type { MarqueeRowProps } from "./types";
 
 export function MarqueeRow({
   children,

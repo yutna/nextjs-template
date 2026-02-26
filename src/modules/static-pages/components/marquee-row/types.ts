@@ -1,6 +1,6 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export interface MarqueeRowProps {
-  children: ReactNode;
+  children?: ReactNode;
   duration?: number;
 }
