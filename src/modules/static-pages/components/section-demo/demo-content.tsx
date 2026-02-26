@@ -98,7 +98,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
                 >
                   {lineIndex + 2}
                 </Text>
-                <Box>
+                <Box whiteSpace="pre">
                   {line.tokens.length === 0 ? (
                     <Text>&nbsp;</Text>
                   ) : (
