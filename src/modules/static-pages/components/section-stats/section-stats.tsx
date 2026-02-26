@@ -8,14 +8,9 @@ import { GlassCard } from "@/modules/static-pages/components/glass-card";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { MotionStagger } from "@/modules/static-pages/components/motion-stagger";
 
-import { type SectionStatsProps } from "./types";
+import { STAT_GRADIENT_COLORS } from "./constants";
 
-const STAT_GRADIENT_COLORS = [
-  { from: "blue.400", to: "cyan.400" },
-  { from: "purple.400", to: "pink.400" },
-  { from: "green.400", to: "teal.400" },
-  { from: "orange.400", to: "yellow.400" },
-] as const;
+import type { SectionStatsProps } from "./types";
 
 export async function SectionStats({ locale }: Readonly<SectionStatsProps>) {
   const t = await getTranslations({

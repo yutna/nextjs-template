@@ -1,3 +1,5 @@
+import type { Locale } from "next-intl";
+
 export interface SectionStatsProps {
-  locale: string;
+  locale: Locale;
 }
