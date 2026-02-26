@@ -19,6 +19,7 @@
     "clsx": "2.1.1",
     "dayjs": "1.11.19",
     "immer": "11.1.4",
+    "motion": "12.34.3",
     "next": "16.1.6",
     "next-intl": "4.8.3",
     "next-safe-action": "8.0.12",
