@@ -99,19 +99,10 @@ export async function SectionFeatures({
                   <Box
                     p={3}
                     borderRadius="xl"
-                    bg={{
-                      base: feature.color.lightBg,
-                      _dark: feature.color.darkBg,
-                    }}
+                    colorPalette={feature.color}
+                    bg="colorPalette.subtle"
                   >
-                    <Icon
-                      asChild
-                      boxSize={5}
-                      color={{
-                        base: feature.color.lightIcon,
-                        _dark: feature.color.darkIcon,
-                      }}
-                    >
+                    <Icon asChild boxSize={5} color="colorPalette.fg">
                       <feature.icon />
                     </Icon>
                   </Box>
