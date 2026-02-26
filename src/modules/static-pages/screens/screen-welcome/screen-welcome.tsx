@@ -10,9 +10,7 @@ import { SectionHero } from "@/modules/static-pages/components/section-hero";
 import { SectionStats } from "@/modules/static-pages/components/section-stats";
 import { SectionTechStack } from "@/modules/static-pages/components/section-tech-stack";
 
-interface WelcomeScreenProps {
-  locale: string;
-}
+import type { WelcomeScreenProps } from "./types";
 
 export async function WelcomeScreen({ locale }: Readonly<WelcomeScreenProps>) {
   return (
