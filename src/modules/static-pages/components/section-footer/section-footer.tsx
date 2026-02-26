@@ -3,7 +3,7 @@ import "server-only";
 import { Box, Flex, HStack, Separator, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 
-import { type SectionFooterProps } from "./types";
+import type { SectionFooterProps } from "./types";
 
 export async function SectionFooter({ locale }: Readonly<SectionFooterProps>) {
   const t = await getTranslations({
