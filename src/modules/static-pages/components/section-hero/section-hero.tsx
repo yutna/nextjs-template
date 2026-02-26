@@ -1,12 +1,13 @@
 import "server-only";
 
-import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
-import { LuArrowRight } from "react-icons/lu";
 
 import { FloatingShapes } from "@/modules/static-pages/components/floating-shapes";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
+
+import { CopyCommand } from "./copy-command";
 
 import type { SectionHeroProps } from "./types";
 
@@ -69,44 +70,8 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
           </Text>
         </MotionReveal>
 
-        {/* CTA buttons */}
-        <MotionReveal variant="fadeInUp" delay={0.3}>
-          <Flex
-            direction={{ base: "column", sm: "row" }}
-            gap={4}
-            justify="center"
-            w="full"
-          >
-            <Button
-              asChild
-              size="lg"
-              bgGradient="to-r"
-              gradientFrom="blue.500"
-              gradientTo="purple.500"
-              color="white"
-              px={8}
-              fontWeight="semibold"
-              boxShadow="0 0 20px rgba(139, 92, 246, 0.3)"
-              _hover={{
-                boxShadow: "0 0 30px rgba(139, 92, 246, 0.5)",
-                transform: "translateY(-1px)",
-              }}
-              transition="all 0.2s ease"
-            >
-              <a
-                href="https://github.com/yutna/nextjs-template"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {t("heroCta")}
-                <LuArrowRight />
-              </a>
-            </Button>
-          </Flex>
-        </MotionReveal>
-
         {/* Decorative gradient line */}
-        <MotionReveal variant="fadeIn" delay={0.45}>
+        <MotionReveal variant="fadeIn" delay={0.3}>
           <Box
             bgGradient="to-r"
             borderRadius="full"
@@ -114,10 +79,14 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
             gradientVia="purple.500"
             gradientTo="pink.400"
             h="3px"
-            mt={4}
             opacity={0.5}
             w={24}
           />
+        </MotionReveal>
+
+        {/* Copy command */}
+        <MotionReveal variant="fadeInUp" delay={0.45}>
+          <CopyCommand />
         </MotionReveal>
       </VStack>
 
