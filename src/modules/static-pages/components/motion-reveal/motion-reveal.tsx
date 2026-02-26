@@ -1,39 +1,18 @@
 "use client";
 
-import { motion, type Variants } from "motion/react";
+import { motion } from "motion/react";
 
-import { type MotionRevealProps } from "./types";
+import { MOTION_REVEAL_VARIANTS } from "./constants";
 
-const variants: Record<string, Variants> = {
-  fadeInUp: {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  },
-  fadeIn: {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  },
-  scaleIn: {
-    hidden: { opacity: 0, scale: 0.85 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  },
-};
+import type { MotionRevealProps } from "./types";
 
 export function MotionReveal({
   children,
-  variant = "fadeInUp",
-  delay = 0,
   className,
+  delay = 0,
+  variant = "fadeInUp",
 }: Readonly<MotionRevealProps>) {
-  const selectedVariant = variants[variant];
+  const selectedVariant = MOTION_REVEAL_VARIANTS[variant];
 
   return (
     <motion.div

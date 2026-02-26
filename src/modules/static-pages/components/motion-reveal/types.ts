@@ -1,8 +1,8 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export interface MotionRevealProps {
-  children: ReactNode;
-  variant?: "fadeInUp" | "fadeIn" | "scaleIn";
-  delay?: number;
+  children?: ReactNode;
   className?: string;
+  delay?: number;
+  variant?: "fadeInUp" | "fadeIn" | "scaleIn";
 }
