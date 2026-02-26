@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 
-import { type GlassCardProps } from "./types";
+import type { GlassCardProps } from "./types";
 
 export function GlassCard({ children, ...props }: Readonly<GlassCardProps>) {
   return (
