@@ -45,7 +45,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
 
       {/* Code editor body */}
       <Box
-        bg={{ base: "gray.900", _dark: "gray.950" }}
+        bg={{ base: "gray.50", _dark: "gray.950" }}
         px={4}
         py={4}
         fontFamily="mono"
@@ -62,7 +62,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
           {/* Comment line */}
           <HStack gap={3} align="start">
             <Text
-              color="gray.600"
+              color={{ base: "gray.400", _dark: "gray.600" }}
               w="6"
               textAlign="right"
               userSelect="none"
@@ -70,7 +70,10 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
             >
               1
             </Text>
-            <Text color="gray.500" fontStyle="italic">
+            <Text
+              color={{ base: "gray.400", _dark: "gray.500" }}
+              fontStyle="italic"
+            >
               {codeComment}
             </Text>
           </HStack>
@@ -90,7 +93,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
             >
               <HStack gap={3} align="start" minH="1.8em">
                 <Text
-                  color="gray.600"
+                  color={{ base: "gray.400", _dark: "gray.600" }}
                   w="6"
                   textAlign="right"
                   userSelect="none"
@@ -103,7 +106,10 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
                     <Text>&nbsp;</Text>
                   ) : (
                     line.tokens.map((token, tokenIndex) => (
-                      <Span key={tokenIndex} color={token.color}>
+                      <Span
+                        key={tokenIndex}
+                        color={{ base: token.color, _dark: token.darkColor }}
+                      >
                         {token.text}
                       </Span>
                     ))
@@ -116,7 +122,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
           {/* Blinking cursor */}
           <HStack gap={3} align="start">
             <Text
-              color="gray.600"
+              color={{ base: "gray.400", _dark: "gray.600" }}
               w="6"
               textAlign="right"
               userSelect="none"
@@ -127,7 +133,7 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
             <Box
               w="2px"
               h="1.2em"
-              bg="purple.400"
+              bg={{ base: "purple.500", _dark: "purple.400" }}
               css={{
                 "animation": "blink 1.2s step-end infinite",
                 "@keyframes blink": {
