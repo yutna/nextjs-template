@@ -2,7 +2,7 @@ import "server-only";
 
 import { Box, Button, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
-import { LuArrowRight, LuGithub } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 
 import { FloatingShapes } from "@/modules/static-pages/components/floating-shapes";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
@@ -78,6 +78,7 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
             w="full"
           >
             <Button
+              asChild
               size="lg"
               bgGradient="to-r"
               gradientFrom="blue.500"
@@ -92,32 +93,13 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
               }}
               transition="all 0.2s ease"
             >
-              {t("heroCta")}
-              <LuArrowRight />
-            </Button>
-
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              px={8}
-              fontWeight="semibold"
-              borderColor={{ base: "gray.300", _dark: "gray.600" }}
-              backdropFilter="blur(8px)"
-              bg={{ base: "white/40", _dark: "gray.800/40" }}
-              _hover={{
-                bg: { base: "white/70", _dark: "gray.800/70" },
-                borderColor: { base: "purple.300", _dark: "purple.600" },
-              }}
-              transition="all 0.2s ease"
-            >
               <a
-                href="https://github.com"
-                target="_blank"
+                href="https://github.com/yutna/nextjs-template"
                 rel="noopener noreferrer"
+                target="_blank"
               >
-                <LuGithub />
-                {t("heroSecondary")}
+                {t("heroCta")}
+                <LuArrowRight />
               </a>
             </Button>
           </Flex>

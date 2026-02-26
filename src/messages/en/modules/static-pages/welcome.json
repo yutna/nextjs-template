@@ -24,7 +24,6 @@
   "footerDocs": "Documentation",
   "footerGithub": "GitHub",
   "heroCta": "Get Started",
-  "heroSecondary": "View on GitHub",
   "heroSubtitle": "A production-ready Next.js template with App Router, Chakra UI v3, TypeScript strict mode, and everything you need to launch modern web applications.",
   "heroTitle": "Build Faster. Ship Smarter.",
   "stat1Label": "Lighthouse Score",
