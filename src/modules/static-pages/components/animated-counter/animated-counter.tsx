@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { animate, useInView } from "motion/react";
 import { Text } from "@chakra-ui/react";
+import { animate, useInView } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-import { type AnimatedCounterProps } from "./types";
+import type { AnimatedCounterProps } from "./types";
 
 export function AnimatedCounter({
   target,

@@ -3,7 +3,7 @@ import "server-only";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 
-import { WelcomeScreen } from "@/modules/static-pages/screens/welcome-screen";
+import { WelcomeScreen } from "@/modules/static-pages/screens/screen-welcome";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
