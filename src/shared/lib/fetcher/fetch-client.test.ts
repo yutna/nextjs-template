@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchClient } from "./fetch-client";
-import { FetchError } from "./fetch-error";
+import { FetchError } from "@/shared/lib/errors/http/fetch-error";
 
 // Mock env so tests don't need a real .env file
 vi.mock("@/shared/config/env", () => ({

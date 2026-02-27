@@ -24,7 +24,7 @@ src/
     api/        # SWR fetchers / API utilities
     components/ # Shared UI components
     config/     # env.ts (@t3-oss/env-nextjs), fonts.ts
-    lib/        # dayjs, logger (pino), safe-action
+    lib/        # dayjs, logger (pino), safe-action, fetcher, errors (error hierarchy), error-reporter
     schemas/    # Shared zod schemas (filename: <name>.schema.ts, no index.ts)
     vendor/     # Wrapped third-party components (chakra-ui/)
 ```
@@ -54,6 +54,11 @@ Not every folder is required — include only what the domain needs.
 - Use `ts-pattern` for exhaustive pattern matching instead of if/else chains
 - Prefer named exports over default exports (except Next.js page/layout files)
 - Server/client boundary: mark client files with `"use client"` only when necessary
+- **File names must match the exported class or function name** — `kebab-case` derived from the export:
+  - `FetchError` → `fetch-error.ts`
+  - `fetchClient` → `fetch-client.ts`
+  - `swrFetcher` → `swr-fetcher.ts`
+  - Shared utilities grouped by role use role-based names: `helpers.ts`, `types.ts`, `constants.ts`, `index.ts`
 
 ## Key Libraries
 
@@ -90,11 +95,107 @@ logger.info({ userId }, "action completed");
 import { dayjs } from "@/shared/lib/dayjs";
 ```
 
-### Data Fetching (client)
+### Data Fetching
 
 ```ts
-// Use SWR for client-side data fetching
+// HTTP requests (server or client) — typed wrapper around native fetch
+import { fetchClient } from "@/shared/lib/fetcher";
+
+const data = await fetchClient<User>({ path: "/users/1" });
+const created = await fetchClient<User>({
+  path: "/users",
+  method: "POST",
+  body: { name: "Alice" },
+});
+
+// With auth token
+const data = await fetchClient<User>({
+  path: "/me",
+  getToken: () => session.token,
+});
+```
+
+```ts
+// Client-side SWR hooks — use swrFetcher as the fetcher function
 import useSWR from "swr";
+import { swrFetcher } from "@/shared/lib/fetcher";
+
+const { data, error, isLoading } = useSWR<User>("/users/1", swrFetcher);
+```
+
+```ts
+// Feature modules define their own SWR hooks in modules/<feature>/api/
+// src/modules/users/api/use-users.ts
+export function useUsers() {
+  return useSWR<User[]>("/users", swrFetcher);
+}
+```
+
+```ts
+// Error handling in data fetching
+import { FetchError } from "@/shared/lib/errors";
+
+try {
+  const data = await fetchClient<User>({ path: "/users/1" });
+} catch (err) {
+  if (err instanceof FetchError) {
+    if (err.isUnauthorized) {
+      /* redirect to login */
+    }
+    if (err.isNotFound) {
+      /* render 404 UI */
+    }
+  }
+}
+```
+
+### Error Handling
+
+All errors extend `AppError` from `@/shared/lib/errors`. Use the hierarchy to throw and catch typed errors.
+
+```
+AppError (abstract)
+├── AuthenticationError          — 401, isOperational: true
+│   └── SessionExpiredError
+├── DomainError (abstract)       — isOperational: true (always)
+│   ├── AuthorizationError       — 403
+│   ├── BusinessRuleError        — 422
+│   ├── ConflictError            — 409
+│   ├── NotFoundError            — 404
+│   └── ValidationError          — 422
+├── HttpError (abstract)         — variable status, variable isOperational
+│   └── FetchError               — thrown by fetchClient on non-ok responses
+└── InfrastructureError (abstract) — 500, isOperational: false (always)
+    ├── DatabaseError
+    ├── ExternalServiceError
+    └── UnknownError
+```
+
+```ts
+import {
+  NotFoundError,
+  BusinessRuleError,
+  FetchError,
+  isAppError,
+  isOperationalError,
+  assertFound,
+  assertRule,
+  toAppError,
+} from "@/shared/lib/errors";
+
+// Throw domain errors in server actions / services
+const user = await db.users.findById(id);
+assertFound(user, "User"); // throws NotFoundError if null
+assertRule(user.isActive, "USER_INACTIVE", "User is not active"); // throws BusinessRuleError
+
+// isOperational = true  → safe to show message to user
+// isOperational = false → log details, show generic 500 UI
+if (isOperationalError(err)) {
+  return { error: err.message };
+}
+
+// Normalize unknown errors to AppError
+const appErr = toAppError(err);
 ```
 
 ### State Management

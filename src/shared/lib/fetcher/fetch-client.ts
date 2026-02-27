@@ -1,9 +1,8 @@
 import { env } from "@/shared/config/env";
-
-import { FetchError } from "./fetch-error";
-import { delay, isNetworkError } from "./helpers";
+import { FetchError } from "@/shared/lib/errors/http/fetch-error";
 
 import { DEFAULT_RETRIES, DEFAULT_RETRY_DELAY_MS } from "./constants";
+import { delay, isNetworkError } from "./helpers";
 
 import type { FetchClientOptions } from "./types";
 

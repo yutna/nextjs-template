@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { FetchError } from "./fetch-error";
 import { AppError } from "@/shared/lib/errors/app-error";
 import { isAppError } from "@/shared/lib/errors/helpers/is-app-error";
 import { isOperationalError } from "@/shared/lib/errors/helpers/is-operational-error";
+
+import { FetchError } from "./fetch-error";
+import { HttpError } from "./http-error";
 
 function makeResponse(status: number, statusText: string): Response {
   return new Response(null, { status, statusText });
@@ -102,14 +104,15 @@ describe("FetchError", () => {
     });
   });
 
-  describe("AppError integration", () => {
-    it("is instanceof AppError and FetchError", () => {
+  describe("AppError / HttpError integration", () => {
+    it("is instanceof AppError, HttpError, and FetchError", () => {
       const err = new FetchError({
         url: "/x",
         method: "GET",
         response: makeResponse(400, "Bad Request"),
       });
       expect(err).toBeInstanceOf(AppError);
+      expect(err).toBeInstanceOf(HttpError);
       expect(err).toBeInstanceOf(FetchError);
       expect(err).toBeInstanceOf(Error);
     });
