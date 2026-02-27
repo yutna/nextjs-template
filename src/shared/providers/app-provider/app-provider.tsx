@@ -12,6 +12,7 @@ import type { AppProviderProps } from "./types";
 export function AppProvider({
   children,
   locale,
+  messages,
   now,
   timeZone,
 }: AppProviderProps) {
@@ -19,6 +20,7 @@ export function AppProvider({
     <NextIntlClientProvider
       formats={formats}
       locale={locale}
+      messages={messages}
       now={now}
       timeZone={timeZone}
     >
