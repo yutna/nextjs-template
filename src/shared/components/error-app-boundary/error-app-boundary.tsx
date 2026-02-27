@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { LuHouse, LuRefreshCw, LuTriangleAlert } from "react-icons/lu";
 
-import { reportErrorAction } from "@/shared/actions/report-error";
+import { reportErrorAction } from "@/shared/actions/report-error-action";
 import { Link } from "@/shared/lib/navigation";
 import { routes } from "@/shared/routes";
 

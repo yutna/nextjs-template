@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 
-import { reportErrorAction } from "@/shared/actions/report-error";
+import { reportErrorAction } from "@/shared/actions/report-error-action";
 import { routes } from "@/shared/routes";
 
 import styles from "./error-global.module.css";
