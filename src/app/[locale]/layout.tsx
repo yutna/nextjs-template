@@ -1,6 +1,6 @@
 import "server-only";
 import { hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
@@ -10,6 +10,7 @@ import { AppProvider } from "@/shared/providers/app-provider";
 import "@/shared/styles/scrollbar.css";
 
 import type { Metadata } from "next";
+import type { AbstractIntlMessages } from "next-intl";
 import type { ReactNode } from "react";
 
 interface LayoutLocaleProps {
@@ -41,6 +42,9 @@ export default async function LayoutLocale({
   // Enable static rendering
   setRequestLocale(locale);
 
+  // Load messages
+  const messages = (await getMessages()) as unknown as AbstractIntlMessages;
+
   return (
     <html
       lang={locale}
@@ -48,7 +52,12 @@ export default async function LayoutLocale({
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>
-        <AppProvider locale={locale} now={new Date()} timeZone={TIME_ZONE}>
+        <AppProvider
+          locale={locale}
+          messages={messages}
+          now={new Date()}
+          timeZone={TIME_ZONE}
+        >
           {children}
         </AppProvider>
       </body>
