@@ -28,6 +28,9 @@ yarn-error.log*
 # production
 /build
 
+# runtime logs
+src/tmp/logs/*.log
+
 # testing
 /coverage
 

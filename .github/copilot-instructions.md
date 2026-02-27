@@ -25,6 +25,7 @@ src/
     components/ # Shared UI components
     config/     # env.ts (@t3-oss/env-nextjs), fonts.ts
     lib/        # dayjs, logger (pino), safe-action
+    schemas/    # Shared zod schemas (filename: <name>.schema.ts, no index.ts)
     vendor/     # Wrapped third-party components (chakra-ui/)
 ```
 
@@ -70,7 +71,7 @@ import { env } from "@/shared/config/env";
 import { actionClient, authActionClient } from "@/shared/lib/safe-action";
 
 const myAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .inputSchema(z.object({ id: z.string() }))
   .action(async ({ parsedInput }) => { ... });
 ```
 
