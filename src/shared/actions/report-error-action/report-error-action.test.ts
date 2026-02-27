@@ -23,11 +23,12 @@ describe("reportErrorAction", () => {
     expect(err.message).toBe("something broke");
   });
 
-  it("passes boundary and meta from context", async () => {
-    await reportErrorAction(
-      { message: "oops" },
-      { boundary: "app", meta: { userId: 42 } },
-    );
+  it("passes boundary and meta from input", async () => {
+    await reportErrorAction({
+      message: "oops",
+      boundary: "app",
+      meta: { userId: 42 },
+    });
 
     expect(mockReportError).toHaveBeenCalledWith(
       expect.any(Error),
@@ -35,33 +36,29 @@ describe("reportErrorAction", () => {
     );
   });
 
-  it("uses digest from serializedError, overriding context.digest", async () => {
-    await reportErrorAction(
-      { message: "err", digest: "from-error" },
-      { digest: "from-context" },
-    );
+  it("passes digest from input", async () => {
+    await reportErrorAction({ message: "err", digest: "abc-123" });
 
     expect(mockReportError).toHaveBeenCalledWith(
       expect.any(Error),
-      expect.objectContaining({ digest: "from-error" }),
+      expect.objectContaining({ digest: "abc-123" }),
     );
   });
 
-  it("falls back to context.digest when serializedError has no digest", async () => {
-    await reportErrorAction({ message: "err" }, { digest: "ctx-digest" });
-
-    expect(mockReportError).toHaveBeenCalledWith(
-      expect.any(Error),
-      expect.objectContaining({ digest: "ctx-digest" }),
-    );
-  });
-
-  it("works with no context argument", async () => {
+  it("works with only message provided", async () => {
     await reportErrorAction({ message: "bare error" });
 
     expect(mockReportError).toHaveBeenCalledWith(
       expect.any(Error),
-      expect.objectContaining({ digest: undefined }),
+      expect.objectContaining({ digest: undefined, boundary: undefined }),
     );
+  });
+
+  it("returns a validation error for missing message", async () => {
+    // @ts-expect-error intentionally invalid input
+    const result = await reportErrorAction({});
+
+    expect(result?.validationErrors).toBeDefined();
+    expect(mockReportError).not.toHaveBeenCalled();
   });
 });

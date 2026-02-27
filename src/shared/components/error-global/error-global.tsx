@@ -16,7 +16,7 @@ export function ErrorGlobal({ error, reset }: NextErrorProps) {
 
   // Effect hooks
   useEffect(() => {
-    void reportErrorAction({ message, digest }, { boundary: "global" });
+    void reportErrorAction({ message, digest, boundary: "global" });
   }, [message, digest]);
 
   return (

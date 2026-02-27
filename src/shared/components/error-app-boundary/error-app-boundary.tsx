@@ -29,7 +29,7 @@ export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
 
   // Effect hooks
   useEffect(() => {
-    void reportErrorAction({ message, digest }, { boundary: "app" });
+    void reportErrorAction({ message, digest, boundary: "app" });
   }, [message, digest]);
 
   return (
