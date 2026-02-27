@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { FetchError } from "./fetch-error";
+import { FetchError } from "@/shared/lib/errors/http/fetch-error";
+
 import { swrFetcher } from "./swr-fetcher";
 
 // Mock env so tests don't need a real .env file

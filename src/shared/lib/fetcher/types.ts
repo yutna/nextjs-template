@@ -1,20 +1,3 @@
-export interface FetchErrorOptions {
-  /** HTTP method used (e.g. "GET", "POST"). */
-  method: string;
-
-  /** The original Response object. */
-  response: Response;
-
-  /** The request URL. */
-  url: string;
-
-  /**
-   * Machine-readable error code from the API response body.
-   * Falls back to "FETCH_ERROR" when not provided.
-   */
-  code?: string;
-}
-
 export interface FetchClientOptions extends Omit<RequestInit, "body"> {
   /**
    * Path relative to NEXT_PUBLIC_API_URL, e.g. "/users/1".
