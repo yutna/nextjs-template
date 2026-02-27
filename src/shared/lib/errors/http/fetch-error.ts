@@ -1,8 +1,8 @@
-import { AppError } from "@/shared/lib/errors/app-error";
+import { HttpError } from "./http-error";
 
 import type { FetchErrorOptions } from "./types";
 
-export class FetchError extends AppError {
+export class FetchError extends HttpError {
   readonly url: string;
   readonly method: string;
   readonly response: Response;

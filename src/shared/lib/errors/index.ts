@@ -20,6 +20,10 @@ export { ExternalServiceError } from "./infrastructure/external-service-error";
 export { InfrastructureError } from "./infrastructure/infrastructure-error";
 export { UnknownError } from "./infrastructure/unknown-error";
 
+export { FetchError } from "./http/fetch-error";
+export { HttpError } from "./http/http-error";
+
 export { AppError } from "./app-error";
 
 export type { AppErrorOptions, FieldErrors, SerializedError } from "./types";
+export type { FetchErrorOptions } from "./http/types";
