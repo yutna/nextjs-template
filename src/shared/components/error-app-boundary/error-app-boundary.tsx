@@ -11,15 +11,26 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 import { LuHouse, LuRefreshCw, LuTriangleAlert } from "react-icons/lu";
 
+import { reportErrorAction } from "@/shared/actions/report-error";
 import { Link } from "@/shared/lib/navigation";
 import { routes } from "@/shared/routes";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
-export function ErrorAppBoundary({ reset }: NextErrorProps) {
+export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
+  // Initialize variables / Setup
+  const { message, digest } = error;
+
+  // Hooks
   const t = useTranslations("shared.components.error");
+
+  // Effect hooks
+  useEffect(() => {
+    void reportErrorAction({ message, digest }, { boundary: "app" });
+  }, [message, digest]);
 
   return (
     <Flex

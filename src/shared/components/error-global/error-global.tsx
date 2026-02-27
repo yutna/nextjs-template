@@ -1,14 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
+import { reportErrorAction } from "@/shared/actions/report-error";
 import { routes } from "@/shared/routes";
 
 import styles from "./error-global.module.css";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
-export function ErrorGlobal({ reset }: NextErrorProps) {
+export function ErrorGlobal({ error, reset }: NextErrorProps) {
+  // Initialize variables / Setup
+  const { message, digest } = error;
+
+  // Effect hooks
+  useEffect(() => {
+    void reportErrorAction({ message, digest }, { boundary: "global" });
+  }, [message, digest]);
+
   return (
     <div className={styles.root}>
       <div className={styles.container}>
