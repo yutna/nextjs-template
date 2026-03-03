@@ -1,11 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "api-design-principles": {
-      "source": "wshobson/agents",
-      "sourceType": "github",
-      "computedHash": "74d1cdb3f538a1f2758001f65132e6fd634dd0d3c8fdff54e6439a97f72499d9"
-    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
