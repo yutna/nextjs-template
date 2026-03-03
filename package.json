@@ -15,9 +15,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@ark-ui/react": "5.34.0",
     "@chakra-ui/react": "3.33.0",
     "@emotion/react": "11.14.0",
     "@t3-oss/env-nextjs": "0.13.10",
+    "@zag-js/react": "1.35.3",
     "clsx": "2.1.1",
     "dayjs": "1.11.19",
     "immer": "11.1.4",
