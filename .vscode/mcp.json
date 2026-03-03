@@ -1,6 +1,11 @@
 {
   "inputs": [],
   "servers": {
+    "ark-ui": {
+      "args": ["-y", "@ark-ui/mcp"],
+      "command": "npx",
+      "type": "stdio"
+    },
     "chakra-ui": {
       "args": ["-y", "@chakra-ui/react-mcp@latest"],
       "command": "npx",
