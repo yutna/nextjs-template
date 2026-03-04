@@ -153,6 +153,7 @@ This keeps related components grouped together alphabetically in the file explor
 
 ### TypeScript
 
+- **No `any` types** — Use proper types, `unknown` with type guards, or generics
 - Functions and variables: `camelCase`
 - React components and classes: `PascalCase`
 - Constants: `SCREAMING_SNAKE_CASE` (e.g. error codes, enum-like values)
