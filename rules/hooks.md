@@ -27,8 +27,9 @@ Do **not** put code in `hooks` when it belongs somewhere more specific:
 
 - `lib/` for infrastructure, integrations, or framework wrappers without a hook-shaped UI API
 - `utils/` for pure functions with no React hook behavior
+- `contexts/` for the context object itself
+- `providers/` for provider components
 - UI folders only when the code is truly view-only and does not represent extracted logic
-- `providers/` when the concern is primarily context/provider setup rather than hook ownership
 
 Rule of thumb:
 
@@ -81,11 +82,14 @@ Avoid moving feature-owned hooks into `shared` too early. Promote only when:
 This guide stays focused on `hooks`, so adjacent folders are mentioned here only to define the boundary.
 
 - use `hooks/` for extracted hook logic, including logic separated for clarity and testability even when reuse is currently local
+- use `contexts/` for context objects
+- use `providers/` for provider components
 - use `lib/` for non-hook infrastructure or integration code
 - use `utils/` for pure React-free helpers
 - use UI folders when the file is primarily rendering and the extracted logic does not need its own hook abstraction
 
 If a function can run without React and is mainly data transformation, it likely belongs outside `hooks/`.
+If a hook consumes context through `useContext`, the hook still belongs in `hooks/`, not in `contexts/`.
 
 ## 4. File and folder structure
 
