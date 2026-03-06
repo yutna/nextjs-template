@@ -29,6 +29,7 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
   });
 
   const token = getToken?.();
+
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
@@ -66,6 +67,7 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
       if (!response.ok) {
         // Try to extract a machine-readable error code from the response body
         let code: string | undefined;
+
         try {
           const json = (await response.clone().json()) as { code?: string };
           code = json?.code;
@@ -89,6 +91,7 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
         await delay(retryDelay);
         continue;
       }
+
       throw err;
     }
   }
