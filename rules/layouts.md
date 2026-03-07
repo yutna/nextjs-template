@@ -58,6 +58,15 @@ Use App Router layout files for:
 - wiring providers or wrappers that must live at that route boundary
 - delegating reusable structure to a layout component when the UI frame is not route-specific
 
+Special case: `src/app/[locale]/layout.tsx`
+
+- treat this file as the locale boundary for the app
+- use `import "server-only";`
+- read and validate the locale from params
+- call `setRequestLocale(locale)` there, just like locale-aware `page.tsx` does at its own boundary
+- keep `generateStaticParams()` there for the locale segment when needed
+- load locale-aware messages and wire locale-aware providers there when the root app shell depends on them
+
 Do **not** let `src/app/**/layout.tsx` become the long-term home for reusable visual structure.
 
 Prefer:
@@ -85,6 +94,53 @@ export default function Layout({
 ```
 
 This keeps the route file focused on Next.js boundary needs while the reusable frame lives in the owning folder.
+
+Locale-boundary direction:
+
+```tsx
+// src/app/[locale]/layout.tsx
+import "server-only";
+
+import { hasLocale } from "next-intl";
+import { getMessages, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+
+import { routing } from "@/shared/config/i18n/routing";
+import { AppProvider } from "@/shared/providers/app-provider";
+
+import type { ReactNode } from "react";
+
+interface LayoutProps {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function Layout({
+  children,
+  params,
+}: Readonly<LayoutProps>) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
+  return (
+    <AppProvider locale={locale} messages={messages}>
+      {children}
+    </AppProvider>
+  );
+}
+```
+
+This is still a route-boundary adapter, but for the locale segment it is expected to own next-intl setup that must happen at the layout boundary.
 
 ## 3. Boundaries with other UI folders
 
