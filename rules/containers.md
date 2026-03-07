@@ -213,14 +213,14 @@ Avoid vague names such as:
 
 For exported symbols:
 
-- use PascalCase names ending with `Container`
+- use PascalCase names prefixed with `Container`
 - derive the name from the concern, not from the route path
 
 Examples:
 
-- `CheckoutFormContainer`
-- `OrderFiltersContainer`
-- `ProfileEditorContainer`
+- `ContainerFormCheckout`
+- `ContainerFiltersOrder`
+- `ContainerEditorProfile`
 
 ## 9. Client and server boundaries
 
@@ -246,10 +246,10 @@ Typical server-first pattern:
 
 ```tsx
 // screen-checkout.tsx
-import { CheckoutFormContainer } from "@/modules/checkout/containers/container-checkout-form";
+import { ContainerFormCheckout } from "@/modules/checkout/containers/container-checkout-form";
 
 export async function CheckoutScreen() {
-  return <CheckoutFormContainer />;
+  return <ContainerFormCheckout />;
 }
 ```
 
@@ -262,7 +262,7 @@ import { CheckoutForm } from "@/modules/checkout/components/checkout-form";
 import { useCheckoutForm } from "@/modules/checkout/hooks/use-checkout-form";
 import { useCheckoutInitialValues } from "@/modules/checkout/hooks/use-checkout-initial-values";
 
-export function CheckoutFormContainer() {
+export function ContainerFormCheckout() {
   const initialValues = useCheckoutInitialValues();
   const form = useCheckoutForm({ initialValues, submitAction: submitCheckoutAction });
 
@@ -274,10 +274,10 @@ export function CheckoutFormContainer() {
 
 ```tsx
 // screen-profile.tsx
-import { ProfileFormContainer } from "@/modules/profile/containers/container-profile-form";
+import { ContainerFormProfile } from "@/modules/profile/containers/container-profile-form";
 
 export async function ProfileScreen() {
-  return <ProfileFormContainer />;
+  return <ContainerFormProfile />;
 }
 ```
 
@@ -287,7 +287,7 @@ import { updateProfileAction } from "@/modules/profile/actions/update-profile-ac
 import { ProfileForm } from "@/modules/profile/components/profile-form";
 import { getProfile } from "@/modules/profile/lib/get-profile";
 
-export async function ProfileFormContainer() {
+export async function ContainerFormProfile() {
   const profile = await getProfile();
 
   return (
