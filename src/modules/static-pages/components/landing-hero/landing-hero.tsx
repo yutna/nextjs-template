@@ -31,6 +31,7 @@ export async function LandingHero({ locale }: Readonly<LandingHeroProps>) {
         maxW="3xl"
         px={{ base: 6, md: 8 }}
         textAlign="center"
+        w="full"
       >
         {/* Mono label badge */}
         <MotionReveal delay={0}>

@@ -1,45 +1,40 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
+import React from "react";
+
+import styles from "./marquee-row.module.css";
 
 import type { MarqueeRowProps } from "./types";
 
 export function MarqueeRow({
   children,
   duration = 30,
+  reverse = false,
 }: Readonly<MarqueeRowProps>) {
   return (
     <Box
       css={{
-        "@media (prefers-reduced-motion: reduce)": {
-          "& .marquee-track": {
-            animationPlayState: "paused",
-          },
-        },
-        "maskImage":
+        maskImage:
           "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-        "WebkitMaskImage":
+        WebkitMaskImage:
           "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
       }}
       overflow="hidden"
       position="relative"
+      w="full"
     >
-      <Box
-        className="marquee-track"
-        css={{
-          "@keyframes marquee": {
-            "0%": { transform: "translateX(0)" },
-            "100%": { transform: "translateX(-50%)" },
-          },
-          "animation": `marquee ${duration}s linear infinite`,
-        }}
-        display="flex"
-        gap="4"
-        w="max-content"
+      <div
+        className={`${styles.track} ${reverse ? styles.reverse : styles.forward}`}
+        style={
+          { "--marquee-duration": `${duration}s` } as React.CSSProperties
+        }
       >
-        {children}
-        {children}
-      </Box>
+        <Box display="flex" gap="4" w="max-content">
+          {children}
+          {children}
+        </Box>
+      </div>
     </Box>
   );
 }

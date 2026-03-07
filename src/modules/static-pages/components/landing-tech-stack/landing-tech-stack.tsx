@@ -18,33 +18,37 @@ export async function LandingTechStack({
     namespace: "modules.staticPages.components.landingTechStack",
   });
 
-  const badges = TECH_STACK.map((tech) => (
-    <Box
-      border="1px solid"
-      borderColor={{ _dark: "gray.700", base: "gray.200" }}
-      borderRadius="full"
-      flexShrink={0}
-      key={tech.name}
-      px={4}
-      py={2}
-      whiteSpace="nowrap"
-    >
-      <Text
-        color={{ _dark: "gray.300", base: "gray.600" }}
-        fontFamily="mono"
-        fontSize="xs"
+  function renderBadges(items: ReadonlyArray<{ name: string; version: string }>) {
+    return items.map((tech) => (
+      <Box
+        border="1px solid"
+        borderColor={{ _dark: "gray.700", base: "gray.200" }}
+        borderRadius="full"
+        flexShrink={0}
+        key={tech.name}
+        px={4}
+        py={2}
+        whiteSpace="nowrap"
       >
-        {tech.name}
         <Text
-          as="span"
-          color={{ _dark: "gray.500", base: "gray.400" }}
-          ml={1.5}
+          color={{ _dark: "gray.300", base: "gray.600" }}
+          fontFamily="mono"
+          fontSize="xs"
         >
-          v{tech.version}
+          {tech.name}
+          <Text
+            as="span"
+            color={{ _dark: "gray.500", base: "gray.400" }}
+            ml={1.5}
+          >
+            v{tech.version}
+          </Text>
         </Text>
-      </Text>
-    </Box>
-  ));
+      </Box>
+    ));
+  }
+
+  const rowItems = renderBadges(TECH_STACK);
 
   return (
     <Box
@@ -57,6 +61,7 @@ export async function LandingTechStack({
         gap={3}
         px={{ base: 6, md: 8 }}
         textAlign="center"
+        w="full"
       >
         <MotionReveal>
           <Heading
@@ -91,8 +96,8 @@ export async function LandingTechStack({
       </VStack>
 
       <MotionReveal delay={0.3} variant="fadeIn">
-        <Box mt={{ base: 10, md: 14 }}>
-          <MarqueeRow duration={35}>{badges}</MarqueeRow>
+        <Box mt={{ base: 10, md: 14 }} w="full">
+          <MarqueeRow duration={30}>{rowItems}</MarqueeRow>
         </Box>
       </MotionReveal>
     </Box>

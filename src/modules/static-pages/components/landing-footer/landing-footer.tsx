@@ -22,11 +22,12 @@ export async function LandingFooter({ locale }: Readonly<LandingFooterProps>) {
     >
       <Flex
         align="center"
-        flexWrap="wrap"
-        gap={4}
-        justify="space-between"
+        flexDirection={{ base: "column", md: "row" }}
+        gap={{ base: 3, md: 4 }}
+        justify={{ base: "center", md: "space-between" }}
         maxW="5xl"
         mx="auto"
+        textAlign={{ base: "center", md: "left" }}
       >
         <Text
           color={{ _dark: "gray.500", base: "gray.400" }}

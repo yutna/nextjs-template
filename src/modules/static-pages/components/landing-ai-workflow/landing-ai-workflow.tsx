@@ -70,17 +70,17 @@ export async function LandingAiWorkflow({
                   align="flex-start"
                   borderBottom={index < WORKFLOW_STEPS.length - 1 ? "1px solid" : undefined}
                   borderColor={{ _dark: "gray.800", base: "gray.100" }}
-                  gap={5}
-                  py={5}
+                  gap={{ base: 3, md: 5 }}
+                  py={{ base: 4, md: 5 }}
                 >
                   {/* Step number */}
                   <Text
                     color={{ _dark: "blue.400/40", base: "blue.600/30" }}
                     fontFamily="mono"
-                    fontSize="2xl"
+                    fontSize={{ base: "xl", md: "2xl" }}
                     fontWeight="bold"
                     lineHeight="1"
-                    minW="12"
+                    minW={{ base: "8", md: "12" }}
                     pt="0.5"
                   >
                     {step.stepNumber}
