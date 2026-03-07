@@ -1,16 +1,16 @@
 {
-  "heading": "ครบทุกอย่างที่ต้องการ",
-  "subheading": "ชุดเครื่องมือและแนวปฏิบัติที่ดีที่สุด คัดสรรมาอย่างดี พร้อมใช้งานทันที",
-  "feature1Title": "App Router",
   "feature1Description": "Next.js 16 App Router พร้อม nested layouts, server components, streaming และ static generation ในตัว",
-  "feature2Title": "Chakra UI v3",
+  "feature1Title": "App Router",
   "feature2Description": "ไลบรารีคอมโพเนนต์สวยงาม เข้าถึงได้ง่าย พร้อม dark mode, responsive design และธีมที่ปรับแต่งได้",
-  "feature3Title": "TypeScript Strict",
+  "feature2Title": "Chakra UI v3",
   "feature3Description": "โหมด strict เต็มรูปแบบ พร้อม Zod runtime validation ไม่มี any และ type safety ที่ครอบคลุม",
-  "feature4Title": "รองรับหลายภาษา",
+  "feature3Title": "TypeScript Strict",
   "feature4Description": "รองรับหลายภาษาด้วย next-intl พร้อม routing ตาม locale และข้อความแปลที่มีโครงสร้าง",
-  "feature5Title": "Dark Mode",
+  "feature4Title": "รองรับหลายภาษา",
   "feature5Description": "สลับโหมดสว่างและมืดอย่างลื่นไหล ขับเคลื่อนด้วย next-themes พร้อมตรวจจับค่ากำหนดระบบ",
+  "feature5Title": "Dark Mode",
+  "feature6Description": "Server actions ที่ type-safe พร้อมการตรวจสอบ input, จัดการ error และ authentication guards ในตัว",
   "feature6Title": "Safe Actions",
-  "feature6Description": "Server actions ที่ type-safe พร้อมการตรวจสอบ input, จัดการ error และ authentication guards ในตัว"
+  "heading": "ครบทุกอย่างที่ต้องการ",
+  "subheading": "ชุดเครื่องมือและแนวปฏิบัติที่ดีที่สุด คัดสรรมาอย่างดี พร้อมใช้งานทันที"
 }

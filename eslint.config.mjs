@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
@@ -20,6 +21,7 @@ const eslintConfig = defineConfig([
   // Project rules — enforce AGENTS.md conventions
   // --------------------------------------------------
   {
+    files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
       perfectionist,
       "simple-import-sort": simpleImportSort,
@@ -269,6 +271,26 @@ const eslintConfig = defineConfig([
     files: ["src/middleware.ts", "src/proxy.ts"],
     rules: {
       "import/no-default-export": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // JSON files — enforce sorted keys in message files
+  // --------------------------------------------------
+  {
+    files: ["src/messages/**/*.json"],
+    language: "jsonc/x",
+    plugins: {
+      jsonc,
+    },
+    rules: {
+      "jsonc/sort-keys": [
+        "error",
+        {
+          order: { type: "asc" },
+          pathPattern: ".*",
+        },
+      ],
     },
   },
 ]);

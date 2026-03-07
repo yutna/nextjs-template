@@ -1,16 +1,16 @@
 {
-  "heading": "Everything You Need",
-  "subheading": "A carefully curated stack of modern tools and best practices, ready out of the box.",
-  "feature1Title": "App Router",
   "feature1Description": "Next.js 16 App Router with nested layouts, server components, streaming, and static generation built in.",
-  "feature2Title": "Chakra UI v3",
+  "feature1Title": "App Router",
   "feature2Description": "Beautiful, accessible component library with dark mode, responsive design, and customizable theming.",
-  "feature3Title": "TypeScript Strict",
+  "feature2Title": "Chakra UI v3",
   "feature3Description": "Full strict mode with Zod runtime validation, zero use of any, and comprehensive type safety.",
-  "feature4Title": "Internationalization",
+  "feature3Title": "TypeScript Strict",
   "feature4Description": "Multi-language support with next-intl, locale-aware routing, and structured translation messages.",
-  "feature5Title": "Dark Mode",
+  "feature4Title": "Internationalization",
   "feature5Description": "Seamless light and dark mode switching powered by next-themes with system preference detection.",
+  "feature5Title": "Dark Mode",
+  "feature6Description": "Type-safe server actions with input validation, error handling, and authentication guards built in.",
   "feature6Title": "Safe Actions",
-  "feature6Description": "Type-safe server actions with input validation, error handling, and authentication guards built in."
+  "heading": "Everything You Need",
+  "subheading": "A carefully curated stack of modern tools and best practices, ready out of the box."
 }

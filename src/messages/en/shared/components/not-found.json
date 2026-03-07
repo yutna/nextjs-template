@@ -1,6 +1,6 @@
 {
-  "heading": "Page Not Found",
   "description": "Sorry, the page you're looking for doesn't exist or has been moved.",
+  "goBack": "Go Back",
   "goHome": "Back to Home",
-  "goBack": "Go Back"
+  "heading": "Page Not Found"
 }
