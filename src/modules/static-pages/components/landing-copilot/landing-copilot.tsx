@@ -90,6 +90,7 @@ export async function LandingCopilot({
                     border="1px solid"
                     borderColor={{ _dark: "gray.800", base: "gray.200" }}
                     borderRadius="lg"
+                    h="full"
                     p={{ base: 5, md: 6 }}
                     transition="border-color 0.2s ease"
                   >
