@@ -69,8 +69,8 @@ This matches the repository direction that view and logic should be separated ev
 This guide stays focused on `components`, so nearby layers are mentioned here only to define the boundary.
 
 - use `components/` for presenter-oriented rendering units
-- use `containers/` for stateful feature wiring and logic-heavy composition
-- use `screens/` for screen-level assembly of containers and components
+- use `containers/` for logic binding between screens and presenter components
+- use `screens/` for screen-level assembly of containers
 - use `layouts/` for reusable structural framing around `children`
 - use `hooks/` for extracted UI logic, even when reuse is still local
 
@@ -80,7 +80,6 @@ Recommended flow:
 
 Common variations:
 
-- `screen` -> `component`
 - `layout` -> `screen` -> `container` -> `component`
 - `component` -> private child presenter components
 
