@@ -856,10 +856,12 @@ These provide deep knowledge when the task needs it.
   contexts, or utils.
 - **`project-styling`** —
   styling with Chakra UI, CSS, or managing images.
-- **`project-styling`** —
-  styling with Chakra UI, CSS, or managing images.
 - **`project-testing`** —
   writing or fixing tests.
+- **`effect`** —
+  Effect TypeScript library for typed error handling.
+  Mandatory in `shared/api/` wrappers. Actions and
+  containers call `Effect.runPromise()` at boundary.
 - **`zag-js`** —
   Zag.js UI component state machines for React when Ark UI
   or Chakra UI do not cover the use case. Covers the
