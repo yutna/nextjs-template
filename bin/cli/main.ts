@@ -1,6 +1,7 @@
 import { readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { Effect } from "effect";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,24 +14,36 @@ interface Command {
   run: (args?: string[]) => Promise<void>;
 }
 
-async function loadCommand(name: string): Promise<Command | undefined> {
-  const normalized = name.replace(":", "-");
-  const commandPath = resolve(COMMANDS_DIR, `${normalized}.ts`);
-
-  try {
-    const mod = await import(commandPath);
-    return mod.command as Command;
-  } catch {
-    return undefined;
+class CommandNotFoundError {
+  readonly _tag = "CommandNotFoundError";
+  readonly commandName: string;
+  constructor(commandName: string) {
+    this.commandName = commandName;
   }
 }
 
-async function listCommands(): Promise<Command[]> {
-  const files = readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".ts"));
+const loadCommand = (name: string) =>
+  Effect.tryPromise({
+    catch: () => new CommandNotFoundError(name),
+    try: async () => {
+      const normalized = name.replace(":", "-");
+      const commandPath = resolve(COMMANDS_DIR, `${normalized}.ts`);
+      const mod = await import(commandPath);
+      return mod.command as Command;
+    },
+  });
+
+const listCommands = Effect.gen(function* () {
+  const files = yield* Effect.try(() =>
+    readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".ts")),
+  );
+
   const commands: Command[] = [];
 
   for (const file of files) {
-    const mod = await import(resolve(COMMANDS_DIR, file));
+    const mod = yield* Effect.tryPromise(() =>
+      import(resolve(COMMANDS_DIR, file)),
+    );
 
     if (mod.command) {
       commands.push(mod.command as Command);
@@ -38,7 +51,7 @@ async function listCommands(): Promise<Command[]> {
   }
 
   return commands.sort((a, b) => a.name.localeCompare(b.name));
-}
+});
 
 function printHelp(commands: Command[]): void {
   const bin = "bin/tmpl";
@@ -67,39 +80,51 @@ function printHelp(commands: Command[]): void {
 `);
 }
 
-export async function main(args: string[]): Promise<void> {
-  const commandName = args[0];
-
-  if (!commandName || commandName === "--help" || commandName === "-h") {
-    const commands = await listCommands();
-    printHelp(commands);
-    return;
-  }
-
-  const command = await loadCommand(commandName);
-
-  if (!command) {
-    console.error(`  Unknown command: ${commandName}\n`);
-    console.error(`  Run ./bin/tmpl --help to see available commands.\n`);
-    process.exitCode = 1;
-    return;
-  }
-
-  const rest = args.slice(1);
-
-  if (rest.includes("--help") || rest.includes("-h")) {
+const showCommandHelp = (commandName: string, command: Command) =>
+  Effect.tryPromise(async () => {
     console.log(`\n  ${command.name} — ${command.description}\n`);
 
     const mod = await import(
-      resolve(COMMANDS_DIR, `${commandName.replace(":", "-")}.ts`)
+      resolve(COMMANDS_DIR, `${commandName.replace(":", "-")}.ts`),
     );
 
     if (typeof mod.help === "function") {
       mod.help();
     }
+  });
 
+export async function main(args: string[]): Promise<void> {
+  const commandName = args[0];
+
+  if (!commandName || commandName === "--help" || commandName === "-h") {
+    const commands = await Effect.runPromise(listCommands);
+    printHelp(commands);
     return;
   }
 
-  await command.run(rest);
+  const program = Effect.gen(function* () {
+    const command = yield* loadCommand(commandName);
+    const rest = args.slice(1);
+
+    if (rest.includes("--help") || rest.includes("-h")) {
+      yield* showCommandHelp(commandName, command);
+      return;
+    }
+
+    yield* Effect.tryPromise(() => command.run(rest));
+  });
+
+  await Effect.runPromise(
+    program.pipe(
+      Effect.catchTag("CommandNotFoundError", (err) =>
+        Effect.sync(() => {
+          console.error(`  Unknown command: ${err.commandName}\n`);
+          console.error(
+            `  Run ./bin/tmpl --help to see available commands.\n`,
+          );
+          process.exitCode = 1;
+        }),
+      ),
+    ),
+  );
 }

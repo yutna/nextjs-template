@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { Effect } from "effect";
 
 function outputContinue(systemMessage?: string): void {
   if (systemMessage) {
@@ -10,66 +11,75 @@ function outputContinue(systemMessage?: string): void {
   }
 }
 
-function hasLintScript(): boolean {
-  try {
-    if (!existsSync("package.json")) {
-      return false;
-    }
+const hasStdout = (error: unknown): error is { stdout: string } =>
+  typeof error === "object" &&
+  error !== null &&
+  "stdout" in error &&
+  typeof (error as Record<string, unknown>).stdout === "string";
 
-    const pkg = execSync("cat package.json", { encoding: "utf8" });
-    return pkg.includes('"lint"');
-  } catch {
-    return false;
+class LintFailedError {
+  readonly _tag = "LintFailedError";
+  readonly cause: unknown;
+  constructor(cause: unknown) {
+    this.cause = cause;
   }
 }
+
+const hasLintScript = Effect.try(() => {
+  if (!existsSync("package.json")) return false;
+  const content = readFileSync("package.json", "utf8");
+  return content.includes('"lint"');
+}).pipe(Effect.catchAll(() => Effect.succeed(false)));
+
+const runLint = Effect.try({
+  catch: (error) => new LintFailedError(error),
+  try: () =>
+    execSync("npm run lint -- --quiet 2>&1", {
+      encoding: "utf8",
+      timeout: 55_000,
+    }),
+}).pipe(
+  Effect.map((output) => ({ failed: false, output })),
+  Effect.catchTag("LintFailedError", (err) =>
+    Effect.succeed({
+      failed: true,
+      output: hasStdout(err.cause) ? err.cause.stdout : "",
+    }),
+  ),
+);
+
+const formatMessage = (output: string): string => {
+  const lines = output.trim().split("\n");
+  const errorCount = lines.filter((l) => /error|✖|✗/i.test(l)).length;
+  const firstErrors = lines.slice(0, 5).join(" ").slice(0, 200);
+  return `Lint check found issues (approx ${errorCount} errors). First few: ${firstErrors}`;
+};
+
+const program = Effect.gen(function* () {
+  const lintAvailable = yield* hasLintScript;
+
+  if (!lintAvailable) {
+    outputContinue();
+    return;
+  }
+
+  const result = yield* runLint;
+
+  if (!result.failed || !result.output.trim()) {
+    outputContinue();
+    return;
+  }
+
+  outputContinue(formatMessage(result.output));
+});
 
 export const command = {
   description: "Run lint check before session ends (Stop hook)",
   name: "hooks:lint",
   run: async (): Promise<void> => {
-    try {
-      if (!hasLintScript()) {
-        outputContinue();
-        return;
-      }
-
-      let lintOutput = "";
-      let lintFailed = false;
-
-      try {
-        lintOutput = execSync("npm run lint -- --quiet 2>&1", {
-          encoding: "utf8",
-          timeout: 55_000,
-        });
-      } catch (error: unknown) {
-        lintFailed = true;
-
-        if (
-          error &&
-          typeof error === "object" &&
-          "stdout" in error &&
-          typeof (error as { stdout: unknown }).stdout === "string"
-        ) {
-          lintOutput = (error as { stdout: string }).stdout;
-        }
-      }
-
-      if (!lintFailed || !lintOutput.trim()) {
-        outputContinue();
-        return;
-      }
-
-      const lines = lintOutput.trim().split("\n");
-      const errorCount = lines.filter((l) =>
-        /error|✖|✗/i.test(l),
-      ).length;
-      const firstErrors = lines.slice(0, 5).join(" ").slice(0, 200);
-      const message = `Lint check found issues (approx ${errorCount} errors). First few: ${firstErrors}`;
-
-      outputContinue(message);
-    } catch {
-      outputContinue();
-    }
+    await Effect.runPromise(
+      program.pipe(Effect.catchAll(() => Effect.sync(() => outputContinue()))),
+    );
   },
 };
 
