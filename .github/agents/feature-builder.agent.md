@@ -4,11 +4,6 @@ description: >-
   Build complete features following the project's page→screen→container→component
   architecture. Researches existing patterns first, then implements, then reviews.
   For autonomous execution, load the autonomous-workflow skill.
-tools:
-  - agent
-  - edit/editFiles
-  - search/codebase
-  - read
 agents:
   - Researcher
   - Implementer

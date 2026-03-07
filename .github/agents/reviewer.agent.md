@@ -2,7 +2,7 @@
 name: Reviewer
 description: Review implementation for architecture compliance
 tools:
-  - search/codebase
+  - search
   - read
 user-invocable: false
 ---

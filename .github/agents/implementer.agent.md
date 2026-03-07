@@ -2,8 +2,10 @@
 name: Implementer
 description: Write code following established patterns and project conventions
 tools:
-  - edit/editFiles
-  - search/codebase
+  - edit
+  - search
+  - read
+  - execute
 user-invocable: false
 ---
 

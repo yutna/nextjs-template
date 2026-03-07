@@ -4,7 +4,7 @@ description: >-
   Review code changes against project architecture conventions. Read-only —
   surfaces genuine violations only, never comments on style preferences.
 tools:
-  - search/codebase
+  - search
   - read
 ---
 

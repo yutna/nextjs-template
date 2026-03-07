@@ -2,7 +2,7 @@
 name: Researcher
 description: Research codebase patterns and gather context for feature building
 tools:
-  - search/codebase
+  - search
   - read
 user-invocable: false
 ---
