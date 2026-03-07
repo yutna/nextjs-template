@@ -15,7 +15,7 @@ import type { SectionStatsProps } from "./types";
 export async function SectionStats({ locale }: Readonly<SectionStatsProps>) {
   const t = await getTranslations({
     locale,
-    namespace: "modules.staticPages.welcome",
+    namespace: "modules.staticPages.components.sectionStats",
   });
 
   const stats = Array.from({ length: 4 }, (_, i) => ({
@@ -42,7 +42,7 @@ export async function SectionStats({ locale }: Readonly<SectionStatsProps>) {
             fontWeight="bold"
             color={{ base: "gray.800", _dark: "gray.100" }}
           >
-            {t("statsHeading")}
+            {t("heading")}
           </Heading>
         </MotionReveal>
 

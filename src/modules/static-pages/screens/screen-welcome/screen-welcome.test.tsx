@@ -30,16 +30,16 @@ vi.mock("@/modules/static-pages/components/section-footer", () => ({
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { WelcomeScreen } from "./screen-welcome";
+import { ScreenWelcome } from "./screen-welcome";
 
-describe("WelcomeScreen", () => {
+describe("ScreenWelcome", () => {
   it("renders a main landmark as the root element", async () => {
-    renderWithProviders(await WelcomeScreen({ locale: "en" }));
+    renderWithProviders(await ScreenWelcome({ locale: "en" }));
     expect(document.querySelector("main")).toBeInTheDocument();
   });
 
   it("renders all 8 sub-components", async () => {
-    renderWithProviders(await WelcomeScreen({ locale: "en" }));
+    renderWithProviders(await ScreenWelcome({ locale: "en" }));
     expect(screen.getByTestId("switcher-locale")).toBeInTheDocument();
     expect(screen.getByTestId("gradient-mesh")).toBeInTheDocument();
     expect(screen.getByTestId("section-hero")).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("WelcomeScreen", () => {
   });
 
   it("renders with Thai locale without error", async () => {
-    renderWithProviders(await WelcomeScreen({ locale: "th" }));
+    renderWithProviders(await ScreenWelcome({ locale: "th" }));
     expect(document.querySelector("main")).toBeInTheDocument();
   });
 });

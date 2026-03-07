@@ -22,7 +22,7 @@ describe("SectionFeatures", () => {
   it("renders all 6 feature description keys", async () => {
     renderWithProviders(await SectionFeatures({ locale: "en" }));
     for (let i = 1; i <= 6; i++) {
-      expect(screen.getByText(`feature${i}Desc`)).toBeInTheDocument();
+      expect(screen.getByText(`feature${i}Description`)).toBeInTheDocument();
     }
   });
 

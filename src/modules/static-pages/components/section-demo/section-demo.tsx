@@ -12,7 +12,7 @@ import type { SectionDemoProps } from "./types";
 export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
   const t = await getTranslations({
     locale,
-    namespace: "modules.staticPages.welcome",
+    namespace: "modules.staticPages.components.sectionDemo",
   });
 
   return (
@@ -32,7 +32,7 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
             fontWeight="bold"
             color={{ base: "gray.800", _dark: "gray.100" }}
           >
-            {t("demoHeading")}
+            {t("heading")}
           </Heading>
         </MotionReveal>
 
@@ -42,7 +42,7 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
-            {t("demoSubheading")}
+            {t("subheading")}
           </Text>
         </MotionReveal>
 

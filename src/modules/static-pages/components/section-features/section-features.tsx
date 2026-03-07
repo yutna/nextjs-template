@@ -16,14 +16,14 @@ export async function SectionFeatures({
 }: Readonly<SectionFeaturesProps>) {
   const t = await getTranslations({
     locale,
-    namespace: "modules.staticPages.welcome",
+    namespace: "modules.staticPages.components.sectionFeatures",
   });
 
   const features = Array.from({ length: 6 }, (_, i) => ({
     icon: FEATURE_ICONS[i],
     title: t(`feature${i + 1}Title` as `feature${1 | 2 | 3 | 4 | 5 | 6}Title`),
     description: t(
-      `feature${i + 1}Desc` as `feature${1 | 2 | 3 | 4 | 5 | 6}Desc`,
+      `feature${i + 1}Description` as `feature${1 | 2 | 3 | 4 | 5 | 6}Description`,
     ),
     color: FEATURE_COLORS[i],
   }));
@@ -45,7 +45,7 @@ export async function SectionFeatures({
             fontWeight="bold"
             color={{ base: "gray.800", _dark: "gray.100" }}
           >
-            {t("featuresHeading")}
+            {t("heading")}
           </Heading>
         </MotionReveal>
 
@@ -55,7 +55,7 @@ export async function SectionFeatures({
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
-            {t("featuresSubheading")}
+            {t("subheading")}
           </Text>
         </MotionReveal>
 

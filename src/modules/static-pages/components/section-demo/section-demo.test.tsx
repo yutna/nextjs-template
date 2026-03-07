@@ -16,12 +16,12 @@ import { SectionDemo } from "./section-demo";
 describe("SectionDemo", () => {
   it("renders the demoHeading translation key", async () => {
     renderWithProviders(await SectionDemo({ locale: "en" }));
-    expect(screen.getByText("demoHeading")).toBeInTheDocument();
+    expect(screen.getByText("heading")).toBeInTheDocument();
   });
 
   it("renders the demoSubheading translation key", async () => {
     renderWithProviders(await SectionDemo({ locale: "en" }));
-    expect(screen.getByText("demoSubheading")).toBeInTheDocument();
+    expect(screen.getByText("subheading")).toBeInTheDocument();
   });
 
   it("passes demoCodeComment to DemoContent as the comment text", async () => {

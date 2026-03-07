@@ -14,7 +14,7 @@ import type { SectionHeroProps } from "./types";
 export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
   const t = await getTranslations({
     locale,
-    namespace: "modules.staticPages.welcome",
+    namespace: "modules.staticPages.components.sectionHero",
   });
 
   return (
@@ -53,7 +53,7 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
             letterSpacing="tight"
             lineHeight="1.1"
           >
-            {t("heroTitle")}
+            {t("title")}
           </Heading>
         </MotionReveal>
 
@@ -66,7 +66,7 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
             maxW="2xl"
             mx="auto"
           >
-            {t("heroSubtitle")}
+            {t("subtitle")}
           </Text>
         </MotionReveal>
 

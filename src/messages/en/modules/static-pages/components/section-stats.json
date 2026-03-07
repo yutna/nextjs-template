@@ -1,0 +1,15 @@
+{
+  "heading": "Built for Performance",
+  "stat1Label": "Lighthouse Score",
+  "stat1Suffix": "",
+  "stat1Value": "100",
+  "stat2Label": "Type Coverage",
+  "stat2Suffix": "%",
+  "stat2Value": "100",
+  "stat3Label": "Build Time",
+  "stat3Suffix": "s",
+  "stat3Value": "2",
+  "stat4Label": "First Load JS",
+  "stat4Suffix": "kb",
+  "stat4Value": "85"
+}

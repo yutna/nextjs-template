@@ -15,7 +15,7 @@ export async function SectionTechStack({
 }: Readonly<SectionTechStackProps>) {
   const t = await getTranslations({
     locale,
-    namespace: "modules.staticPages.welcome",
+    namespace: "modules.staticPages.components.sectionTechStack",
   });
 
   const badges = TECH_STACK.map((tech) => (
@@ -71,7 +71,7 @@ export async function SectionTechStack({
             fontWeight="bold"
             color={{ base: "gray.800", _dark: "gray.100" }}
           >
-            {t("techHeading")}
+            {t("heading")}
           </Heading>
         </MotionReveal>
 
@@ -81,7 +81,7 @@ export async function SectionTechStack({
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
-            {t("techSubheading")}
+            {t("subheading")}
           </Text>
         </MotionReveal>
 

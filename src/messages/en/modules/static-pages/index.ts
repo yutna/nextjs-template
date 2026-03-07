@@ -1,5 +1,5 @@
-import welcome from "./welcome.json";
+import { components } from "./components";
 
 export const staticPages = {
-  welcome,
+  components,
 };

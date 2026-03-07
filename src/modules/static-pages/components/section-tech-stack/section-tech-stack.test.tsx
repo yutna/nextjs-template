@@ -22,8 +22,8 @@ describe("SectionTechStack", () => {
 
   it("renders the section heading and subheading translation keys", async () => {
     renderWithProviders(await SectionTechStack({ locale: "en" }));
-    expect(screen.getByText("techHeading")).toBeInTheDocument();
-    expect(screen.getByText("techSubheading")).toBeInTheDocument();
+    expect(screen.getByText("heading")).toBeInTheDocument();
+    expect(screen.getByText("subheading")).toBeInTheDocument();
   });
 
   it("TECH_STACK contains the expected core technologies", () => {

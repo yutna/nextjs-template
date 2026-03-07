@@ -16,13 +16,13 @@ describe("SectionFooter", () => {
     expect(document.querySelector("footer")).toBeInTheDocument();
   });
 
-  it("renders the footerCopyright translation key", async () => {
+  it("renders the copyright translation key", async () => {
     renderWithProviders(await SectionFooter({ locale: "en" }));
-    expect(screen.getByText("footerCopyright")).toBeInTheDocument();
+    expect(screen.getByText("copyright")).toBeInTheDocument();
   });
 
-  it("renders the footerBuiltWith translation key", async () => {
+  it("renders the builtWith translation key", async () => {
     renderWithProviders(await SectionFooter({ locale: "en" }));
-    expect(screen.getByText("footerBuiltWith")).toBeInTheDocument();
+    expect(screen.getByText("builtWith")).toBeInTheDocument();
   });
 });

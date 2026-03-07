@@ -16,14 +16,14 @@ describe("SectionHero", () => {
     expect(document.querySelector("section")).toBeInTheDocument();
   });
 
-  it("renders the heroTitle translation key", async () => {
+  it("renders the title translation key", async () => {
     renderWithProviders(await SectionHero({ locale: "en" }));
-    expect(screen.getByText("heroTitle")).toBeInTheDocument();
+    expect(screen.getByText("title")).toBeInTheDocument();
   });
 
-  it("renders the heroSubtitle translation key", async () => {
+  it("renders the subtitle translation key", async () => {
     renderWithProviders(await SectionHero({ locale: "en" }));
-    expect(screen.getByText("heroSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("subtitle")).toBeInTheDocument();
   });
 
   it("renders with Thai locale without error", async () => {
