@@ -241,12 +241,12 @@ if (isUser(data)) {
 | Layer | ts-pattern | Notes |
 | --- | --- | --- |
 | `shared/api/` | Rarely | Errors handled by Effect inside |
+| `shared/lib/` | Yes | Also may use Effect internally |
 | `actions/` | Yes | Match on Effect results at boundary |
 | `containers/` (server) | Yes | Match on data shapes for rendering |
 | `containers/` (client) | Yes | Match on UI states |
 | `components/` | Yes | Match on discriminated union props |
 | `hooks/` | Yes | Match on state transitions |
-| `shared/lib/` | Yes | Match on config or input variants |
 | `schemas/` | Rarely | Zod handles validation |
 
 ## Relationship to Effect

@@ -101,7 +101,7 @@ Core ownership rules:
 - **Headless UI:** Ark UI
 - **State machines:** Zag.js
 - **Pattern matching:** ts-pattern
-- **API composition:** Effect (server-only)
+- **API composition:** Effect
 - **i18n:** next-intl
 - **Validation:** Zod
 - **Server actions:** next-safe-action
@@ -862,8 +862,9 @@ These provide deep knowledge when the task needs it.
   writing or fixing tests.
 - **`effect`** —
   Effect TypeScript library for typed error handling.
-  Mandatory in `shared/api/` wrappers. Actions and
-  containers call `Effect.runPromise()` at boundary.
+  Mandatory in `shared/api/`. Free to use in `shared/lib/`,
+  `modules/*/lib/`, and `utils/` for custom libraries.
+  React rendering layers never import Effect.
 - **`ts-pattern`** —
   exhaustive pattern matching for complex control flow.
   Mandatory for 3+ branches and discriminated unions.
