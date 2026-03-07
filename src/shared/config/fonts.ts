@@ -4,13 +4,13 @@ export const jetBrainsMono = JetBrains_Mono({
   display: "swap",
   preload: false,
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-jetbrains-mono",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const notoSansThai = Noto_Sans_Thai({
   display: "swap",
   subsets: ["thai", "latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-noto-sans-thai",
+  weight: ["400", "500", "600", "700"],
 });

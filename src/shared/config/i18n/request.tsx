@@ -18,8 +18,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     defaultTranslationValues: {
       b: (chunks: ReactNode) => <strong>{chunks}</strong>,
-      i: (chunks: ReactNode) => <em>{chunks}</em>,
       br: () => <br />,
+      i: (chunks: ReactNode) => <em>{chunks}</em>,
     },
     formats,
     getMessageFallback({ key, namespace }) {

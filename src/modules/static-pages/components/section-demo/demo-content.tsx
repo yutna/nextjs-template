@@ -12,28 +12,28 @@ import type { DemoContentProps } from "./types";
 
 export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
   return (
-    <GlassCard p={0} overflow="hidden" maxW="2xl" mx="auto">
+    <GlassCard maxW="2xl" mx="auto" overflow="hidden" p={0}>
       {/* Editor title bar */}
       <HStack
+        bg={{ _dark: "gray.800/80", base: "gray.100/80" }}
+        borderBottom="1px solid"
+        borderColor={{ _dark: "gray.700", base: "gray.200" }}
+        gap={3}
         px={4}
         py={3}
-        bg={{ base: "gray.100/80", _dark: "gray.800/80" }}
-        borderBottom="1px solid"
-        borderColor={{ base: "gray.200", _dark: "gray.700" }}
-        gap={3}
       >
         {/* Window dots */}
         <HStack gap={1.5}>
-          <Box w={3} h={3} borderRadius="full" bg="red.400" />
-          <Box w={3} h={3} borderRadius="full" bg="yellow.400" />
-          <Box w={3} h={3} borderRadius="full" bg="green.400" />
+          <Box bg="red.400" borderRadius="full" h={3} w={3} />
+          <Box bg="yellow.400" borderRadius="full" h={3} w={3} />
+          <Box bg="green.400" borderRadius="full" h={3} w={3} />
         </HStack>
 
         <Text
-          fontSize="xs"
-          color={{ base: "gray.500", _dark: "gray.400" }}
-          fontFamily="mono"
+          color={{ _dark: "gray.400", base: "gray.500" }}
           flex={1}
+          fontFamily="mono"
+          fontSize="xs"
           textAlign="center"
         >
           app.tsx
@@ -45,33 +45,33 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
 
       {/* Code editor body */}
       <Box
-        bg={{ base: "gray.50", _dark: "gray.950" }}
-        px={4}
-        py={4}
+        bg={{ _dark: "gray.950", base: "gray.50" }}
         fontFamily="mono"
         fontSize={{ base: "xs", md: "sm" }}
         lineHeight="1.8"
         overflowX="auto"
+        px={4}
+        py={4}
       >
         <motion.div
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          whileInView={{ opacity: 1 }}
         >
           {/* Comment line */}
-          <HStack gap={3} align="start">
+          <HStack align="start" gap={3}>
             <Text
-              color={{ base: "gray.400", _dark: "gray.600" }}
-              w="6"
+              color={{ _dark: "gray.600", base: "gray.400" }}
+              flexShrink={0}
               textAlign="right"
               userSelect="none"
-              flexShrink={0}
+              w="6"
             >
               1
             </Text>
             <Text
-              color={{ base: "gray.400", _dark: "gray.500" }}
+              color={{ _dark: "gray.500", base: "gray.400" }}
               fontStyle="italic"
             >
               {codeComment}
@@ -81,23 +81,23 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
           {/* Code lines with staggered reveal */}
           {CODE_LINES.map((line, lineIndex) => (
             <motion.div
-              key={lineIndex}
               initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              key={lineIndex}
+              style={{ willChange: "transform, opacity" }}
               transition={{
                 delay: 0.1 + lineIndex * 0.06,
                 duration: 0.3,
               }}
-              style={{ willChange: "transform, opacity" }}
+              viewport={{ once: true }}
+              whileInView={{ opacity: 1, x: 0 }}
             >
-              <HStack gap={3} align="start" minH="1.8em">
+              <HStack align="start" gap={3} minH="1.8em">
                 <Text
-                  color={{ base: "gray.400", _dark: "gray.600" }}
-                  w="6"
+                  color={{ _dark: "gray.600", base: "gray.400" }}
+                  flexShrink={0}
                   textAlign="right"
                   userSelect="none"
-                  flexShrink={0}
+                  w="6"
                 >
                   {lineIndex + 2}
                 </Text>
@@ -107,8 +107,8 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
                   ) : (
                     line.tokens.map((token, tokenIndex) => (
                       <Span
+                        color={{ _dark: token.darkColor, base: token.color }}
                         key={tokenIndex}
-                        color={{ base: token.color, _dark: token.darkColor }}
                       >
                         {token.text}
                       </Span>
@@ -120,27 +120,27 @@ export function DemoContent({ codeComment }: Readonly<DemoContentProps>) {
           ))}
 
           {/* Blinking cursor */}
-          <HStack gap={3} align="start">
+          <HStack align="start" gap={3}>
             <Text
-              color={{ base: "gray.400", _dark: "gray.600" }}
-              w="6"
+              color={{ _dark: "gray.600", base: "gray.400" }}
+              flexShrink={0}
               textAlign="right"
               userSelect="none"
-              flexShrink={0}
+              w="6"
             >
               {CODE_LINES.length + 2}
             </Text>
             <Box
-              w="2px"
-              h="1.2em"
-              bg={{ base: "purple.500", _dark: "purple.400" }}
+              bg={{ _dark: "purple.400", base: "purple.500" }}
               css={{
-                "animation": "blink 1.2s step-end infinite",
                 "@keyframes blink": {
                   "0%, 100%": { opacity: 1 },
                   "50%": { opacity: 0 },
                 },
+                "animation": "blink 1.2s step-end infinite",
               }}
+              h="1.2em"
+              w="2px"
             />
           </HStack>
         </motion.div>

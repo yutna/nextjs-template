@@ -20,34 +20,34 @@ export async function SectionTechStack({
 
   const badges = TECH_STACK.map((tech) => (
     <Box
+      _hover={{
+        bg: { _dark: `${tech.color}.900/40`, base: `${tech.color}.100/80` },
+        borderColor: { _dark: `${tech.color}.600`, base: `${tech.color}.300` },
+        transform: "scale(1.05)",
+      }}
+      backdropFilter="blur(8px)"
+      bg={{ _dark: `${tech.color}.950/30`, base: `${tech.color}.50/60` }}
+      border="1px solid"
+      borderColor={{ _dark: `${tech.color}.800`, base: `${tech.color}.200` }}
+      borderRadius="full"
+      flexShrink={0}
       key={tech.name}
       px={5}
       py={2.5}
-      borderRadius="full"
-      border="1px solid"
-      borderColor={{ base: `${tech.color}.200`, _dark: `${tech.color}.800` }}
-      bg={{ base: `${tech.color}.50/60`, _dark: `${tech.color}.950/30` }}
-      backdropFilter="blur(8px)"
-      whiteSpace="nowrap"
-      flexShrink={0}
       transition="all 0.2s ease"
-      _hover={{
-        borderColor: { base: `${tech.color}.300`, _dark: `${tech.color}.600` },
-        bg: { base: `${tech.color}.100/80`, _dark: `${tech.color}.900/40` },
-        transform: "scale(1.05)",
-      }}
+      whiteSpace="nowrap"
     >
       <Text
+        color={{ _dark: `${tech.color}.300`, base: `${tech.color}.700` }}
         fontSize="sm"
         fontWeight="semibold"
-        color={{ base: `${tech.color}.700`, _dark: `${tech.color}.300` }}
       >
         {tech.name}
         <Text
           as="span"
-          ml={1.5}
+          color={{ _dark: `${tech.color}.400`, base: `${tech.color}.500` }}
           fontWeight="normal"
-          color={{ base: `${tech.color}.500`, _dark: `${tech.color}.400` }}
+          ml={1.5}
         >
           v{tech.version}
         </Text>
@@ -56,20 +56,20 @@ export async function SectionTechStack({
   ));
 
   return (
-    <Box as="section" py={{ base: 16, md: 24 }} overflow="hidden">
+    <Box as="section" overflow="hidden" py={{ base: 16, md: 24 }}>
       {/* Section heading */}
       <VStack
         gap={4}
         mb={{ base: 12, md: 16 }}
-        textAlign="center"
         px={{ base: 6, md: 8 }}
+        textAlign="center"
       >
         <MotionReveal>
           <Heading
             as="h2"
+            color={{ _dark: "gray.100", base: "gray.800" }}
             fontSize={{ base: "2xl", md: "4xl" }}
             fontWeight="bold"
-            color={{ base: "gray.800", _dark: "gray.100" }}
           >
             {t("heading")}
           </Heading>
@@ -77,7 +77,7 @@ export async function SectionTechStack({
 
         <MotionReveal delay={0.1}>
           <Text
-            color={{ base: "gray.500", _dark: "gray.400" }}
+            color={{ _dark: "gray.400", base: "gray.500" }}
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
@@ -85,7 +85,7 @@ export async function SectionTechStack({
           </Text>
         </MotionReveal>
 
-        <MotionReveal variant="scaleIn" delay={0.2}>
+        <MotionReveal delay={0.2} variant="scaleIn">
           <Box
             bgGradient="to-r"
             borderRadius="full"
@@ -98,7 +98,7 @@ export async function SectionTechStack({
       </VStack>
 
       {/* Marquee badges */}
-      <MotionReveal variant="fadeIn" delay={0.3}>
+      <MotionReveal delay={0.3} variant="fadeIn">
         <MarqueeRow duration={40}>{badges}</MarqueeRow>
       </MotionReveal>
     </Box>

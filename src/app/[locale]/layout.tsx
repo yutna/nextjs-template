@@ -21,9 +21,9 @@ interface LayoutLocaleProps {
 
 // TODO: translate this metadata
 export const metadata: Metadata = {
-  title: "Next.js Template",
   description:
     "A Next.js starter designed for developers building in the AI-driven era.",
+  title: "Next.js Template",
 };
 
 export function generateStaticParams() {
@@ -48,8 +48,8 @@ export default async function LayoutLocale({
 
   return (
     <html
-      lang={locale}
       className={`${notoSansThai.variable} ${jetBrainsMono.variable}`}
+      lang={locale}
       suppressHydrationWarning
     >
       <body className={notoSansThai.className}>

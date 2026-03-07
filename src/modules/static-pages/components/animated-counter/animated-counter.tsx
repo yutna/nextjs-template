@@ -15,7 +15,7 @@ export function AnimatedCounter({
   ...props
 }: Readonly<AnimatedCounterProps>) {
   const ref = useRef<HTMLParagraphElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const isInView = useInView(ref, { amount: 0.5, once: true });
   const [state, updateState] = useImmer({ displayValue: 0 });
 
   useEffect(() => {

@@ -6,8 +6,8 @@ export interface GradientMeshBlob {
   lightTo: string;
   size: { base: string; md: string };
 
-  top?: string;
+  bottom?: string;
   left?: string;
   right?: string;
-  bottom?: string;
+  top?: string;
 }

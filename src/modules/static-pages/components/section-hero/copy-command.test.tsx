@@ -14,9 +14,9 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
   mockWriteText.mockResolvedValue(undefined);
   Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
     value: { writeText: mockWriteText },
     writable: true,
-    configurable: true,
   });
 });
 

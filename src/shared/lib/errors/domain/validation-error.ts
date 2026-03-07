@@ -15,7 +15,7 @@ export class ValidationError extends DomainError {
     fieldErrors: FieldErrors = {},
     code = "VALIDATION_ERROR",
   ) {
-    super({ code, statusCode: 422, message });
+    super({ code, message, statusCode: 422 });
     this.fieldErrors = fieldErrors;
   }
 

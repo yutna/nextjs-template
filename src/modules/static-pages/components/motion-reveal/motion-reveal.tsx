@@ -16,9 +16,9 @@ export function MotionReveal({
 
   return (
     <motion.div
+      className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
+      style={{ willChange: "transform, opacity" }}
       variants={{
         hidden: selectedVariant.hidden,
         visible: {
@@ -30,8 +30,8 @@ export function MotionReveal({
           },
         },
       }}
-      className={className}
-      style={{ willChange: "transform, opacity" }}
+      viewport={{ amount: 0.3, once: true }}
+      whileInView="visible"
     >
       {children}
     </motion.div>

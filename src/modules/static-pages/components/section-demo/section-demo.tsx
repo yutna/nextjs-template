@@ -18,19 +18,19 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
   return (
     <Box
       as="section"
-      px={{ base: 6, md: 8 }}
-      py={{ base: 16, md: 24 }}
       maxW="5xl"
       mx="auto"
+      px={{ base: 6, md: 8 }}
+      py={{ base: 16, md: 24 }}
     >
       {/* Section heading */}
       <VStack gap={4} mb={{ base: 12, md: 16 }} textAlign="center">
         <MotionReveal>
           <Heading
             as="h2"
+            color={{ _dark: "gray.100", base: "gray.800" }}
             fontSize={{ base: "2xl", md: "4xl" }}
             fontWeight="bold"
-            color={{ base: "gray.800", _dark: "gray.100" }}
           >
             {t("heading")}
           </Heading>
@@ -38,7 +38,7 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
 
         <MotionReveal delay={0.1}>
           <Text
-            color={{ base: "gray.500", _dark: "gray.400" }}
+            color={{ _dark: "gray.400", base: "gray.500" }}
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
@@ -46,7 +46,7 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
           </Text>
         </MotionReveal>
 
-        <MotionReveal variant="scaleIn" delay={0.2}>
+        <MotionReveal delay={0.2} variant="scaleIn">
           <Box
             bgGradient="to-r"
             borderRadius="full"
@@ -59,7 +59,7 @@ export async function SectionDemo({ locale }: Readonly<SectionDemoProps>) {
       </VStack>
 
       {/* Interactive demo */}
-      <MotionReveal variant="scaleIn" delay={0.2}>
+      <MotionReveal delay={0.2} variant="scaleIn">
         <DemoContent codeComment={t("demoCodeComment")} />
       </MotionReveal>
     </Box>

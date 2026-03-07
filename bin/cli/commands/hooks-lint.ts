@@ -24,8 +24,8 @@ function hasLintScript(): boolean {
 }
 
 export const command = {
-  name: "hooks:lint",
   description: "Run lint check before session ends (Stop hook)",
+  name: "hooks:lint",
   run: async (): Promise<void> => {
     try {
       if (!hasLintScript()) {

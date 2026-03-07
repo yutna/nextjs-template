@@ -6,12 +6,12 @@ export class NotFoundError extends DomainError {
    * @param id       - The identifier that was looked up (optional; omit in public routes)
    * @param code     - Override the default code if the module has a specific one
    */
-  constructor(resource: string, id?: string | number, code = "NOT_FOUND") {
+  constructor(resource: string, id?: number | string, code = "NOT_FOUND") {
     const detail = id !== undefined ? ` with id "${id}"` : "";
     super({
       code,
-      statusCode: 404,
       message: `${resource}${detail} not found`,
+      statusCode: 404,
     });
   }
 }

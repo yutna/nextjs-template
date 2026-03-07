@@ -18,44 +18,44 @@ export function SwitcherLocale({ locale }: Readonly<SwitcherLocaleProps>) {
   }
 
   return (
-    <Box position="fixed" top={4} right={4} zIndex="overlay">
+    <Box position="fixed" right={4} top={4} zIndex="overlay">
       <HStack
+        backdropFilter="blur(8px)"
+        bg={{ _dark: "gray.900/60", base: "white/80" }}
+        border="1px solid"
+        borderColor={{ _dark: "gray.700/60", base: "gray.200" }}
+        borderRadius="full"
         gap={1}
         px={1}
         py={1}
-        borderRadius="full"
-        border="1px solid"
-        borderColor={{ base: "gray.200", _dark: "gray.700/60" }}
-        bg={{ base: "white/80", _dark: "gray.900/60" }}
-        backdropFilter="blur(8px)"
       >
         {LOCALES.map((l) => {
           const isActive = l === locale;
           return (
             <Box
-              key={l}
-              as="button"
-              onClick={() => handleSwitch(l)}
-              px={3}
-              py={1}
-              borderRadius="full"
-              fontSize="xs"
-              fontWeight="semibold"
-              letterSpacing="wide"
-              transition="all 0.2s ease"
-              cursor={isActive ? "default" : "pointer"}
-              userSelect="none"
-              bgGradient={isActive ? "to-r" : undefined}
-              gradientFrom={isActive ? "blue.500" : undefined}
-              gradientTo={isActive ? "purple.500" : undefined}
-              color={
-                isActive ? "white" : { base: "gray.500", _dark: "gray.400" }
-              }
               _hover={
                 isActive
                   ? {}
-                  : { color: { base: "gray.800", _dark: "gray.100" } }
+                  : { color: { _dark: "gray.100", base: "gray.800" } }
               }
+              as="button"
+              bgGradient={isActive ? "to-r" : undefined}
+              borderRadius="full"
+              color={
+                isActive ? "white" : { _dark: "gray.400", base: "gray.500" }
+              }
+              cursor={isActive ? "default" : "pointer"}
+              fontSize="xs"
+              fontWeight="semibold"
+              gradientFrom={isActive ? "blue.500" : undefined}
+              gradientTo={isActive ? "purple.500" : undefined}
+              key={l}
+              letterSpacing="wide"
+              onClick={() => handleSwitch(l)}
+              px={3}
+              py={1}
+              transition="all 0.2s ease"
+              userSelect="none"
             >
               {l.toUpperCase()}
             </Box>

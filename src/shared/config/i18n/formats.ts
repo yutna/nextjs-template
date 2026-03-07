@@ -24,24 +24,24 @@ export const formats: Formats = {
     full: {
       day: "numeric",
       month: "long",
-      year: "numeric",
       weekday: "long",
+      year: "numeric",
     },
     // format.dateTime(date, "shortDateTime") → "25/2/2569 09:30"
     shortDateTime: {
       day: "numeric",
-      month: "numeric",
-      year: "numeric",
       hour: "numeric",
       minute: "numeric",
+      month: "numeric",
+      year: "numeric",
     },
     // format.dateTime(date, "mediumDateTime") → "25 ก.พ. 2569 09:30"
     mediumDateTime: {
       day: "numeric",
-      month: "short",
-      year: "numeric",
       hour: "numeric",
       minute: "numeric",
+      month: "short",
+      year: "numeric",
     },
     // format.dateTime(date, "time") → "09:30"
     time: {
@@ -49,35 +49,35 @@ export const formats: Formats = {
       minute: "numeric",
     },
   },
-  number: {
-    // format.number(1234.5, "decimal") → "1,234.50"
-    decimal: {
-      style: "decimal",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-    // format.number(1234.5, "integer") → "1,235"
-    integer: {
-      style: "decimal",
-      maximumFractionDigits: 0,
-    },
-    // format.number(1234.5, "currency") → "฿1,234.50"
-    currency: {
-      style: "currency",
-      currency: "THB",
-    },
-    // format.number(0.856, "percent") → "85.6%"
-    percent: {
-      style: "percent",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    },
-  },
   list: {
     // format.list(["แอปเปิล", "กล้วย", "ส้ม"], "enumeration") → "แอปเปิล กล้วย และส้ม"
     enumeration: {
       style: "long",
       type: "conjunction",
+    },
+  },
+  number: {
+    // format.number(1234.5, "decimal") → "1,234.50"
+    decimal: {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+      style: "decimal",
+    },
+    // format.number(1234.5, "integer") → "1,235"
+    integer: {
+      maximumFractionDigits: 0,
+      style: "decimal",
+    },
+    // format.number(1234.5, "currency") → "฿1,234.50"
+    currency: {
+      currency: "THB",
+      style: "currency",
+    },
+    // format.number(0.856, "percent") → "85.6%"
+    percent: {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+      style: "percent",
     },
   },
 };

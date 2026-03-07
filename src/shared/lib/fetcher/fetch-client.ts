@@ -8,12 +8,12 @@ import type { FetchClientOptions } from "./types";
 
 export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
   const {
-    path,
     body,
     getToken,
+    headers: customHeaders,
+    path,
     retries = DEFAULT_RETRIES,
     retryDelay = DEFAULT_RETRY_DELAY_MS,
-    headers: customHeaders,
     ...restOptions
   } = options;
 
@@ -38,19 +38,19 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
 
   const init: RequestInit = {
     ...restOptions,
-    method,
-    headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    headers,
+    method,
   };
 
   // Server-side logging (pino is Node-only)
-  let log: ReturnType<
+  let log: null | ReturnType<
     Awaited<typeof import("@/shared/lib/logger")>["logger"]["child"]
-  > | null = null;
+  > = null;
 
   if (typeof window === "undefined") {
     const { logger } = await import("@/shared/lib/logger");
-    log = logger.child({ url, method });
+    log = logger.child({ method, url });
     log.debug("→ fetch request");
   }
 
@@ -62,7 +62,7 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
       const response = await fetch(url, init);
       const duration = Date.now() - start;
 
-      log?.debug({ status: response.status, duration }, "← fetch response");
+      log?.debug({ duration, status: response.status }, "← fetch response");
 
       if (!response.ok) {
         // Try to extract a machine-readable error code from the response body
@@ -75,7 +75,7 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
           // Body was not JSON — ignore
         }
 
-        throw new FetchError({ url, method, response, code });
+        throw new FetchError({ code, method, response, url });
       }
 
       // 204 No Content — return undefined cast to T

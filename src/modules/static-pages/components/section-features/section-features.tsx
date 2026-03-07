@@ -20,30 +20,30 @@ export async function SectionFeatures({
   });
 
   const features = Array.from({ length: 6 }, (_, i) => ({
-    icon: FEATURE_ICONS[i],
-    title: t(`feature${i + 1}Title` as `feature${1 | 2 | 3 | 4 | 5 | 6}Title`),
+    color: FEATURE_COLORS[i],
     description: t(
       `feature${i + 1}Description` as `feature${1 | 2 | 3 | 4 | 5 | 6}Description`,
     ),
-    color: FEATURE_COLORS[i],
+    icon: FEATURE_ICONS[i],
+    title: t(`feature${i + 1}Title` as `feature${1 | 2 | 3 | 4 | 5 | 6}Title`),
   }));
 
   return (
     <Box
       as="section"
-      px={{ base: 6, md: 8 }}
-      py={{ base: 16, md: 24 }}
       maxW="6xl"
       mx="auto"
+      px={{ base: 6, md: 8 }}
+      py={{ base: 16, md: 24 }}
     >
       {/* Section heading */}
       <VStack gap={4} mb={{ base: 12, md: 16 }} textAlign="center">
         <MotionReveal>
           <Heading
             as="h2"
+            color={{ _dark: "gray.100", base: "gray.800" }}
             fontSize={{ base: "2xl", md: "4xl" }}
             fontWeight="bold"
-            color={{ base: "gray.800", _dark: "gray.100" }}
           >
             {t("heading")}
           </Heading>
@@ -51,7 +51,7 @@ export async function SectionFeatures({
 
         <MotionReveal delay={0.1}>
           <Text
-            color={{ base: "gray.500", _dark: "gray.400" }}
+            color={{ _dark: "gray.400", base: "gray.500" }}
             fontSize={{ base: "md", md: "lg" }}
             maxW="2xl"
           >
@@ -60,7 +60,7 @@ export async function SectionFeatures({
         </MotionReveal>
 
         {/* Gradient accent underline */}
-        <MotionReveal variant="scaleIn" delay={0.2}>
+        <MotionReveal delay={0.2} variant="scaleIn">
           <Box
             bgGradient="to-r"
             borderRadius="full"
@@ -75,32 +75,32 @@ export async function SectionFeatures({
       {/* Features grid */}
       <MotionStagger staggerDelay={0.08}>
         <Grid
+          gap={{ base: 6, md: 8 }}
           templateColumns={{
             base: "1fr",
-            md: "repeat(2, 1fr)",
             lg: "repeat(3, 1fr)",
+            md: "repeat(2, 1fr)",
           }}
-          gap={{ base: 6, md: 8 }}
         >
           {features.map((feature) => (
             <MotionReveal key={feature.title} variant="fadeInUp">
               <GlassCard
-                h="full"
-                bg={{ base: "white/90", _dark: "gray.800/70" }}
-                borderColor={{ base: "gray.200/80", _dark: "gray.700/60" }}
                 _hover={{
+                  borderColor: { _dark: "purple.700/50", base: "purple.200" },
                   boxShadow: `0 0 24px rgba(139, 92, 246, 0.15)`,
-                  borderColor: { base: "purple.200", _dark: "purple.700/50" },
                   transform: "translateY(-4px)",
                 }}
+                bg={{ _dark: "gray.800/70", base: "white/90" }}
+                borderColor={{ _dark: "gray.700/60", base: "gray.200/80" }}
+                h="full"
               >
                 <VStack align="start" gap={4}>
                   {/* Icon with color-adaptive background */}
                   <Box
-                    p={3}
+                    bg="colorPalette.subtle"
                     borderRadius="xl"
                     colorPalette={feature.color}
-                    bg="colorPalette.subtle"
+                    p={3}
                   >
                     <Icon asChild boxSize={5} color="colorPalette.fg">
                       <feature.icon />
@@ -110,17 +110,17 @@ export async function SectionFeatures({
                   {/* Title */}
                   <Heading
                     as="h3"
+                    color={{ _dark: "gray.100", base: "gray.800" }}
                     fontSize="lg"
                     fontWeight="semibold"
-                    color={{ base: "gray.800", _dark: "gray.100" }}
                   >
                     {feature.title}
                   </Heading>
 
                   {/* Description */}
                   <Text
+                    color={{ _dark: "gray.400", base: "gray.600" }}
                     fontSize="sm"
-                    color={{ base: "gray.600", _dark: "gray.400" }}
                     lineHeight="tall"
                   >
                     {feature.description}

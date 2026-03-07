@@ -8,8 +8,8 @@ const __dirname = dirname(__filename);
 const COMMANDS_DIR = resolve(__dirname, "commands");
 
 interface Command {
-  name: string;
   description: string;
+  name: string;
   run: (args?: string[]) => Promise<void>;
 }
 

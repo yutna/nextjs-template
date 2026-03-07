@@ -53,32 +53,32 @@ describe("navigation", () => {
 
   describe("getPathname", () => {
     it("returns the pathname for 'en' locale", () => {
-      const result = getPathname({ locale: "en", href: "/about" });
+      const result = getPathname({ href: "/about", locale: "en" });
       expect(result).toBe("/about");
     });
 
     it("returns the pathname for 'th' locale", () => {
-      const result = getPathname({ locale: "th", href: "/about" });
+      const result = getPathname({ href: "/about", locale: "th" });
       expect(result).toBe("/about");
     });
 
     it("handles root path", () => {
-      const result = getPathname({ locale: "en", href: "/" });
+      const result = getPathname({ href: "/", locale: "en" });
       expect(result).toBe("/");
     });
 
     it("handles nested path", () => {
       const result = getPathname({
-        locale: "en",
         href: "/dashboard/settings",
+        locale: "en",
       });
       expect(result).toBe("/dashboard/settings");
     });
 
     it("handles href as object with pathname", () => {
       const result = getPathname({
-        locale: "en",
         href: { pathname: "/profile" },
+        locale: "en",
       });
       expect(result).toBe("/profile");
     });

@@ -12,11 +12,11 @@ import type { NextErrorProps } from "@/shared/types/next";
 
 export function ErrorGlobal({ error, reset }: NextErrorProps) {
   // Initialize variables / Setup
-  const { message, digest } = error;
+  const { digest, message } = error;
 
   // Effect hooks
   useEffect(() => {
-    void reportErrorAction({ message, digest, boundary: "global" });
+    void reportErrorAction({ boundary: "global", digest, message });
   }, [message, digest]);
 
   return (

@@ -5,8 +5,8 @@ export function LoadingGlobal() {
     <Flex
       align="center"
       bgGradient="to-br"
-      gradientFrom={{ base: "gray.50", _dark: "gray.950" }}
-      gradientTo={{ base: "blue.50", _dark: "blue.950" }}
+      gradientFrom={{ _dark: "gray.950", base: "gray.50" }}
+      gradientTo={{ _dark: "blue.950", base: "blue.50" }}
       justify="center"
       minH="100vh"
     >

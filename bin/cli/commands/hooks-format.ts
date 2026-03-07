@@ -2,8 +2,8 @@ import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
 
 interface HookInput {
-  tool_name?: string;
   tool_input?: Record<string, string>;
+  tool_name?: string;
 }
 
 const EDITING_TOOLS = new Set([
@@ -86,8 +86,8 @@ function fileExists(filePath: string): boolean {
 }
 
 export const command = {
-  name: "hooks:format",
   description: "Auto-format files after Copilot edits (PostToolUse hook)",
+  name: "hooks:format",
   run: async (): Promise<void> => {
     try {
       const raw = await readStdin();

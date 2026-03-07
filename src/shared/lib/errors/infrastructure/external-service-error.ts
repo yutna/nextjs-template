@@ -9,9 +9,9 @@ export class ExternalServiceError extends InfrastructureError {
    */
   constructor(service: string, cause?: unknown) {
     super({
+      cause,
       code: "EXTERNAL_SERVICE_ERROR",
       message: `External service "${service}" is unavailable`,
-      cause,
     });
     this.service = service;
   }

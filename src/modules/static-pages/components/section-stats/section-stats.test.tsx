@@ -11,8 +11,8 @@ vi.mock("motion/react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("motion/react")>();
   return {
     ...actual,
-    useInView: vi.fn().mockReturnValue(false),
     animate: vi.fn().mockReturnValue({ stop: vi.fn() }),
+    useInView: vi.fn().mockReturnValue(false),
   };
 });
 

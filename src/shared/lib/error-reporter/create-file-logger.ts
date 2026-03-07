@@ -8,8 +8,8 @@ export function createFileLogger(): pino.Logger {
     fs.mkdirSync(LOG_DIR, { recursive: true });
     return pino(
       {
-        level: "error",
         base: { service: "nextjs-app" },
+        level: "error",
         timestamp: pino.stdTimeFunctions.isoTime,
       },
       pino.destination({ dest: LOG_FILE, sync: false }),

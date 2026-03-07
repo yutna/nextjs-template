@@ -8,49 +8,49 @@ import { GRADIENT_MESH_BLOBS } from "./constants";
 export function GradientMesh() {
   return (
     <Box
-      position="fixed"
-      inset="0"
-      zIndex={-1}
-      pointerEvents="none"
-      overflow="hidden"
       aria-hidden="true"
+      inset="0"
+      overflow="hidden"
+      pointerEvents="none"
+      position="fixed"
+      zIndex={-1}
     >
       {GRADIENT_MESH_BLOBS.map((blob, i) => (
         <motion.div
-          key={i}
           animate={{
             x: [0, 30, -20, 10, 0],
             y: [0, -25, 15, -10, 0],
           }}
+          key={i}
+          style={{
+            bottom: blob.bottom,
+            left: blob.left,
+            position: "absolute",
+            right: blob.right,
+            top: blob.top,
+            willChange: "transform",
+          }}
           transition={{
             duration: blob.duration,
-            repeat: Infinity,
             ease: "easeInOut",
-          }}
-          style={{
-            position: "absolute",
-            top: blob.top,
-            left: blob.left,
-            right: blob.right,
-            bottom: blob.bottom,
-            willChange: "transform",
+            repeat: Infinity,
           }}
         >
           <Box
-            w={blob.size}
-            h={blob.size}
-            borderRadius="full"
             bgGradient="to-br"
+            borderRadius="full"
+            filter="blur(80px)"
             gradientFrom={{
-              base: blob.lightFrom,
               _dark: blob.darkFrom,
+              base: blob.lightFrom,
             }}
             gradientTo={{
-              base: blob.lightTo,
               _dark: blob.darkTo,
+              base: blob.lightTo,
             }}
-            filter="blur(80px)"
-            opacity={{ base: 0.3, _dark: 0.15 }}
+            h={blob.size}
+            opacity={{ _dark: 0.15, base: 0.3 }}
+            w={blob.size}
           />
         </motion.div>
       ))}

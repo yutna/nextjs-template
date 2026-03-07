@@ -8,8 +8,8 @@ vi.mock("motion/react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("motion/react")>();
   return {
     ...actual,
-    useInView: mockUseInView,
     animate: mockAnimate,
+    useInView: mockUseInView,
   };
 });
 
@@ -31,7 +31,7 @@ describe("AnimatedCounter", () => {
 
   it("calls animate with correct arguments when in view", () => {
     mockUseInView.mockReturnValue(true);
-    renderWithProviders(<AnimatedCounter target={42} duration={1} />);
+    renderWithProviders(<AnimatedCounter duration={1} target={42} />);
     expect(mockAnimate).toHaveBeenCalledWith(
       0,
       42,
@@ -49,10 +49,10 @@ describe("AnimatedCounter", () => {
     mockUseInView.mockReturnValue(false);
     renderWithProviders(
       <AnimatedCounter
-        target={99}
+        data-testid="counter"
         prefix="$"
         suffix="+"
-        data-testid="counter"
+        target={99}
       />,
     );
     const el = screen.getByTestId("counter");
@@ -62,7 +62,7 @@ describe("AnimatedCounter", () => {
 
   it("forwards extra TextProps to the underlying Text element", () => {
     mockUseInView.mockReturnValue(false);
-    renderWithProviders(<AnimatedCounter target={10} data-testid="counter" />);
+    renderWithProviders(<AnimatedCounter data-testid="counter" target={10} />);
     expect(screen.getByTestId("counter")).toBeInTheDocument();
   });
 

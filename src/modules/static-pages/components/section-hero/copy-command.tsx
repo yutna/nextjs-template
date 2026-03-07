@@ -23,50 +23,50 @@ export function CopyCommand() {
 
   return (
     <HStack
+      backdropFilter="blur(8px)"
+      bg={{ _dark: "gray.900/60", base: "gray.50/80" }}
+      border="1px solid"
+      borderColor={{ _dark: "gray.700/60", base: "gray.200" }}
+      borderRadius="xl"
       gap={3}
+      maxW="xl"
+      mx="auto"
       px={4}
       py={3}
-      borderRadius="xl"
-      border="1px solid"
-      borderColor={{ base: "gray.200", _dark: "gray.700/60" }}
-      bg={{ base: "gray.50/80", _dark: "gray.900/60" }}
-      backdropFilter="blur(8px)"
-      maxW="xl"
       w="full"
-      mx="auto"
     >
       <Text
         as="span"
-        color={{ base: "purple.500", _dark: "purple.400" }}
+        color={{ _dark: "purple.400", base: "purple.500" }}
+        flexShrink={0}
         fontFamily="mono"
         fontSize="xs"
         fontWeight="semibold"
-        flexShrink={0}
       >
         $
       </Text>
       <Text
-        color={{ base: "gray.700", _dark: "gray.300" }}
+        color={{ _dark: "gray.300", base: "gray.700" }}
+        flex={1}
         fontFamily="mono"
         fontSize="xs"
-        flex={1}
         truncate
       >
         {HERO_INSTALL_COMMAND}
       </Text>
       <IconButton
+        _hover={{ color: { _dark: "gray.100", base: "gray.800" } }}
         aria-label={state.copied ? "Copied" : "Copy command"}
-        size="xs"
-        variant="ghost"
         color={
           state.copied
             ? "green.400"
-            : { base: "gray.500", _dark: "gray.400" }
+            : { _dark: "gray.400", base: "gray.500" }
         }
-        _hover={{ color: { base: "gray.800", _dark: "gray.100" } }}
-        transition="all 0.2s ease"
-        onClick={handleCopy}
         flexShrink={0}
+        onClick={handleCopy}
+        size="xs"
+        transition="all 0.2s ease"
+        variant="ghost"
       >
         {state.copied ? <LuCheck /> : <LuCopy />}
       </IconButton>

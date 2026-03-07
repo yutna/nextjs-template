@@ -19,8 +19,8 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
 
   return (
     <Flex
-      as="section"
       align="center"
+      as="section"
       justify="center"
       minH="100vh"
       position="relative"
@@ -37,19 +37,19 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
             bgClip="text"
             bgGradient="to-r"
             css={{
-              "color": "transparent",
-              "backgroundSize": "200% 200%",
-              "animation": "gradientShift 6s ease infinite",
               "@keyframes gradientShift": {
                 "0%, 100%": { backgroundPosition: "0% 50%" },
                 "50%": { backgroundPosition: "100% 50%" },
               },
+              "animation": "gradientShift 6s ease infinite",
+              "backgroundSize": "200% 200%",
+              "color": "transparent",
             }}
-            fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
+            fontSize={{ base: "3xl", lg: "6xl", md: "5xl", sm: "4xl" }}
             fontWeight="extrabold"
             gradientFrom="blue.400"
-            gradientVia="purple.500"
             gradientTo="pink.400"
+            gradientVia="purple.500"
             letterSpacing="tight"
             lineHeight="1.1"
           >
@@ -58,10 +58,10 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
         </MotionReveal>
 
         {/* Subtitle */}
-        <MotionReveal variant="fadeInUp" delay={0.15}>
+        <MotionReveal delay={0.15} variant="fadeInUp">
           <Text
-            color={{ base: "gray.600", _dark: "gray.300" }}
-            fontSize={{ base: "md", md: "lg", lg: "xl" }}
+            color={{ _dark: "gray.300", base: "gray.600" }}
+            fontSize={{ base: "md", lg: "xl", md: "lg" }}
             lineHeight="tall"
             maxW="2xl"
             mx="auto"
@@ -71,13 +71,13 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
         </MotionReveal>
 
         {/* Decorative gradient line */}
-        <MotionReveal variant="fadeIn" delay={0.3}>
+        <MotionReveal delay={0.3} variant="fadeIn">
           <Box
             bgGradient="to-r"
             borderRadius="full"
             gradientFrom="blue.400"
-            gradientVia="purple.500"
             gradientTo="pink.400"
+            gradientVia="purple.500"
             h="3px"
             opacity={0.5}
             w={24}
@@ -85,7 +85,7 @@ export async function SectionHero({ locale }: Readonly<SectionHeroProps>) {
         </MotionReveal>
 
         {/* Copy command */}
-        <MotionReveal variant="fadeInUp" delay={0.45}>
+        <MotionReveal delay={0.45} variant="fadeInUp">
           <CopyCommand />
         </MotionReveal>
       </VStack>

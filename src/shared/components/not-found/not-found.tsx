@@ -28,8 +28,8 @@ export async function NotFound() {
     <Flex
       align="center"
       bgGradient="to-br"
-      gradientFrom={{ base: "gray.50", _dark: "gray.950" }}
-      gradientTo={{ base: "purple.50", _dark: "blue.950" }}
+      gradientFrom={{ _dark: "gray.950", base: "gray.50" }}
+      gradientTo={{ _dark: "blue.950", base: "purple.50" }}
       justify="center"
       minH="100vh"
       px={6}
@@ -65,14 +65,14 @@ export async function NotFound() {
         <VStack gap={3}>
           <Heading
             as="h1"
-            color={{ base: "gray.800", _dark: "gray.100" }}
+            color={{ _dark: "gray.100", base: "gray.800" }}
             fontWeight="bold"
             size={{ base: "2xl", md: "3xl" }}
           >
             {t("heading")}
           </Heading>
           <Text
-            color={{ base: "gray.500", _dark: "gray.400" }}
+            color={{ _dark: "gray.400", base: "gray.500" }}
             fontSize={{ base: "md", md: "lg" }}
             maxW="sm"
           >

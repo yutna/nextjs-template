@@ -5,6 +5,6 @@ export class AuthenticationError extends AppError {
     message = "Authentication required. Please log in.",
     code = "AUTHENTICATION_REQUIRED",
   ) {
-    super({ code, statusCode: 401, message, isOperational: true });
+    super({ code, isOperational: true, message, statusCode: 401 });
   }
 }

@@ -8,43 +8,43 @@ import { FLOATING_SHAPES } from "./constants";
 export function FloatingShapes() {
   return (
     <Box
-      position="absolute"
+      aria-hidden="true"
       inset="0"
       overflow="hidden"
       pointerEvents="none"
-      aria-hidden="true"
+      position="absolute"
     >
       {FLOATING_SHAPES.map((shape, i) => (
         <motion.div
-          key={i}
           animate={{
-            y: [0, -20, 10, -15, 0],
-            x: [0, 10, -10, 5, 0],
             rotate: [0, 45, -20, 30, 0],
+            x: [0, 10, -10, 5, 0],
+            y: [0, -20, 10, -15, 0],
+          }}
+          key={i}
+          style={{
+            bottom: shape.bottom,
+            left: shape.left,
+            position: "absolute",
+            right: shape.right,
+            top: shape.top,
+            willChange: "transform",
           }}
           transition={{
-            duration: shape.duration,
-            repeat: Infinity,
-            ease: "easeInOut",
             delay: shape.delay,
-          }}
-          style={{
-            position: "absolute",
-            top: shape.top,
-            left: shape.left,
-            right: shape.right,
-            bottom: shape.bottom,
-            willChange: "transform",
+            duration: shape.duration,
+            ease: "easeInOut",
+            repeat: Infinity,
           }}
         >
           <Box
-            w={`${shape.size}px`}
-            h={`${shape.size}px`}
-            borderRadius={shape.borderRadius}
+            bg={{ _dark: "purple.800/20", base: "purple.100/20" }}
             border="1px solid"
-            borderColor={{ base: "purple.200", _dark: "purple.700" }}
+            borderColor={{ _dark: "purple.700", base: "purple.200" }}
+            borderRadius={shape.borderRadius}
+            h={`${shape.size}px`}
             opacity={0.4}
-            bg={{ base: "purple.100/20", _dark: "purple.800/20" }}
+            w={`${shape.size}px`}
           />
         </motion.div>
       ))}

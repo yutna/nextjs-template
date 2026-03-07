@@ -9,9 +9,9 @@ import { HttpError } from "./http-error";
 // HttpError is abstract — test through FetchError as a concrete subclass
 function makeFetchError(status: number): FetchError {
   return new FetchError({
-    url: "/test",
     method: "GET",
     response: new Response(null, { status, statusText: "Test" }),
+    url: "/test",
   });
 }
 

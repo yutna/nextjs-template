@@ -11,9 +11,8 @@ export function MotionStagger({
 }: Readonly<MotionStaggerProps>) {
   return (
     <motion.div
+      className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
       variants={{
         hidden: {},
         visible: {
@@ -22,7 +21,8 @@ export function MotionStagger({
           },
         },
       }}
-      className={className}
+      viewport={{ amount: 0.2, once: true }}
+      whileInView="visible"
     >
       {children}
     </motion.div>

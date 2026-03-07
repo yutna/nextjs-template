@@ -8,10 +8,10 @@ import { ValidationError } from "./validation-error";
 describe("ValidationError", () => {
   it("builds from ZodError", () => {
     const schema = z.object({
-      email: z.string().email(),
       age: z.number().min(0),
+      email: z.string().email(),
     });
-    const result = schema.safeParse({ email: "not-an-email", age: -1 });
+    const result = schema.safeParse({ age: -1, email: "not-an-email" });
 
     expect(result.success).toBe(false);
     if (!result.success) {

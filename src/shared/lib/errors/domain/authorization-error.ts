@@ -5,6 +5,6 @@ export class AuthorizationError extends DomainError {
     message = "You do not have permission to perform this action",
     code = "INSUFFICIENT_PERMISSIONS",
   ) {
-    super({ code, statusCode: 403, message });
+    super({ code, message, statusCode: 403 });
   }
 }

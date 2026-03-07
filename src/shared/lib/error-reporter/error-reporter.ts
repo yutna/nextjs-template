@@ -15,8 +15,8 @@ export function reportError(error: unknown, context: ErrorContext = {}): void {
 
   errorLogger.error(
     {
-      digest: context.digest,
       boundary: context.boundary,
+      digest: context.digest,
       meta: context.meta,
       stack: err.stack,
     },

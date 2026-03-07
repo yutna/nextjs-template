@@ -33,11 +33,11 @@ export abstract class AppError extends Error {
    */
   toJSON(): SerializedError {
     return {
-      name: this.name,
       code: this.code,
-      statusCode: this.statusCode,
-      message: this.message,
       isOperational: this.isOperational,
+      message: this.message,
+      name: this.name,
+      statusCode: this.statusCode,
       ...(this.digest ? { digest: this.digest } : {}),
     };
   }
