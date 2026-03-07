@@ -875,9 +875,6 @@ capabilities beyond project conventions.
   clicking buttons, taking screenshots, and scraping data.
 - **`find-skills`** —
   discover and install new agent skills.
-- **`frontend-design`** —
-  create distinctive, production-grade frontend interfaces
-  with high design quality.
 - **`next-best-practices`** —
   Next.js file conventions, RSC boundaries, data patterns,
   async APIs, metadata, error handling, and optimization.
