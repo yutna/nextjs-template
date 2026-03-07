@@ -100,6 +100,8 @@ Core ownership rules:
 - **UI:** Chakra UI v3
 - **Headless UI:** Ark UI
 - **State machines:** Zag.js
+- **Pattern matching:** ts-pattern
+- **API composition:** Effect (server-only)
 - **i18n:** next-intl
 - **Validation:** Zod
 - **Server actions:** next-safe-action
@@ -862,6 +864,10 @@ These provide deep knowledge when the task needs it.
   Effect TypeScript library for typed error handling.
   Mandatory in `shared/api/` wrappers. Actions and
   containers call `Effect.runPromise()` at boundary.
+- **`ts-pattern`** —
+  exhaustive pattern matching for complex control flow.
+  Mandatory for 3+ branches and discriminated unions.
+  Replaces switch-case. Works in all layers.
 - **`zag-js`** —
   Zag.js UI component state machines for React when Ark UI
   or Chakra UI do not cover the use case. Covers the

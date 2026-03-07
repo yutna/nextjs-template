@@ -202,6 +202,13 @@ const data = await Effect.runPromise(
 | `components/` | Never |
 | `hooks/` | Never |
 
+## Relationship to ts-pattern
+
+Effect handles error matching **inside** Effect pipelines with
+`catchTag` and `catchAll`. For general pattern matching **outside**
+Effect pipelines (control flow, UI branching, discriminated unions),
+use ts-pattern instead.
+
 ## Full reference
 
 Complete Effect documentation (all modules, patterns, and API):
