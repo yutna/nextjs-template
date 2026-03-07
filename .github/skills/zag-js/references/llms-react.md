@@ -1,11 +1,17 @@
+<!-- markdownlint-disable -->
+<!-- External reference from zagjs.com/llms-react.txt — not linted -->
+
 An accordion is a vertically stacked set of interactive headings containing a
 title, content snippet, or thumbnail representing a section of content.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/accordion)
 [Logic Visualizer](https://zag-visualizer.vercel.app/accordion)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/accordion)
+
+
 
 **Features**
 
@@ -29,6 +35,8 @@ yarn add @zag-js/accordion @zag-js/react
 Check the accordion anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -486,9 +494,12 @@ control rotations or orientations, offering accessibility features.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/angle-slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/angle-slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/angle-slider)
+
+
 
 **Features**
 
@@ -512,6 +523,8 @@ To set up the angle slider correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -916,9 +929,12 @@ no image is provided.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/avatar)
 [Logic Visualizer](https://zag-visualizer.vercel.app/avatar)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/avatar)
+
+
 
 ## Installation
 
@@ -935,6 +951,8 @@ yarn add @zag-js/avatar @zag-js/react
 Check the avatar anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -1148,9 +1166,12 @@ performant scrolling between slides.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/carousel)
 [Logic Visualizer](https://zag-visualizer.vercel.app/carousel)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/carousel)
+
+
 
 **Features**
 
@@ -1176,6 +1197,8 @@ yarn add @zag-js/carousel @zag-js/react
 Check the carousel anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -1722,9 +1745,12 @@ multiple linked levels of dropdown menus.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/cascade-select)
 [Logic Visualizer](https://zag-visualizer.vercel.app/cascade-select)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/cascade-select)
+
+
 
 **Features**
 
@@ -1753,6 +1779,8 @@ yarn add @zag-js/cascade-select @zag-js/react
 Check the cascade select anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -2666,9 +2694,12 @@ two possible mutually exclusive options.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/checkbox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/checkbox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/checkbox)
+
+
 
 **Features**
 
@@ -2692,6 +2723,8 @@ yarn add @zag-js/checkbox @zag-js/react
 Check the checkbox anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -3082,9 +3115,12 @@ The clipboard machine lets users quickly copy content to the clipboard.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/clipboard)
 [Logic Visualizer](https://zag-visualizer.vercel.app/clipboard)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/clipboard)
+
+
 
 ## Installation
 
@@ -3101,6 +3137,8 @@ yarn add @zag-js/clipboard @zag-js/react
 Check the clipboard anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -3320,9 +3358,12 @@ A collapsible is a component which expands and collapses a panel.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/collapsible)
 [Logic Visualizer](https://zag-visualizer.vercel.app/collapsible)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/collapsible)
+
+
 
 **Features**
 
@@ -3711,9 +3752,12 @@ provides a more customizable and consistent user experience.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/color-picker)
 [Logic Visualizer](https://zag-visualizer.vercel.app/color-picker)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/color-picker)
+
+
 
 **Features**
 
@@ -3740,6 +3784,8 @@ To set up the color picker correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -4569,9 +4615,12 @@ collection.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/combobox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/combobox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/combobox)
+
+
 
 **Features**
 
@@ -4597,6 +4646,8 @@ yarn add @zag-js/combobox @zag-js/react
 Check the combobox anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -5610,9 +5661,12 @@ calendar.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/date-picker)
 [Logic Visualizer](https://zag-visualizer.vercel.app/date-picker)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/date-picker)
+
+
 
 **Features**
 
@@ -5640,6 +5694,8 @@ yarn add @zag-js/date-picker @zag-js/react
 Check the date-picker anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -7054,9 +7110,12 @@ interact with it.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/dialog)
 [Logic Visualizer](https://zag-visualizer.vercel.app/dialog)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/dialog)
+
+
 
 **Features**
 
@@ -7081,6 +7140,8 @@ To use the dialog component correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -7521,9 +7582,12 @@ triggered (click, focus, or double-click).
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/editable)
 [Logic Visualizer](https://zag-visualizer.vercel.app/editable)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/editable)
+
+
 
 **Features**
 
@@ -7548,6 +7612,8 @@ yarn add @zag-js/editable @zag-js/react
 Check the editable anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -8062,9 +8128,12 @@ drag-n-drop version.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/file-upload)
 [Logic Visualizer](https://zag-visualizer.vercel.app/file-upload)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/file-upload)
+
+
 
 **Features**
 
@@ -8090,6 +8159,8 @@ To set up the file upload correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -8813,9 +8884,12 @@ resized, and positioned anywhere on the screen for optimal workflow.
 
 ## Resources
 
+
 [Latest version: v]()
 [Logic Visualizer](https://zag-visualizer.vercel.app/floating-panel)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/floating-panel)
+
+
 
 **Features**
 
@@ -8843,6 +8917,8 @@ yarn add @zag-js/floating-panel @zag-js/react
 Check the floating panel anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -9510,9 +9586,12 @@ A hover card lets sighted users preview content behind a link.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/hover-card)
 [Logic Visualizer](https://zag-visualizer.vercel.app/hover-card)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/hover-card)
+
+
 
 **Features**
 
@@ -9538,6 +9617,8 @@ To set up the hover card correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -9815,9 +9896,12 @@ rotation, and flip controls.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/image-cropper)
 [Logic Visualizer](https://zag-visualizer.vercel.app/image-cropper)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/image-cropper)
+
+
 
 **Features**
 
@@ -9844,6 +9928,8 @@ To set up the image cropper correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -10525,9 +10611,12 @@ A listbox displays selectable options in single or multiple selection modes.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/listbox)
 [Logic Visualizer](https://zag-visualizer.vercel.app/listbox)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/listbox)
+
+
 
 **Features**
 
@@ -10554,6 +10643,8 @@ yarn add @zag-js/listbox @zag-js/react
 Check the listbox anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -11175,9 +11266,12 @@ A marquee auto-scrolls content like logos, announcements, or featured items.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/marquee)
 [Logic Visualizer](https://zag-visualizer.vercel.app/marquee)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/marquee)
+
+
 
 **Features**
 
@@ -11202,6 +11296,8 @@ yarn add @zag-js/marquee @zag-js/react
 Check the marquee anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -11883,9 +11979,12 @@ actions or options that a user can choose.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
+
+
 
 **Features**
 
@@ -11909,6 +12008,8 @@ yarn add @zag-js/menu @zag-js/react
 Check the menu anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -12492,9 +12593,12 @@ actions or options that a user can choose.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
+
+
 
 **Features**
 
@@ -12518,6 +12622,8 @@ yarn add @zag-js/menu @zag-js/react
 Check the menu anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -12790,9 +12896,12 @@ right-clicked or long pressed.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/menu)
+
+
 
 **Features**
 
@@ -12816,6 +12925,8 @@ yarn add @zag-js/menu @zag-js/react
 Check the menu anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -13043,9 +13154,12 @@ A navigation menu displays links with optional dropdown content.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/navigation-menu)
 [Logic Visualizer](https://zag-visualizer.vercel.app/navigation-menu)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/navigation-menu)
+
+
 
 **Features**
 
@@ -13073,6 +13187,8 @@ yarn add @zag-js/navigation-menu @zag-js/react
 Check the navigation menu anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -13767,9 +13883,12 @@ numeric values using the keyboard or pointer.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/number-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/number-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/number-input)
+
+
 
 **Features**
 
@@ -13798,6 +13917,8 @@ To set up the number input correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -14436,9 +14557,12 @@ Pagination lets users navigate data split across multiple pages.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/pagination)
 [Logic Visualizer](https://zag-visualizer.vercel.app/pagination)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/pagination)
+
+
 
 ## Installation
 
@@ -14456,6 +14580,8 @@ To set up the pagination correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -14862,9 +14988,12 @@ Description: Function to go to the last page.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/password-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/password-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/password-input)
+
+
 
 **Features**
 
@@ -14888,6 +15017,8 @@ yarn add @zag-js/password-input @zag-js/react
 Check the password-input anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -15227,9 +15358,12 @@ focus transfers to the next input in the sequence, until every input is filled.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/pin-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/pin-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/pin-input)
+
+
 
 **Features**
 
@@ -15255,6 +15389,8 @@ yarn add @zag-js/pin-input @zag-js/react
 Check the pin input anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -15722,9 +15858,12 @@ clickable trigger element.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/popover)
 [Logic Visualizer](https://zag-visualizer.vercel.app/popover)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/popover)
+
+
 
 **Features**
 
@@ -15748,6 +15887,8 @@ yarn add @zag-js/popover @zag-js/react
 Check the popover anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -16211,9 +16352,12 @@ Presence keeps it mounted long enough for exit animations to finish.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/presence)
 [Logic Visualizer](https://zag-visualizer.vercel.app/presence)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/presence)
+
+
 
 ## Installation
 
@@ -16391,9 +16535,12 @@ of a task such as downloading a file, uploading an image, etc.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/progress)
 [Logic Visualizer](https://zag-visualizer.vercel.app/progress)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/progress)
+
+
 
 **Features**
 
@@ -16415,6 +16562,8 @@ yarn add @zag-js/progress @zag-js/react
 Check the progress anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -16617,9 +16766,12 @@ progress of a task such as downloading a file, uploading an image, etc.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/progress)
 [Logic Visualizer](https://zag-visualizer.vercel.app/progress)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/progress)
+
+
 
 **Features**
 
@@ -16641,6 +16793,8 @@ yarn add @zag-js/progress @zag-js/react
 Check the progress anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -16852,9 +17006,12 @@ A QR code encodes information or links that can be scanned with a phone or app.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/qr-code)
 [Logic Visualizer](https://zag-visualizer.vercel.app/qr-code)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/qr-code)
+
+
 
 **Features**
 
@@ -16878,6 +17035,8 @@ yarn add @zag-js/qr-code @zag-js/react
 Check the QR code anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -17134,9 +17293,12 @@ A radio group lets users select one option from a set.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/radio-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/radio-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/radio-group)
+
+
 
 **Features**
 
@@ -17161,6 +17323,8 @@ To set up the radio group correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -17504,9 +17668,12 @@ Rating group lets users assign a rating value to an item.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/rating-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/rating-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/rating-group)
+
+
 
 **Features**
 
@@ -17528,6 +17695,8 @@ yarn add @zag-js/rating-group @zag-js/react
 Check the rating anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -17883,9 +18052,12 @@ A scroll area provides a custom-scrollbar viewport for overflow content.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/scroll-area)
 [Logic Visualizer](https://zag-visualizer.vercel.app/scroll-area)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/scroll-area)
+
+
 
 **Features**
 
@@ -17910,6 +18082,8 @@ To set up the scroll area correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Required style
 
@@ -18245,9 +18419,12 @@ A segmented control lets users pick one option from a small set.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/radio-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/segmented-control)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/segmented-control)
+
+
 
 **Features**
 
@@ -18271,6 +18448,8 @@ yarn add @zag-js/radio-group @zag-js/react
 Check the segmented control anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -18475,9 +18654,12 @@ A select component lets you pick a value from predefined options.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/select)
 [Logic Visualizer](https://zag-visualizer.vercel.app/select)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/select)
+
+
 
 **Features**
 
@@ -18501,6 +18683,8 @@ yarn add @zag-js/select @zag-js/react
 Check the select anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -19498,9 +19682,12 @@ input.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/signature-pad)
 [Logic Visualizer](https://zag-visualizer.vercel.app/signature-pad)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/signature-pad)
+
+
 
 **Features**
 
@@ -19524,6 +19711,8 @@ To set up the signature pad correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -19836,9 +20025,12 @@ accessibility.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/slider)
+
+
 
 **Features**
 
@@ -19865,6 +20057,8 @@ yarn add @zag-js/slider @zag-js/react
 Check the slider anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -20602,9 +20796,12 @@ numbers.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/slider)
 [Logic Visualizer](https://zag-visualizer.vercel.app/slider)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/slider)
+
+
 
 **Features**
 
@@ -20629,6 +20826,8 @@ yarn add @zag-js/slider @zag-js/react
 Check the slider anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -20965,9 +21164,12 @@ A splitter creates resizable layouts with horizontal or vertical panels.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/splitter)
 [Logic Visualizer](https://zag-visualizer.vercel.app/splitter)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/splitter)
+
+
 
 **Features**
 
@@ -20996,6 +21198,8 @@ yarn add @zag-js/splitter @zag-js/react
 Check the splitter anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -21383,9 +21587,12 @@ Steps guide users through a multi-step process.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/steps)
 [Logic Visualizer](https://zag-visualizer.vercel.app/steps)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/steps)
+
+
 
 **Features**
 
@@ -21408,6 +21615,8 @@ yarn add @zag-js/steps @zag-js/react
 Check the steps anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -21851,9 +22060,12 @@ A switch allows users to turn an individual option on or off.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/switch)
 [Logic Visualizer](https://zag-visualizer.vercel.app/switch)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/switch)
+
+
 
 **Features**
 
@@ -21876,6 +22088,8 @@ yarn add @zag-js/switch @zag-js/react
 Check the switch anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -22196,9 +22410,12 @@ Tabs organize related content into selectable panels.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/tabs)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tabs)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tabs)
+
+
 
 **Features**
 
@@ -22223,6 +22440,8 @@ yarn add @zag-js/tabs @zag-js/react
 Check the tabs anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -22748,9 +22967,12 @@ input element.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/tags-input)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tags-input)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tags-input)
+
+
 
 **Features**
 
@@ -22779,6 +23001,8 @@ To set up the tags input correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -22938,8 +23162,9 @@ const service = useMachine(tagsInput.machine, {
 Before a tag is added, the machine provides a `validate` function you can use to
 determine whether to accept or reject a tag.
 
-> **Note:** Duplicate tags are automatically prevented by design. You don't need
-> to handle this in your `validate` function.
+> **Note:** Duplicate tags are prevented by default. Set `allowDuplicates: true`
+> to allow repeatable tags (e.g. sentence builders). Use `validate` for custom
+> rules like format or length.
 
 Common use-cases for validating tags include enforcing format, length, or
 content rules.
@@ -22950,6 +23175,17 @@ const service = useMachine(tagsInput.machine, {
     // Example: only allow lowercase alphabetic tags
     return /^[a-z]+$/.test(details.inputValue)
   },
+})
+```
+
+### Allow Duplicates
+
+By default, duplicate tags are prevented. For use cases like sentence builders
+or repeatable tokens, set `allowDuplicates: true`:
+
+```jsx {2}
+const service = useMachine(tagsInput.machine, {
+  allowDuplicates: true,
 })
 ```
 
@@ -23453,9 +23689,12 @@ The timer machine tracks elapsed or remaining time.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/timer)
 [Logic Visualizer](https://zag-visualizer.vercel.app/timer)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/timer)
+
+
 
 **Features**
 
@@ -23479,6 +23718,8 @@ yarn add @zag-js/timer @zag-js/react
 Check the timer anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -23761,9 +24002,12 @@ Toast provides brief feedback after an action.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/toast)
 [Logic Visualizer](https://zag-visualizer.vercel.app/toast)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/toast)
+
+
 
 **Features**
 
@@ -23788,6 +24032,8 @@ yarn add @zag-js/toast @zag-js/react
 Check the toast anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -24306,9 +24552,12 @@ A toggle group lets users toggle one or more related options.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/toggle-group)
 [Logic Visualizer](https://zag-visualizer.vercel.app/toggle-group)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/toggle-group)
+
+
 
 **Features**
 
@@ -24332,6 +24581,8 @@ To set up the toggle group correctly, you'll need to understand its anatomy and
 how we name its parts.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -24662,9 +24913,12 @@ hovered.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/tooltip)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tooltip)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tooltip)
+
+
 
 **Features**
 
@@ -24691,6 +24945,8 @@ yarn add @zag-js/tooltip @zag-js/react
 Check the tooltip anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -25009,9 +25265,12 @@ A tour guides users through product features with step-by-step overlays.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/tour)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tour)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tour)
+
+
 
 **Features**
 
@@ -25038,6 +25297,8 @@ yarn add @zag-js/tour @zag-js/react
 Check the tour anatomy and part names.
 
 > Each part includes a `data-part` attribute to help identify them in the DOM.
+
+
 
 ## Usage
 
@@ -25697,9 +25958,12 @@ navigation.
 
 ## Resources
 
+
 [Latest version: v1.35.3](https://www.npmjs.com/package/@zag-js/tree-view)
 [Logic Visualizer](https://zag-visualizer.vercel.app/tree-view)
 [Source Code](https://github.com/chakra-ui/zag/tree/main/packages/machines/tree-view)
+
+
 
 **Features**
 
@@ -25723,6 +25987,8 @@ yarn add @zag-js/tree-view @zag-js/react
 ## Anatomy
 
 Check the tree view anatomy and part names.
+
+
 
 ## Usage
 

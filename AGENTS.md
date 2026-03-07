@@ -856,8 +856,47 @@ These provide deep knowledge when the task needs it.
   contexts, or utils.
 - **`project-styling`** —
   styling with Chakra UI, CSS, or managing images.
+- **`project-styling`** —
+  styling with Chakra UI, CSS, or managing images.
 - **`project-testing`** —
   writing or fixing tests.
+- **`zag-js`** —
+  Zag.js UI component state machines for React when Ark UI
+  or Chakra UI do not cover the use case. Covers the
+  service-based API pattern (v1.35.3+).
+
+### Installed skills
+
+External skills in `.agents/skills/` provide additional
+capabilities beyond project conventions.
+
+- **`agent-browser`** —
+  browser automation for navigating pages, filling forms,
+  clicking buttons, taking screenshots, and scraping data.
+- **`find-skills`** —
+  discover and install new agent skills.
+- **`frontend-design`** —
+  create distinctive, production-grade frontend interfaces
+  with high design quality.
+- **`next-best-practices`** —
+  Next.js file conventions, RSC boundaries, data patterns,
+  async APIs, metadata, error handling, and optimization.
+- **`next-cache-components`** —
+  Next.js 16 cache components, PPR, `use cache` directive,
+  `cacheLife`, `cacheTag`, and `updateTag`.
+- **`next-upgrade`** —
+  upgrade Next.js to the latest version following official
+  migration guides and codemods.
+- **`skill-creator`** —
+  guide for creating new skills that extend AI capabilities.
+- **`vercel-composition-patterns`** —
+  Vercel composition patterns for React and Next.js.
+- **`vercel-react-best-practices`** —
+  React and Next.js performance optimization guidelines
+  from Vercel Engineering.
+- **`vitest`** —
+  Vitest testing framework with Jest-compatible API,
+  mocking, coverage, and fixtures.
 
 ## Concrete module walkthrough
 
