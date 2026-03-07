@@ -107,6 +107,13 @@ Core ownership rules:
 - **Server actions:** next-safe-action
 - **Data fetching:** SWR
 - **URL state:** nuqs
+- **State management:** useImmer (replaces useState)
+- **Animation:** motion (v12)
+- **Dates:** dayjs
+- **Color mode:** next-themes
+- **Env validation:** @t3-oss/env-nextjs
+- **Utility hooks:** usehooks-ts
+- **CSS utility:** clsx
 - **Logging:** Pino
 - **Testing:** Vitest + Testing Library
 
@@ -873,6 +880,10 @@ These provide deep knowledge when the task needs it.
   Zag.js UI component state machines for React when Ark UI
   or Chakra UI do not cover the use case. Covers the
   service-based API pattern (v1.35.3+).
+- **`nuqs`** —
+  type-safe URL search params state management. Covers
+  useQueryState, useQueryStates, createLoader for server-side
+  parsing, typed parsers, and NuqsAdapter setup.
 
 ### Installed skills
 

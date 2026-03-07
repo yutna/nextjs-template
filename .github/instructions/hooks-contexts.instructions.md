@@ -30,6 +30,64 @@ The `hooks/` folder holds consumer hooks and custom hooks.
 - One hook per leaf folder with `index.ts` and optional `types.ts`
 - Keep tests adjacent to the hook they cover
 
+## State management
+
+Always use `useImmer` from `use-immer` — never use `useState`.
+
+- State value is always an **object**: `useImmer({ count: 0 })`
+- Maximum **one** `useImmer({})` call per file — if a file needs
+  two independent states, unify them into one object or extract
+  a separate hook
+- For complex state with multiple action types, use
+  `useImmerReducer` instead
+- Import from `use-immer`, not from React
+
+```tsx
+// Good — single object state
+const [state, updateState] = useImmer({ query: "", page: 1 });
+
+// Good — complex logic
+const [state, dispatch] = useImmerReducer(reducer, initialState);
+```
+
+```tsx
+// Bad — never use useState
+const [count, setCount] = useState(0);
+
+// Bad — multiple useImmer calls in one file
+const [filters, updateFilters] = useImmer({ q: "" });
+const [pagination, updatePagination] = useImmer({ page: 1 });
+```
+
+## SWR integration
+
+Use SWR with the project's `swrFetcher` for client-side data
+fetching:
+
+```tsx
+import useSWR from "swr";
+
+import { swrFetcher } from "@/shared/lib/fetcher";
+
+const { data, error, isLoading } = useSWR<User>(
+  "/api/users/me",
+  swrFetcher
+);
+```
+
+- Always import `swrFetcher` from `@/shared/lib/fetcher`
+- Prefer server-side data loading when possible — SWR is for
+  cases that genuinely need client-side reactivity
+- SWR hooks live in `hooks/` or directly in client `containers/`
+
+## Utility hooks
+
+Check `usehooks-ts` before creating a custom hook.
+
+- Import directly: `import { useDebounce } from "usehooks-ts"`
+- If `usehooks-ts` provides the exact hook, use it
+- If it needs project-specific wrapping, wrap it in a custom hook
+
 ## Scope and placement
 
 - **Module-first**: place in `src/modules/<module>/hooks/` or `src/modules/<module>/contexts/`

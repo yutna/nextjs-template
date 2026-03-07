@@ -31,10 +31,16 @@ validation, font registration, i18n routing, and formatting definitions.
 
 ### Environment variables
 
+Environment validation uses `@t3-oss/env-nextjs` in
+`shared/config/env.ts`.
+
 - Centralize all `process.env` access through `shared/config/env.ts`
+- Define server and client schemas with Zod in the `createEnv` call
 - No ad hoc `process.env` reads scattered across the codebase
 - Use `NEXT_PUBLIC_` only for values intended for the client
 - Keep server-only values off the client
+- Import `env` from `@/shared/config/env` — never read
+  `process.env` directly in app code
 
 ### Config naming
 

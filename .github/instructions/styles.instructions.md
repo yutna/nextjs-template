@@ -38,6 +38,20 @@ For component-scoped styling when Chakra props are not a good fit.
 - Reference classes through `styles.className`
 - Class names describe the local role: `.root`, `.container`, `.heading`, `.actions`
 
+## Animation (motion)
+
+Import from `motion/react` — the package was renamed from
+`framer-motion` to `motion` in v12:
+
+```tsx
+import { motion } from "motion/react";
+```
+
+- Keep animation components in `components/` as client leaves
+- Prefer server-rendered layouts; animate only client leaves
+- Use `motion.div`, `AnimatePresence`, and `variants` for
+  declarative animations
+
 ## When to use raw CSS vs Chakra
 
 Use Chakra props for:
