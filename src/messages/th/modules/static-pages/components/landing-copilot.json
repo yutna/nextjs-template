@@ -1,0 +1,12 @@
+{
+  "feature1Description": "AI conventions ระดับโปรเจกต์โหลดอัตโนมัติทุก session กฎ architecture, naming, import order — ทุกอย่างอยู่ที่เดียว",
+  "feature1Title": "AGENTS.md",
+  "feature2Description": "ไฟล์ความรู้เชิงลึกที่เรียกใช้ตามต้องการ Chakra UI, Effect, Zod, nuqs — โหลดเฉพาะเมื่อ task ต้องการ",
+  "feature2Title": "ระบบ Skills",
+  "feature3Description": "Context ตาม file type โหลดอัตโนมัติต่อ session แก้ screen? กฎ screen ปรากฎ แก้ action? กฎ action ปรากฎ",
+  "feature3Title": "Auto Instructions",
+  "feature4Description": "โมเดล 2 จุดสัมผัส: ยืนยันความต้องการ จากนั้น Copilot สร้าง feature ทั้งหมด end-to-end ด้วยการวิจัย, implement, review และส่งมอบ",
+  "feature4Title": "Autonomous Workflow",
+  "heading": "ปรับแต่งสำหรับ GitHub Copilot",
+  "subheading": "ทุก convention ของโปรเจกต์อ่านได้ด้วยเครื่อง Copilot จะมี context ที่ถูกต้องเสมอ"
+}

@@ -1,0 +1,16 @@
+{
+  "heading": "Why This Template",
+  "strength1Description": "React 19 RSC with Next.js 16 App Router. Minimal client surface, maximum performance.",
+  "strength1Title": "Server-First by Default",
+  "strength2Description": "Full strict mode with Zod 4 runtime validation. Zero any, typed errors everywhere.",
+  "strength2Title": "TypeScript Strict Mode",
+  "strength3Description": "AGENTS.md conventions, skills system, and auto-loaded instructions baked in.",
+  "strength3Title": "AI-Optimized Codebase",
+  "strength4Description": "Thai and English support via next-intl. Structured namespaces, no spaghetti translations.",
+  "strength4Title": "i18n Built-In",
+  "strength5Description": "Seamless theme switching via next-themes and Chakra UI v3. Works in both SSR and client.",
+  "strength5Title": "Light & Dark Mode",
+  "strength6Description": "Vitest, ESLint, Pino logging, and strict type coverage. Ready to deploy from day one.",
+  "strength6Title": "Production Ready",
+  "subheading": "Built on proven conventions so your team ships faster from day one."
+}

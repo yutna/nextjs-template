@@ -1,0 +1,12 @@
+{
+  "feature1Description": "Project-wide AI conventions always loaded into every Copilot session. Architecture rules, naming, import order — all in one place.",
+  "feature1Title": "AGENTS.md",
+  "feature2Description": "Deep domain knowledge files invoked on demand. Chakra UI, Effect, Zod, nuqs — loaded exactly when the task needs them.",
+  "feature2Title": "Skills System",
+  "feature3Description": "File-type context auto-loaded per editing session. Editing a screen? Screen conventions appear. Editing an action? Action rules appear.",
+  "feature3Title": "Auto Instructions",
+  "feature4Description": "2-touchpoint model: confirm requirements, then Copilot builds the entire feature end-to-end with research, implementation, review, and delivery.",
+  "feature4Title": "Autonomous Workflow",
+  "heading": "Optimized for GitHub Copilot",
+  "subheading": "Every project convention is machine-readable. Copilot always has the right context."
+}
