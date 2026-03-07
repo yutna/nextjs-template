@@ -1,10 +1,10 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
-import React from "react";
 
 import styles from "./marquee-row.module.css";
 
+import type { CSSProperties } from "react";
 import type { MarqueeRowProps } from "./types";
 
 export function MarqueeRow({
@@ -27,7 +27,7 @@ export function MarqueeRow({
       <div
         className={`${styles.track} ${reverse ? styles.reverse : styles.forward}`}
         style={
-          { "--marquee-duration": `${duration}s` } as React.CSSProperties
+          { "--marquee-duration": `${duration}s` } as CSSProperties
         }
       >
         <Box display="flex" gap="4" w="max-content">

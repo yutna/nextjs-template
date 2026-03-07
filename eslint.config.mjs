@@ -89,6 +89,7 @@ const eslintConfig = defineConfig([
       "import/no-default-export": "error",
 
       // Ban ad hoc process.env reads (Common Style Guide §9)
+      // Ban React namespace access — use named/type imports instead
       "no-restricted-syntax": [
         "error",
         {
@@ -96,6 +97,11 @@ const eslintConfig = defineConfig([
             "Direct process.env access is banned. Import from '@/shared/config/env' instead.",
           selector:
             "MemberExpression[object.name='process'][property.name='env']",
+        },
+        {
+          message:
+            "React namespace access is banned. Use named imports instead: import type { CSSProperties } from 'react'.",
+          selector: "MemberExpression[object.name='React']",
         },
       ],
 
