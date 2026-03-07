@@ -4,15 +4,6 @@ description: >-
   Build complete features following the project's page→screen→container→component
   architecture. Researches existing patterns first, then implements, then reviews.
   For autonomous execution, load the autonomous-workflow skill.
-agents:
-  - Researcher
-  - Implementer
-  - Reviewer
-handoffs:
-  - label: Review Changes
-    agent: Architecture Reviewer
-    prompt: Review all changes made in this session against project conventions.
-    send: false
 ---
 
 # Feature Builder
