@@ -12,93 +12,24 @@ argument-hint: >-
 
 # Scaffold page chain
 
-Create the full `page.tsx` to screen to container to
-component chain for a new route.
+Create the full page → screen → container → component chain following
+AGENTS.md feature flow and matching instruction files (auto-loaded per file).
 
 ## Input
 
 `${input}` contains three space-separated values:
 
 1. **module-name** — kebab-case feature module name
-1. **page-name** — kebab-case page name
-1. **route-group** — `public` or `private`
+2. **page-name** — kebab-case page name
+3. **route-group** — `public` or `private`
 
-## Architecture rules
+## Files to create
 
-- `page.tsx` is a thin server-only route entry
-- One `page.tsx` returns exactly one screen
-- Screens compose containers only
-- Containers are the bridge layer binding logic to UI
-- Components are stateless presenters
-
-## File creation steps
-
-### 1 — Route entry
-
-Create `src/app/[locale]/(${route-group})/${page-name}/page.tsx`:
-
-```typescript
-import "server-only";
-
-import { setRequestLocale } from "next-intl/server";
-import { use } from "react";
-
-import { ScreenName } from "@/modules/${module}/screens/screen-${page}";
-
-interface PageProps {
-  params: Promise<{ locale: string }>;
-}
-
-export default function Page({ params }: Readonly<PageProps>) {
-  const { locale } = use(params);
-  setRequestLocale(locale);
-
-  return <ScreenName locale={locale} />;
-}
-```
-
-Name the default export `Page`. Do **not** add a custom
-name like `SettingsPage`.
-
-### 2 — Screen
-
-Create a folder at
-`src/modules/${module}/screens/screen-${page}/` with:
-
-- `screen-${page}.tsx` — server-first, composes containers
-- `types.ts` — props interface accepting `locale`
-- `index.ts` — barrel exporting component and type
-
-Use `import "server-only"` at the top. Use named exports.
-
-### 3 — Container
-
-Create a folder at
-`src/modules/${module}/containers/container-${page}/` with:
-
-- `container-${page}.tsx` — bridge layer, self-contained
-- `types.ts` — props interface
-- `index.ts` — barrel export
-
-Keep the container server-first unless client interaction
-is required. If `"use client"` is needed, add it only to
-this file.
-
-### 4 — Component
-
-Create a folder at
-`src/modules/${module}/components/${page}/` with:
-
-- `${page}.tsx` — stateless presenter, named export
-- `types.ts` — props interface with `Readonly<Props>`
-- `index.ts` — barrel export
-- `${page}.test.tsx` — basic render test
-
-## Conventions
-
-- All folders use **kebab-case**
-- All React components use **PascalCase** named exports
-- Every leaf folder has an `index.ts` barrel
-- Every component folder has a `types.ts`
-- Use `@/` alias for cross-folder imports
-- Do not use `../` parent imports
+1. `src/app/[locale]/(${route-group})/${page-name}/page.tsx` — thin,
+   `import "server-only"`, `export default function Page`, returns one screen
+2. `src/modules/${module}/screens/screen-${page}/` — server-first, composes
+   containers only, with `types.ts` and `index.ts`
+3. `src/modules/${module}/containers/container-${page}/` — bridge layer,
+   server-first unless client needed, with `types.ts` and `index.ts`
+4. `src/modules/${module}/components/${page}/` — stateless presenter with
+   `types.ts`, `index.ts`, and `${page}.test.tsx`

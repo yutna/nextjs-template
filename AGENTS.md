@@ -937,49 +937,52 @@ capabilities beyond project conventions.
 ## Concrete module walkthrough
 
 The `static-pages` module demonstrates the standard
-feature architecture.
+feature architecture with the required container bridge
+layer.
 
 ### File tree
 
 ```text
 src/modules/static-pages/
 ├── components/
-│   ├── animated-counter/
-│   │   ├── animated-counter.tsx
-│   │   ├── animated-counter.test.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── floating-shapes/
-│   │   ├── constants.ts
-│   │   ├── floating-shapes.tsx
-│   │   ├── floating-shapes.test.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── glass-card/
-│   ├── gradient-mesh/
-│   ├── marquee-row/
-│   ├── motion-reveal/
-│   ├── motion-stagger/
-│   ├── scroll-indicator/
-│   ├── section-demo/
-│   ├── section-features/
-│   ├── section-footer/
-│   ├── section-hero/
+│   ├── copy-command/
 │   │   ├── constants.ts
 │   │   ├── copy-command.tsx
 │   │   ├── copy-command.test.tsx
+│   │   └── index.ts
+│   ├── landing-ai-workflow/
+│   │   ├── constants.ts
+│   │   ├── landing-ai-workflow.tsx
+│   │   ├── landing-ai-workflow.test.tsx
 │   │   ├── index.ts
-│   │   ├── section-hero.tsx
-│   │   ├── section-hero.test.tsx
 │   │   └── types.ts
-│   ├── section-stats/
-│   ├── section-tech-stack/
-│   └── switcher-locale/
+│   ├── landing-copilot/
+│   ├── landing-cta/
+│   ├── landing-footer/
+│   ├── landing-hero/
+│   ├── landing-strengths/
+│   ├── landing-tech-stack/
+│   ├── marquee-row/
+│   │   ├── marquee-row.tsx
+│   │   ├── marquee-row.module.css
+│   │   ├── marquee-row.test.tsx
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── motion-reveal/
+│   ├── motion-stagger/
+│   ├── page-chrome/
+│   └── scroll-indicator/
+├── containers/
+│   └── container-welcome-page/
+│       ├── container-welcome-page.tsx
+│       ├── container-welcome-page.test.tsx
+│       ├── index.ts
+│       └── types.ts
 └── screens/
     └── screen-welcome/
-        ├── index.ts
         ├── screen-welcome.tsx
         ├── screen-welcome.test.tsx
+        ├── index.ts
         └── types.ts
 ```
 
@@ -1009,38 +1012,54 @@ export default function Page({ params }: Readonly<PageProps>) {
 }
 ```
 
-The screen composes presenter components (this module has
-no containers because it is a simple static page with no
-logic binding needed):
+The screen composes exactly one container:
 
 ```tsx
 // screen-welcome/screen-welcome.tsx
 import "server-only";
 
-import { Box } from "@chakra-ui/react";
-
-import { GradientMesh } from "@/modules/static-pages/components/gradient-mesh";
-import { SectionDemo } from "@/modules/static-pages/components/section-demo";
-import { SectionFeatures } from "@/modules/static-pages/components/section-features";
-import { SectionFooter } from "@/modules/static-pages/components/section-footer";
-import { SectionHero } from "@/modules/static-pages/components/section-hero";
-import { SectionStats } from "@/modules/static-pages/components/section-stats";
-import { SectionTechStack } from "@/modules/static-pages/components/section-tech-stack";
-import { SwitcherLocale } from "@/modules/static-pages/components/switcher-locale";
+import { ContainerWelcomePage } from "@/modules/static-pages/containers/container-welcome-page";
 
 import type { ScreenWelcomeProps } from "./types";
 
 export async function ScreenWelcome({ locale }: Readonly<ScreenWelcomeProps>) {
+  return <ContainerWelcomePage locale={locale} />;
+}
+```
+
+The container is the required bridge layer — it binds
+presenter components together:
+
+```tsx
+// container-welcome-page/container-welcome-page.tsx
+import "server-only";
+
+import { Box } from "@chakra-ui/react";
+
+import { LandingAiWorkflow } from "@/modules/static-pages/components/landing-ai-workflow";
+import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
+import { LandingCta } from "@/modules/static-pages/components/landing-cta";
+import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
+import { LandingHero } from "@/modules/static-pages/components/landing-hero";
+import { LandingStrengths } from "@/modules/static-pages/components/landing-strengths";
+import { LandingTechStack } from "@/modules/static-pages/components/landing-tech-stack";
+import { PageChrome } from "@/modules/static-pages/components/page-chrome";
+
+import type { ContainerWelcomePageProps } from "./types";
+
+export async function ContainerWelcomePage({
+  locale,
+}: Readonly<ContainerWelcomePageProps>) {
   return (
-    <Box as="main" overflow="hidden" position="relative">
-      <SwitcherLocale locale={locale} />
-      <GradientMesh />
-      <SectionHero locale={locale} />
-      <SectionFeatures locale={locale} />
-      <SectionTechStack locale={locale} />
-      <SectionStats locale={locale} />
-      <SectionDemo locale={locale} />
-      <SectionFooter locale={locale} />
+    <Box as="main" position="relative">
+      <PageChrome locale={locale} />
+      <LandingHero locale={locale} />
+      <LandingStrengths locale={locale} />
+      <LandingAiWorkflow locale={locale} />
+      <LandingCopilot locale={locale} />
+      <LandingTechStack locale={locale} />
+      <LandingCta locale={locale} />
+      <LandingFooter locale={locale} />
     </Box>
   );
 }
@@ -1050,8 +1069,13 @@ Key patterns demonstrated:
 
 - **1:1 page-to-screen** — `page.tsx` returns exactly one
   `ScreenWelcome`
-- **server-only** — both `page.tsx` and the screen use
-  `import "server-only"`
+- **screen → container → component** — the screen
+  composes a container, the container binds presenter
+  components
+- **server-only throughout** — `page.tsx`, screen, and
+  container all use `import "server-only"`
+- **container as required bridge** — even for a static
+  page, the container layer is present
 - **leaf folder convention** — each component has its own
   folder with implementation, types, index re-export, and
   colocated tests
