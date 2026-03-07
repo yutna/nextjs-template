@@ -395,18 +395,18 @@ Reusable structural frame?  -> layouts/
 App setup/static values?    -> config/ or constants/
 ```
 
-## 12. Related rule documents
+## 12. Related topics
 
-Use this document together with:
+Use this document together with the more specific topics for:
 
-- `rules/page.md`
-- `rules/screens.md`
-- `rules/containers.md`
-- `rules/components.md`
-- `rules/actions.md`
-- `rules/hooks.md`
-- `rules/layouts.md`
-- `rules/schemas.md`
-- `rules/lib.md`
+- page entry files
+- screens
+- containers
+- components
+- actions
+- hooks
+- layouts
+- schemas
+- shared lib code
 
-This document explains the common flow. The individual rule files still define the detailed standards for each folder or file type.
+This document explains the common flow. The narrower topics still define the detailed standards for each folder or file type.
