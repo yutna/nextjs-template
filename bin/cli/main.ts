@@ -59,8 +59,8 @@ const listCommands = Effect.gen(function* () {
   const commands: Command[] = [];
 
   for (const file of files) {
-    const mod = yield* Effect.tryPromise(() =>
-      import(resolve(COMMANDS_DIR, file)),
+    const mod = yield* Effect.tryPromise(
+      () => import(resolve(COMMANDS_DIR, file)),
     );
 
     if (mod.command) {
@@ -129,9 +129,7 @@ export async function main(args: string[]): Promise<void> {
       Effect.catchTag("CommandNotFoundError", (err) =>
         Effect.sync(() => {
           console.error(`  Unknown command: ${err.commandName}\n`);
-          console.error(
-            `  Run ./bin/tmpl --help to see available commands.\n`,
-          );
+          console.error(`  Run ./bin/tmpl --help to see available commands.\n`);
           process.exitCode = 1;
         }),
       ),

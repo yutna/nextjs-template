@@ -110,9 +110,7 @@ export const command = {
   description: "Auto-format files after Copilot edits (PostToolUse hook)",
   name: "hooks:format",
   run: async (): Promise<void> => {
-    await Effect.runPromise(
-      program.pipe(Effect.catchAll(() => Effect.void)),
-    );
+    await Effect.runPromise(program.pipe(Effect.catchAll(() => Effect.void)));
     outputContinue();
   },
 };

@@ -73,9 +73,7 @@ export const command = {
   name: "hooks:lint",
   run: async (): Promise<void> => {
     const message = await Effect.runPromise(
-      program.pipe(
-        Effect.catchAll(() => Effect.succeed(undefined)),
-      ),
+      program.pipe(Effect.catchAll(() => Effect.succeed(undefined))),
     );
     outputContinue(message);
   },

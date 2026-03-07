@@ -10,12 +10,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
 
   // Override default ignores of eslint-config-next.
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 
   // --------------------------------------------------
   // Project rules — enforce AGENTS.md conventions
@@ -92,7 +87,8 @@ const eslintConfig = defineConfig([
         {
           message:
             "Direct process.env access is banned. Import from '@/shared/config/env' instead.",
-          selector: "MemberExpression[object.name='process'][property.name='env']",
+          selector:
+            "MemberExpression[object.name='process'][property.name='env']",
         },
       ],
 
