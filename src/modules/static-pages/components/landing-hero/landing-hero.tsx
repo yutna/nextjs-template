@@ -4,9 +4,9 @@ import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 import { LuGithub } from "react-icons/lu";
 
+import { CopyCommand } from "@/modules/static-pages/components/copy-command";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
-import { CopyCommand } from "@/modules/static-pages/components/section-hero/copy-command";
 
 import type { LandingHeroProps } from "./types";
 

@@ -4,8 +4,8 @@ import { Box, Button, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 import { LuGithub } from "react-icons/lu";
 
+import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/components/copy-command";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
-import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/components/section-hero/constants";
 
 import type { LandingCtaProps } from "./types";
 

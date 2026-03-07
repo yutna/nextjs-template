@@ -9,8 +9,6 @@ import { CopyCommand } from "./copy-command";
 const mockWriteText = vi.fn();
 
 beforeEach(() => {
-  // Only fake setTimeout/clearTimeout so Promise microtasks still resolve normally.
-  // This lets the async handleCopy complete and setCopied(true) fire before assertions.
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
   mockWriteText.mockResolvedValue(undefined);
   Object.defineProperty(navigator, "clipboard", {
@@ -50,7 +48,6 @@ describe("CopyCommand", () => {
     renderWithProviders(<CopyCommand />);
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
-      // Flush all pending microtasks (resolves the writeText promise and state update)
       await Promise.resolve();
     });
     expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
