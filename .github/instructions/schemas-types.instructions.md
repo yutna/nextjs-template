@@ -92,7 +92,9 @@ export interface FetchClientOptions extends Omit<RequestInit, "body"> {
 }
 ```
 
-## Schema checklist
+## Checklist
+
+### Schemas
 
 - [ ] Model vs validation schema correctly classified
 - [ ] Model schemas live in `src/shared/schemas/models/`
@@ -100,7 +102,7 @@ export interface FetchClientOptions extends Omit<RequestInit, "body"> {
 - [ ] File name explicit about the schema role
 - [ ] Named exports with `export type` for types
 
-## Types checklist
+### Types
 
 - [ ] Placement: colocated first, shared only when cross-cutting
 - [ ] Name is specific and domain-based

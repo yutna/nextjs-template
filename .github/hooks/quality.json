@@ -3,14 +3,14 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "./scripts/hooks/post-tool-format.sh",
+        "command": "./bin/tmpl hooks:format",
         "timeout": 15
       }
     ],
     "Stop": [
       {
         "type": "command",
-        "command": "./scripts/hooks/stop-lint-check.sh",
+        "command": "./bin/tmpl hooks:lint",
         "timeout": 60
       }
     ]
