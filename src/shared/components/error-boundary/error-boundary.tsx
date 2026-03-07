@@ -2,8 +2,8 @@
 
 import { Component } from "react";
 
-import type { ErrorBoundaryProps, ErrorBoundaryState } from "./types";
 import type { ErrorInfo } from "react";
+import type { ErrorBoundaryProps, ErrorBoundaryState } from "./types";
 
 /**
  * React class-based Error Boundary for wrapping arbitrary subtrees.

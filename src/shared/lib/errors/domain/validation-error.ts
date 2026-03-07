@@ -1,7 +1,7 @@
 import { DomainError } from "./domain-error";
 
-import type { FieldErrors } from "@/shared/lib/errors/types";
 import type { ZodError } from "zod";
+import type { FieldErrors } from "@/shared/lib/errors/types";
 
 export class ValidationError extends DomainError {
   /**

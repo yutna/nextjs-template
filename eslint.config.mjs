@@ -34,7 +34,8 @@ const eslintConfig = defineConfig([
 
       // Import sorting — 5-group order (Common Style Guide §3)
       // Groups: 1) side-effect  2) external  3) @/ internal  4) ./ local  5) import type
-      // Longest regex match wins; ^.+\\u0000$ matches the full string so type imports always win
+      // Type imports (suffix \u0000) are kept in one block without blank lines.
+      // Within the type block, pattern order enforces: external → @/ → ./
       "simple-import-sort/exports": "error",
       "simple-import-sort/imports": [
         "error",
@@ -44,7 +45,13 @@ const eslintConfig = defineConfig([
             ["^node:", "^@(?!/)\\w", "^\\w"],
             ["^@/"],
             ["^\\."],
-            ["^.+\\u0000$"],
+            [
+              "^node:.*\\u0000$",
+              "^@(?!/)\\w.*\\u0000$",
+              "^\\w.*\\u0000$",
+              "^@/.*\\u0000$",
+              "^\\..*\\u0000$",
+            ],
           ],
         },
       ],

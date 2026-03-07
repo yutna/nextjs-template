@@ -6,8 +6,8 @@ import { LOCALES } from "@/shared/constants/locale";
 import { usePathname, useRouter } from "@/shared/lib/navigation";
 import { ColorModeButton } from "@/shared/vendor/chakra-ui/color-mode";
 
-import type { PageChromeProps } from "./types";
 import type { Locale } from "next-intl";
+import type { PageChromeProps } from "./types";
 
 export function PageChrome({ locale }: Readonly<PageChromeProps>) {
   const pathname = usePathname();
