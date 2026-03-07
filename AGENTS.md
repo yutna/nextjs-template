@@ -25,6 +25,23 @@ for the full map.
 - when in doubt, optimize for architecture correctness
   over convenience
 
+## Definition of Done
+
+Every delivered feature must meet all of these criteria
+before presenting to the user. If any criterion is not met,
+keep working.
+
+- feature works end-to-end exactly as requirements describe
+- zero bugs — every code path tested and verified
+- zero type errors on all touched files
+- zero lint errors on all touched files
+- zero warnings on all touched files
+- all existing tests still pass — no regressions
+- new tests cover the new feature
+- code review passed — no security or convention issues
+- ready for production use — not a prototype, not a draft
+- human has nothing to fix, debug, or clean up
+
 ## Project overview
 
 This is a production-ready Next.js 16 starter template
@@ -129,6 +146,12 @@ This guide has three layers:
    when you edit matching files.
 3. **Skills** (`.github/skills/`) — deep reference
    knowledge invoked on demand when a task needs it.
+
+For autonomous feature delivery, use the `build-feature`
+prompt or load the `autonomous-workflow` skill. These
+implement the 2-touchpoint model: gather requirements from
+the user, then execute everything autonomously until
+delivery.
 
 When two rules overlap, keep the narrower ownership rule
 and the stronger server-first constraint.
@@ -884,6 +907,12 @@ These provide deep knowledge when the task needs it.
   type-safe URL search params state management. Covers
   useQueryState, useQueryStates, createLoader for server-side
   parsing, typed parsers, and NuqsAdapter setup.
+- **`autonomous-workflow`** —
+  autonomous multi-agent execution protocol. Use when
+  entering autopilot mode or building a complete feature
+  with zero human interaction after plan approval. Defines
+  the 2-touchpoint model, role-to-tool mapping, self-healing
+  loops, retry budgets, and Definition of Done.
 
 ### Installed skills
 
