@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { AppError } from "@/shared/lib/errors/app-error";
 import { isAppError } from "@/shared/lib/errors/helpers/is-app-error";
 
-import { HttpError } from "./http-error";
 import { FetchError } from "./fetch-error";
+import { HttpError } from "./http-error";
 
 // HttpError is abstract — test through FetchError as a concrete subclass
 function makeFetchError(status: number): FetchError {

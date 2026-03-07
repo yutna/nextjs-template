@@ -5,8 +5,8 @@ import { Box, HStack } from "@chakra-ui/react";
 import { LOCALES } from "@/shared/constants/locale";
 import { usePathname, useRouter } from "@/shared/lib/navigation";
 
-import type { Locale } from "next-intl";
 import type { SwitcherLocaleProps } from "./types";
+import type { Locale } from "next-intl";
 
 export function SwitcherLocale({ locale }: Readonly<SwitcherLocaleProps>) {
   const pathname = usePathname();

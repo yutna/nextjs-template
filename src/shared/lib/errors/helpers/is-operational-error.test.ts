@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { NotFoundError } from "@/shared/lib/errors/domain/not-found-error";
 import { DatabaseError } from "@/shared/lib/errors/infrastructure/database-error";
+
 import { isOperationalError } from "./is-operational-error";
 
 describe("isOperationalError", () => {

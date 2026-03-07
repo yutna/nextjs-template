@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
-import { ValidationError } from "./validation-error";
 import { isOperationalError } from "@/shared/lib/errors/helpers/is-operational-error";
+
+import { ValidationError } from "./validation-error";
 
 describe("ValidationError", () => {
   it("builds from ZodError", () => {

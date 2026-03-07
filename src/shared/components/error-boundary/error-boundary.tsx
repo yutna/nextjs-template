@@ -2,8 +2,8 @@
 
 import { Component } from "react";
 
-import type { ErrorInfo } from "react";
 import type { ErrorBoundaryProps, ErrorBoundaryState } from "./types";
+import type { ErrorInfo } from "react";
 
 /**
  * React class-based Error Boundary for wrapping arbitrary subtrees.
@@ -30,6 +30,7 @@ export class ErrorBoundary extends Component<
 
   override componentDidCatch(error: Error, info: ErrorInfo) {
     // Wire to reportError() in SETUP_ERROR_LOGGING branch
+    // eslint-disable-next-line no-console
     console.error("[ErrorBoundary]", error.message, info.componentStack);
   }
 

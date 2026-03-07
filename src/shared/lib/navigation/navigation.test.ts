@@ -16,8 +16,8 @@ vi.mock("next-intl/navigation", () => ({
 }));
 
 import {
-  Link,
   getPathname,
+  Link,
   redirect,
   usePathname,
   useRouter,

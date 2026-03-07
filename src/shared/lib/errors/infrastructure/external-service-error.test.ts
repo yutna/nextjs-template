@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { ExternalServiceError } from "./external-service-error";
 import { isOperationalError } from "@/shared/lib/errors/helpers/is-operational-error";
+
+import { ExternalServiceError } from "./external-service-error";
 
 describe("ExternalServiceError", () => {
   it("has statusCode 500, correct code, service field, and is NOT operational", () => {

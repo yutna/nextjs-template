@@ -1,13 +1,14 @@
 import "server-only";
+import "@/shared/styles/scrollbar.css";
+
+import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
 import { TIME_ZONE } from "@/shared/constants/timezone";
 import { AppProvider } from "@/shared/providers/app-provider";
-import "@/shared/styles/scrollbar.css";
 
 import type { Metadata } from "next";
 import type { AbstractIntlMessages } from "next-intl";

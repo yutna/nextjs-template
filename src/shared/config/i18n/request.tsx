@@ -1,11 +1,11 @@
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
+import { messages } from "@/messages";
 import { formats } from "@/shared/config/i18n/formats";
 import { routing } from "@/shared/config/i18n/routing";
 import { TIME_ZONE } from "@/shared/constants/timezone";
 import { logger } from "@/shared/lib/logger";
-import { messages } from "@/messages";
 
 import type { ReactNode } from "react";
 

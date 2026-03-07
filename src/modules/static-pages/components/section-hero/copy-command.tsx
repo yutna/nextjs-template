@@ -1,18 +1,24 @@
 "use client";
 
 import { HStack, IconButton, Text } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuCheck, LuCopy } from "react-icons/lu";
+import { useImmer } from "use-immer";
 
 import { HERO_INSTALL_COMMAND } from "./constants";
 
 export function CopyCommand() {
-  const [copied, setCopied] = useState(false);
+  const [state, updateState] = useImmer({ copied: false });
 
   async function handleCopy() {
     await navigator.clipboard.writeText(HERO_INSTALL_COMMAND);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    updateState((draft) => {
+      draft.copied = true;
+    });
+    setTimeout(() => {
+      updateState((draft) => {
+        draft.copied = false;
+      });
+    }, 2000);
   }
 
   return (
@@ -49,16 +55,20 @@ export function CopyCommand() {
         {HERO_INSTALL_COMMAND}
       </Text>
       <IconButton
-        aria-label={copied ? "Copied" : "Copy command"}
+        aria-label={state.copied ? "Copied" : "Copy command"}
         size="xs"
         variant="ghost"
-        color={copied ? "green.400" : { base: "gray.500", _dark: "gray.400" }}
+        color={
+          state.copied
+            ? "green.400"
+            : { base: "gray.500", _dark: "gray.400" }
+        }
         _hover={{ color: { base: "gray.800", _dark: "gray.100" } }}
         transition="all 0.2s ease"
         onClick={handleCopy}
         flexShrink={0}
       >
-        {copied ? <LuCheck /> : <LuCopy />}
+        {state.copied ? <LuCheck /> : <LuCopy />}
       </IconButton>
     </HStack>
   );
