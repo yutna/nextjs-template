@@ -1,2 +1,2 @@
-export { WelcomeScreen } from "./screen-welcome";
-export type { WelcomeScreenProps } from "./types";
+export { ScreenWelcome } from "./screen-welcome";
+export type { ScreenWelcomeProps } from "./types";

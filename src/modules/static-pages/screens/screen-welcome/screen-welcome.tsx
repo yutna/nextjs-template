@@ -11,9 +11,9 @@ import { SectionStats } from "@/modules/static-pages/components/section-stats";
 import { SectionTechStack } from "@/modules/static-pages/components/section-tech-stack";
 import { SwitcherLocale } from "@/modules/static-pages/components/switcher-locale";
 
-import type { WelcomeScreenProps } from "./types";
+import type { ScreenWelcomeProps } from "./types";
 
-export async function WelcomeScreen({ locale }: Readonly<WelcomeScreenProps>) {
+export async function ScreenWelcome({ locale }: Readonly<ScreenWelcomeProps>) {
   return (
     <Box as="main" overflow="hidden" position="relative">
       <SwitcherLocale locale={locale} />
