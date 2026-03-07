@@ -14,6 +14,11 @@ interface Command {
   run: (args?: string[]) => Promise<void>;
 }
 
+interface CommandModule {
+  command: Command;
+  help?: () => void;
+}
+
 class CommandNotFoundError {
   readonly _tag = "CommandNotFoundError";
   readonly commandName: string;
@@ -22,14 +27,27 @@ class CommandNotFoundError {
   }
 }
 
-const loadCommand = (name: string) =>
+const loadCommandModule = (name: string) =>
   Effect.tryPromise({
     catch: () => new CommandNotFoundError(name),
     try: async () => {
       const normalized = name.replace(":", "-");
       const commandPath = resolve(COMMANDS_DIR, `${normalized}.ts`);
       const mod = await import(commandPath);
-      return mod.command as Command;
+
+      if (!mod.command) {
+        throw new Error(`No command export in ${normalized}.ts`);
+      }
+
+      const result: CommandModule = {
+        command: mod.command as Command,
+      };
+
+      if (typeof mod.help === "function") {
+        result.help = mod.help as () => void;
+      }
+
+      return result;
     },
   });
 
@@ -80,19 +98,6 @@ function printHelp(commands: Command[]): void {
 `);
 }
 
-const showCommandHelp = (commandName: string, command: Command) =>
-  Effect.tryPromise(async () => {
-    console.log(`\n  ${command.name} — ${command.description}\n`);
-
-    const mod = await import(
-      resolve(COMMANDS_DIR, `${commandName.replace(":", "-")}.ts`),
-    );
-
-    if (typeof mod.help === "function") {
-      mod.help();
-    }
-  });
-
 export async function main(args: string[]): Promise<void> {
   const commandName = args[0];
 
@@ -103,11 +108,16 @@ export async function main(args: string[]): Promise<void> {
   }
 
   const program = Effect.gen(function* () {
-    const command = yield* loadCommand(commandName);
+    const { command, help: helpFn } = yield* loadCommandModule(commandName);
     const rest = args.slice(1);
 
     if (rest.includes("--help") || rest.includes("-h")) {
-      yield* showCommandHelp(commandName, command);
+      console.log(`\n  ${command.name} — ${command.description}\n`);
+
+      if (helpFn) {
+        helpFn();
+      }
+
       return;
     }
 

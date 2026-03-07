@@ -3,12 +3,13 @@ import { existsSync, readFileSync } from "node:fs";
 import { Effect } from "effect";
 
 function outputContinue(systemMessage?: string): void {
+  const payload: Record<string, unknown> = { continue: true };
+
   if (systemMessage) {
-    const escaped = systemMessage.replace(/"/g, '\\"').replace(/\n/g, " ");
-    console.log(`{"continue": true, "systemMessage": "${escaped}"}`);
-  } else {
-    console.log('{"continue": true}');
+    payload.systemMessage = systemMessage;
   }
+
+  console.log(JSON.stringify(payload));
 }
 
 const hasStdout = (error: unknown): error is { stdout: string } =>
@@ -58,28 +59,25 @@ const formatMessage = (output: string): string => {
 const program = Effect.gen(function* () {
   const lintAvailable = yield* hasLintScript;
 
-  if (!lintAvailable) {
-    outputContinue();
-    return;
-  }
+  if (!lintAvailable) return undefined;
 
   const result = yield* runLint;
 
-  if (!result.failed || !result.output.trim()) {
-    outputContinue();
-    return;
-  }
+  if (!result.failed || !result.output.trim()) return undefined;
 
-  outputContinue(formatMessage(result.output));
+  return formatMessage(result.output);
 });
 
 export const command = {
   description: "Run lint check before session ends (Stop hook)",
   name: "hooks:lint",
   run: async (): Promise<void> => {
-    await Effect.runPromise(
-      program.pipe(Effect.catchAll(() => Effect.sync(() => outputContinue()))),
+    const message = await Effect.runPromise(
+      program.pipe(
+        Effect.catchAll(() => Effect.succeed(undefined)),
+      ),
     );
+    outputContinue(message);
   },
 };
 

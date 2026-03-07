@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { Effect } from "effect";
 
@@ -80,7 +80,7 @@ const fileExists = (filePath: string) =>
 
 const formatFile = (filePath: string) =>
   Effect.try(() => {
-    execSync(`npx prettier --write "${filePath}"`, {
+    execFileSync("npx", ["prettier", "--write", "--", filePath], {
       stdio: "ignore",
       timeout: 10_000,
     });
