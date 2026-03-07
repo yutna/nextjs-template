@@ -29,5 +29,7 @@ Follow the 2-touchpoint model from the autonomous-workflow skill:
    the build order in AGENTS.md, present plan for approval.
 3. **Execute** — After approval, implement autonomously. Spawn sub-agents,
    run quality gates, self-heal on failure, code review each todo.
-4. **Touchpoint 2** — Present completed feature. Every item in the Definition
+4. **Verify** — After all todos done, verify runtime behavior with
+   `agent-browser` (navigate affected pages, check for errors).
+5. **Touchpoint 2** — Present completed feature. Every item in the Definition
    of Done (AGENTS.md) must be met before presenting.

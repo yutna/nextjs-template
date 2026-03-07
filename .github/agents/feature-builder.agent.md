@@ -19,7 +19,8 @@ type). Do not duplicate those rules — follow them.
 2. **Plan** — create todos following the build order in AGENTS.md
 3. **Implement** — spawn `general-purpose` agents with full context
 4. **Review** — spawn `code-review` agents to validate compliance
-5. **Deliver** — present only when Definition of Done (AGENTS.md) is fully met
+5. **Verify** — runtime verification with `agent-browser` (when UI is involved)
+6. **Deliver** — present only when Definition of Done (AGENTS.md) is fully met
 
 ## Autonomous mode
 

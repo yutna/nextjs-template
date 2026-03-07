@@ -81,7 +81,7 @@ AND NOT EXISTS (
 ```
 
 If no todos are ready and none are in progress, all work is complete. Proceed to
-Step 7.
+Step 7 (runtime verification).
 
 ### Step 3 — Research (when needed)
 
@@ -203,12 +203,32 @@ VALUES ('retry_count_' || todo_id, CAST(current_count + 1 AS TEXT));
 
 | Retries | Action |
 |---------|--------|
-| 1-3 | Fix and retry |
-| 4+ | Mark todo as `blocked`, record error details, continue with other todos |
+| 1-2 | Fix and retry |
+| 3+ | Mark todo as `blocked`, record error details, continue with other todos |
 
 Blocked todos are reported to the user at Touchpoint 2.
 
-### Step 7 — Deliver
+### Step 7 — Runtime verification
+
+After all todos are done (or remaining are blocked), verify the feature works at
+runtime before presenting to the user.
+
+1. Start the dev server if not already running (`npm run dev`)
+2. Navigate to affected pages using `agent-browser` (open, snapshot, screenshot)
+3. Check for:
+   - No console errors or runtime exceptions
+   - Feature renders correctly and matches requirements
+   - Responsive behavior on different viewport sizes (when applicable)
+   - Light and dark theme support (when applicable)
+4. If runtime issues are found, treat as a self-healing case: analyze the error,
+   spawn a `general-purpose` agent to fix it, rerun quality gates, and re-verify
+
+Skip this step only when:
+
+- The change is purely backend (schemas, lib, actions with no UI)
+- The change is configuration or tooling only (no rendered output)
+
+### Step 8 — Deliver
 
 When all todos are done (or remaining todos are blocked), present the result to
 the user.
@@ -296,11 +316,12 @@ EXECUTION ORDER
 3. Research (explore agents, parallel-safe)
 4. Implement (general-purpose agent, with context)
 5. Quality gates (check-types → lint → test)
-6. Self-heal on failure (max 3 retries per todo)
+6. Self-heal on failure (max 3 attempts per todo)
 7. Code review (code-review agent)
 8. Fix review issues → rerun gates
 9. Mark done → loop to step 2
-10. All done → present to user
+10. All done → runtime verification (agent-browser)
+11. Present to user
 
 DEFINITION OF DONE
 ══════════════════
@@ -309,5 +330,6 @@ DEFINITION OF DONE
 ✅ All existing tests pass (no regressions)
 ✅ New tests cover the new feature
 ✅ Code review passed
+✅ Runtime verified in browser (when applicable)
 ✅ Production-ready — human has nothing to fix
 ```
