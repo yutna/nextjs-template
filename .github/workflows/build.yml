@@ -17,16 +17,17 @@ jobs:
     name: Build App
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft != true
+    timeout-minutes: 30
 
     env:
       NEXT_PUBLIC_API_URL: https://api.example.com
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24.13.1"
           cache: "npm"
@@ -41,13 +42,14 @@ jobs:
     name: Build Storybook
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft != true
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24.13.1"
           cache: "npm"
