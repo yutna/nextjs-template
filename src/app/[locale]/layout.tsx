@@ -3,7 +3,11 @@ import "@/shared/styles/scrollbar.css";
 
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
