@@ -663,7 +663,7 @@ export function help(): void {
   console.log(`  Run project-specific lint checks.
 
   Usage:
-    ./bin/tmpl lint:check [options]
+    ./bin/vibe lint:check [options]
 
   Options:
     --all              Run all checks (default)
@@ -675,8 +675,8 @@ export function help(): void {
     --css-variables    Check CSS modules for hardcoded values (soft warning)
 
   Examples:
-    ./bin/tmpl lint:check
-    ./bin/tmpl lint:check --server-only --barrel-export
-    ./bin/tmpl lint:check --missing-tests
+    ./bin/vibe lint:check
+    ./bin/vibe lint:check --server-only --barrel-export
+    ./bin/vibe lint:check --missing-tests
 `);
 }

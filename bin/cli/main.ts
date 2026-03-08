@@ -72,7 +72,7 @@ const listCommands = Effect.gen(function* () {
 });
 
 function printHelp(commands: Command[]): void {
-  const bin = "bin/tmpl";
+  const bin = "bin/vibe";
 
   console.log(`
   Usage: ./${bin} <command> [options]
@@ -129,7 +129,7 @@ export async function main(args: string[]): Promise<void> {
       Effect.catchTag("CommandNotFoundError", (err) =>
         Effect.sync(() => {
           console.error(`  Unknown command: ${err.commandName}\n`);
-          console.error(`  Run ./bin/tmpl --help to see available commands.\n`);
+          console.error(`  Run ./bin/vibe --help to see available commands.\n`);
           process.exitCode = 1;
         }),
       ),
