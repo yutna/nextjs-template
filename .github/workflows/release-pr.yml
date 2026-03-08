@@ -1,0 +1,97 @@
+name: Release PR
+
+on:
+  milestone:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-release-pr:
+    name: Open Release PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Validate milestone title is semver
+        run: |
+          if ! [[ "${{ github.event.milestone.title }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Milestone title '${{ github.event.milestone.title }}' is not a valid semver version (e.g. 1.2.3). Skipping."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24.13.1"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version in package.json
+        run: npm version ${{ github.event.milestone.title }} --no-git-tag-version
+
+      - name: Create release branch and push
+        run: |
+          git checkout -b release/${{ github.event.milestone.title }}
+          git add package.json package-lock.json
+          git commit -m "Release ${{ github.event.milestone.title }}"
+          git push origin release/${{ github.event.milestone.title }}
+
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "release" \
+            --color "0075ca" \
+            --description "Release PR" \
+            --force
+          gh label create "priority: high" \
+            --color "d93f0b" \
+            --description "High priority" \
+            --force
+
+      - name: Build PR body from closed milestone issues
+        id: notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUES=$(gh api \
+            "repos/${{ github.repository }}/issues?milestone=${{ github.event.milestone.number }}&state=closed&per_page=100" \
+            --jq '.[] | select(.pull_request == null) | "- \(.title) [#\(.number)](\(.html_url))"' \
+            | head -50)
+
+          {
+            echo "body<<EOF"
+            echo "## Release ${{ github.event.milestone.title }}"
+            echo ""
+            echo "### Changes"
+            echo ""
+            echo "$ISSUES"
+            echo ""
+            echo "---"
+            echo "Milestone: [${{ github.event.milestone.title }}](${{ github.event.milestone.html_url }})"
+            echo ""
+            echo "> Merge this PR to publish tag \`v${{ github.event.milestone.title }}\` and create the GitHub Release."
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "Release ${{ github.event.milestone.title }}" \
+            --body "${{ steps.notes.outputs.body }}" \
+            --base main \
+            --head "release/${{ github.event.milestone.title }}" \
+            --label "release" \
+            --label "priority: high"
