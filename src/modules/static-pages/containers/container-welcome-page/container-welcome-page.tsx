@@ -3,6 +3,7 @@ import "server-only";
 import { Box } from "@chakra-ui/react";
 
 import { LandingAiWorkflow } from "@/modules/static-pages/components/landing-ai-workflow";
+import { LandingCliUsage } from "@/modules/static-pages/components/landing-cli-usage";
 import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
 import { LandingCta } from "@/modules/static-pages/components/landing-cta";
 import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
@@ -23,6 +24,7 @@ export async function ContainerWelcomePage({
       <LandingStrengths locale={locale} />
       <LandingAiWorkflow locale={locale} />
       <LandingCopilot locale={locale} />
+      <LandingCliUsage locale={locale} />
       <LandingTechStack locale={locale} />
       <LandingCta locale={locale} />
       <LandingFooter locale={locale} />
