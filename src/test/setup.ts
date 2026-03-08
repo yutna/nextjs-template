@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 // jsdom does not implement IntersectionObserver.
 // motion/react (framer-motion) uses it for whileInView / viewport features.
@@ -27,7 +27,7 @@ beforeEach(() => {
     throw new Error(
       [
         "Unexpected console.error in test.",
-        "Mock it if intentional: vi.spyOn(console, \"error\").mockImplementation(() => {})",
+        'Mock it if intentional: vi.spyOn(console, "error").mockImplementation(() => {})',
         "",
         String(args[0]),
       ].join("\n"),
@@ -39,7 +39,7 @@ beforeEach(() => {
     throw new Error(
       [
         "Unexpected console.warn in test.",
-        "Mock it if intentional: vi.spyOn(console, \"warn\").mockImplementation(() => {})",
+        'Mock it if intentional: vi.spyOn(console, "warn").mockImplementation(() => {})',
         "",
         String(args[0]),
       ].join("\n"),
