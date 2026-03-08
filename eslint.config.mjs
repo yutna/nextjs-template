@@ -5,16 +5,15 @@ import checkFile from "eslint-plugin-check-file";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import storybook from "eslint-plugin-storybook";
 
 import localPlugin from "./eslint/local-plugin.mjs";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-
   // Override default ignores of eslint-config-next.
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
-
   // --------------------------------------------------
   // Project rules — enforce AGENTS.md conventions
   // --------------------------------------------------
@@ -232,7 +231,6 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-
   // --------------------------------------------------
   // Next.js convention files — allow default exports
   // --------------------------------------------------
@@ -258,7 +256,6 @@ const eslintConfig = defineConfig([
       "import/no-default-export": "off",
     },
   },
-
   // --------------------------------------------------
   // Config files — allow process.env and default exports
   // --------------------------------------------------
@@ -276,7 +273,6 @@ const eslintConfig = defineConfig([
       "no-restricted-syntax": "off",
     },
   },
-
   // --------------------------------------------------
   // Vendor files — third-party integration wrappers
   // --------------------------------------------------
@@ -290,7 +286,6 @@ const eslintConfig = defineConfig([
       "project/no-inline-style": "off",
     },
   },
-
   // --------------------------------------------------
   // Global error boundary — runs outside Chakra provider
   // --------------------------------------------------
@@ -300,7 +295,6 @@ const eslintConfig = defineConfig([
       "project/no-inline-style": "off",
     },
   },
-
   // --------------------------------------------------
   // Infrastructure — allow process.env in bootstrap code
   // --------------------------------------------------
@@ -310,7 +304,6 @@ const eslintConfig = defineConfig([
       "no-restricted-syntax": "off",
     },
   },
-
   // --------------------------------------------------
   // Test files — allow console and relaxed restrictions
   // --------------------------------------------------
@@ -320,7 +313,6 @@ const eslintConfig = defineConfig([
       "no-console": "off",
     },
   },
-
   // --------------------------------------------------
   // CLI scripts — allow console and process.env
   // --------------------------------------------------
@@ -331,7 +323,6 @@ const eslintConfig = defineConfig([
       "no-restricted-syntax": "off",
     },
   },
-
   // --------------------------------------------------
   // Local ESLint plugin — requires default export
   // --------------------------------------------------
@@ -342,7 +333,6 @@ const eslintConfig = defineConfig([
       "import/no-default-export": "off",
     },
   },
-
   // --------------------------------------------------
   // Middleware — allow default export
   // --------------------------------------------------
@@ -352,7 +342,6 @@ const eslintConfig = defineConfig([
       "import/no-default-export": "off",
     },
   },
-
   // --------------------------------------------------
   // JSON files — enforce sorted keys in message files
   // --------------------------------------------------
@@ -370,6 +359,27 @@ const eslintConfig = defineConfig([
           pathPattern: ".*",
         },
       ],
+    },
+  },
+  ...storybook.configs["flat/recommended"],
+  // --------------------------------------------------
+  // Story files — allow Storybook CSF default export
+  // --------------------------------------------------
+  {
+    files: ["**/*.stories.{ts,tsx,js,jsx,mjs}"],
+    rules: {
+      "import/no-default-export": "off",
+    },
+  },
+  // --------------------------------------------------
+  // Storybook config — allow relative parent imports
+  // --------------------------------------------------
+  {
+    files: [".storybook/**"],
+    rules: {
+      "import/no-default-export": "off",
+      "no-restricted-imports": "off",
+      "no-restricted-syntax": "off",
     },
   },
 ]);
