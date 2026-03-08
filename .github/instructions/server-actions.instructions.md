@@ -63,6 +63,17 @@ src/modules/<module>/actions/<action-name>/
 - Leaf `index.ts` for the public API
 - No parent barrel files for `actions/`
 
+## Leaf index.ts exports
+
+When a `types.ts` file exists, `index.ts` must re-export its types.
+Value exports come first, type exports come last.
+
+```ts
+export { updateProfileAction } from "./update-profile-action";
+
+export type { UpdateProfileActionResult } from "./types";
+```
+
 ## Naming
 
 - Folders: kebab-case, suffixed with `-action` (e.g. `update-profile-action`)
@@ -90,3 +101,5 @@ src/modules/<module>/actions/<action-name>/
 - [ ] Export is camelCase `*Action` named export
 - [ ] Business logic lives in `lib/`, not inline
 - [ ] Scope is correct: module-first, shared only when cross-module
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`

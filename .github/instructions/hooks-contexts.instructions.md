@@ -25,8 +25,8 @@ The `hooks/` folder holds consumer hooks and custom hooks.
 - Package reusable client-side state or effect logic behind a `use*` API
 - Consumed primarily by containers
 - Add `"use client"` at the top of hook implementation files
-- Prefer extracting logic into hooks for clarity and testability,
-  even if only used once
+- Always extract logic into hooks for clarity and testability,
+  even if only used once — client containers must not own logic directly
 - One hook per leaf folder with `index.ts` and optional `types.ts`
 - Keep tests adjacent to the hook they cover
 
@@ -78,7 +78,7 @@ const { data, error, isLoading } = useSWR<User>(
 - Always import `swrFetcher` from `@/shared/lib/fetcher`
 - Prefer server-side data loading when possible — SWR is for
   cases that genuinely need client-side reactivity
-- SWR hooks live in `hooks/` or directly in client `containers/`
+- SWR hooks live in `hooks/`
 
 ## Utility hooks
 
@@ -151,3 +151,5 @@ src/modules/orders/contexts/order-filters/
 - [ ] Tests adjacent to the hook they cover
 - [ ] No parent barrel files
 - [ ] Types colocated when owned by the hook or context
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`

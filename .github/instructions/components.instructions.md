@@ -136,6 +136,38 @@ The flow is: `screen` → `container` → `component`
 Components should **not** absorb orchestration just because no container
 exists yet.
 
+### Import boundaries
+
+Components may import:
+
+- other components (same module or `shared/components/`)
+- shared utilities (`utils/`, `lib/`, `constants/`, `config/`)
+- external libraries
+
+Components must **not** import from:
+
+- `containers/` — containers consume components, never the reverse
+- `screens/` — screens are above components in the layer hierarchy
+- `actions/` — actions are called from containers, not components
+- `hooks/` — hooks are called from containers, not components
+- `contexts/` — context consumption belongs in hooks or containers
+- `providers/` — providers wrap children at boundary layers
+
+This enforces the unidirectional flow: `page → screen → container → component`.
+If a component needs data or behavior from a container, it must receive
+it through props.
+
+## Leaf index.ts exports
+
+When a `types.ts` file exists in the component folder, `index.ts` must
+re-export its types. Value exports come first, type exports come last.
+
+```ts
+export { LandingHero } from "./landing-hero";
+
+export type { LandingHeroProps } from "./types";
+```
+
 ## Checklist
 
 - [ ] Primarily a presenter or stateless UI concern
@@ -145,4 +177,7 @@ exists yet.
 - [ ] Props API is clear and presenter-oriented
 - [ ] Server component by default, `"use client"` only when needed
 - [ ] Extracted logic lives in hooks or containers, not inline
+- [ ] No imports from containers, screens, actions, hooks, or contexts
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
 - [ ] No parent barrel files

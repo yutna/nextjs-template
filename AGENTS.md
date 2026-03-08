@@ -317,6 +317,63 @@ export default function SectionHero() {
 Exceptions: only when the framework requires a default
 export (e.g., `page.tsx`, `layout.tsx`).
 
+### Leaf folder index.ts
+
+Every leaf folder with a public API must have an
+`index.ts` that re-exports public symbols.
+
+Rules:
+
+- value exports come first, type exports come last
+  (mirrors the import sorting rule where `import type`
+  is the last group)
+- when a sibling `types.ts` exists, `index.ts` must
+  `export type` from it — never omit type re-exports
+- use `export type` for type-only re-exports
+- keep index files as pure re-exports with no logic
+
+Canonical pattern:
+
+```ts
+export { LandingHero } from "./landing-hero";
+
+export type { LandingHeroProps } from "./types";
+```
+
+Multiple exports:
+
+```ts
+export { ErrorBoundary } from "./error-boundary";
+
+export type {
+  ErrorBoundaryFallbackProps,
+  ErrorBoundaryProps,
+} from "./types";
+```
+
+### Layer boundaries
+
+The architecture enforces a strict unidirectional import
+flow. Each layer may only import from layers below it,
+never above.
+
+```text
+page.tsx  →  screens  →  containers  →  components
+                              ↓
+                           hooks
+```
+
+Forbidden directions:
+
+- components must **not** import from containers, screens,
+  or hooks
+- containers must **not** import from screens
+- screens must **not** import from page.tsx boundaries
+
+Components may import other components (same module or
+shared). Containers may import components, hooks, actions,
+lib, and schemas.
+
 ### Server-first mindset
 
 This is the default implementation mindset for the whole
@@ -550,6 +607,9 @@ Before writing or changing code, check:
 - strict TypeScript without `any`?
 - naming and casing consistent?
 - named export (unless framework requires default)?
+- `index.ts` re-exports types from `types.ts`?
+- value exports before type exports in `index.ts`?
+- layer boundaries respected (no upward imports)?
 - server-side by default?
 - comments only where they help?
 - errors handled explicitly?
@@ -567,6 +627,12 @@ Before writing or changing code, check:
 - `kebab-case` files/folders
 - component names: UI-type first, domain last
 - named exports by default
+- `index.ts` always re-exports types from `types.ts`
+- value exports first, type exports last
+- layer flow: page → screen → container → component
+- components never import containers or screens
+- client containers delegate all logic to hooks
+- stories only for components, not containers or screens
 - server components by default
 - comments only when needed
 - no silent error handling
@@ -608,8 +674,10 @@ Supporting layers:
   returns one screen. Handles params and locale setup.
 - **`screens/`** — module-level page UI. 1:1 with page.
   Composes containers only. Server-first.
-- **`containers/`** — required bridge layer. Binds logic
-  to presenters. Server or client. Self-contained.
+- **`containers/`** — required bridge layer. Binds hooks
+  and actions to presenters. Client containers must
+  delegate all logic to custom hooks. Server or client.
+  Self-contained.
 - **`components/`** — presenter UI. Stateless or
   logic-light. Receives prepared props.
 - **`actions/`** — server actions. `"use server"`,
@@ -791,21 +859,28 @@ app/[locale]/page.tsx
 5. define actions for mutations
 6. define schemas for validation
 7. extract reusable service logic into `lib/`
-8. extract client logic into hooks if interaction requires
-   it
+8. extract client logic into hooks — client containers
+   must not own logic directly
 
 ### Common mistakes to avoid
 
 - `page.tsx` assembling containers directly
 - screens rendering presenter components directly as the
   main pattern
-- containers owning business logic inline
+- containers owning business logic inline — extract to
+  hooks (client) or lib (server)
+- containers using hooks, state, or effects directly
+  instead of delegating to a custom hook
+- components importing containers or screens (violates
+  unidirectional flow)
 - components becoming mini controllers
 - actions embedding reusable service logic that belongs
   in `lib/`
 - hooks becoming the home of server-side behavior
 - route-boundary App Router responsibilities leaking into
   screens or containers
+- `index.ts` missing `export type` when a `types.ts`
+  sibling exists
 
 ### Quick placement reference
 
@@ -892,7 +967,9 @@ These load when editing matching files.
 - **`storybook-stories`** —
   applies to `**/*.stories.ts` and `**/*.stories.tsx`.
   Story file patterns, meta structure, server component
-  stories, locale and color mode handling.
+  stories, locale and color mode handling. Stories are
+  only for components (`shared/components/` and
+  `modules/<module>/components/`).
 
 ### On-demand skills
 
@@ -920,7 +997,8 @@ These provide deep knowledge when the task needs it.
 - **`project-storybook`** —
   writing component stories, preview setup, mocking
   server components and next-intl, configuration files,
-  locale and color mode toolbar integration.
+  locale and color mode toolbar integration. Stories
+  are only for components — not screens or containers.
 - **`effect`** —
   Effect TypeScript library for typed error handling.
   Mandatory in `shared/api/`. Free to use in `shared/lib/`,
@@ -1021,14 +1099,12 @@ src/modules/static-pages/
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
 │       ├── container-welcome-page.test.tsx
-│       ├── container-welcome-page.stories.tsx
 │       ├── index.ts
 │       └── types.ts
 └── screens/
     └── screen-welcome/
         ├── screen-welcome.tsx
         ├── screen-welcome.test.tsx
-        ├── screen-welcome.stories.tsx
         ├── index.ts
         └── types.ts
 ```

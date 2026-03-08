@@ -48,6 +48,17 @@ Rules:
 - Tests adjacent to the implementation
 - No parent barrel files for `utils/`
 
+## Leaf index.ts exports
+
+When a `types.ts` file exists, `index.ts` must re-export its types.
+Value exports come first, type exports come last.
+
+```ts
+export { formatCurrency } from "./format-currency";
+
+export type { FormatCurrencyOptions } from "./types";
+```
+
 ## Naming
 
 - Folders: kebab-case, named after the concern (`format-currency`,
@@ -74,4 +85,6 @@ Rules:
 - [ ] One concern per leaf folder
 - [ ] Named exports only
 - [ ] Tests adjacent to the implementation
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
 - [ ] No parent barrel files

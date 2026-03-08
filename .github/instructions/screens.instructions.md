@@ -61,6 +61,7 @@ Rules:
 - colocate `types.ts` when the screen owns contracts
 - tests adjacent to the screen
 - no parent barrel files for `screens/`
+- do NOT create story files for screens (stories are only for components)
 
 ## Naming
 
@@ -113,3 +114,6 @@ export async function ScreenProfile({ locale }: Readonly<ScreenProfileProps>) {
 - [ ] Exported symbol uses `Screen` prefix (`ScreenWelcome`)
 - [ ] Props are small and route-shaped
 - [ ] Route-boundary concerns stay in `page.tsx`
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
+- [ ] No story files (stories are only for components)
