@@ -492,7 +492,8 @@ const checkSectionOrder = Effect.sync((): CheckResult => {
 // Check: css-variables (hardcoded hex colors in CSS modules)
 // -------------------------------------------------------------------
 
-const HEX_COLOR_PATTERN = /#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})\b/gi;
+const HEX_COLOR_PATTERN =
+  /#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})\b/gi;
 
 const CSS_VARIABLE_SKIP_PROPERTIES = new Set([
   "background-image",
