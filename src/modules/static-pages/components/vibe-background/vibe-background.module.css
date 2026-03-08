@@ -1,0 +1,61 @@
+.container {
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.container-hidden {
+  visibility: hidden;
+  opacity: 0;
+
+  /* visibility hidden after fade so overlay never blocks hero interactions */
+  transition:
+    opacity 0.6s ease,
+    visibility 0s linear 0.6s;
+}
+
+.overlay {
+  inset: 0;
+  position: absolute;
+  z-index: 2;
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 50% 45%,
+      rgb(0 0 0 / 55%) 0%,
+      rgb(0 5 20 / 22%) 60%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 35%) 0%,
+      transparent 22%,
+      transparent 78%,
+      rgb(0 0 0 / 38%) 100%
+    );
+}
+
+.iframe-wrapper {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+
+  /* Add 5% buffer so the video always overflows the container edges.
+     This prevents any black edge leakage at exact 16:9 viewports. */
+  height: max(105%, 59.0625vw);
+  min-height: 59.0625vw;
+  min-width: 105%;
+  width: max(105%, 186.67vh);
+  transform: translate(-50%, -50%);
+}
+
+.iframe {
+  border: none;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}

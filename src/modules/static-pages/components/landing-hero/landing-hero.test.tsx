@@ -8,6 +8,9 @@ vi.mock("server-only", () => ({}));
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => key),
 }));
+vi.mock("@/modules/static-pages/components/vibe-background", () => ({
+  VibeBackground: () => null,
+}));
 
 describe("LandingHero", () => {
   it("renders the hero section", async () => {

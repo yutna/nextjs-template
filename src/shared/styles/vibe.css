@@ -1,0 +1,15 @@
+/*
+ * Hero text color overrides when the vibe background is active.
+ *
+ * VibeBackground sets data-vibe-active="1" on <html> when the YouTube
+ * player is playing on desktop. Overriding Chakra CSS custom properties
+ * here propagates to all descendant elements styled with those tokens.
+ */
+:root[data-vibe-active="1"] [data-vibe-hero] {
+  --chakra-colors-gray-300: rgb(255 255 255 / 85%);
+  --chakra-colors-gray-400: rgb(255 255 255 / 70%);
+  --chakra-colors-gray-500: rgb(255 255 255 / 60%);
+  --chakra-colors-gray-600: rgb(255 255 255 / 78%);
+  --chakra-colors-gray-700: rgb(255 255 255 / 20%);
+  --chakra-colors-gray-900: white;
+}

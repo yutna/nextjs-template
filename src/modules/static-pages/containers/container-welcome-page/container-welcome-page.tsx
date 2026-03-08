@@ -11,6 +11,7 @@ import { LandingHero } from "@/modules/static-pages/components/landing-hero";
 import { LandingStrengths } from "@/modules/static-pages/components/landing-strengths";
 import { LandingTechStack } from "@/modules/static-pages/components/landing-tech-stack";
 import { PageChrome } from "@/modules/static-pages/components/page-chrome";
+import { VibeProvider } from "@/modules/static-pages/providers/vibe-provider";
 
 import type { ContainerWelcomePageProps } from "./types";
 
@@ -18,16 +19,18 @@ export async function ContainerWelcomePage({
   locale,
 }: Readonly<ContainerWelcomePageProps>) {
   return (
-    <Box as="main" position="relative">
-      <PageChrome locale={locale} />
-      <LandingHero locale={locale} />
-      <LandingStrengths locale={locale} />
-      <LandingAiWorkflow locale={locale} />
-      <LandingCopilot locale={locale} />
-      <LandingCliUsage locale={locale} />
-      <LandingTechStack locale={locale} />
-      <LandingCta locale={locale} />
-      <LandingFooter locale={locale} />
-    </Box>
+    <VibeProvider>
+      <Box as="main" position="relative">
+        <PageChrome locale={locale} />
+        <LandingHero locale={locale} />
+        <LandingStrengths locale={locale} />
+        <LandingAiWorkflow locale={locale} />
+        <LandingCopilot locale={locale} />
+        <LandingCliUsage locale={locale} />
+        <LandingTechStack locale={locale} />
+        <LandingCta locale={locale} />
+        <LandingFooter locale={locale} />
+      </Box>
+    </VibeProvider>
   );
 }

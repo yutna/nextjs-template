@@ -9,6 +9,10 @@ vi.mock("@/shared/lib/navigation", () => ({
   useRouter: vi.fn(() => ({ replace: vi.fn() })),
 }));
 
+vi.mock("@/modules/static-pages/components/vibe-controls", () => ({
+  VibeControls: () => null,
+}));
+
 vi.mock("server-only", () => ({}));
 
 describe("PageChrome", () => {

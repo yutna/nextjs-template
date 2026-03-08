@@ -2,6 +2,7 @@
 
 import { Box, HStack, Separator } from "@chakra-ui/react";
 
+import { VibeControls } from "@/modules/static-pages/components/vibe-controls";
 import { LOCALES } from "@/shared/constants/locale";
 import { usePathname, useRouter } from "@/shared/lib/navigation";
 import { ColorModeButton } from "@/shared/vendor/chakra-ui/color-mode";
@@ -29,6 +30,7 @@ export function PageChrome({ locale }: Readonly<PageChromeProps>) {
         px={1}
         py={1}
       >
+        <VibeControls />
         {LOCALES.map((l) => {
           const isActive = l === locale;
           return (

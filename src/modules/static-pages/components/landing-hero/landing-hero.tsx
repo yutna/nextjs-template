@@ -7,6 +7,7 @@ import { LuGithub } from "react-icons/lu";
 import { CopyCommand } from "@/modules/static-pages/components/copy-command";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
+import { VibeBackground } from "@/modules/static-pages/components/vibe-background";
 
 import type { LandingHeroProps } from "./types";
 
@@ -26,12 +27,16 @@ export async function LandingHero({ locale }: Readonly<LandingHeroProps>) {
       minH="100vh"
       position="relative"
     >
+      <VibeBackground />
       <VStack
+        data-vibe-hero=""
         gap={{ base: 6, md: 8 }}
         maxW="3xl"
+        position="relative"
         px={{ base: 6, md: 8 }}
         textAlign="center"
         w="full"
+        zIndex={1}
       >
         {/* Mono label badge */}
         <MotionReveal delay={0}>
@@ -109,7 +114,9 @@ export async function LandingHero({ locale }: Readonly<LandingHeroProps>) {
         </MotionReveal>
       </VStack>
 
-      <ScrollIndicator />
+      <Box position="relative" zIndex={1}>
+        <ScrollIndicator />
+      </Box>
     </Box>
   );
 }
