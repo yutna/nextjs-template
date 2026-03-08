@@ -10,8 +10,8 @@ import type { VibeControlsProps } from "./types";
 export function VibeControls({
   isDesktop,
   isVibeOn,
-  onVibeToggle,
-  onVolumeChange,
+  onChangeVolume,
+  onToggleVibe,
   volume,
 }: Readonly<VibeControlsProps>) {
   if (!isDesktop) return null;
@@ -37,7 +37,7 @@ export function VibeControls({
               className={styles["volume-slider"]}
               max={VOLUME_MAX}
               min={VOLUME_MIN}
-              onChange={(e) => onVolumeChange(Number(e.target.value))}
+              onChange={(e) => onChangeVolume(Number(e.target.value))}
               step={VOLUME_STEP}
               type="range"
               value={volume}
@@ -56,7 +56,7 @@ export function VibeControls({
       <button
         aria-label={isVibeOn ? "Turn off vibe" : "Turn on vibe"}
         className={`${styles["vibe-button"]}${isVibeOn ? ` ${styles["vibe-button-on"]}` : ""}`}
-        onClick={onVibeToggle}
+        onClick={onToggleVibe}
       >
         Vibe{" "}
         <span

@@ -16,9 +16,9 @@ vi.mock("@/modules/static-pages/hooks/use-copy-command", () => ({
 
 vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
   useVibe: () => ({
+    handleChangeVolume: vi.fn(),
+    handleToggleVibe: vi.fn(),
     isVibeOn: false,
-    setVolume: vi.fn(),
-    toggleVibe: vi.fn(),
     volume: 50,
   }),
 }));

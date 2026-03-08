@@ -5,5 +5,5 @@ export interface UsePageChromeOptions {
 }
 
 export interface UsePageChromeReturn {
-  onLocaleSwitch: (next: Locale) => void;
+  handleSwitchLocale: (next: Locale) => void;
 }

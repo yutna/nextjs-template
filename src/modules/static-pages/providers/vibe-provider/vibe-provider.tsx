@@ -12,7 +12,7 @@ import type { VibeProviderProps, VibeState } from "./types";
 export function VibeProvider({ children }: Readonly<VibeProviderProps>) {
   const [state, updateState] = useImmer<VibeState>(INITIAL_VIBE_STATE);
 
-  function toggleVibe() {
+  function handleToggleVibe() {
     const newVibeOn = !state.isVibeOn;
     updateState((draft) => {
       draft.isVibeOn = newVibeOn;
@@ -30,7 +30,7 @@ export function VibeProvider({ children }: Readonly<VibeProviderProps>) {
     }
   }
 
-  function setVolume(newVolume: number) {
+  function handleChangeVolume(newVolume: number) {
     const clamped = Math.max(0, Math.min(100, newVolume));
     updateState((draft) => {
       draft.volume = clamped;
@@ -45,9 +45,9 @@ export function VibeProvider({ children }: Readonly<VibeProviderProps>) {
   return (
     <VibeContext
       value={{
+        handleChangeVolume,
+        handleToggleVibe,
         isVibeOn: state.isVibeOn,
-        setVolume,
-        toggleVibe,
         volume: state.volume,
       }}
     >

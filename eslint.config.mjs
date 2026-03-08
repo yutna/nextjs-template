@@ -124,6 +124,12 @@ const eslintConfig = defineConfig([
       // Project-specific rules (eslint/local-plugin.mjs)
       // ------------------------------------------------
 
+      // Enforce on* prefix for event callback props in *Props interfaces (Event naming)
+      "project/enforce-event-prop-naming": "error",
+
+      // Enforce handle* prefix for handler identifiers in on* JSX props (Event naming)
+      "project/enforce-handler-naming": "error",
+
       // Forbid imports between feature modules (Architecture)
       "project/no-cross-module-import": "error",
 
@@ -295,6 +301,8 @@ const eslintConfig = defineConfig([
       "no-restricted-imports": "off",
       "perfectionist/sort-jsx-props": "off",
       "perfectionist/sort-objects": "off",
+      "project/enforce-event-prop-naming": "off",
+      "project/enforce-handler-naming": "off",
       "project/no-hook-spread": "off",
       "project/no-inline-style": "off",
     },

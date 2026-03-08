@@ -11,10 +11,10 @@ export function usePageChrome({
   const pathname = usePathname();
   const router = useRouter();
 
-  function onLocaleSwitch(next: Locale) {
+  function handleSwitchLocale(next: Locale) {
     if (next === locale) return;
     router.replace(pathname, { locale: next });
   }
 
-  return { onLocaleSwitch };
+  return { handleSwitchLocale };
 }

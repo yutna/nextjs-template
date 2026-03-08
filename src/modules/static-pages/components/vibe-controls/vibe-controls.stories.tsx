@@ -6,8 +6,8 @@ const meta = {
   args: {
     isDesktop: true,
     isVibeOn: true,
-    onVibeToggle: () => {},
-    onVolumeChange: () => {},
+    onChangeVolume: () => {},
+    onToggleVibe: () => {},
     volume: 15,
   },
   component: VibeControls,

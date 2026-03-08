@@ -10,7 +10,7 @@ import type { PageChromeProps } from "./types";
 export function PageChrome({
   children,
   locale,
-  onLocaleSwitch,
+  onSwitchLocale,
 }: Readonly<PageChromeProps>) {
   return (
     <Box position="fixed" right={4} top={4} zIndex="overlay">
@@ -46,7 +46,7 @@ export function PageChrome({
               fontWeight="semibold"
               key={l}
               letterSpacing="wide"
-              onClick={() => onLocaleSwitch(l)}
+              onClick={() => onSwitchLocale(l)}
               px={3}
               py={1}
               transition="all 0.15s ease"

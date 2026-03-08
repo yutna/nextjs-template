@@ -31,11 +31,11 @@ describe("CopyCommand", () => {
   });
 
   it("calls onCopy when the button is clicked", () => {
-    const onCopy = vi.fn();
+    const handleCopy = vi.fn();
     renderWithProviders(
-      <CopyCommand isCopied={false} isVibeOn={false} onCopy={onCopy} />,
+      <CopyCommand isCopied={false} isVibeOn={false} onCopy={handleCopy} />,
     );
     fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
-    expect(onCopy).toHaveBeenCalledOnce();
+    expect(handleCopy).toHaveBeenCalledOnce();
   });
 });

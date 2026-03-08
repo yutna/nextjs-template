@@ -3,6 +3,6 @@ export interface VibeControlsProps {
   isVibeOn: boolean;
   volume: number;
 
-  onVibeToggle: () => void;
-  onVolumeChange: (volume: number) => void;
+  onChangeVolume: (volume: number) => void;
+  onToggleVibe: () => void;
 }

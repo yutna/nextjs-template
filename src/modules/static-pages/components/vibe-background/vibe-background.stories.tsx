@@ -7,7 +7,7 @@ const meta = {
     iframeRef: { current: null },
     isDesktop: true,
     isVibeOn: true,
-    onIframeLoad: () => {},
+    onLoadIframe: () => {},
   },
   component: VibeBackground,
   parameters: {

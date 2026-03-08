@@ -4,5 +4,7 @@
  */
 export interface NextErrorProps {
   error: Error & { digest?: string };
+  // Next.js App Router error boundary API — name fixed by framework contract.
+  // eslint-disable-next-line project/enforce-event-prop-naming
   reset: () => void;
 }

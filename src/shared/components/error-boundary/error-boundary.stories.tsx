@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const NoError: Story = {
   render: () => (
     <ErrorBoundary
-      fallback={({ error, reset }) => (
+      renderFallback={({ error, reset }) => (
         <Box
           bg="red.50"
           borderColor="red.200"

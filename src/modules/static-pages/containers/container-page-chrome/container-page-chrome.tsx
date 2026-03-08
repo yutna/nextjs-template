@@ -9,10 +9,10 @@ import type { ContainerPageChromeProps } from "./types";
 export function ContainerPageChrome({
   locale,
 }: Readonly<ContainerPageChromeProps>) {
-  const { onLocaleSwitch } = usePageChrome({ locale });
+  const { handleSwitchLocale } = usePageChrome({ locale });
 
   return (
-    <PageChrome locale={locale} onLocaleSwitch={onLocaleSwitch}>
+    <PageChrome locale={locale} onSwitchLocale={handleSwitchLocale}>
       <ContainerVibeControls />
     </PageChrome>
   );

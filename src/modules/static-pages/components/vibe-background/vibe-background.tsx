@@ -9,7 +9,7 @@ export function VibeBackground({
   iframeRef,
   isDesktop,
   isVibeOn,
-  onIframeLoad,
+  onLoadIframe,
 }: Readonly<VibeBackgroundProps>) {
   if (!isDesktop) return null;
 
@@ -23,7 +23,7 @@ export function VibeBackground({
         <iframe
           allow="autoplay; fullscreen"
           className={styles.iframe}
-          onLoad={onIframeLoad}
+          onLoad={onLoadIframe}
           ref={iframeRef}
           src={VIBE_EMBED_SRC}
           title="vibe background"

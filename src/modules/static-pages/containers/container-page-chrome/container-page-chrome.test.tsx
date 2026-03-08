@@ -6,7 +6,7 @@ import { ContainerPageChrome } from "./container-page-chrome";
 
 vi.mock("@/modules/static-pages/hooks/use-page-chrome", () => ({
   usePageChrome: () => ({
-    onLocaleSwitch: vi.fn(),
+    handleSwitchLocale: vi.fn(),
   }),
 }));
 

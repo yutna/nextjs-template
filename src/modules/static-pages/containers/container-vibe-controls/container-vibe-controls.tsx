@@ -6,7 +6,7 @@ import { VibeControls } from "@/modules/static-pages/components/vibe-controls";
 import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
 
 export function ContainerVibeControls() {
-  const { isVibeOn, setVolume, toggleVibe, volume } = useVibe();
+  const { handleChangeVolume, handleToggleVibe, isVibeOn, volume } = useVibe();
   const isDesktop = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });
@@ -15,8 +15,8 @@ export function ContainerVibeControls() {
     <VibeControls
       isDesktop={isDesktop}
       isVibeOn={isVibeOn}
-      onVibeToggle={toggleVibe}
-      onVolumeChange={setVolume}
+      onChangeVolume={handleChangeVolume}
+      onToggleVibe={handleToggleVibe}
       volume={volume}
     />
   );

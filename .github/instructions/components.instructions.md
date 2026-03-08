@@ -92,6 +92,29 @@ interface EmptyStateProps {
 
 Avoid huge prop bags that mirror internal implementation details.
 
+### Event callback props
+
+Event callback props follow the three-part pattern: `on` + **event verb** +
+**target** (optional). The event verb comes immediately after `on`.
+Enforced by ESLint (`project/enforce-event-prop-naming`).
+
+```ts
+// Good — verb right after on, target last
+interface FormCheckoutProps {
+  onSubmit: (data: FormData) => void;
+  onClickBack?: () => void;
+  onChangeDropdownDepartment?: (value: string) => void;
+}
+
+// Bad — missing on* prefix or wrong word order
+interface FormCheckoutProps {
+  submitForm: (data: FormData) => void;   // should be onSubmitForm
+  onBackClick: () => void;                // should be onClickBack (verb first)
+}
+```
+
+Non-event function props are exempt: `render*`, `get*`, `format*`.
+
 ## No hook spreading
 
 Do not spread hook return values directly into JSX props.
@@ -175,6 +198,7 @@ export type { LandingHeroProps } from "./types";
 - [ ] One public component per folder
 - [ ] File names are specific and kebab-case
 - [ ] Props API is clear and presenter-oriented
+- [ ] Event callback props use `on` + verb + target pattern
 - [ ] Server component by default, `"use client"` only when needed
 - [ ] Extracted logic lives in hooks or containers, not inline
 - [ ] No imports from containers, screens, actions, hooks, or contexts

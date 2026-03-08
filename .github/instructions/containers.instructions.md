@@ -50,9 +50,9 @@ import { CheckoutForm } from "@/modules/checkout/components/checkout-form";
 import { useCheckoutForm } from "@/modules/checkout/hooks/use-checkout-form";
 
 export function ContainerFormCheckout() {
-  const { errors, onSubmit, values } = useCheckoutForm();
+  const { errors, handleSubmit, values } = useCheckoutForm();
 
-  return <CheckoutForm errors={errors} onSubmit={onSubmit} values={values} />;
+  return <CheckoutForm errors={errors} onSubmit={handleSubmit} values={values} />;
 }
 ```
 
@@ -107,6 +107,29 @@ Bad server container behavior:
 - containers should import their own concern-owned actions and data
 - pass only minimal route-boundary inputs (params-derived identifiers)
 - avoid forwarding long prop chains from screen to container
+
+## Event handler binding
+
+Both `on*` props and `handle*` implementations follow the three-part
+pattern: **prefix** + **event verb** + **target** (optional). The event
+verb comes immediately after the prefix.
+
+Enforced by ESLint (`project/enforce-handler-naming`).
+
+```tsx
+// Good — handle*/on* with verb first, target last
+const { handleSubmitForm, handleClickBack } = useCheckoutForm();
+<CheckoutForm onSubmitForm={handleSubmitForm} onClickBack={handleClickBack} />;
+
+// Bad — non-handle* identifiers on on* props
+const { submitForm, goBack } = useCheckoutForm();
+<CheckoutForm onSubmitForm={submitForm} onClickBack={goBack} />;
+
+// Bad — wrong word order (target before verb)
+const { handleFormSubmit } = useCheckoutForm();
+<CheckoutForm onFormSubmit={handleFormSubmit} />;
+// should be handleSubmitForm / onSubmitForm
+```
 
 ## Folder structure
 
@@ -173,9 +196,9 @@ import { CheckoutForm } from "@/modules/checkout/components/checkout-form";
 import { useCheckoutForm } from "@/modules/checkout/hooks/use-checkout-form";
 
 export function ContainerFormCheckout() {
-  const { errors, onSubmit, values } = useCheckoutForm();
+  const { errors, handleSubmit, values } = useCheckoutForm();
 
-  return <CheckoutForm errors={errors} onSubmit={onSubmit} values={values} />;
+  return <CheckoutForm errors={errors} onSubmit={handleSubmit} values={values} />;
 }
 ```
 
@@ -196,6 +219,7 @@ export type { ContainerFormCheckoutProps } from "./types";
 - [ ] Module-owned (not in `src/shared/`)
 - [ ] Client containers delegate all logic to custom hooks — zero
       hooks, state, effects, or inline handlers directly in the file
+- [ ] Event handlers use `handle` + verb + target, bound to `on` + verb + target props
 - [ ] Server containers call lib functions, not inline logic
 - [ ] Server-first unless client coordination is truly needed
 - [ ] Minimal prop drilling — imports its own concerns

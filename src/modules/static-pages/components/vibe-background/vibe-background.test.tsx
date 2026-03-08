@@ -12,7 +12,7 @@ describe("VibeBackground", () => {
         iframeRef={{ current: null }}
         isDesktop={false}
         isVibeOn={false}
-        onIframeLoad={vi.fn()}
+        onLoadIframe={vi.fn()}
       />,
     );
 
@@ -25,7 +25,7 @@ describe("VibeBackground", () => {
         iframeRef={{ current: null }}
         isDesktop={true}
         isVibeOn={true}
-        onIframeLoad={vi.fn()}
+        onLoadIframe={vi.fn()}
       />,
     );
 

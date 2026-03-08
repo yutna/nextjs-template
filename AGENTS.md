@@ -227,6 +227,76 @@ domain-last** pattern:
   `form-checkout`, `card-product-detail`,
   `container-form-checkout`, `screen-checkout`
 
+### Event naming
+
+Event callback props and handler functions follow a
+strict three-part naming pattern enforced by ESLint.
+
+The pattern is: **prefix** + **event verb** +
+**target** (optional).
+
+The event verb (Click, Change, Submit, Toggle, Load,
+Focus, Blur, etc.) always comes immediately after the
+prefix. The optional target describes what is being
+acted on and comes last.
+
+**Event callback props** (`on` + event verb + target):
+
+Props that accept event callbacks must start with `on`
+followed by the event verb, then an optional target.
+
+- `onClick`, `onChange`, `onSubmit`
+- `onClickBack`, `onChangeDropdownDepartment`
+- `onSubmitFormContact`, `onToggleVibe`
+
+Non-event function props (`render*`, `get*`, `format*`)
+are exempt from the `on*` rule.
+
+**Handler implementations** (`handle` + event verb +
+target):
+
+Functions that implement event handlers must start with
+`handle` followed by the event verb, then an optional
+target.
+
+- `handleClick`, `handleChange`, `handleSubmit`
+- `handleClickBack`, `handleChangeDropdownDepartment`
+- `handleSubmitFormContact`, `handleToggleVibe`
+
+**Hook return values for event binding:**
+
+Custom hooks that return functions intended for containers
+to bind to component `on*` event props must also use the
+`handle*` prefix with the same verb-first pattern.
+
+```ts
+// Hook
+function useCheckoutForm() {
+  function handleSubmitForm() { /* ... */ }
+  return { handleSubmitForm };
+}
+
+// Container
+const { handleSubmitForm } = useCheckoutForm();
+<CheckoutForm onSubmitForm={handleSubmitForm} />;
+
+// Component
+interface CheckoutFormProps {
+  onSubmitForm: () => void;
+}
+```
+
+Common event verbs: Click, Change, Submit, Toggle, Load,
+Focus, Blur, Scroll, Select, Close, Open, Press, Drag,
+Drop, Copy, Reset.
+
+This convention is enforced by:
+
+- `project/enforce-event-prop-naming` — event callbacks
+  in `*Props` interfaces must use `on*`
+- `project/enforce-handler-naming` — identifiers passed
+  to `on*` JSX attributes must use `handle*`
+
 ### Imports and modules
 
 Use the repository path alias for internal imports:
@@ -606,6 +676,8 @@ Before writing or changing code, check:
 
 - strict TypeScript without `any`?
 - naming and casing consistent?
+- event naming: `on/handle` + event verb + target?
+- handler implementations use `handle*` prefix?
 - named export (unless framework requires default)?
 - `index.ts` re-exports types from `types.ts`?
 - value exports before type exports in `index.ts`?
@@ -626,6 +698,8 @@ Before writing or changing code, check:
 - `SCREAMING_SNAKE_CASE` constants
 - `kebab-case` files/folders
 - component names: UI-type first, domain last
+- event naming: `on/handle` + verb + target (`onClickBack`, `handleSubmitForm`)
+- hooks return `handle*` for event handler bindings
 - named exports by default
 - `index.ts` always re-exports types from `types.ts`
 - value exports first, type exports last

@@ -6,5 +6,5 @@ export interface PageChromeProps {
 
   children?: ReactNode;
 
-  onLocaleSwitch: (locale: Locale) => void;
+  onSwitchLocale: (locale: Locale) => void;
 }

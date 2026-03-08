@@ -5,5 +5,5 @@ export interface VibeBackgroundProps {
   isDesktop: boolean;
   isVibeOn: boolean;
 
-  onIframeLoad: () => void;
+  onLoadIframe: () => void;
 }

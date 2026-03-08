@@ -92,7 +92,7 @@ export function useVibeBackground(): UseVibeBackgroundReturn {
   // Tell YouTube to start sending API events. Without this listening handshake
   // YouTube does not deliver onReady / onStateChange postMessages, and player
   // commands (setVolume, unMute, seekTo, etc.) are silently ignored.
-  function handleIframeLoad() {
+  function handleLoadIframe() {
     iframeRef.current?.contentWindow?.postMessage(
       JSON.stringify({ event: "listening", id: 1 }),
       "https://www.youtube.com",
@@ -100,9 +100,9 @@ export function useVibeBackground(): UseVibeBackgroundReturn {
   }
 
   return {
+    handleLoadIframe,
     iframeRef,
     isDesktop,
     isVibeOn,
-    onIframeLoad: handleIframeLoad,
   };
 }

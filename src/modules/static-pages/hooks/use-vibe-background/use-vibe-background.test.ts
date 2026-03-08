@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
   useVibe: vi.fn(() => ({
+    handleChangeVolume: vi.fn(),
+    handleToggleVibe: vi.fn(),
     isVibeOn: true,
-    setVolume: vi.fn(),
-    toggleVibe: vi.fn(),
     volume: 15,
   })),
 }));

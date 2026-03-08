@@ -11,8 +11,8 @@ describe("VibeControls", () => {
       <VibeControls
         isDesktop={false}
         isVibeOn={false}
-        onVibeToggle={vi.fn()}
-        onVolumeChange={vi.fn()}
+        onChangeVolume={vi.fn()}
+        onToggleVibe={vi.fn()}
         volume={15}
       />,
     );
@@ -25,8 +25,8 @@ describe("VibeControls", () => {
       <VibeControls
         isDesktop={true}
         isVibeOn={true}
-        onVibeToggle={vi.fn()}
-        onVolumeChange={vi.fn()}
+        onChangeVolume={vi.fn()}
+        onToggleVibe={vi.fn()}
         volume={15}
       />,
     );
@@ -42,8 +42,8 @@ describe("VibeControls", () => {
       <VibeControls
         isDesktop={true}
         isVibeOn={false}
-        onVibeToggle={vi.fn()}
-        onVolumeChange={vi.fn()}
+        onChangeVolume={vi.fn()}
+        onToggleVibe={vi.fn()}
         volume={15}
       />,
     );

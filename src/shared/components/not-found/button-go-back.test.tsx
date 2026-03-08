@@ -17,11 +17,11 @@ describe("ButtonGoBack", () => {
   });
 
   it("calls onClick when clicked", () => {
-    const onClick = vi.fn();
-    renderWithProviders(<ButtonGoBack label="Go Back" onClick={onClick} />);
+    const handleClick = vi.fn();
+    renderWithProviders(<ButtonGoBack label="Go Back" onClick={handleClick} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Go Back" }));
 
-    expect(onClick).toHaveBeenCalledOnce();
+    expect(handleClick).toHaveBeenCalledOnce();
   });
 });

@@ -19,7 +19,7 @@ describe("usePageChrome", () => {
     const { result } = renderHook(() => usePageChrome({ locale: "en" }));
 
     act(() => {
-      result.current.onLocaleSwitch("th");
+      result.current.handleSwitchLocale("th");
     });
 
     expect(mockReplace).toHaveBeenCalledWith("/dashboard", { locale: "th" });
@@ -29,7 +29,7 @@ describe("usePageChrome", () => {
     const { result } = renderHook(() => usePageChrome({ locale: "en" }));
 
     act(() => {
-      result.current.onLocaleSwitch("en");
+      result.current.handleSwitchLocale("en");
     });
 
     expect(mockReplace).not.toHaveBeenCalled();

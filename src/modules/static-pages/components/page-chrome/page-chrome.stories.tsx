@@ -16,13 +16,13 @@ type Story = StoryObj<typeof meta>;
 export const English: Story = {
   args: {
     locale: "en",
-    onLocaleSwitch: () => undefined,
+    onSwitchLocale: () => undefined,
   },
 };
 
 export const Thai: Story = {
   args: {
     locale: "th",
-    onLocaleSwitch: () => undefined,
+    onSwitchLocale: () => undefined,
   },
 };

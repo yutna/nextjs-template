@@ -4,7 +4,7 @@ import { VibeBackground } from "@/modules/static-pages/components/vibe-backgroun
 import { useVibeBackground } from "@/modules/static-pages/hooks/use-vibe-background";
 
 export function ContainerVibeBackground() {
-  const { iframeRef, isDesktop, isVibeOn, onIframeLoad } =
+  const { handleLoadIframe, iframeRef, isDesktop, isVibeOn } =
     useVibeBackground();
 
   return (
@@ -12,7 +12,7 @@ export function ContainerVibeBackground() {
       iframeRef={iframeRef}
       isDesktop={isDesktop}
       isVibeOn={isVibeOn}
-      onIframeLoad={onIframeLoad}
+      onLoadIframe={handleLoadIframe}
     />
   );
 }

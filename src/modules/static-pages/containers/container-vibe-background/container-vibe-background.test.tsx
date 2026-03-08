@@ -6,10 +6,10 @@ import { ContainerVibeBackground } from "./container-vibe-background";
 
 vi.mock("@/modules/static-pages/hooks/use-vibe-background", () => ({
   useVibeBackground: vi.fn(() => ({
+    handleLoadIframe: vi.fn(),
     iframeRef: { current: null },
     isDesktop: false,
     isVibeOn: true,
-    onIframeLoad: vi.fn(),
   })),
 }));
 
