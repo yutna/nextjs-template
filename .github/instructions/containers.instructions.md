@@ -84,14 +84,14 @@ Rules:
 
 Files and folders use kebab-case with `container-` prefix:
 
-- `container-checkout-form`, `container-order-filters`
+- `container-form-checkout`, `container-form-filters-order`
 
-Exported symbols use PascalCase with `Container` prefix, followed by the
-UI type, then the domain (UI-first, domain-last):
+Exported symbols follow the project-wide **UI-type-first, domain-last**
+pattern with `Container` prefix, then the UI type, then the domain:
 
-- `container-checkout-form` → `ContainerFormCheckout`
-- `container-order-filters` → `ContainerFormFiltersOrder`
-- `container-profile-header` → `ContainerHeaderProfile`
+- `container-form-checkout` → `ContainerFormCheckout`
+- `container-form-filters-order` → `ContainerFormFiltersOrder`
+- `container-header-profile` → `ContainerHeaderProfile`
 
 ## Example
 

@@ -204,18 +204,20 @@ Naming:
 - constants: `SCREAMING_SNAKE_CASE`
 - files and folders: `kebab-case`
 
-Container naming uses a **UI-type-first, domain-last**
-pattern:
+React component naming uses a **UI-type-first,
+domain-last** pattern:
 
-- `Container` prefix + UI type chain (outermost → innermost)
-  \+ domain noun
-- Examples: `ContainerFormCheckout`,
-  `ContainerFormFiltersOrder`,
-  `ContainerHeaderProfile`
+- optional layer prefix (`Screen`, `Container`) +
+  UI type chain (outermost → innermost) + domain noun
+- Examples:
+  - `FormCheckout`, `FormFiltersOrder`,
+    `HeaderProfile`, `CardProductDetail`
+  - `ContainerFormCheckout`,
+    `ContainerHeaderProfile`
+  - `ScreenCheckout`, `ScreenProfile`
 - Folder names are the kebab-case equivalent:
-  `container-form-checkout`,
-  `container-form-filters-order`,
-  `container-header-profile`
+  `form-checkout`, `card-product-detail`,
+  `container-form-checkout`, `screen-checkout`
 
 ### Imports and modules
 
@@ -553,6 +555,7 @@ Before writing or changing code, check:
 - `PascalCase` components/classes
 - `SCREAMING_SNAKE_CASE` constants
 - `kebab-case` files/folders
+- component names: UI-type first, domain last
 - named exports by default
 - server components by default
 - comments only when needed

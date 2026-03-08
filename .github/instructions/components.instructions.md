@@ -59,14 +59,17 @@ Rules:
 
 ## Naming
 
+All React component names follow a **UI-type-first, domain-last** pattern.
+Place the UI structural role before the domain noun.
+
 Files and folders use specific kebab-case names:
 
-- `glass-card`, `section-hero`, `error-boundary`, `not-found`
+- `form-checkout`, `card-product-detail`, `header-profile`, `landing-hero`
 
 Exported symbols use PascalCase derived from the file name:
 
-- `GlassCard`, `SectionHero`, `ErrorBoundary`, `NotFound`
-- prop types use `Props` suffix: `SectionHeroProps`
+- `FormCheckout`, `CardProductDetail`, `HeaderProfile`, `LandingHero`
+- prop types use `Props` suffix: `FormCheckoutProps`
 
 Avoid vague names: `component`, `common`, `widget`, `thing`.
 

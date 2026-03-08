@@ -68,7 +68,8 @@ Files and folders use kebab-case with `screen-` prefix:
 
 - `screen-welcome`, `screen-profile`, `screen-checkout`
 
-Exported symbols use PascalCase with `Screen` prefix:
+Exported symbols follow the project-wide **UI-type-first, domain-last**
+pattern with `Screen` prefix:
 
 - `ScreenWelcome`, `ScreenProfile`, `ScreenCheckout`
 
