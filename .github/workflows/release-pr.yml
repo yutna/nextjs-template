@@ -59,39 +59,37 @@ jobs:
             --description "High priority" \
             --force
 
-      - name: Build PR body from closed milestone issues
-        id: notes
+      - name: Create PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          VERSION="${{ github.event.milestone.title }}"
+          MILESTONE_URL="${{ github.event.milestone.html_url }}"
+
           ISSUES=$(gh api \
             "repos/${{ github.repository }}/issues?milestone=${{ github.event.milestone.number }}&state=closed&per_page=100" \
             --jq '.[] | select(.pull_request == null) | "- \(.title) [#\(.number)](\(.html_url))"' \
             | head -50)
 
           {
-            echo "body<<EOF"
-            echo "## Release ${{ github.event.milestone.title }}"
+            echo "## Release $VERSION"
             echo ""
             echo "### Changes"
             echo ""
             echo "$ISSUES"
             echo ""
             echo "---"
-            echo "Milestone: [${{ github.event.milestone.title }}](${{ github.event.milestone.html_url }})"
+            echo "Milestone: [$VERSION]($MILESTONE_URL)"
             echo ""
-            echo "> Merge this PR to publish tag \`v${{ github.event.milestone.title }}\` and create the GitHub Release."
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+            echo "> Merge this PR to publish tag \`v$VERSION\` and create the GitHub Release."
+          } > /tmp/pr-body.md
 
-      - name: Create PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create \
-            --title "Release ${{ github.event.milestone.title }}" \
-            --body "${{ steps.notes.outputs.body }}" \
+          PR_URL=$(gh pr create \
+            --title "Release $VERSION" \
+            --body-file /tmp/pr-body.md \
             --base main \
-            --head "release/${{ github.event.milestone.title }}" \
+            --head "release/$VERSION" \
             --label "type: release" \
-            --label "priority: high"
+            --label "priority: high")
+
+          gh pr edit "$PR_URL" --milestone "$VERSION"

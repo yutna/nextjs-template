@@ -6,6 +6,9 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    labels:
+      - "type: chore"
+      - "priority: low"
     groups:
       github-actions:
         patterns:
@@ -16,6 +19,9 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    labels:
+      - "type: chore"
+      - "priority: low"
     groups:
       nextjs:
         patterns:

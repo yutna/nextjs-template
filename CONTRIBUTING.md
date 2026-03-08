@@ -18,7 +18,7 @@ Examples: `feat/user-auth`, `fix/login-redirect`, `chore/setup-eslint`
 ## Opening a pull request
 
 1. **Title** — Title Case, no prefix. e.g. `Setup ESLint`, `Implement Login Page`
-2. **Labels** — Always add two labels:
+2. **Labels** — Always assign at least two labels (one type, one priority):
    - **Type:** `type: feature`, `type: chore`, `type: bug`, `type: hotfix`
    - **Priority:** `priority: high`, `priority: medium`, `priority: low`
 3. **Milestone** — Always assign the PR (and its related issues)
