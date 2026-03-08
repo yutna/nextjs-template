@@ -1,30 +1,40 @@
 # Next.js Template
 
-Production-ready Next.js 16 starter with opinionated conventions for scalable, maintainable web applications.
+Built for front-end developers shipping polished UIs on top of an external
+API — **NOT** a full-stack template. No database. No auth server. Just a
+fast, opinionated [Next.js 16][nextjs] starter for clean front-ends that
+talk to a backend.
 
 ## Features
 
-- **Next.js 16** — App Router, React 19, server-first architecture
-- **TypeScript** — strict mode, no `any`
-- **Chakra UI v3** — component library with Ark UI headless primitives
-- **i18n** — next-intl with Thai and English locales
-- **Server Actions** — type-safe mutations via next-safe-action
-- **Error Handling** — structured error hierarchy with operational/non-operational distinction
-- **Testing** — Vitest + Testing Library with 80% coverage thresholds
-- **Linting** — ESLint + Stylelint + custom Effect-based checks
-- **AI Agent Support** — AGENTS.md with instruction files and skills for Copilot
+- 🏗️ **Server-first** — App Router, React 19 RSC, minimal client surface
+- 🎨 **UI** — [Chakra UI v3][chakra] + [Ark UI][ark] headless primitives
+- 🌐 **i18n** — [next-intl][intl] with Thai 🇹🇭 and English 🇺🇸 locales
+- ✅ **TypeScript** — [strict][typescript], no `any`, zero exceptions
+- ⚡ **Server Actions** — [next-safe-action][safe-action] for type-safe
+  mutations
+- 🛡️ **Error Handling** — structured hierarchy, operational vs
+  non-operational
+- 🧪 **Testing** — [Vitest][vitest] + [Testing Library][testing-lib],
+  80% coverage
+- 🔍 **Linting** — [ESLint][eslint] + [Stylelint][stylelint] + custom
+  [Effect][effect]-based checks
+- 🤖 **AI-ready** — [`AGENTS.md`](./AGENTS.md) with Copilot instruction
+  files and skills
 
 ## Quick Start
 
 ```bash
-npx create-next-app --example https://github.com/yutna/nextjs-template my-app
+npx create-next-app \
+  --example https://github.com/yutna/nextjs-template \
+  my-app
 cd my-app
 ```
 
 ### Prerequisites
 
-- **Node.js 24+** (managed by [mise](https://mise.jdx.dev) — see `mise.toml`)
-- **npm** (no yarn/pnpm/bun)
+- **Node.js 24+** — managed by [mise][mise], see [`mise.toml`](./mise.toml)
+- **npm** — no yarn/pnpm/bun
 
 ### Setup
 
@@ -36,22 +46,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Scripts
+## Tech Stack
 
-| Command                    | Description                                          |
-| -------------------------- | ---------------------------------------------------- |
-| `npm run build`            | Production build                                     |
-| `npm run build:analyze`    | Production build with bundle analyzer                |
-| `npm run build:storybook`  | Build Storybook for production                       |
-| `npm run check-types`      | TypeScript type checking                             |
-| `npm run dev`              | Start development server                             |
-| `npm run dev:storybook`    | Start Storybook dev server                           |
-| `npm run format`           | Format code with Prettier                            |
-| `npm run lint`             | Run all linters (ESLint + Stylelint + custom checks) |
-| `npm run start`            | Start production server                              |
-| `npm run test`             | Run all tests                                        |
-| `npm run test:coverage`    | Run tests with coverage report                       |
-| `npm run test:watch`       | Run tests in watch mode                              |
+| Category        | Technology                                           |
+| --------------- | ---------------------------------------------------- |
+| Framework       | [Next.js 16][nextjs] · [React 19][react]             |
+| Language        | [TypeScript][typescript] (strict)                    |
+| UI              | [Chakra UI v3][chakra] · [Ark UI][ark]               |
+| i18n            | [next-intl][intl]                                    |
+| Validation      | [Zod][zod]                                           |
+| Server Actions  | [next-safe-action][safe-action]                      |
+| Data Fetching   | [SWR][swr]                                           |
+| Error Handling  | [Effect][effect]                                     |
+| Testing         | [Vitest][vitest] · [Testing Library][testing-lib]    |
+| Logging         | [Pino][pino]                                         |
+| Components      | [Storybook][storybook]                               |
 
 ## Project Structure
 
@@ -76,20 +85,56 @@ src/
 └── test/             # Shared test helpers
 ```
 
-**Key conventions**: page → screen → container → component flow, server components by default, `"use client"` only at the smallest leaf.
+Data flows `page → screen → container → component`. Server components by
+default — `"use client"` only at the smallest leaf.
+
+## Scripts
+
+| Command                   | Description                            |
+| ------------------------- | -------------------------------------- |
+| `npm run dev`             | Start development server               |
+| `npm run build`           | Production build                       |
+| `npm run build:analyze`   | Build with bundle analyzer             |
+| `npm run build:storybook` | Build Storybook for production         |
+| `npm run start`           | Start production server                |
+| `npm run dev:storybook`   | Start Storybook dev server             |
+| `npm run check-types`     | TypeScript type check                  |
+| `npm run lint`            | ESLint + Stylelint + custom checks     |
+| `npm run format`          | Format with Prettier                   |
+| `npm run test`            | Run all tests                          |
+| `npm run test:coverage`   | Run tests with coverage report         |
+| `npm run test:watch`      | Run tests in watch mode                |
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` and configure:
+Copy [`.env.example`](./.env.example) to `.env.local` and fill in:
 
 | Variable              | Description                          |
 | --------------------- | ------------------------------------ |
-| `NEXT_PUBLIC_API_URL` | API endpoint for the backend service |
+| `NEXT_PUBLIC_API_URL` | Base URL for the backend API         |
 
-## Technology Stack
+## Contributing
 
-Next.js 16 · React 19 · TypeScript · Chakra UI v3 · Ark UI · next-intl · Zod · next-safe-action · SWR · Effect · Vitest · Pino
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## License
 
-MIT
+[MIT](./LICENSE)
+
+[ark]: https://ark-ui.com
+[chakra]: https://chakra-ui.com
+[effect]: https://effect.website
+[eslint]: https://eslint.org
+[intl]: https://next-intl-docs.vercel.app
+[mise]: https://mise.jdx.dev
+[nextjs]: https://nextjs.org
+[pino]: https://getpino.io
+[react]: https://react.dev
+[safe-action]: https://next-safe-action.dev
+[storybook]: https://storybook.js.org
+[stylelint]: https://stylelint.io
+[swr]: https://swr.vercel.app
+[testing-lib]: https://testing-library.com
+[typescript]: https://www.typescriptlang.org
+[vitest]: https://vitest.dev
+[zod]: https://zod.dev
