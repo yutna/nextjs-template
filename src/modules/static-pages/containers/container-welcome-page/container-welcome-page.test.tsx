@@ -25,6 +25,9 @@ vi.mock("@/modules/static-pages/components/landing-footer", () => ({
 vi.mock("@/modules/static-pages/components/landing-hero", () => ({
   LandingHero: () => null,
 }));
+vi.mock("@/modules/static-pages/components/landing-cli-usage", () => ({
+  LandingCliUsage: () => null,
+}));
 vi.mock("@/modules/static-pages/components/landing-strengths", () => ({
   LandingStrengths: () => null,
 }));
