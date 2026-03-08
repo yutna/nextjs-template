@@ -1,6 +1,8 @@
-# Utils
+---
+applyTo: "src/**/utils/**"
+---
 
-applyTo: src/**/utils/**
+# Utils
 
 ## Purpose
 

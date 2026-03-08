@@ -204,6 +204,19 @@ Naming:
 - constants: `SCREAMING_SNAKE_CASE`
 - files and folders: `kebab-case`
 
+Container naming uses a **UI-type-first, domain-last**
+pattern:
+
+- `Container` prefix + UI type chain (outermost → innermost)
+  \+ domain noun
+- Examples: `ContainerFormCheckout`,
+  `ContainerFormFiltersOrder`,
+  `ContainerHeaderProfile`
+- Folder names are the kebab-case equivalent:
+  `container-form-checkout`,
+  `container-form-filters-order`,
+  `container-header-profile`
+
 ### Imports and modules
 
 Use the repository path alias for internal imports:

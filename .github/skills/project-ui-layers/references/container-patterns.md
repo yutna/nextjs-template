@@ -253,7 +253,7 @@ For exported symbols:
 Examples:
 
 - `ContainerFormCheckout`
-- `ContainerFiltersOrder`
+- `ContainerFormFiltersOrder`
 - `ContainerEditorProfile`
 
 ## 9. Client and server boundaries
@@ -325,7 +325,7 @@ export function ContainerFormCheckout() {
 
 ```tsx
 // screen-profile.tsx
-import { ContainerFormProfile } from "@/modules/profile/containers/container-profile-form";
+import { ContainerFormProfile } from "@/modules/profile/containers/container-form-profile";
 
 export async function ProfileScreen() {
   return <ContainerFormProfile />;
@@ -333,7 +333,7 @@ export async function ProfileScreen() {
 ```
 
 ```tsx
-// container-profile-form.tsx
+// container-form-profile.tsx
 import { updateProfileAction } from "@/modules/profile/actions/update-profile-action";
 import { ProfileForm } from "@/modules/profile/components/profile-form";
 import { getProfile } from "@/modules/profile/lib/get-profile";

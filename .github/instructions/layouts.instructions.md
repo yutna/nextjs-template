@@ -1,6 +1,8 @@
-# Reusable Layouts
+---
+applyTo: "src/shared/layouts/**,src/modules/**/layouts/**"
+---
 
-applyTo: src/shared/layouts/**, src/modules/**/layouts/**
+# Reusable Layouts
 
 ## Purpose
 
