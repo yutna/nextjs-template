@@ -4,10 +4,6 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 import { PageChrome } from "./page-chrome";
 
-vi.mock("@/modules/static-pages/containers/container-vibe-controls", () => ({
-  ContainerVibeControls: () => null,
-}));
-
 describe("PageChrome", () => {
   it("renders locale buttons and color mode toggle", () => {
     const { getByText } = renderWithProviders(
