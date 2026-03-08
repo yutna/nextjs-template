@@ -1,7 +1,6 @@
-import type { ZodError } from "zod";
-
 import { DomainError } from "./domain-error";
 
+import type { ZodError } from "zod";
 import type { FieldErrors } from "@/shared/lib/errors/types";
 
 export class ValidationError extends DomainError {
@@ -16,7 +15,7 @@ export class ValidationError extends DomainError {
     fieldErrors: FieldErrors = {},
     code = "VALIDATION_ERROR",
   ) {
-    super({ code, statusCode: 422, message });
+    super({ code, message, statusCode: 422 });
     this.fieldErrors = fieldErrors;
   }
 

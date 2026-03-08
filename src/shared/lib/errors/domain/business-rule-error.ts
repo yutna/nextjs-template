@@ -9,6 +9,6 @@ import { DomainError } from "./domain-error";
  */
 export class BusinessRuleError extends DomainError {
   constructor(message: string, code: string) {
-    super({ code, statusCode: 422, message });
+    super({ code, message, statusCode: 422 });
   }
 }

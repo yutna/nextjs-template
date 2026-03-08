@@ -12,11 +12,11 @@ import type { NextErrorProps } from "@/shared/types/next";
 
 export function ErrorGlobal({ error, reset }: NextErrorProps) {
   // Initialize variables / Setup
-  const { message, digest } = error;
+  const { digest, message } = error;
 
   // Effect hooks
   useEffect(() => {
-    void reportErrorAction({ message, digest, boundary: "global" });
+    void reportErrorAction({ boundary: "global", digest, message });
   }, [message, digest]);
 
   return (
@@ -29,10 +29,10 @@ export function ErrorGlobal({ error, reset }: NextErrorProps) {
           A critical error occurred. Please try again or refresh the page.
         </p>
         <div className={styles.actions}>
-          <Link className={styles.buttonOutline} href={routes.root.path()}>
+          <Link className={styles["button-outline"]} href={routes.root.path()}>
             ⌂ Back to Home
           </Link>
-          <button className={styles.buttonSolid} onClick={reset}>
+          <button className={styles["button-solid"]} onClick={reset}>
             ↺ Try Again
           </button>
         </div>

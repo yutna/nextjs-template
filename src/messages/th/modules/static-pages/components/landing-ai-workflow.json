@@ -1,0 +1,14 @@
+{
+  "heading": "กระบวนการพัฒนาด้วย AI",
+  "step1Description": "Copilot CLI สร้าง explore agents เพื่อวิเคราะห์โค้ดเบส ค้นหา pattern ที่มีอยู่ และทำความเข้าใจ context ก่อนแตะไฟล์ใดๆ",
+  "step1Title": "วิจัย",
+  "step2Description": "AI สร้างแผนการ implement ที่มีโครงสร้างและยืนยันความต้องการกับคุณหนึ่งครั้ง จากนั้นดำเนินการแบบไม่ต้องมีคนควบคุม",
+  "step2Title": "วางแผน",
+  "step3Description": "general-purpose agents เขียนโค้ดที่พร้อมใช้งานจริงตามแนวทาง AGENTS.md ถูก layer, ถูก naming, ถูก import",
+  "step3Title": "ลงมือทำ",
+  "step4Description": "code-review agent ตรวจสอบความสอดคล้องกับ architecture, security และ naming conventions แก้ไขปัญหาเองโดยไม่ต้องรบกวน",
+  "step4Title": "ตรวจสอบ",
+  "step5Description": "Type-safe, lint สะอาด, ครอบคลุมด้วย test และไม่มี bug คุณแค่ตรวจสอบ output สุดท้าย",
+  "step5Title": "ส่งมอบ",
+  "subheading": "เทมเพลตนี้ออกแบบสำหรับ GitHub Copilot CLI ทุก feature ส่งมอบแบบ end-to-end โดยไม่ต้องทำ scaffolding เอง"
+}

@@ -7,9 +7,9 @@ export class DatabaseError extends InfrastructureError {
    */
   constructor(operation: string, cause?: unknown) {
     super({
+      cause,
       code: "DATABASE_ERROR",
       message: `Database operation failed: ${operation}`,
-      cause,
     });
   }
 }

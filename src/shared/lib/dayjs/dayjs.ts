@@ -1,9 +1,10 @@
+import "dayjs/locale/th";
+
 import _dayjs from "dayjs";
 import buddhistEra from "dayjs/plugin/buddhistEra";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import "dayjs/locale/th";
 
 import { TIME_ZONE } from "@/shared/constants/timezone";
 

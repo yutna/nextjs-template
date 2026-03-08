@@ -4,8 +4,8 @@ import {
   Box,
   Button,
   Flex,
-  HStack,
   Heading,
+  HStack,
   Icon,
   Text,
   VStack,
@@ -22,22 +22,22 @@ import type { NextErrorProps } from "@/shared/types/next";
 
 export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
   // Initialize variables / Setup
-  const { message, digest } = error;
+  const { digest, message } = error;
 
   // Hooks
   const t = useTranslations("shared.components.error");
 
   // Effect hooks
   useEffect(() => {
-    void reportErrorAction({ message, digest, boundary: "app" });
+    void reportErrorAction({ boundary: "app", digest, message });
   }, [message, digest]);
 
   return (
     <Flex
       align="center"
       bgGradient="to-br"
-      gradientFrom={{ base: "orange.50", _dark: "gray.950" }}
-      gradientTo={{ base: "red.50", _dark: "red.950" }}
+      gradientFrom={{ _dark: "gray.950", base: "orange.50" }}
+      gradientTo={{ _dark: "red.950", base: "red.50" }}
       justify="center"
       minH="100vh"
       px={6}
@@ -45,7 +45,7 @@ export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
     >
       <VStack gap={8} maxW="lg" textAlign="center">
         {/* Error icon */}
-        <Box color="orange.500" _dark={{ color: "orange.400" }}>
+        <Box _dark={{ color: "orange.400" }} color="orange.500">
           <Icon fontSize={{ base: "8rem", md: "11rem" }}>
             <LuTriangleAlert />
           </Icon>
@@ -64,14 +64,14 @@ export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
         <VStack gap={3}>
           <Heading
             as="h1"
-            color={{ base: "gray.800", _dark: "gray.100" }}
+            color={{ _dark: "gray.100", base: "gray.800" }}
             fontWeight="bold"
             size={{ base: "2xl", md: "3xl" }}
           >
             {t("heading")}
           </Heading>
           <Text
-            color={{ base: "gray.500", _dark: "gray.400" }}
+            color={{ _dark: "gray.400", base: "gray.500" }}
             fontSize={{ base: "md", md: "lg" }}
             maxW="sm"
           >

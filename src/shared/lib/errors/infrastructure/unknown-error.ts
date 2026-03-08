@@ -6,6 +6,6 @@ import { InfrastructureError } from "./infrastructure-error";
  */
 export class UnknownError extends InfrastructureError {
   constructor(message: string, cause?: unknown) {
-    super({ code: "UNKNOWN_ERROR", message, cause });
+    super({ cause, code: "UNKNOWN_ERROR", message });
   }
 }

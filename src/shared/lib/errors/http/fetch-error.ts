@@ -8,13 +8,13 @@ export class FetchError extends HttpError {
   readonly response: Response;
 
   constructor(options: FetchErrorOptions) {
-    const { url, method, response, code } = options;
+    const { code, method, response, url } = options;
 
     super({
       code: code ?? "FETCH_ERROR",
+      isOperational: response.status >= 400 && response.status < 500,
       message: `${method} ${url} failed with ${response.status} ${response.statusText}`,
       statusCode: response.status,
-      isOperational: response.status >= 400 && response.status < 500,
     });
 
     this.url = url;

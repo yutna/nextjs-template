@@ -25,8 +25,8 @@ describe("reportErrorAction", () => {
 
   it("passes boundary and meta from input", async () => {
     await reportErrorAction({
-      message: "oops",
       boundary: "app",
+      message: "oops",
       meta: { userId: 42 },
     });
 
@@ -37,7 +37,7 @@ describe("reportErrorAction", () => {
   });
 
   it("passes digest from input", async () => {
-    await reportErrorAction({ message: "err", digest: "abc-123" });
+    await reportErrorAction({ digest: "abc-123", message: "err" });
 
     expect(mockReportError).toHaveBeenCalledWith(
       expect.any(Error),
@@ -50,7 +50,7 @@ describe("reportErrorAction", () => {
 
     expect(mockReportError).toHaveBeenCalledWith(
       expect.any(Error),
-      expect.objectContaining({ digest: undefined, boundary: undefined }),
+      expect.objectContaining({ boundary: undefined, digest: undefined }),
     );
   });
 
