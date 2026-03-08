@@ -353,6 +353,18 @@ function classifyLine(line: string): null | number {
     return SectionKind.EffectHooks;
   }
 
+  const isCallbackDecl =
+    /^const\s+\w+\s*=\s*useCallback\(/.test(trimmed) ||
+    /^const\s+\w+\s*=\s*useCallback\s*$/.test(trimmed);
+
+  if (isCallbackDecl) {
+    if (/^const\s+handle[A-Z]|^const\s+on[A-Z]/.test(trimmed)) {
+      return SectionKind.EventHandlers;
+    }
+
+    return SectionKind.Functions;
+  }
+
   if (/\buseMemo\b/.test(trimmed)) {
     return SectionKind.ComputedVariables;
   }
@@ -371,18 +383,6 @@ function classifyLine(line: string): null | number {
 
   if (/^return\s/.test(trimmed) || trimmed === "return (") {
     return SectionKind.ConditionalRendering;
-  }
-
-  const isCallbackDecl =
-    /^const\s+\w+\s*=\s*useCallback\(/.test(trimmed) ||
-    /^const\s+\w+\s*=\s*useCallback\s*$/.test(trimmed);
-
-  if (isCallbackDecl) {
-    if (/^const\s+handle[A-Z]|^const\s+on[A-Z]/.test(trimmed)) {
-      return SectionKind.EventHandlers;
-    }
-
-    return SectionKind.Functions;
   }
 
   if (/^const\s+\w+\s*=\s*(?!use[A-Z])/.test(trimmed)) {
@@ -492,7 +492,7 @@ const checkSectionOrder = Effect.sync((): CheckResult => {
 // Check: css-variables (hardcoded hex colors in CSS modules)
 // -------------------------------------------------------------------
 
-const HEX_COLOR_PATTERN = /#(?:[0-9a-f]{3,8})\b/gi;
+const HEX_COLOR_PATTERN = /#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})\b/gi;
 
 const CSS_VARIABLE_SKIP_PROPERTIES = new Set([
   "background-image",

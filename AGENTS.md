@@ -276,7 +276,7 @@ import "server-only";
 import { Box, Flex, Heading, Text, VStack } from "@chakra-ui/react";
 import { getTranslations } from "next-intl/server";
 
-import { FloatingShapes } from "@/modules/static-pages/components/floating-shapes";
+import { LandingHero } from "@/modules/static-pages/components/landing-hero";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
 
@@ -995,9 +995,7 @@ src/modules/static-pages/
 │   ├── motion-reveal/
 │   ├── motion-stagger/
 │   ├── page-chrome/
-│   ├── scroll-indicator/
-│   ├── section-docs/
-│   └── section-installation/
+│   └── scroll-indicator/
 ├── containers/
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
