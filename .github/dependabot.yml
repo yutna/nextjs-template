@@ -6,6 +6,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+      timezone: "Asia/Bangkok"
+    open-pull-requests-limit: 5
     labels:
       - "type: chore"
       - "priority: low"
@@ -19,6 +21,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+      timezone: "Asia/Bangkok"
+    open-pull-requests-limit: 10
     labels:
       - "type: chore"
       - "priority: low"
