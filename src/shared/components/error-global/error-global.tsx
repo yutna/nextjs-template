@@ -29,10 +29,10 @@ export function ErrorGlobal({ error, reset }: NextErrorProps) {
           A critical error occurred. Please try again or refresh the page.
         </p>
         <div className={styles.actions}>
-          <Link className={styles.buttonOutline} href={routes.root.path()}>
+          <Link className={styles["button-outline"]} href={routes.root.path()}>
             ⌂ Back to Home
           </Link>
-          <button className={styles.buttonSolid} onClick={reset}>
+          <button className={styles["button-solid"]} onClick={reset}>
             ↺ Try Again
           </button>
         </div>

@@ -9,6 +9,7 @@ export function ScrollIndicator() {
     <Box bottom="8" left="50%" position="absolute" transform="translateX(-50%)">
       <motion.div
         animate={{ y: [0, 8, 0] }}
+        // eslint-disable-next-line project/no-inline-style -- motion animation performance hint
         style={{ willChange: "transform" }}
         transition={{
           duration: 2,

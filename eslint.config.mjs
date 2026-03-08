@@ -1,9 +1,12 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import checkFile from "eslint-plugin-check-file";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+
+import localPlugin from "./eslint/local-plugin.mjs";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -18,7 +21,9 @@ const eslintConfig = defineConfig([
   {
     files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
+      "check-file": checkFile,
       perfectionist,
+      project: localPlugin,
       "simple-import-sort": simpleImportSort,
     },
     rules: {
@@ -107,6 +112,47 @@ const eslintConfig = defineConfig([
 
       // Prefer project logger over console (Logging)
       "no-console": "warn",
+
+      // ------------------------------------------------
+      // Type safety
+      // ------------------------------------------------
+
+      // Ban explicit any (Common Style Guide §1)
+      "@typescript-eslint/no-explicit-any": "error",
+
+      // ------------------------------------------------
+      // Project-specific rules (eslint/local-plugin.mjs)
+      // ------------------------------------------------
+
+      // Forbid imports between feature modules (Architecture)
+      "project/no-cross-module-import": "error",
+
+      // Forbid spreading hook return values in JSX (Props)
+      "project/no-hook-spread": "error",
+
+      // Forbid inline style attribute in JSX (Styles)
+      "project/no-inline-style": "error",
+
+      // ------------------------------------------------
+      // File and directory naming (Common Style Guide §2)
+      // ------------------------------------------------
+
+      "check-file/filename-naming-convention": [
+        "error",
+        { "**/*.{ts,tsx,js,jsx,mjs,cjs}": "KEBAB_CASE" },
+        { ignoreMiddleExtensions: true },
+      ],
+      "check-file/folder-naming-convention": [
+        "error",
+        {
+          "bin/**/": "KEBAB_CASE",
+          "eslint/**/": "KEBAB_CASE",
+          "src/messages/**/": "KEBAB_CASE",
+          "src/modules/**/": "KEBAB_CASE",
+          "src/shared/**/": "KEBAB_CASE",
+          "src/test/**/": "KEBAB_CASE",
+        },
+      ],
 
       // ------------------------------------------------
       // Sorting — enforce consistent key/prop ordering
@@ -222,6 +268,7 @@ const eslintConfig = defineConfig([
       "next.config.ts",
       "vitest.config.mts",
       "eslint.config.mjs",
+      "stylelint.config.mjs",
       "src/shared/vendor/**",
     ],
     rules: {
@@ -239,6 +286,18 @@ const eslintConfig = defineConfig([
       "no-restricted-imports": "off",
       "perfectionist/sort-jsx-props": "off",
       "perfectionist/sort-objects": "off",
+      "project/no-hook-spread": "off",
+      "project/no-inline-style": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Global error boundary — runs outside Chakra provider
+  // --------------------------------------------------
+  {
+    files: ["src/app/global-error.tsx"],
+    rules: {
+      "project/no-inline-style": "off",
     },
   },
 
@@ -270,6 +329,17 @@ const eslintConfig = defineConfig([
     rules: {
       "no-console": "off",
       "no-restricted-syntax": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Local ESLint plugin — requires default export
+  // --------------------------------------------------
+  {
+    files: ["eslint/**"],
+    rules: {
+      "import/no-anonymous-default-export": "off",
+      "import/no-default-export": "off",
     },
   },
 

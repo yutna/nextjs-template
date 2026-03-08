@@ -18,6 +18,7 @@ export function MotionReveal({
     <motion.div
       className={className}
       initial="hidden"
+      // eslint-disable-next-line project/no-inline-style -- motion animation performance hint
       style={{ willChange: "transform, opacity" }}
       variants={{
         hidden: selectedVariant.hidden,
