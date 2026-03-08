@@ -40,7 +40,8 @@ const eslintConfig = defineConfig([
       // Groups: 1) side-effect  2) external  3) @/ internal  4) ./ local  5) import type
       // Type imports (suffix \u0000) are kept in one block without blank lines.
       // Within the type block, pattern order enforces: external → @/ → ./
-      "simple-import-sort/exports": "error",
+      // Export sorting is handled by perfectionist/sort-exports below
+      "simple-import-sort/exports": "off",
       "simple-import-sort/imports": [
         "error",
         {
@@ -157,11 +158,23 @@ const eslintConfig = defineConfig([
       // Sorting — enforce consistent key/prop ordering
       // ------------------------------------------------
 
-      // Disable perfectionist import/export rules (simple-import-sort handles these)
-      "perfectionist/sort-exports": "off",
+      // Disable perfectionist import rules (simple-import-sort handles these)
       "perfectionist/sort-imports": "off",
       "perfectionist/sort-named-exports": "off",
       "perfectionist/sort-named-imports": "off",
+
+      // Export sorting — value exports first, type exports last
+      // simple-import-sort/exports handles alphabetical order;
+      // perfectionist/sort-exports enforces type-after-value grouping
+      "perfectionist/sort-exports": [
+        "error",
+        {
+          groups: ["value-export", "type-export"],
+          newlinesBetween: 1,
+          order: "asc",
+          type: "natural",
+        },
+      ],
 
       // Object keys + destructuring (natural alphabetical)
       "perfectionist/sort-objects": [
