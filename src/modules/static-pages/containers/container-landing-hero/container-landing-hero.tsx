@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 
 import { LandingHero } from "@/modules/static-pages/components/landing-hero";
 import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
+import { ContainerCopyCommand } from "@/modules/static-pages/containers/container-copy-command";
 import { ContainerVibeBackground } from "@/modules/static-pages/containers/container-vibe-background";
 
 import type { ContainerLandingHeroProps } from "./types";
@@ -29,6 +30,7 @@ export async function ContainerLandingHero({
     >
       <ContainerVibeBackground />
       <LandingHero
+        copyCommand={<ContainerCopyCommand />}
         getStarted={t("getStarted")}
         subtitle={t("subtitle")}
         title={t("title")}

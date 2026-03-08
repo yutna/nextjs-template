@@ -11,6 +11,9 @@ vi.mock("next-intl/server", () => ({
 vi.mock("@/modules/static-pages/containers/container-vibe-background", () => ({
   ContainerVibeBackground: () => null,
 }));
+vi.mock("@/modules/static-pages/containers/container-copy-command", () => ({
+  ContainerCopyCommand: () => null,
+}));
 vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
   useVibe: () => ({
     isVibeOn: false,
