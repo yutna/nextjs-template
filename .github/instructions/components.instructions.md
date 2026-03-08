@@ -38,11 +38,9 @@ Promote only when:
 Each public component lives in its own leaf folder:
 
 ```text
-src/modules/static-pages/components/section-hero/
-├── section-hero.tsx
-├── section-hero.test.tsx
-├── section-hero.stories.tsx
-├── copy-command.tsx
+src/modules/static-pages/components/landing-hero/
+├── landing-hero.tsx
+├── landing-hero.test.tsx
 ├── constants.ts
 ├── index.ts
 └── types.ts
@@ -55,7 +53,7 @@ Rules:
 - leaf-level `index.ts` for the public API
 - colocate `types.ts` for prop contracts
 - allow private child components in the same folder
-- allow colocated `constants.ts` and stories files
+- allow colocated `constants.ts` and stories files (when using Storybook)
 - tests adjacent to the component
 - no parent barrel files for `components/`
 

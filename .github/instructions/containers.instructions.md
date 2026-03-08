@@ -88,7 +88,7 @@ Files and folders use kebab-case with `container-` prefix:
 
 Exported symbols use PascalCase with `Container` prefix:
 
-- `ContainerFormCheckout`, `ContainerFiltersOrder`
+- `ContainerCheckoutForm`, `ContainerOrderFilters`
 
 ## Example
 

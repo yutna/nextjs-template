@@ -3,7 +3,7 @@ import "@/shared/styles/scrollbar.css";
 
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
@@ -19,12 +19,17 @@ interface LayoutLocaleProps {
   params: Promise<{ locale: string }>;
 }
 
-// TODO: translate this metadata
-export const metadata: Metadata = {
-  description:
-    "A Next.js starter designed for developers building in the AI-driven era.",
-  title: "Next.js Template",
-};
+export async function generateMetadata({
+  params,
+}: Pick<LayoutLocaleProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "common.metadata" });
+
+  return {
+    description: t("description"),
+    title: t("title"),
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

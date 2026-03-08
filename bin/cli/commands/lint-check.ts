@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Array as Arr, Effect, pipe } from "effect";
 
 // -------------------------------------------------------------------
@@ -23,7 +24,7 @@ interface CheckResult {
 // -------------------------------------------------------------------
 
 const PROJECT_ROOT = resolve(
-  dirname(new URL(import.meta.url).pathname),
+  dirname(fileURLToPath(import.meta.url)),
   "../../..",
 );
 
@@ -364,7 +365,7 @@ function classifyLine(line: string): null | number {
     return SectionKind.Hooks;
   }
 
-  if (/^if\s*\(.*\)\s*(return|throw)\b/.test(trimmed)) {
+  if (/^if\s*\([^)]*\)\s*(return|throw)\b/.test(trimmed)) {
     return SectionKind.ConditionalRendering;
   }
 
