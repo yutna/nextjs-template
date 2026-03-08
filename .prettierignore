@@ -36,6 +36,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Storybook build
+storybook-static
+
 # Vercel and Metadata
 .vercel
 .turbo
