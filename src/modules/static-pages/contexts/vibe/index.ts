@@ -1,2 +1,3 @@
-export type { VibeContextValue } from "./types";
 export { VibeContext } from "./vibe-context";
+
+export type { VibeContextValue } from "./types";
