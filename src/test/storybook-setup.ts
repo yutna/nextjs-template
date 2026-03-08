@@ -2,6 +2,20 @@ import "@testing-library/jest-dom";
 
 import { vi } from "vitest";
 
+// Suppress known React warnings when rendering async server components in jsdom.
+// React client-side rendering does not support async components — these warnings
+// are expected and not actual bugs in the stories.
+const originalConsoleError = console.error;
+console.error = (...args: unknown[]) => {
+  const msg = typeof args[0] === "string" ? args[0] : "";
+
+  if (msg.includes("async Client Component")) return;
+  if (msg.includes("not wrapped in act(")) return;
+  if (msg.includes("act` call was not awaited")) return;
+
+  originalConsoleError.call(console, ...args);
+};
+
 // jsdom does not implement IntersectionObserver.
 // motion/react uses it for whileInView / viewport features.
 class IntersectionObserverStub {
