@@ -8,11 +8,11 @@
     "build:analyze": "cross-env ANALYZE=true next build --webpack",
     "check-types": "tsc --noEmit",
     "format": "prettier --write .",
-    "start": "next start",
     "lint": "run-s lint:eslint lint:css lint:check",
     "lint:check": "node --experimental-strip-types --no-warnings bin/tmpl lint:check",
     "lint:css": "stylelint \"src/**/*.module.css\"",
     "lint:eslint": "eslint",
+    "start": "next start",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
