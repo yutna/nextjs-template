@@ -28,7 +28,9 @@ const withProviders: Decorator = (Story, context) => {
       timeZone={TIME_ZONE}
     >
       <NuqsAdapter>
-        <Provider forcedTheme={colorMode}>{Story()}</Provider>
+        <Provider forcedTheme={colorMode}>
+          <Story />
+        </Provider>
       </NuqsAdapter>
     </NextIntlClientProvider>
   );
@@ -36,7 +38,6 @@ const withProviders: Decorator = (Story, context) => {
 
 const preview: Preview = {
   decorators: [withProviders],
-
   globalTypes: {
     colorMode: {
       description: "Color mode",
@@ -58,17 +59,14 @@ const preview: Preview = {
           { right: "🇺🇸", title: "English", value: "en" },
           { right: "🇹🇭", title: "Thai", value: "th" },
         ],
-        showName: true,
         title: "Locale",
       },
     },
   },
-
-  globals: {
+  initialGlobals: {
     colorMode: "light",
     locale: "en",
   },
-
   parameters: {
     controls: {
       matchers: {

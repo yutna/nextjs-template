@@ -26,13 +26,25 @@ const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   viteFinal: async (config) => {
     config.resolve ??= {};
-    config.resolve.alias = {
-      ...(config.resolve.alias as Record<string, string>),
+
+    const newAliases = {
       // Neutralise server-only guard so server components load in the browser
       "server-only": join(__dirname, "mocks/server-only.ts"),
       // Provide locale-aware mock for next-intl server APIs
       "next-intl/server": join(__dirname, "mocks/next-intl-server.ts"),
     };
+
+    // Storybook may pass aliases as an array — handle both formats safely
+    config.resolve.alias = Array.isArray(config.resolve.alias)
+      ? [
+          ...config.resolve.alias,
+          ...Object.entries(newAliases).map(([find, replacement]) => ({
+            find,
+            replacement,
+          })),
+        ]
+      : { ...(config.resolve.alias ?? {}), ...newAliases };
+
     return config;
   },
 };
