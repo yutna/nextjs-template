@@ -65,7 +65,9 @@ Use raw CSS when you need:
 - Global CSS side effects
 - Component-scoped selectors not worth expressing as prop objects
 
-Do **not** use inline `style` objects unless values are truly dynamic at runtime.
+Do **not** use inline `style` objects. This is enforced by ESLint (`project/no-inline-style`).
+If a legitimate case requires inline styles (e.g., CSS custom property injection),
+add an `eslint-disable` comment with a brief reason.
 
 ## CSS variables over literals
 
@@ -103,4 +105,4 @@ Sort properties alphabetically within each group.
 - [ ] CSS Module is beside its owning component
 - [ ] Global CSS imported once from app-level boundary
 - [ ] File names are specific and kebab-case
-- [ ] No inline style objects unless values are dynamic at runtime
+- [ ] No inline style objects (enforced by ESLint; use `eslint-disable` with reason if needed)

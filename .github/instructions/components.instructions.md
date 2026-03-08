@@ -89,6 +89,29 @@ interface EmptyStateProps {
 
 Avoid huge prop bags that mirror internal implementation details.
 
+## No hook spreading
+
+Do not spread hook return values directly into JSX props.
+This is enforced by ESLint (`project/no-hook-spread`).
+
+```tsx
+// Bad — hides what the component actually receives
+const form = useCheckoutForm();
+<CheckoutForm {...form} />;
+
+// Good — explicit prop binding
+const form = useCheckoutForm();
+<CheckoutForm errors={form.errors} onSubmit={form.onSubmit} values={form.values} />;
+```
+
+Spreading **rest props** from a component's own parameters is fine:
+
+```tsx
+function Card({ title, ...props }: Readonly<CardProps>) {
+  return <Box {...props}>{title}</Box>;
+}
+```
+
 ## Server-first boundaries
 
 - server components by default

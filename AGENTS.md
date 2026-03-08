@@ -853,6 +853,13 @@ These load when editing matching files.
   applies to `src/shared/styles/**` and
   `**/*.module.css`.
   Global CSS, CSS Modules.
+- **`layouts`** —
+  applies to `src/shared/layouts/**` and
+  `src/modules/**/layouts/**`.
+  Reusable structural framing.
+- **`utils`** —
+  applies to `src/**/utils/**`.
+  Pure transforms, formatters, guards.
 - **`test-files`** —
   applies to `**/*.test.ts` and `**/*.test.tsx`.
   Vitest, Testing Library patterns.
@@ -957,6 +964,7 @@ src/modules/static-pages/
 │   │   ├── index.ts
 │   │   └── types.ts
 │   ├── landing-copilot/
+│   ├── landing-cli-usage/
 │   ├── landing-cta/
 │   ├── landing-footer/
 │   ├── landing-hero/
@@ -971,7 +979,9 @@ src/modules/static-pages/
 │   ├── motion-reveal/
 │   ├── motion-stagger/
 │   ├── page-chrome/
-│   └── scroll-indicator/
+│   ├── scroll-indicator/
+│   ├── section-docs/
+│   └── section-installation/
 ├── containers/
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
@@ -1037,6 +1047,7 @@ import "server-only";
 import { Box } from "@chakra-ui/react";
 
 import { LandingAiWorkflow } from "@/modules/static-pages/components/landing-ai-workflow";
+import { LandingCliUsage } from "@/modules/static-pages/components/landing-cli-usage";
 import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
 import { LandingCta } from "@/modules/static-pages/components/landing-cta";
 import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
@@ -1057,6 +1068,7 @@ export async function ContainerWelcomePage({
       <LandingStrengths locale={locale} />
       <LandingAiWorkflow locale={locale} />
       <LandingCopilot locale={locale} />
+      <LandingCliUsage locale={locale} />
       <LandingTechStack locale={locale} />
       <LandingCta locale={locale} />
       <LandingFooter locale={locale} />

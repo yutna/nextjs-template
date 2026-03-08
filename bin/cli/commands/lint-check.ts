@@ -527,8 +527,8 @@ const checkCssVariables = Effect.sync((): CheckResult => {
 
       if (skipProp) continue;
 
+      HEX_COLOR_PATTERN.lastIndex = 0;
       if (HEX_COLOR_PATTERN.test(line)) {
-        HEX_COLOR_PATTERN.lastIndex = 0;
         warnings.push({
           file: relPath,
           message: `Line ${i + 1}: hardcoded color "${line.trim()}" — prefer CSS variable`,
