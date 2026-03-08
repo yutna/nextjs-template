@@ -1,14 +1,5 @@
 # Contributing
 
-## Getting started
-
-```bash
-git clone https://github.com/yutna/nextjs-template.git
-cd nextjs-template
-npm ci
-npm run dev
-```
-
 ## Branch naming
 
 ```text
