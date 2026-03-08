@@ -25,7 +25,7 @@ updates:
     groups:
       nextjs:
         patterns:
-          - "next"
+          - "next*"
           - "@next/*"
           - "eslint-config-next"
       react:
@@ -34,6 +34,12 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+      vite:
+        patterns:
+          - "vite"
+          - "vite-*"
+          - "@vitejs/*"
+          - "babel-plugin-*"
       chakra-ui:
         patterns:
           - "@chakra-ui/*"
@@ -56,9 +62,13 @@ updates:
           - "eslint"
           - "eslint-*"
           - "@typescript-eslint/*"
+          - "prettier"
           - "stylelint"
           - "stylelint-*"
       typescript:
         patterns:
           - "typescript"
           - "@types/node"
+      dependencies:
+        patterns:
+          - "*"
