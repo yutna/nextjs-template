@@ -39,6 +39,8 @@ keep working.
 - all existing tests still pass — no regressions
 - new tests cover the new feature
 - code review passed — no security or convention issues
+- QA verified in a real browser when the feature has UI
+  (visual layout, responsive, dark/light mode, locales)
 - ready for production use — not a prototype, not a draft
 - human has nothing to fix, debug, or clean up
 
@@ -1096,6 +1098,13 @@ These provide deep knowledge when the task needs it.
   with zero human interaction after plan approval. Defines
   the 2-touchpoint model, role-to-tool mapping, self-healing
   loops, retry budgets, and Definition of Done.
+- **`qa-verification`** —
+  E2E browser verification protocol using `agent-browser`.
+  Use after implementing a UI feature to verify it works
+  in a real browser. Covers visual checks, responsive
+  viewports (desktop, tablet, mobile), color schemes,
+  locale switching, console errors, interaction testing,
+  and annotated screenshots.
 
 ### Installed skills
 

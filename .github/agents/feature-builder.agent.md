@@ -19,7 +19,11 @@ type). Do not duplicate those rules — follow them.
 2. **Plan** — create todos following the build order in AGENTS.md
 3. **Implement** — spawn `general-purpose` agents with full context
 4. **Review** — spawn `code-review` agents to validate compliance
-5. **Verify** — runtime verification with `agent-browser` (when UI is involved)
+5. **QA Verify** — spawn `qa` agent with affected routes and requirements to
+   verify the feature in a real browser (visual layout, responsive viewports,
+   dark/light mode, locale switching, interaction flows). Load the
+   `qa-verification` skill for the full protocol. **Do not skip this step for
+   any feature that renders UI — it is the most common source of bugs.**
 6. **Deliver** — present only when Definition of Done (AGENTS.md) is fully met
 
 ## Autonomous mode
