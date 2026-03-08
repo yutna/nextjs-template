@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 10
     if: >
       github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'release')
+      contains(github.event.pull_request.labels.*.name, 'type: release')
 
     steps:
       - name: Checkout

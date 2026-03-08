@@ -50,9 +50,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh label create "release" \
+          gh label create "type: release" \
             --color "0075ca" \
-            --description "Release PR" \
+            --description "Automated release PR" \
             --force
           gh label create "priority: high" \
             --color "d93f0b" \
@@ -93,5 +93,5 @@ jobs:
             --body "${{ steps.notes.outputs.body }}" \
             --base main \
             --head "release/${{ github.event.milestone.title }}" \
-            --label "release" \
+            --label "type: release" \
             --label "priority: high"
