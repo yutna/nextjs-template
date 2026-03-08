@@ -10,9 +10,9 @@ import { NotFoundError } from "@/shared/lib/errors/domain/not-found-error";
  * assertFound(user, "User", userId);  // includes id in the error message
  */
 export function assertFound<T>(
-  value: T | null | undefined,
+  value: null | T | undefined,
   resourceName: string,
-  id?: string | number,
+  id?: number | string,
 ): asserts value is T {
   if (value === null || value === undefined) {
     throw new NotFoundError(resourceName, id);

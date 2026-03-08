@@ -1,0 +1,14 @@
+{
+  "heading": "AI-Powered Development Workflow",
+  "step1Description": "Copilot CLI spawns explore agents to analyze your codebase, discover existing patterns, and understand context before touching a single file.",
+  "step1Title": "Research",
+  "step2Description": "AI creates a structured implementation plan and confirms requirements with you at one touchpoint. You approve, then hands-free execution begins.",
+  "step2Title": "Plan",
+  "step3Description": "general-purpose agents write production-ready code following AGENTS.md conventions — correct layer, correct naming, correct import ordering.",
+  "step3Title": "Implement",
+  "step4Description": "code-review agent validates architecture compliance, security, and naming conventions. Issues are self-healed without human intervention.",
+  "step4Title": "Review",
+  "step5Description": "Type-safe, lint-clean, test-covered, and zero-bug. The only thing left for you is to review the final output.",
+  "step5Title": "Ship",
+  "subheading": "This template is built for GitHub Copilot CLI. Every feature is delivered end-to-end with zero manual scaffolding."
+}

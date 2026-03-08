@@ -30,6 +30,7 @@ export class ErrorBoundary extends Component<
 
   override componentDidCatch(error: Error, info: ErrorInfo) {
     // Wire to reportError() in SETUP_ERROR_LOGGING branch
+    // eslint-disable-next-line no-console
     console.error("[ErrorBoundary]", error.message, info.componentStack);
   }
 

@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "./bin/tmpl hooks:format",
+        "timeout": 15
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./bin/tmpl hooks:lint",
+        "timeout": 60
+      }
+    ]
+  }
+}

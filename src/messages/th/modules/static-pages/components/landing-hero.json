@@ -1,0 +1,6 @@
+{
+  "getStarted": "ดูบน GitHub",
+  "installCommand": "npx create-next-app --example https://github.com/yutna/nextjs-template my-app",
+  "subtitle": "เทมเพลต Next.js 16 พร้อมใช้งานจริง ออกแบบมาสำหรับการพัฒนาด้วย AI เป็นหลัก เน้น server-first, type-safe, และปรับแต่งสำหรับ GitHub Copilot",
+  "title": "สร้างเร็วขึ้น\nส่งมอบอย่างฉลาด"
+}

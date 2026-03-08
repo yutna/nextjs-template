@@ -1,18 +1,377 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import checkFile from "eslint-plugin-check-file";
+import jsonc from "eslint-plugin-jsonc";
+import perfectionist from "eslint-plugin-perfectionist";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+
+import localPlugin from "./eslint/local-plugin.mjs";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+
   // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+
+  // --------------------------------------------------
+  // Project rules — enforce AGENTS.md conventions
+  // --------------------------------------------------
+  {
+    files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
+    plugins: {
+      "check-file": checkFile,
+      perfectionist,
+      "project": localPlugin,
+      "simple-import-sort": simpleImportSort,
+    },
+    rules: {
+      // Import type enforcement (Common Style Guide §3)
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          disallowTypeAnnotations: false,
+          fixStyle: "separate-type-imports",
+          prefer: "type-imports",
+        },
+      ],
+
+      // Import sorting — 5-group order (Common Style Guide §3)
+      // Groups: 1) side-effect  2) external  3) @/ internal  4) ./ local  5) import type
+      // Type imports (suffix \u0000) are kept in one block without blank lines.
+      // Within the type block, pattern order enforces: external → @/ → ./
+      "simple-import-sort/exports": "error",
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            ["^\\u0000"],
+            ["^node:", "^@(?!/)\\w", "^\\w"],
+            ["^@/"],
+            ["^\\."],
+            [
+              "^node:.*\\u0000$",
+              "^@(?!/)\\w.*\\u0000$",
+              "^\\w.*\\u0000$",
+              "^@/.*\\u0000$",
+              "^\\..*\\u0000$",
+            ],
+          ],
+        },
+      ],
+
+      // Ban parent directory imports (Common Style Guide §3)
+      // Ban useState — use useImmer (Hooks §State)
+      // Ban framer-motion — use motion/react (Styles §Animation)
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              importNames: ["useState"],
+              message:
+                "useState is banned. Use useImmer from 'use-immer' instead.",
+              name: "react",
+            },
+            {
+              message:
+                "framer-motion is renamed. Import from 'motion/react' instead.",
+              name: "framer-motion",
+            },
+          ],
+          patterns: [
+            {
+              group: ["../*"],
+              message:
+                "Parent imports (../) are banned. Use @/ alias for cross-directory imports.",
+            },
+          ],
+        },
+      ],
+
+      // Named exports by default (Common Style Guide §4)
+      "import/no-default-export": "error",
+
+      // Ban ad hoc process.env reads (Common Style Guide §9)
+      // Ban React namespace access — use named/type imports instead
+      "no-restricted-syntax": [
+        "error",
+        {
+          message:
+            "Direct process.env access is banned. Import from '@/shared/config/env' instead.",
+          selector:
+            "MemberExpression[object.name='process'][property.name='env']",
+        },
+        {
+          message:
+            "React namespace access is banned. Use named imports instead: import type { CSSProperties } from 'react'.",
+          selector: "MemberExpression[object.name='React']",
+        },
+      ],
+
+      // Prefer project logger over console (Logging)
+      "no-console": "warn",
+
+      // ------------------------------------------------
+      // Type safety
+      // ------------------------------------------------
+
+      // Ban explicit any (Common Style Guide §1)
+      "@typescript-eslint/no-explicit-any": "error",
+
+      // ------------------------------------------------
+      // Project-specific rules (eslint/local-plugin.mjs)
+      // ------------------------------------------------
+
+      // Forbid imports between feature modules (Architecture)
+      "project/no-cross-module-import": "error",
+
+      // Forbid spreading hook return values in JSX (Props)
+      "project/no-hook-spread": "error",
+
+      // Forbid inline style attribute in JSX (Styles)
+      "project/no-inline-style": "error",
+
+      // ------------------------------------------------
+      // File and directory naming (Common Style Guide §2)
+      // ------------------------------------------------
+
+      "check-file/filename-naming-convention": [
+        "error",
+        { "**/*.{ts,tsx,js,jsx,mjs,cjs}": "KEBAB_CASE" },
+        { ignoreMiddleExtensions: true },
+      ],
+      "check-file/folder-naming-convention": [
+        "error",
+        {
+          "bin/**/": "KEBAB_CASE",
+          "eslint/**/": "KEBAB_CASE",
+          "src/messages/**/": "KEBAB_CASE",
+          "src/modules/**/": "KEBAB_CASE",
+          "src/shared/**/": "KEBAB_CASE",
+          "src/test/**/": "KEBAB_CASE",
+        },
+      ],
+
+      // ------------------------------------------------
+      // Sorting — enforce consistent key/prop ordering
+      // ------------------------------------------------
+
+      // Disable perfectionist import/export rules (simple-import-sort handles these)
+      "perfectionist/sort-exports": "off",
+      "perfectionist/sort-imports": "off",
+      "perfectionist/sort-named-exports": "off",
+      "perfectionist/sort-named-imports": "off",
+
+      // Object keys + destructuring (natural alphabetical)
+      "perfectionist/sort-objects": [
+        "error",
+        {
+          order: "asc",
+          partitionByComment: true,
+          partitionByNewLine: true,
+          type: "natural",
+        },
+      ],
+
+      // JSX props
+      "perfectionist/sort-jsx-props": [
+        "error",
+        {
+          order: "asc",
+          type: "natural",
+        },
+      ],
+
+      // TypeScript interfaces
+      "perfectionist/sort-interfaces": [
+        "error",
+        {
+          order: "asc",
+          partitionByNewLine: true,
+          type: "natural",
+        },
+      ],
+
+      // TypeScript object types
+      "perfectionist/sort-object-types": [
+        "error",
+        {
+          order: "asc",
+          partitionByNewLine: true,
+          type: "natural",
+        },
+      ],
+
+      // TypeScript union types
+      "perfectionist/sort-union-types": [
+        "error",
+        {
+          order: "asc",
+          type: "natural",
+        },
+      ],
+
+      // TypeScript intersection types
+      "perfectionist/sort-intersection-types": [
+        "error",
+        {
+          order: "asc",
+          type: "natural",
+        },
+      ],
+
+      // TypeScript enums
+      "perfectionist/sort-enums": [
+        "error",
+        {
+          order: "asc",
+          type: "natural",
+        },
+      ],
+    },
+  },
+
+  // --------------------------------------------------
+  // Next.js convention files — allow default exports
+  // --------------------------------------------------
+  {
+    files: [
+      "src/app/**/page.tsx",
+      "src/app/**/layout.tsx",
+      "src/app/**/loading.tsx",
+      "src/app/**/error.tsx",
+      "src/app/**/global-error.tsx",
+      "src/app/**/not-found.tsx",
+      "src/app/**/template.tsx",
+      "src/app/**/default.tsx",
+      "src/app/**/route.ts",
+      "src/app/**/opengraph-image.tsx",
+      "src/app/**/icon.tsx",
+      "src/app/**/apple-icon.tsx",
+      "src/app/**/sitemap.ts",
+      "src/app/**/robots.ts",
+      "src/app/**/manifest.ts",
+    ],
+    rules: {
+      "import/no-default-export": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Config files — allow process.env and default exports
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/config/**",
+      "next.config.ts",
+      "vitest.config.mts",
+      "eslint.config.mjs",
+      "stylelint.config.mjs",
+      "src/shared/vendor/**",
+    ],
+    rules: {
+      "import/no-default-export": "off",
+      "no-restricted-syntax": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Vendor files — third-party integration wrappers
+  // --------------------------------------------------
+  {
+    files: ["src/shared/vendor/**"],
+    rules: {
+      "no-restricted-imports": "off",
+      "perfectionist/sort-jsx-props": "off",
+      "perfectionist/sort-objects": "off",
+      "project/no-hook-spread": "off",
+      "project/no-inline-style": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Global error boundary — runs outside Chakra provider
+  // --------------------------------------------------
+  {
+    files: ["src/app/global-error.tsx"],
+    rules: {
+      "project/no-inline-style": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Infrastructure — allow process.env in bootstrap code
+  // --------------------------------------------------
+  {
+    files: ["src/shared/lib/logger/**"],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Test files — allow console and relaxed restrictions
+  // --------------------------------------------------
+  {
+    files: ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // CLI scripts — allow console and process.env
+  // --------------------------------------------------
+  {
+    files: ["bin/**"],
+    rules: {
+      "no-console": "off",
+      "no-restricted-syntax": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Local ESLint plugin — requires default export
+  // --------------------------------------------------
+  {
+    files: ["eslint/**"],
+    rules: {
+      "import/no-anonymous-default-export": "off",
+      "import/no-default-export": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // Middleware — allow default export
+  // --------------------------------------------------
+  {
+    files: ["src/middleware.ts", "src/proxy.ts"],
+    rules: {
+      "import/no-default-export": "off",
+    },
+  },
+
+  // --------------------------------------------------
+  // JSON files — enforce sorted keys in message files
+  // --------------------------------------------------
+  {
+    files: ["src/messages/**/*.json"],
+    language: "jsonc/x",
+    plugins: {
+      jsonc,
+    },
+    rules: {
+      "jsonc/sort-keys": [
+        "error",
+        {
+          order: { type: "asc" },
+          pathPattern: ".*",
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

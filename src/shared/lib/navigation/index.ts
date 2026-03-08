@@ -1,6 +1,6 @@
 export {
-  Link,
   getPathname,
+  Link,
   redirect,
   usePathname,
   useRouter,

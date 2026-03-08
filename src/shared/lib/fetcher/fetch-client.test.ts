@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { fetchClient } from "./fetch-client";
 import { FetchError } from "@/shared/lib/errors/http/fetch-error";
+
+import { fetchClient } from "./fetch-client";
 
 // Mock env so tests don't need a real .env file
 vi.mock("@/shared/config/env", () => ({
@@ -121,7 +122,7 @@ describe("fetchClient", () => {
       new Response(JSON.stringify({}), { status: 200 }),
     );
 
-    await fetchClient({ path: "/me", getToken: () => "my-token" });
+    await fetchClient({ getToken: () => "my-token", path: "/me" });
 
     const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
     expect((callInit.headers as Headers).get("Authorization")).toBe(
@@ -134,7 +135,7 @@ describe("fetchClient", () => {
       new Response(JSON.stringify({}), { status: 200 }),
     );
 
-    await fetchClient({ path: "/public", getToken: () => null });
+    await fetchClient({ getToken: () => null, path: "/public" });
 
     const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
     expect((callInit.headers as Headers).get("Authorization")).toBeNull();
@@ -146,8 +147,8 @@ describe("fetchClient", () => {
     );
 
     const result = await fetchClient<void>({
-      path: "/items/1",
       method: "DELETE",
+      path: "/items/1",
     });
     expect(result).toBeUndefined();
   });
@@ -158,9 +159,9 @@ describe("fetchClient", () => {
     );
 
     await fetchClient({
-      path: "/items",
-      method: "POST",
       body: { name: "test" },
+      method: "POST",
+      path: "/items",
     });
 
     const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;

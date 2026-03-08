@@ -24,5 +24,5 @@ export interface FetchClientOptions extends Omit<RequestInit, "body"> {
    * Called per-request so that refreshed tokens are always used.
    * Return `null` or `undefined` to skip the header.
    */
-  getToken?: () => string | null | undefined;
+  getToken?: () => null | string | undefined;
 }

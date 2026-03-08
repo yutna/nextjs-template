@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Template
 
-## Getting Started
+Production-ready Next.js 16 starter with opinionated conventions for scalable, maintainable web applications.
 
-First, run the development server:
+## Features
+
+- **Next.js 16** — App Router, React 19, server-first architecture
+- **TypeScript** — strict mode, no `any`
+- **Chakra UI v3** — component library with Ark UI headless primitives
+- **i18n** — next-intl with Thai and English locales
+- **Server Actions** — type-safe mutations via next-safe-action
+- **Error Handling** — structured error hierarchy with operational/non-operational distinction
+- **Testing** — Vitest + Testing Library with 80% coverage thresholds
+- **Linting** — ESLint + Stylelint + custom Effect-based checks
+- **AI Agent Support** — AGENTS.md with instruction files and skills for Copilot
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx create-next-app --example https://github.com/yutna/nextjs-template my-app
+cd my-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Node.js 24+** (managed by [mise](https://mise.jdx.dev) — see `mise.toml`)
+- **npm** (no yarn/pnpm/bun)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Setup
 
-## Learn More
+```bash
+npm install
+cp .env.example .env.local   # edit with your values
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command | Description |
+| --------- | ------------- |
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run lint` | Run all linters (ESLint + Stylelint + custom checks) |
+| `npm run check-types` | TypeScript type checking |
+| `npm run test` | Run all tests |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run format` | Format code with Prettier |
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```txt
+src/
+├── app/              # App Router (thin route entries)
+│   └── [locale]/     # i18n locale segment
+├── modules/          # Feature modules
+│   └── {module}/
+│       ├── actions/      # Server actions
+│       ├── components/   # Presenter UI
+│       ├── containers/   # Logic binding (bridge layer)
+│       ├── hooks/        # Client logic
+│       ├── screens/      # Page-level composition
+│       └── schemas/      # Validation contracts
+├── shared/           # Cross-cutting code
+│   ├── components/   # Shared UI
+│   ├── config/       # Env, fonts, i18n
+│   ├── lib/          # Integrations and services
+│   └── ...
+├── messages/         # i18n translations (en/th)
+└── test/             # Shared test helpers
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Key conventions**: page → screen → container → component flow, server components by default, `"use client"` only at the smallest leaf.
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and configure:
+
+| Variable              | Description                          |
+| --------------------- | ------------------------------------ |
+| `NEXT_PUBLIC_API_URL` | API endpoint for the backend service |
+
+## Technology Stack
+
+Next.js 16 · React 19 · TypeScript · Chakra UI v3 · Ark UI · next-intl · Zod · next-safe-action · SWR · Effect · Vitest · Pino
+
+## License
+
+MIT

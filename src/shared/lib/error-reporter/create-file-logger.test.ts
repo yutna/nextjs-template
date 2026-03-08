@@ -6,15 +6,15 @@ import { createFileLogger } from "./create-file-logger";
 
 import type { MockInstance } from "vitest";
 
-const { mockPinoFn, mockDestination } = vi.hoisted(() => {
+const { mockDestination, mockPinoFn } = vi.hoisted(() => {
   const mockLogger = { error: vi.fn(), level: "error" };
   const mockDestination = vi.fn(() => ({}));
   const mockPinoFn = vi.fn(() => mockLogger);
   Object.assign(mockPinoFn, {
-    stdTimeFunctions: { isoTime: "isoTime" },
     destination: mockDestination,
+    stdTimeFunctions: { isoTime: "isoTime" },
   });
-  return { mockPinoFn, mockDestination };
+  return { mockDestination, mockPinoFn };
 });
 
 vi.mock("pino", () => ({ default: mockPinoFn }));
@@ -40,8 +40,8 @@ describe("createFileLogger", () => {
     expect(mockDestination).toHaveBeenCalled();
     expect(mockPinoFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        level: "error",
         base: { service: "nextjs-app" },
+        level: "error",
       }),
       expect.anything(),
     );

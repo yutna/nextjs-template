@@ -11,9 +11,9 @@ class TestInfraError extends AppError {
   constructor() {
     super({
       code: "TEST_ERROR",
+      isOperational: false,
       message: "infra detail",
       statusCode: 500,
-      isOperational: false,
     });
   }
 }

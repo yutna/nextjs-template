@@ -15,9 +15,9 @@ describe("FetchError", () => {
   it("sets statusCode, code, url, method, and message from options", () => {
     const response = makeResponse(404, "Not Found");
     const err = new FetchError({
-      url: "https://api.example.com/users/1",
       method: "GET",
       response,
+      url: "https://api.example.com/users/1",
     });
 
     expect(err.statusCode).toBe(404);
@@ -32,10 +32,10 @@ describe("FetchError", () => {
 
   it("uses custom code when provided", () => {
     const err = new FetchError({
-      url: "/items/1",
+      code: "ITEM_NOT_FOUND",
       method: "GET",
       response: makeResponse(404, "Not Found"),
-      code: "ITEM_NOT_FOUND",
+      url: "/items/1",
     });
 
     expect(err.code).toBe("ITEM_NOT_FOUND");
@@ -43,9 +43,9 @@ describe("FetchError", () => {
 
   it("is operational for 4xx responses", () => {
     const err = new FetchError({
-      url: "/test",
       method: "POST",
       response: makeResponse(422, "Unprocessable Entity"),
+      url: "/test",
     });
 
     expect(err.isOperational).toBe(true);
@@ -54,9 +54,9 @@ describe("FetchError", () => {
 
   it("is NOT operational for 5xx responses", () => {
     const err = new FetchError({
-      url: "/test",
       method: "GET",
       response: makeResponse(500, "Internal Server Error"),
+      url: "/test",
     });
 
     expect(err.isOperational).toBe(false);
@@ -66,9 +66,9 @@ describe("FetchError", () => {
   describe("convenience getters", () => {
     it("isNotFound — true for 404", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(404, "Not Found"),
+        url: "/x",
       });
       expect(err.isNotFound).toBe(true);
       expect(err.isClientError).toBe(true);
@@ -77,27 +77,27 @@ describe("FetchError", () => {
 
     it("isUnauthorized — true for 401", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(401, "Unauthorized"),
+        url: "/x",
       });
       expect(err.isUnauthorized).toBe(true);
     });
 
     it("isForbidden — true for 403", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(403, "Forbidden"),
+        url: "/x",
       });
       expect(err.isForbidden).toBe(true);
     });
 
     it("isServerError — true for 500", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(500, "Internal Server Error"),
+        url: "/x",
       });
       expect(err.isServerError).toBe(true);
       expect(err.isClientError).toBe(false);
@@ -107,9 +107,9 @@ describe("FetchError", () => {
   describe("AppError / HttpError integration", () => {
     it("is instanceof AppError, HttpError, and FetchError", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(400, "Bad Request"),
+        url: "/x",
       });
       expect(err).toBeInstanceOf(AppError);
       expect(err).toBeInstanceOf(HttpError);
@@ -119,35 +119,35 @@ describe("FetchError", () => {
 
     it("is detected by isAppError helper", () => {
       const err = new FetchError({
-        url: "/x",
         method: "GET",
         response: makeResponse(400, "Bad Request"),
+        url: "/x",
       });
       expect(isAppError(err)).toBe(true);
     });
 
     it("toJSON() returns serialized error without stack", () => {
       const err = new FetchError({
-        url: "/x",
         method: "POST",
         response: makeResponse(409, "Conflict"),
+        url: "/x",
       });
 
       const json = err.toJSON();
       expect(json).toMatchObject({
-        name: "FetchError",
         code: "FETCH_ERROR",
-        statusCode: 409,
         isOperational: true,
+        name: "FetchError",
+        statusCode: 409,
       });
       expect(json).not.toHaveProperty("stack");
     });
 
     it("toString() follows AppError format", () => {
       const err = new FetchError({
-        url: "/x",
         method: "DELETE",
         response: makeResponse(403, "Forbidden"),
+        url: "/x",
       });
 
       expect(err.toString()).toBe(

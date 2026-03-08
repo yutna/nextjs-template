@@ -24,9 +24,9 @@ describe("NotFoundError", () => {
   it("serializes cleanly", () => {
     const json = new NotFoundError("Order", "abc-123").toJSON();
     expect(json).toMatchObject({
+      isOperational: true,
       name: "NotFoundError",
       statusCode: 404,
-      isOperational: true,
     });
     expect(json).not.toHaveProperty("stack");
   });

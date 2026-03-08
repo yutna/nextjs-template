@@ -6,9 +6,9 @@ class TestError extends AppError {
   constructor() {
     super({
       code: "TEST_ERROR",
-      statusCode: 418,
-      message: "I'm a teapot",
       isOperational: true,
+      message: "I'm a teapot",
+      statusCode: 418,
     });
   }
 }
@@ -17,9 +17,9 @@ class TestInfraError extends AppError {
   constructor() {
     super({
       code: "INFRA_ERROR",
-      statusCode: 500,
-      message: "System failure",
       isOperational: false,
+      message: "System failure",
+      statusCode: 500,
     });
   }
 }
@@ -45,11 +45,11 @@ describe("AppError", () => {
   it("toJSON returns a plain object without stack", () => {
     const json = new TestError().toJSON();
     expect(json).toMatchObject({
-      name: "TestError",
       code: "TEST_ERROR",
-      statusCode: 418,
-      message: "I'm a teapot",
       isOperational: true,
+      message: "I'm a teapot",
+      name: "TestError",
+      statusCode: 418,
     });
     expect(json).not.toHaveProperty("stack");
   });
@@ -70,7 +70,7 @@ describe("AppError", () => {
     const cause = new Error("original");
     class CauseError extends AppError {
       constructor() {
-        super({ code: "X", statusCode: 500, message: "wrapped", cause });
+        super({ cause, code: "X", message: "wrapped", statusCode: 500 });
       }
     }
     expect(new CauseError().cause).toBe(cause);

@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { DatabaseError } from "./database-error";
 import { isAppError } from "@/shared/lib/errors/helpers/is-app-error";
 import { isOperationalError } from "@/shared/lib/errors/helpers/is-operational-error";
+
+import { DatabaseError } from "./database-error";
 
 describe("DatabaseError", () => {
   it("has statusCode 500, correct code, and is NOT operational", () => {

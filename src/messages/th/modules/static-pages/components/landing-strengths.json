@@ -1,0 +1,16 @@
+{
+  "heading": "ทำไมต้องใช้เทมเพลตนี้",
+  "strength1Description": "React 19 RSC กับ Next.js 16 App Router รหัส client น้อยที่สุด ประสิทธิภาพสูงสุด",
+  "strength1Title": "Server-First โดยค่าเริ่มต้น",
+  "strength2Description": "Strict mode เต็มรูปแบบพร้อม Zod 4 สำหรับ runtime validation ไม่มี any ทุก error มี type",
+  "strength2Title": "TypeScript Strict Mode",
+  "strength3Description": "AGENTS.md, ระบบ skills และ instructions ที่โหลดอัตโนมัติ พร้อมใช้งาน",
+  "strength3Title": "โค้ดเบสปรับแต่งสำหรับ AI",
+  "strength4Description": "รองรับภาษาไทยและอังกฤษด้วย next-intl namespace ที่มีโครงสร้างชัดเจน",
+  "strength4Title": "รองรับหลายภาษาในตัว",
+  "strength5Description": "สลับธีมอย่างราบรื่นด้วย next-themes และ Chakra UI v3 รองรับทั้ง SSR และ client",
+  "strength5Title": "Light & Dark Mode",
+  "strength6Description": "Vitest, ESLint, Pino logging และ type coverage เต็มรูปแบบ พร้อม deploy ตั้งแต่วันแรก",
+  "strength6Title": "พร้อมสำหรับ Production",
+  "subheading": "สร้างบนแนวทางที่พิสูจน์แล้ว ทีมของคุณจะส่งงานได้เร็วขึ้นตั้งแต่วันแรก"
+}
