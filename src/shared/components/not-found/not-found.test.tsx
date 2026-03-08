@@ -24,10 +24,9 @@ vi.mock("@/shared/routes", () => ({
   routes: { root: { path: () => "/" } },
 }));
 
-const mockBack = vi.hoisted(() => vi.fn());
-vi.mock("./button-go-back", () => ({
-  ButtonGoBack: ({ label }: { label: string }) => (
-    <button onClick={mockBack}>{label}</button>
+vi.mock("./button-go-back-client", () => ({
+  ButtonGoBackClient: ({ label }: { label: string }) => (
+    <button>{label}</button>
   ),
 }));
 

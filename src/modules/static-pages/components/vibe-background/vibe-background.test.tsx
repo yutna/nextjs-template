@@ -1,33 +1,34 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
 import { VibeBackground } from "./vibe-background";
 
-vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
-  useVibe: vi.fn(() => ({
-    isVibeOn: true,
-    setVolume: vi.fn(),
-    toggleVibe: vi.fn(),
-    volume: 15,
-  })),
-}));
-
-beforeEach(() => {
-  Object.defineProperty(window, "matchMedia", {
-    configurable: true,
-    value: vi.fn().mockReturnValue({
-      addEventListener: vi.fn(),
-      matches: false,
-      removeEventListener: vi.fn(),
-    }),
-  });
-});
-
 describe("VibeBackground", () => {
-  it("renders nothing on mobile (default SSR state)", () => {
-    const { container } = renderWithProviders(<VibeBackground />);
-    // On initial render (before useEffect), isDesktop=false so renders null
+  it("renders nothing when not on desktop", () => {
+    const { container } = renderWithProviders(
+      <VibeBackground
+        iframeRef={{ current: null }}
+        isDesktop={false}
+        isVibeOn={false}
+        onIframeLoad={vi.fn()}
+      />,
+    );
+
     expect(container.firstChild).toBeNull();
+  });
+
+  it("renders the iframe on desktop", () => {
+    renderWithProviders(
+      <VibeBackground
+        iframeRef={{ current: null }}
+        isDesktop={true}
+        isVibeOn={true}
+        onIframeLoad={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTitle("vibe background")).toBeInTheDocument();
   });
 });

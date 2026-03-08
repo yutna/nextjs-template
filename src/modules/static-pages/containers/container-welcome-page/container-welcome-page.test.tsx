@@ -33,12 +33,8 @@ vi.mock("@/modules/static-pages/components/landing-strengths", () => ({
 vi.mock("@/modules/static-pages/components/landing-tech-stack", () => ({
   LandingTechStack: () => null,
 }));
-vi.mock("@/modules/static-pages/components/page-chrome", () => ({
-  PageChrome: () => null,
-}));
-vi.mock("@/shared/lib/navigation", () => ({
-  usePathname: vi.fn(() => "/"),
-  useRouter: vi.fn(() => ({ replace: vi.fn() })),
+vi.mock("@/modules/static-pages/containers/container-page-chrome", () => ({
+  ContainerPageChrome: () => null,
 }));
 
 describe("ContainerWelcomePage", () => {

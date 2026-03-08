@@ -1,17 +1,19 @@
 "use client";
 
 import { HStack, Separator } from "@chakra-ui/react";
-import { useMediaQuery } from "usehooks-ts";
-
-import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
 
 import { BARS_COUNT, VOLUME_MAX, VOLUME_MIN, VOLUME_STEP } from "./constants";
 import styles from "./vibe-controls.module.css";
 
-export function VibeControls() {
-  const { isVibeOn, setVolume, toggleVibe, volume } = useVibe();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+import type { VibeControlsProps } from "./types";
 
+export function VibeControls({
+  isDesktop,
+  isVibeOn,
+  onVibeToggle,
+  onVolumeChange,
+  volume,
+}: Readonly<VibeControlsProps>) {
   if (!isDesktop) return null;
 
   return (
@@ -35,7 +37,7 @@ export function VibeControls() {
               className={styles["volume-slider"]}
               max={VOLUME_MAX}
               min={VOLUME_MIN}
-              onChange={(e) => setVolume(Number(e.target.value))}
+              onChange={(e) => onVolumeChange(Number(e.target.value))}
               step={VOLUME_STEP}
               type="range"
               value={volume}
@@ -54,7 +56,7 @@ export function VibeControls() {
       <button
         aria-label={isVibeOn ? "Turn off vibe" : "Turn on vibe"}
         className={`${styles["vibe-button"]}${isVibeOn ? ` ${styles["vibe-button-on"]}` : ""}`}
-        onClick={toggleVibe}
+        onClick={onVibeToggle}
       >
         Vibe{" "}
         <span

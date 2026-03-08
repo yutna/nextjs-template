@@ -4,20 +4,15 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 import { PageChrome } from "./page-chrome";
 
-vi.mock("@/shared/lib/navigation", () => ({
-  usePathname: vi.fn(() => "/"),
-  useRouter: vi.fn(() => ({ replace: vi.fn() })),
+vi.mock("@/modules/static-pages/containers/container-vibe-controls", () => ({
+  ContainerVibeControls: () => null,
 }));
-
-vi.mock("@/modules/static-pages/components/vibe-controls", () => ({
-  VibeControls: () => null,
-}));
-
-vi.mock("server-only", () => ({}));
 
 describe("PageChrome", () => {
   it("renders locale buttons and color mode toggle", () => {
-    const { getByText } = renderWithProviders(<PageChrome locale="en" />);
+    const { getByText } = renderWithProviders(
+      <PageChrome locale="en" onLocaleSwitch={vi.fn()} />,
+    );
     expect(getByText("TH")).toBeDefined();
     expect(getByText("EN")).toBeDefined();
   });

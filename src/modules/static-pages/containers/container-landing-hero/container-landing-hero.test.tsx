@@ -8,8 +8,8 @@ vi.mock("server-only", () => ({}));
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => key),
 }));
-vi.mock("@/modules/static-pages/components/vibe-background", () => ({
-  VibeBackground: () => null,
+vi.mock("@/modules/static-pages/containers/container-vibe-background", () => ({
+  ContainerVibeBackground: () => null,
 }));
 vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
   useVibe: () => ({

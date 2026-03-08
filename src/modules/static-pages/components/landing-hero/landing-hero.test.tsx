@@ -4,13 +4,8 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 import { LandingHero } from "./landing-hero";
 
-vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
-  useVibe: () => ({
-    isVibeOn: false,
-    setVolume: vi.fn(),
-    toggleVibe: vi.fn(),
-    volume: 15,
-  }),
+vi.mock("@/modules/static-pages/containers/container-copy-command", () => ({
+  ContainerCopyCommand: () => null,
 }));
 
 describe("LandingHero", () => {

@@ -15,7 +15,7 @@ import { LuHouse } from "react-icons/lu";
 import { Link } from "@/shared/lib/navigation";
 import { routes } from "@/shared/routes";
 
-import { ButtonGoBack } from "./button-go-back";
+import { ButtonGoBackClient } from "./button-go-back-client";
 
 export async function NotFound() {
   const locale = await getLocale();
@@ -82,7 +82,7 @@ export async function NotFound() {
 
         {/* Actions */}
         <HStack flexWrap="wrap" gap={4} justify="center">
-          <ButtonGoBack label={t("goBack")} />
+          <ButtonGoBackClient label={t("goBack")} />
           <Button asChild colorPalette="blue" size="lg">
             <Link href={routes.root.path()}>
               <LuHouse />

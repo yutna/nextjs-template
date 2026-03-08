@@ -1,32 +1,55 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
 import { VibeControls } from "./vibe-controls";
 
-vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
-  useVibe: vi.fn(() => ({
-    isVibeOn: true,
-    setVolume: vi.fn(),
-    toggleVibe: vi.fn(),
-    volume: 15,
-  })),
-}));
-
-beforeEach(() => {
-  Object.defineProperty(window, "matchMedia", {
-    configurable: true,
-    value: vi.fn().mockReturnValue({
-      addEventListener: vi.fn(),
-      matches: false,
-      removeEventListener: vi.fn(),
-    }),
-  });
-});
-
 describe("VibeControls", () => {
-  it("renders nothing on mobile (default SSR state)", () => {
-    const { container } = renderWithProviders(<VibeControls />);
+  it("renders nothing on mobile", () => {
+    const { container } = renderWithProviders(
+      <VibeControls
+        isDesktop={false}
+        isVibeOn={false}
+        onVibeToggle={vi.fn()}
+        onVolumeChange={vi.fn()}
+        volume={15}
+      />,
+    );
+
     expect(container.firstChild).toBeNull();
+  });
+
+  it("renders the vibe toggle on desktop", () => {
+    renderWithProviders(
+      <VibeControls
+        isDesktop={true}
+        isVibeOn={true}
+        onVibeToggle={vi.fn()}
+        onVolumeChange={vi.fn()}
+        volume={15}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Turn off vibe" }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Vibe volume")).toBeInTheDocument();
+  });
+
+  it("shows the correct aria-label when vibe is off", () => {
+    renderWithProviders(
+      <VibeControls
+        isDesktop={true}
+        isVibeOn={false}
+        onVibeToggle={vi.fn()}
+        onVolumeChange={vi.fn()}
+        volume={15}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Turn on vibe" }),
+    ).toBeInTheDocument();
   });
 });

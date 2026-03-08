@@ -5,27 +5,23 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 import { ButtonGoBack } from "./button-go-back";
 
-const mockBack = vi.hoisted(() => vi.fn());
-vi.mock("@/shared/lib/navigation", () => ({
-  useRouter: vi.fn(() => ({ back: mockBack })),
-}));
-
 describe("ButtonGoBack", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("renders a button with the provided label", () => {
-    renderWithProviders(<ButtonGoBack label="Go Back" />);
+    renderWithProviders(<ButtonGoBack label="Go Back" onClick={vi.fn()} />);
 
     expect(screen.getByRole("button", { name: "Go Back" })).toBeInTheDocument();
   });
 
-  it("calls router.back when clicked", () => {
-    renderWithProviders(<ButtonGoBack label="Go Back" />);
+  it("calls onClick when clicked", () => {
+    const onClick = vi.fn();
+    renderWithProviders(<ButtonGoBack label="Go Back" onClick={onClick} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Go Back" }));
 
-    expect(mockBack).toHaveBeenCalledOnce();
+    expect(onClick).toHaveBeenCalledOnce();
   });
 });

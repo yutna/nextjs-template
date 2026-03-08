@@ -2,28 +2,16 @@
 
 import { HStack, IconButton, Text } from "@chakra-ui/react";
 import { LuCheck, LuCopy } from "react-icons/lu";
-import { useImmer } from "use-immer";
-
-import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
 
 import { HERO_INSTALL_COMMAND } from "./constants";
 
-export function CopyCommand() {
-  const [state, updateState] = useImmer({ copied: false });
-  const { isVibeOn } = useVibe();
+import type { CopyCommandProps } from "./types";
 
-  async function handleCopy() {
-    await navigator.clipboard.writeText(HERO_INSTALL_COMMAND);
-    updateState((draft) => {
-      draft.copied = true;
-    });
-    setTimeout(() => {
-      updateState((draft) => {
-        draft.copied = false;
-      });
-    }, 2000);
-  }
-
+export function CopyCommand({
+  isCopied,
+  isVibeOn,
+  onCopy,
+}: Readonly<CopyCommandProps>) {
   return (
     <HStack
       backdropFilter="blur(12px)"
@@ -65,21 +53,21 @@ export function CopyCommand() {
             ? "gray.100"
             : { _dark: "gray.100", base: "gray.800" },
         }}
-        aria-label={state.copied ? "Copied" : "Copy command"}
+        aria-label={isCopied ? "Copied" : "Copy command"}
         color={
-          state.copied
+          isCopied
             ? "green.400"
             : isVibeOn
               ? "gray.400"
               : { _dark: "gray.400", base: "gray.500" }
         }
         flexShrink={0}
-        onClick={handleCopy}
+        onClick={onCopy}
         size="xs"
         transition="all 0.2s ease"
         variant="ghost"
       >
-        {state.copied ? <LuCheck /> : <LuCopy />}
+        {isCopied ? <LuCheck /> : <LuCopy />}
       </IconButton>
     </HStack>
   );

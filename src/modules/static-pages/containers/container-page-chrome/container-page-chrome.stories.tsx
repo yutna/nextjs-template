@@ -1,14 +1,20 @@
-import { PageChrome } from "./page-chrome";
+import { ContainerPageChrome } from "./container-page-chrome";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 const meta = {
-  component: PageChrome,
+  component: ContainerPageChrome,
   parameters: {
     layout: "fullscreen",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: "/",
+      },
+    },
   },
-  title: "modules/static-pages/components/page-chrome",
-} satisfies Meta<typeof PageChrome>;
+  title: "modules/static-pages/containers/container-page-chrome",
+} satisfies Meta<typeof ContainerPageChrome>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -16,13 +22,11 @@ type Story = StoryObj<typeof meta>;
 export const English: Story = {
   args: {
     locale: "en",
-    onLocaleSwitch: () => undefined,
   },
 };
 
 export const Thai: Story = {
   args: {
     locale: "th",
-    onLocaleSwitch: () => undefined,
   },
 };

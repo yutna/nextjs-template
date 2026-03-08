@@ -2,23 +2,16 @@
 
 import { Box, HStack, Separator } from "@chakra-ui/react";
 
-import { VibeControls } from "@/modules/static-pages/components/vibe-controls";
+import { ContainerVibeControls } from "@/modules/static-pages/containers/container-vibe-controls";
 import { LOCALES } from "@/shared/constants/locale";
-import { usePathname, useRouter } from "@/shared/lib/navigation";
 import { ColorModeButton } from "@/shared/vendor/chakra-ui/color-mode";
 
-import type { Locale } from "next-intl";
 import type { PageChromeProps } from "./types";
 
-export function PageChrome({ locale }: Readonly<PageChromeProps>) {
-  const pathname = usePathname();
-  const router = useRouter();
-
-  function handleSwitch(next: Locale) {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
-
+export function PageChrome({
+  locale,
+  onLocaleSwitch,
+}: Readonly<PageChromeProps>) {
   return (
     <Box position="fixed" right={4} top={4} zIndex="overlay">
       <HStack
@@ -30,7 +23,7 @@ export function PageChrome({ locale }: Readonly<PageChromeProps>) {
         px={1}
         py={1}
       >
-        <VibeControls />
+        <ContainerVibeControls />
         {LOCALES.map((l) => {
           const isActive = l === locale;
           return (
@@ -53,7 +46,7 @@ export function PageChrome({ locale }: Readonly<PageChromeProps>) {
               fontWeight="semibold"
               key={l}
               letterSpacing="wide"
-              onClick={() => handleSwitch(l)}
+              onClick={() => onLocaleSwitch(l)}
               px={3}
               py={1}
               transition="all 0.15s ease"

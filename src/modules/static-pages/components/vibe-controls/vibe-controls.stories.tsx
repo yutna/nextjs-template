@@ -1,18 +1,16 @@
-import { VibeProvider } from "@/modules/static-pages/providers/vibe-provider";
-
 import { VibeControls } from "./vibe-controls";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 const meta = {
+  args: {
+    isDesktop: true,
+    isVibeOn: true,
+    onVibeToggle: () => {},
+    onVolumeChange: () => {},
+    volume: 15,
+  },
   component: VibeControls,
-  decorators: [
-    (Story) => (
-      <VibeProvider>
-        <Story />
-      </VibeProvider>
-    ),
-  ],
   parameters: {
     layout: "centered",
   },
@@ -22,6 +20,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Vibe toggle + volume slider — visible on desktop (≥768px).
-// On mobile the component renders null.
+// Vibe toggle + volume slider — visible on desktop (isDesktop: true).
 export const Default: Story = {};
+
+export const VibeOff: Story = {
+  args: { isVibeOn: false },
+};
+
+export const Mobile: Story = {
+  args: { isDesktop: false },
+};

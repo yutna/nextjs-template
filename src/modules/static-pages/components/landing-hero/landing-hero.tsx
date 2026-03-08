@@ -1,8 +1,8 @@
 import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { LuGithub } from "react-icons/lu";
 
-import { CopyCommand } from "@/modules/static-pages/components/copy-command";
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
+import { ContainerCopyCommand } from "@/modules/static-pages/containers/container-copy-command";
 
 import type { LandingHeroProps } from "./types";
 
@@ -70,7 +70,7 @@ export function LandingHero({
       </MotionReveal>
 
       <MotionReveal delay={0.3}>
-        <CopyCommand />
+        <ContainerCopyCommand />
       </MotionReveal>
 
       <MotionReveal delay={0.4}>
