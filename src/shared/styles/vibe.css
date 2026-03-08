@@ -4,12 +4,23 @@
  * VibeBackground sets data-vibe-active="1" on <html> when the YouTube
  * player is playing on desktop. Overriding Chakra CSS custom properties
  * here propagates to all descendant elements styled with those tokens.
+ *
+ * Two concerns addressed:
+ *   1. Text colors → flipped to white so they stay readable over the dark video.
+ *   2. UI surface colors → CopyCommand box and button need dark-mode-style
+ *      backgrounds/borders so white text has sufficient contrast.
  */
 :root[data-vibe-active="1"] [data-vibe-hero] {
+  /* Text → white spectrum */
   --chakra-colors-gray-300: rgb(255 255 255 / 85%);
   --chakra-colors-gray-400: rgb(255 255 255 / 70%);
   --chakra-colors-gray-500: rgb(255 255 255 / 60%);
   --chakra-colors-gray-600: rgb(255 255 255 / 78%);
-  --chakra-colors-gray-700: rgb(255 255 255 / 20%);
+  --chakra-colors-gray-700: rgb(255 255 255 / 85%);
   --chakra-colors-gray-900: white;
+
+  /* UI surfaces → dark-tinted so white text stays readable.
+     CopyCommand uses gray.50 (bg) and gray.200 (border) in light mode. */
+  --chakra-colors-gray-50: rgb(0 0 0 / 45%);
+  --chakra-colors-gray-200: rgb(255 255 255 / 20%);
 }
