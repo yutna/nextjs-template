@@ -38,15 +38,20 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-| --------- | ------------- |
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run lint` | Run all linters (ESLint + Stylelint + custom checks) |
-| `npm run check-types` | TypeScript type checking |
-| `npm run test` | Run all tests |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run format` | Format code with Prettier |
+| Command                    | Description                                          |
+| -------------------------- | ---------------------------------------------------- |
+| `npm run build`            | Production build                                     |
+| `npm run build:analyze`    | Production build with bundle analyzer                |
+| `npm run build:storybook`  | Build Storybook for production                       |
+| `npm run check-types`      | TypeScript type checking                             |
+| `npm run dev`              | Start development server                             |
+| `npm run dev:storybook`    | Start Storybook dev server                           |
+| `npm run format`           | Format code with Prettier                            |
+| `npm run lint`             | Run all linters (ESLint + Stylelint + custom checks) |
+| `npm run start`            | Start production server                              |
+| `npm run test`             | Run all tests                                        |
+| `npm run test:coverage`    | Run tests with coverage report                       |
+| `npm run test:watch`       | Run tests in watch mode                              |
 
 ## Project Structure
 
