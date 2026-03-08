@@ -95,6 +95,13 @@ src/
 ├── test/             # Shared test helpers
 └── proxy.ts          # Locale routing middleware
 
+.storybook/           # Storybook configuration
+├── main.ts           # Framework, addons, story discovery
+├── preview.tsx       # Global decorators and toolbar
+├── preview-head.html # Font preloading
+├── mocks/            # server-only and next-intl mocks
+└── vitest.setup.ts   # Portable stories test setup
+
 .github/
 ├── instructions/     # Auto-loaded conventions
 └── skills/           # On-demand deep knowledge
@@ -133,6 +140,7 @@ Core ownership rules:
 - **CSS utility:** clsx
 - **Logging:** Pino
 - **Testing:** Vitest + Testing Library
+- **Component development:** Storybook v10
 
 ## How to use this guide
 
@@ -506,6 +514,8 @@ Current baseline:
 - linting: `npm run lint`
 - type-checking: `npm run check-types`
 - testing: `npm run test`
+- component development: `npm run dev:storybook`
+- building stories: `npm run build:storybook`
 
 Rules:
 
@@ -879,6 +889,10 @@ These load when editing matching files.
 - **`test-files`** —
   applies to `**/*.test.ts` and `**/*.test.tsx`.
   Vitest, Testing Library patterns.
+- **`storybook-stories`** —
+  applies to `**/*.stories.ts` and `**/*.stories.tsx`.
+  Story file patterns, meta structure, server component
+  stories, locale and color mode handling.
 
 ### On-demand skills
 
@@ -903,6 +917,10 @@ These provide deep knowledge when the task needs it.
   styling with Chakra UI, CSS, or managing images.
 - **`project-testing`** —
   writing or fixing tests.
+- **`project-storybook`** —
+  writing component stories, preview setup, mocking
+  server components and next-intl, configuration files,
+  locale and color mode toolbar integration.
 - **`effect`** —
   Effect TypeScript library for typed error handling.
   Mandatory in `shared/api/`. Free to use in `shared/lib/`,
@@ -972,11 +990,13 @@ src/modules/static-pages/
 │   │   ├── constants.ts
 │   │   ├── copy-command.tsx
 │   │   ├── copy-command.test.tsx
+│   │   ├── copy-command.stories.tsx
 │   │   └── index.ts
 │   ├── landing-ai-workflow/
 │   │   ├── constants.ts
 │   │   ├── landing-ai-workflow.tsx
 │   │   ├── landing-ai-workflow.test.tsx
+│   │   ├── landing-ai-workflow.stories.tsx
 │   │   ├── index.ts
 │   │   └── types.ts
 │   ├── landing-copilot/
@@ -990,6 +1010,7 @@ src/modules/static-pages/
 │   │   ├── marquee-row.tsx
 │   │   ├── marquee-row.module.css
 │   │   ├── marquee-row.test.tsx
+│   │   ├── marquee-row.stories.tsx
 │   │   ├── index.ts
 │   │   └── types.ts
 │   ├── motion-reveal/
@@ -1000,12 +1021,14 @@ src/modules/static-pages/
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
 │       ├── container-welcome-page.test.tsx
+│       ├── container-welcome-page.stories.tsx
 │       ├── index.ts
 │       └── types.ts
 └── screens/
     └── screen-welcome/
         ├── screen-welcome.tsx
         ├── screen-welcome.test.tsx
+        ├── screen-welcome.stories.tsx
         ├── index.ts
         └── types.ts
 ```
