@@ -1,7 +1,9 @@
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 import type { StorybookConfig } from "@storybook/nextjs-vite";
+import type { Plugin } from "vite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,7 +21,7 @@ const config: StorybookConfig = {
   framework: {
     name: "@storybook/nextjs-vite",
     options: {
-      nextConfigPath: "../next.config.ts",
+      nextConfigPath: join(__dirname, "..", "next.config.ts"),
     },
   },
   staticDirs: ["../public"],
@@ -44,6 +46,26 @@ const config: StorybookConfig = {
           })),
         ]
       : { ...(config.resolve.alias ?? {}), ...newAliases };
+
+    // Replace any existing vite-tsconfig-paths plugins with one that uses an
+    // explicit `projects` list. This bypasses findAll() which can scan parent
+    // directories and pick up tsconfig files from sibling projects when the
+    // Vite workspace root resolves above the project boundary.
+    config.plugins = (config.plugins ?? []).filter(
+      (p) =>
+        !(
+          p &&
+          typeof p === "object" &&
+          "name" in p &&
+          (p as Plugin).name === "vite-tsconfig-paths"
+        ),
+    );
+    config.plugins.push(
+      tsconfigPaths({
+        ignoreConfigErrors: true,
+        projects: [join(__dirname, "..", "tsconfig.json")],
+      }),
+    );
 
     return config;
   },
