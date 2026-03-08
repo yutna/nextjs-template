@@ -1,0 +1,78 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: "Asia/Bangkok"
+    open-pull-requests-limit: 5
+    labels:
+      - "type: chore"
+      - "priority: low"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: "Asia/Bangkok"
+    open-pull-requests-limit: 10
+    labels:
+      - "type: chore"
+      - "priority: low"
+    groups:
+      nextjs:
+        patterns:
+          - "next*"
+          - "@next/*"
+          - "eslint-config-next"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      vite:
+        patterns:
+          - "vite"
+          - "vite-*"
+          - "@vitejs/*"
+          - "babel-plugin-*"
+      chakra-ui:
+        patterns:
+          - "@chakra-ui/*"
+          - "@ark-ui/*"
+          - "@zag-js/*"
+          - "motion"
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+          - "@chromatic-com/*"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "jsdom"
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+          - "prettier"
+          - "stylelint"
+          - "stylelint-*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/node"
+      dependencies:
+        patterns:
+          - "*"
