@@ -68,7 +68,9 @@ export async function LandingAiWorkflow({
               <MotionReveal key={step.key} variant="fadeInUp">
                 <HStack
                   align="flex-start"
-                  borderBottom={index < WORKFLOW_STEPS.length - 1 ? "1px solid" : undefined}
+                  borderBottom={
+                    index < WORKFLOW_STEPS.length - 1 ? "1px solid" : undefined
+                  }
                   borderColor={{ _dark: "gray.800", base: "gray.100" }}
                   gap={{ base: 3, md: 5 }}
                   py={{ base: 4, md: 5 }}

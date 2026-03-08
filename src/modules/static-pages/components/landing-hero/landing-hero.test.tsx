@@ -11,7 +11,9 @@ vi.mock("next-intl/server", () => ({
 
 describe("LandingHero", () => {
   it("renders the hero section", async () => {
-    const { container } = renderWithProviders(await LandingHero({ locale: "en" }));
+    const { container } = renderWithProviders(
+      await LandingHero({ locale: "en" }),
+    );
     expect(container).toBeDefined();
   });
 });

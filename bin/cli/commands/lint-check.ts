@@ -85,7 +85,10 @@ const checkServerOnly = Effect.sync((): CheckResult => {
 
     if (isRedirectOnly || isNotFoundOnly) continue;
 
-    if (!content.includes('"server-only"') && !content.includes("'server-only'")) {
+    if (
+      !content.includes('"server-only"') &&
+      !content.includes("'server-only'")
+    ) {
       errors.push({
         file: rel(page),
         message: 'Missing import "server-only"',
@@ -198,8 +201,10 @@ const SKIP_FILES = new Set([
 
 function isImplementationFile(filename: string): boolean {
   if (SKIP_FILES.has(filename)) return false;
-  if (filename.endsWith(".test.ts") || filename.endsWith(".test.tsx")) return false;
-  if (filename.endsWith(".stories.ts") || filename.endsWith(".stories.tsx")) return false;
+  if (filename.endsWith(".test.ts") || filename.endsWith(".test.tsx"))
+    return false;
+  if (filename.endsWith(".stories.ts") || filename.endsWith(".stories.tsx"))
+    return false;
   if (filename.endsWith(".d.ts")) return false;
   if (filename.endsWith(".module.css")) return false;
   if (filename.endsWith(".json")) return false;
@@ -386,12 +391,7 @@ function classifyLine(line: string): null | number {
   return null;
 }
 
-const SECTION_ORDER_LAYERS = [
-  "components",
-  "containers",
-  "hooks",
-  "screens",
-];
+const SECTION_ORDER_LAYERS = ["components", "containers", "hooks", "screens"];
 
 const checkSectionOrder = Effect.sync((): CheckResult => {
   const warnings: Violation[] = [];
@@ -513,7 +513,11 @@ const checkCssVariables = Effect.sync((): CheckResult => {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
 
-      if (!line.includes("#") || line.startsWith("/*") || line.startsWith("//")) {
+      if (
+        !line.includes("#") ||
+        line.startsWith("/*") ||
+        line.startsWith("//")
+      ) {
         continue;
       }
 
@@ -567,7 +571,10 @@ function parseArgs(args: string[]): { checks: CheckName[] } {
     }
   }
 
-  return { checks: checks.length > 0 ? checks : (Object.keys(ALL_CHECKS) as CheckName[]) };
+  return {
+    checks:
+      checks.length > 0 ? checks : (Object.keys(ALL_CHECKS) as CheckName[]),
+  };
 }
 
 function formatResults(results: CheckResult[]): string {
@@ -600,9 +607,7 @@ function formatResults(results: CheckResult[]): string {
   }
 
   lines.push("");
-  lines.push(
-    `  Total: ${totalErrors} errors, ${totalWarnings} warnings`,
-  );
+  lines.push(`  Total: ${totalErrors} errors, ${totalWarnings} warnings`);
 
   return lines.join("\n");
 }

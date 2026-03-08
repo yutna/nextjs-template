@@ -7,9 +7,7 @@ import { LandingCliUsage } from "./landing-cli-usage";
 
 vi.mock("server-only", () => ({}));
 
-const mockGetTranslations = vi.hoisted(() =>
-  vi.fn(() => (key: string) => key),
-);
+const mockGetTranslations = vi.hoisted(() => vi.fn(() => (key: string) => key));
 
 vi.mock("next-intl/server", () => ({
   getTranslations: mockGetTranslations,
@@ -35,7 +33,9 @@ describe("LandingCliUsage", () => {
     );
 
     for (const step of WORKFLOW_STEPS) {
-      expect(getByText(`${step.key}Title`, { exact: false })).toBeInTheDocument();
+      expect(
+        getByText(`${step.key}Title`, { exact: false }),
+      ).toBeInTheDocument();
       expect(getByText(`${step.key}Note`)).toBeInTheDocument();
     }
   });

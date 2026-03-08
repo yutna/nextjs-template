@@ -10,7 +10,9 @@ import { STRENGTHS } from "./constants";
 
 import type { LandingStrengthsProps } from "./types";
 
-export async function LandingStrengths({ locale }: Readonly<LandingStrengthsProps>) {
+export async function LandingStrengths({
+  locale,
+}: Readonly<LandingStrengthsProps>) {
   const t = await getTranslations({
     locale,
     namespace: "modules.staticPages.components.landingStrengths",
@@ -63,42 +65,44 @@ export async function LandingStrengths({ locale }: Readonly<LandingStrengthsProp
             {STRENGTHS.map((strength) => {
               const StrengthIcon = strength.icon;
               return (
-              <MotionReveal key={strength.titleKey} variant="fadeInUp">
-                <Box
-                  _hover={{ borderColor: { _dark: "gray.700", base: "gray.300" } }}
-                  bg={{ _dark: "gray.950", base: "white" }}
-                  border="1px solid"
-                  borderColor={{ _dark: "gray.800", base: "gray.200" }}
-                  borderRadius="lg"
-                  h="full"
-                  p={{ base: 5, md: 6 }}
-                  transition="border-color 0.2s ease"
-                >
-                  {/* Icon */}
-                  <Box color={{ _dark: "blue.400", base: "blue.600" }} mb={3}>
-                    <StrengthIcon height={20} width={20} />
+                <MotionReveal key={strength.titleKey} variant="fadeInUp">
+                  <Box
+                    _hover={{
+                      borderColor: { _dark: "gray.700", base: "gray.300" },
+                    }}
+                    bg={{ _dark: "gray.950", base: "white" }}
+                    border="1px solid"
+                    borderColor={{ _dark: "gray.800", base: "gray.200" }}
+                    borderRadius="lg"
+                    h="full"
+                    p={{ base: 5, md: 6 }}
+                    transition="border-color 0.2s ease"
+                  >
+                    {/* Icon */}
+                    <Box color={{ _dark: "blue.400", base: "blue.600" }} mb={3}>
+                      <StrengthIcon height={20} width={20} />
+                    </Box>
+
+                    {/* Title */}
+                    <Text
+                      color={{ _dark: "white", base: "gray.900" }}
+                      fontSize="sm"
+                      fontWeight="semibold"
+                      mb={2}
+                    >
+                      {t(strength.titleKey as Parameters<typeof t>[0])}
+                    </Text>
+
+                    {/* Description */}
+                    <Text
+                      color={{ _dark: "gray.400", base: "gray.600" }}
+                      fontSize="sm"
+                      lineHeight="tall"
+                    >
+                      {t(strength.descriptionKey as Parameters<typeof t>[0])}
+                    </Text>
                   </Box>
-
-                  {/* Title */}
-                  <Text
-                    color={{ _dark: "white", base: "gray.900" }}
-                    fontSize="sm"
-                    fontWeight="semibold"
-                    mb={2}
-                  >
-                    {t(strength.titleKey as Parameters<typeof t>[0])}
-                  </Text>
-
-                  {/* Description */}
-                  <Text
-                    color={{ _dark: "gray.400", base: "gray.600" }}
-                    fontSize="sm"
-                    lineHeight="tall"
-                  >
-                    {t(strength.descriptionKey as Parameters<typeof t>[0])}
-                  </Text>
-                </Box>
-              </MotionReveal>
+                </MotionReveal>
               );
             })}
           </SimpleGrid>

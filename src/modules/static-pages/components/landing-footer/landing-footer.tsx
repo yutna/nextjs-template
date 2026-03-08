@@ -29,10 +29,7 @@ export async function LandingFooter({ locale }: Readonly<LandingFooterProps>) {
         mx="auto"
         textAlign={{ base: "center", md: "left" }}
       >
-        <Text
-          color={{ _dark: "gray.500", base: "gray.400" }}
-          fontSize="xs"
-        >
+        <Text color={{ _dark: "gray.500", base: "gray.400" }} fontSize="xs">
           {t("copyright", { year: new Date().getFullYear() })}
         </Text>
 

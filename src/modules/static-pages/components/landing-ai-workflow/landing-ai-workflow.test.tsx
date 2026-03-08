@@ -11,7 +11,9 @@ vi.mock("next-intl/server", () => ({
 
 describe("LandingAiWorkflow", () => {
   it("renders the workflow section", async () => {
-    const { container } = renderWithProviders(await LandingAiWorkflow({ locale: "en" }));
+    const { container } = renderWithProviders(
+      await LandingAiWorkflow({ locale: "en" }),
+    );
     expect(container).toBeDefined();
   });
 });

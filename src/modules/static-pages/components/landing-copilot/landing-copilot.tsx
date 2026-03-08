@@ -81,40 +81,40 @@ export async function LandingCopilot({
               {COPILOT_FEATURES.map((feature) => {
                 const FeatureIcon = feature.icon;
                 return (
-                <MotionReveal key={feature.titleKey} variant="fadeInUp">
-                  <Box
-                    _hover={{
-                      borderColor: { _dark: "gray.700", base: "gray.300" },
-                    }}
-                    bg={{ _dark: "gray.950", base: "white" }}
-                    border="1px solid"
-                    borderColor={{ _dark: "gray.800", base: "gray.200" }}
-                    borderRadius="lg"
-                    h="full"
-                    p={{ base: 5, md: 6 }}
-                    transition="border-color 0.2s ease"
-                  >
-                    <HStack gap={3} mb={3}>
-                      <Box color={{ _dark: "blue.400", base: "blue.600" }}>
-                        <FeatureIcon height={16} width={16} />
-                      </Box>
-                      <Text
-                        color={{ _dark: "white", base: "gray.900" }}
-                        fontSize="sm"
-                        fontWeight="semibold"
-                      >
-                        {t(feature.titleKey as Parameters<typeof t>[0])}
-                      </Text>
-                    </HStack>
-                    <Text
-                      color={{ _dark: "gray.400", base: "gray.600" }}
-                      fontSize="sm"
-                      lineHeight="tall"
+                  <MotionReveal key={feature.titleKey} variant="fadeInUp">
+                    <Box
+                      _hover={{
+                        borderColor: { _dark: "gray.700", base: "gray.300" },
+                      }}
+                      bg={{ _dark: "gray.950", base: "white" }}
+                      border="1px solid"
+                      borderColor={{ _dark: "gray.800", base: "gray.200" }}
+                      borderRadius="lg"
+                      h="full"
+                      p={{ base: 5, md: 6 }}
+                      transition="border-color 0.2s ease"
                     >
-                      {t(feature.descriptionKey as Parameters<typeof t>[0])}
-                    </Text>
-                  </Box>
-                </MotionReveal>
+                      <HStack gap={3} mb={3}>
+                        <Box color={{ _dark: "blue.400", base: "blue.600" }}>
+                          <FeatureIcon height={16} width={16} />
+                        </Box>
+                        <Text
+                          color={{ _dark: "white", base: "gray.900" }}
+                          fontSize="sm"
+                          fontWeight="semibold"
+                        >
+                          {t(feature.titleKey as Parameters<typeof t>[0])}
+                        </Text>
+                      </HStack>
+                      <Text
+                        color={{ _dark: "gray.400", base: "gray.600" }}
+                        fontSize="sm"
+                        lineHeight="tall"
+                      >
+                        {t(feature.descriptionKey as Parameters<typeof t>[0])}
+                      </Text>
+                    </Box>
+                  </MotionReveal>
                 );
               })}
             </SimpleGrid>

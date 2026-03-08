@@ -33,11 +33,19 @@ export function PageChrome({ locale }: Readonly<PageChromeProps>) {
           const isActive = l === locale;
           return (
             <Box
-              _hover={isActive ? {} : { bg: { _dark: "gray.800", base: "gray.100" } }}
+              _hover={
+                isActive ? {} : { bg: { _dark: "gray.800", base: "gray.100" } }
+              }
               as="button"
-              bg={isActive ? { _dark: "gray.700", base: "gray.100" } : undefined}
+              bg={
+                isActive ? { _dark: "gray.700", base: "gray.100" } : undefined
+              }
               borderRadius="full"
-              color={isActive ? { _dark: "white", base: "gray.900" } : { _dark: "gray.400", base: "gray.500" }}
+              color={
+                isActive
+                  ? { _dark: "white", base: "gray.900" }
+                  : { _dark: "gray.400", base: "gray.500" }
+              }
               cursor={isActive ? "default" : "pointer"}
               fontSize="xs"
               fontWeight="semibold"
@@ -53,7 +61,11 @@ export function PageChrome({ locale }: Readonly<PageChromeProps>) {
             </Box>
           );
         })}
-        <Separator borderColor={{ _dark: "gray.700", base: "gray.200" }} height="5" orientation="vertical" />
+        <Separator
+          borderColor={{ _dark: "gray.700", base: "gray.200" }}
+          height="5"
+          orientation="vertical"
+        />
         <ColorModeButton size="xs" variant="ghost" />
       </HStack>
     </Box>

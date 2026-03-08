@@ -25,14 +25,10 @@ describe("ErrorBoundary", () => {
   });
 
   it("renders the fallback UI when a child throws", () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     renderWithProviders(
-      <ErrorBoundary
-        fallback={({ error }) => <p>caught: {error.message}</p>}
-      >
+      <ErrorBoundary fallback={({ error }) => <p>caught: {error.message}</p>}>
         <ThrowingChild />
       </ErrorBoundary>,
     );
@@ -43,9 +39,7 @@ describe("ErrorBoundary", () => {
   });
 
   it("renders nothing when a child throws and no fallback is provided", () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     const { container } = renderWithProviders(
       <ErrorBoundary>
@@ -59,9 +53,7 @@ describe("ErrorBoundary", () => {
   });
 
   it("resets the error state and re-renders children when reset is called", () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     let shouldThrow = true;
 
@@ -74,9 +66,7 @@ describe("ErrorBoundary", () => {
 
     renderWithProviders(
       <ErrorBoundary
-        fallback={({ reset }) => (
-          <button onClick={reset}>retry</button>
-        )}
+        fallback={({ reset }) => <button onClick={reset}>retry</button>}
       >
         <ConditionalChild />
       </ErrorBoundary>,

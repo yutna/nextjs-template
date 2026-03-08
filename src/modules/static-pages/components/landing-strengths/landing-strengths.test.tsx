@@ -11,7 +11,9 @@ vi.mock("next-intl/server", () => ({
 
 describe("LandingStrengths", () => {
   it("renders the strengths section", async () => {
-    const { container } = renderWithProviders(await LandingStrengths({ locale: "en" }));
+    const { container } = renderWithProviders(
+      await LandingStrengths({ locale: "en" }),
+    );
     expect(container).toBeDefined();
   });
 });

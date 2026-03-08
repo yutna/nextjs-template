@@ -22,12 +22,7 @@ export async function LandingCta({ locale }: Readonly<LandingCtaProps>) {
       px={{ base: 6, md: 8 }}
       py={{ base: 20, md: 28 }}
     >
-      <VStack
-        gap={{ base: 6, md: 8 }}
-        maxW="2xl"
-        mx="auto"
-        textAlign="center"
-      >
+      <VStack gap={{ base: 6, md: 8 }} maxW="2xl" mx="auto" textAlign="center">
         <MotionReveal>
           <Text
             as="h2"
@@ -71,10 +66,7 @@ export async function LandingCta({ locale }: Readonly<LandingCtaProps>) {
 
         <MotionReveal delay={0.3}>
           <VStack gap={2}>
-            <Text
-              color={{ _dark: "gray.500", base: "gray.400" }}
-              fontSize="xs"
-            >
+            <Text color={{ _dark: "gray.500", base: "gray.400" }} fontSize="xs">
               {t("orRun")}
             </Text>
             <Box

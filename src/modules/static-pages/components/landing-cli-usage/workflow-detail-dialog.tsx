@@ -23,9 +23,7 @@ import {
 import type { ReactNode } from "react";
 
 export function WorkflowDetailDialog() {
-  const t = useTranslations(
-    "modules.staticPages.components.landingCliUsage",
-  );
+  const t = useTranslations("modules.staticPages.components.landingCliUsage");
 
   return (
     <Dialog.Root placement="center" scrollBehavior="inside" size="xl">

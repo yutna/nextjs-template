@@ -15,14 +15,7 @@ const config = {
         {
           groupName: "position",
           noEmptyLineBetween: true,
-          properties: [
-            "bottom",
-            "left",
-            "position",
-            "right",
-            "top",
-            "z-index",
-          ],
+          properties: ["bottom", "left", "position", "right", "top", "z-index"],
         },
 
         // Group 2: Display / flex / grid

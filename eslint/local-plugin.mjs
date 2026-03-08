@@ -104,10 +104,7 @@ const noInlineStyle = {
   create(context) {
     return {
       JSXAttribute(node) {
-        if (
-          node.name.type === "JSXIdentifier" &&
-          node.name.name === "style"
-        ) {
+        if (node.name.type === "JSXIdentifier" && node.name.name === "style") {
           context.report({
             messageId: "inlineStyle",
             node,

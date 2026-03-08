@@ -27,9 +27,7 @@ export function MarqueeRow({
       <div
         className={`${styles.track} ${reverse ? styles.reverse : styles.forward}`}
         // eslint-disable-next-line project/no-inline-style -- CSS custom property injection
-        style={
-          { "--marquee-duration": `${duration}s` } as CSSProperties
-        }
+        style={{ "--marquee-duration": `${duration}s` } as CSSProperties}
       >
         <Box display="flex" gap="4" w="max-content">
           {children}

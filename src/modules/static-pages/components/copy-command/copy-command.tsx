@@ -58,9 +58,7 @@ export function CopyCommand() {
         _hover={{ color: { _dark: "gray.100", base: "gray.800" } }}
         aria-label={state.copied ? "Copied" : "Copy command"}
         color={
-          state.copied
-            ? "green.400"
-            : { _dark: "gray.400", base: "gray.500" }
+          state.copied ? "green.400" : { _dark: "gray.400", base: "gray.500" }
         }
         flexShrink={0}
         onClick={handleCopy}

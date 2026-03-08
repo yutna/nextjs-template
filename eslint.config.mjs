@@ -23,7 +23,7 @@ const eslintConfig = defineConfig([
     plugins: {
       "check-file": checkFile,
       perfectionist,
-      project: localPlugin,
+      "project": localPlugin,
       "simple-import-sort": simpleImportSort,
     },
     rules: {

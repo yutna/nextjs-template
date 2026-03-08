@@ -18,7 +18,9 @@ export async function LandingTechStack({
     namespace: "modules.staticPages.components.landingTechStack",
   });
 
-  function renderBadges(items: ReadonlyArray<{ name: string; version: string }>) {
+  function renderBadges(
+    items: ReadonlyArray<{ name: string; version: string }>,
+  ) {
     return items.map((tech) => (
       <Box
         border="1px solid"
@@ -57,12 +59,7 @@ export async function LandingTechStack({
       overflow="hidden"
       py={{ base: 16, md: 20 }}
     >
-      <VStack
-        gap={3}
-        px={{ base: 6, md: 8 }}
-        textAlign="center"
-        w="full"
-      >
+      <VStack gap={3} px={{ base: 6, md: 8 }} textAlign="center" w="full">
         <MotionReveal>
           <Heading
             as="h2"

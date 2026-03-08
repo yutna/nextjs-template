@@ -18,9 +18,7 @@ describe("ButtonGoBack", () => {
   it("renders a button with the provided label", () => {
     renderWithProviders(<ButtonGoBack label="Go Back" />);
 
-    expect(
-      screen.getByRole("button", { name: "Go Back" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Go Back" })).toBeInTheDocument();
   });
 
   it("calls router.back when clicked", () => {

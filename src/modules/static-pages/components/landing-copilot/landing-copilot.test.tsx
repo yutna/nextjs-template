@@ -11,7 +11,9 @@ vi.mock("next-intl/server", () => ({
 
 describe("LandingCopilot", () => {
   it("renders the copilot features section", async () => {
-    const { container } = renderWithProviders(await LandingCopilot({ locale: "en" }));
+    const { container } = renderWithProviders(
+      await LandingCopilot({ locale: "en" }),
+    );
     expect(container).toBeDefined();
   });
 });
