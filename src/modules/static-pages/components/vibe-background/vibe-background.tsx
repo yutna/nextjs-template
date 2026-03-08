@@ -4,27 +4,41 @@ import { useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
 
 import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
+import { registerVibePlayerCommand } from "@/modules/static-pages/lib/vibe-player-registry";
 
-import { VIBE_VIDEO_ID } from "./constants";
+import { VIBE_EMBED_SRC } from "./constants";
 import styles from "./vibe-background.module.css";
-
-import type { YouTubePlayerInstance } from "./types";
 
 interface VibeBackgroundState {
   isDesktop: boolean;
-  isPlayerReady: boolean;
+}
+
+function sendYouTubeCommand(
+  iframe: HTMLIFrameElement,
+  func: string,
+  args: unknown[] = [],
+) {
+  iframe.contentWindow?.postMessage(
+    JSON.stringify({ args, event: "command", func }),
+    "https://www.youtube.com",
+  );
 }
 
 export function VibeBackground() {
   const { isVibeOn, volume } = useVibe();
   const [state, updateState] = useImmer<VibeBackgroundState>({
     isDesktop: false,
-    isPlayerReady: false,
   });
-  const containerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<null | YouTubePlayerInstance>(null);
+  // Ref tracks the latest volume so the onReady handler always reads the
+  // current value without needing to re-register on every volume change.
+  const volumeRef = useRef(volume);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Detect desktop breakpoint (768px = md)
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
+
+  // Detect desktop breakpoint (768px = md).
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
 
@@ -42,93 +56,70 @@ export function VibeBackground() {
     return () => mq.removeEventListener("change", handleChange);
   }, [updateState]);
 
-  // Initialize YouTube player only on desktop
+  // postMessage listener: handles onReady (register player command, set volume)
+  // and onStateChange state=0 (restart before YouTube shows the end-screen).
   useEffect(() => {
-    if (!state.isDesktop || !containerRef.current) return;
+    if (!state.isDesktop) return;
 
-    const containerEl = containerRef.current;
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== "https://www.youtube.com") return;
 
-    function initPlayer() {
-      if (!containerEl || !window.YT?.Player) return;
+      const iframe = iframeRef.current;
+      if (!iframe || e.source !== iframe.contentWindow) return;
 
-      playerRef.current = new window.YT.Player(containerEl, {
-        events: {
-          onReady: (event) => {
-            // Start playing immediately (autoplay:1 playerVar may be blocked
-            // by the browser before onReady; calling playVideo() here is the
-            // reliable fallback.)
-            event.target.playVideo();
-            event.target.setVolume(volume);
-            if (isVibeOn) {
-              event.target.unMute();
-            } else {
-              event.target.mute();
-            }
-            updateState((draft) => {
-              draft.isPlayerReady = true;
-            });
-          },
-        },
-        height: "100%",
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          loop: 1,
-          modestbranding: 1,
-          mute: 1,
-          playlist: VIBE_VIDEO_ID,
-          rel: 0,
-        },
-        videoId: VIBE_VIDEO_ID,
-        width: "100%",
-      });
-    }
+      let data: unknown;
+      try {
+        data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      } catch {
+        return;
+      }
 
-    if (window.YT?.Player) {
-      initPlayer();
-    } else {
-      const previousCallback = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        previousCallback?.();
-        initPlayer();
-      };
+      if (typeof data !== "object" || data === null || !("event" in data)) {
+        return;
+      }
 
-      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-        const script = document.createElement("script");
-        script.async = true;
-        script.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(script);
+      const payload = data as { event: string; info?: unknown };
+
+      if (payload.event === "onReady") {
+        // Expose a command function so VibeProvider can dispatch player
+        // commands synchronously from user gestures, preserving the
+        // browser's autoplay-with-sound policy.
+        registerVibePlayerCommand((func, args) => {
+          if (iframeRef.current) {
+            sendYouTubeCommand(iframeRef.current, func, args);
+          }
+        });
+        // Set initial volume; video stays muted via mute=1 URL param until
+        // the user interacts (first gesture will call unMute via provider).
+        sendYouTubeCommand(iframe, "setVolume", [volumeRef.current]);
+      }
+
+      // state 0 = ended — restart immediately so YouTube never shows the
+      // end-screen / suggested-videos overlay between loops.
+      if (payload.event === "onStateChange" && payload.info === 0) {
+        sendYouTubeCommand(iframe, "seekTo", [0, true]);
+        sendYouTubeCommand(iframe, "playVideo");
       }
     }
 
+    window.addEventListener("message", handleMessage);
     return () => {
-      playerRef.current?.destroy();
-      playerRef.current = null;
-      updateState((draft) => {
-        draft.isPlayerReady = false;
-      });
+      window.removeEventListener("message", handleMessage);
+      registerVibePlayerCommand(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isDesktop]);
 
-  // Sync vibe on/off + volume to YouTube player
-  useEffect(() => {
-    if (!state.isPlayerReady || !playerRef.current) return;
+  // Tell YouTube to start sending API events. Without this listening handshake
+  // YouTube does not deliver onReady / onStateChange postMessages, and player
+  // commands (setVolume, unMute, seekTo, etc.) are silently ignored.
+  function handleIframeLoad() {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "listening", id: 1 }),
+      "https://www.youtube.com",
+    );
+  }
 
-    if (isVibeOn) {
-      playerRef.current.unMute();
-      playerRef.current.setVolume(volume);
-      playerRef.current.playVideo();
-    } else {
-      playerRef.current.mute();
-      playerRef.current.pauseVideo();
-    }
-  }, [isVibeOn, volume, state.isPlayerReady]);
-
-  // Signal active state to DOM so hero text can adapt its color
+  // Signal active state to DOM so hero text can adapt its colour variables.
   useEffect(() => {
     if (state.isDesktop && isVibeOn) {
       document.documentElement.setAttribute("data-vibe-active", "1");
@@ -140,18 +131,23 @@ export function VibeBackground() {
     };
   }, [isVibeOn, state.isDesktop]);
 
-  const isHidden = !isVibeOn;
-
   if (!state.isDesktop) return null;
 
   return (
     <div
       aria-hidden="true"
-      className={`${styles.container}${isHidden ? ` ${styles["container-hidden"]}` : ""}`}
+      className={`${styles.container}${!isVibeOn ? ` ${styles["container-hidden"]}` : ""}`}
     >
       <div className={styles.overlay} />
       <div className={styles["iframe-wrapper"]}>
-        <div className={styles.iframe} ref={containerRef} />
+        <iframe
+          allow="autoplay; fullscreen"
+          className={styles.iframe}
+          onLoad={handleIframeLoad}
+          ref={iframeRef}
+          src={VIBE_EMBED_SRC}
+          title="vibe background"
+        />
       </div>
     </div>
   );

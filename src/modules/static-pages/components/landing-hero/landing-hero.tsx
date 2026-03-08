@@ -114,9 +114,7 @@ export async function LandingHero({ locale }: Readonly<LandingHeroProps>) {
         </MotionReveal>
       </VStack>
 
-      <Box position="relative" zIndex={1}>
-        <ScrollIndicator />
-      </Box>
+      <ScrollIndicator />
     </Box>
   );
 }

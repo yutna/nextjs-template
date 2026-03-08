@@ -6,7 +6,7 @@ import { LuChevronDown } from "react-icons/lu";
 
 export function ScrollIndicator() {
   return (
-    <Box bottom="8" left="50%" position="absolute" transform="translateX(-50%)">
+    <Box bottom="8" left="50%" position="absolute" transform="translateX(-50%)" zIndex={1}>
       <motion.div
         animate={{ y: [0, 8, 0] }}
         // eslint-disable-next-line project/no-inline-style -- motion animation performance hint

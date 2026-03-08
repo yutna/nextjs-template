@@ -44,11 +44,9 @@
   top: 50%;
   z-index: 1;
 
-  /* Add 5% buffer so the video always overflows the container edges.
-     This prevents any black edge leakage at exact 16:9 viewports. */
-  height: max(105%, 59.0625vw);
-  min-height: 59.0625vw;
-  min-width: 105%;
+  /* Exact 16:9 ratio prevents YouTube from letterboxing the video content.
+     Width formula covers the viewport at any aspect ratio with a 5% buffer. */
+  aspect-ratio: 16 / 9;
   width: max(105%, 186.67vh);
   transform: translate(-50%, -50%);
 }

@@ -2,7 +2,6 @@
 
 import { Box, HStack, Separator } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { LuVolume2, LuVolumeX } from "react-icons/lu";
 import { useImmer } from "use-immer";
 
 import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
@@ -36,8 +35,6 @@ export function VibeControls() {
     mq.addEventListener("change", handleChange);
     return () => mq.removeEventListener("change", handleChange);
   }, [updateState]);
-
-  const iconColor = { _dark: "gray.300", base: "gray.600" };
 
   if (!state.isDesktop) return null;
 
@@ -83,20 +80,33 @@ export function VibeControls() {
         orientation="vertical"
       />
 
-      {/* Vibe toggle button */}
+      {/* Vibe toggle button — gradient text when on, muted when off */}
       <Box
-        _hover={{ bg: { _dark: "gray.800", base: "gray.100" } }}
+        _hover={{ opacity: 0.75 }}
         aria-label={isVibeOn ? "Turn off vibe" : "Turn on vibe"}
         as="button"
+        bg="transparent"
+        border="none"
         borderRadius="full"
-        color={isVibeOn ? { _dark: "blue.400", base: "blue.500" } : iconColor}
+        color={isVibeOn ? undefined : { _dark: "gray.500", base: "gray.400" }}
         cursor="pointer"
-        display="flex"
+        fontFamily="inherit"
+        fontSize="sm"
+        fontWeight="semibold"
         onClick={toggleVibe}
-        p={1.5}
-        transition="all 0.15s ease"
+        px={2}
+        py={1}
+        transition="opacity 0.15s ease"
       >
-        {isVibeOn ? <LuVolume2 size={14} /> : <LuVolumeX size={14} />}
+        {isVibeOn ? (
+          <span className={styles["vibe-text-on"]}>
+            Vibe <em>on</em>
+          </span>
+        ) : (
+          <span>
+            Vibe <em>off</em>
+          </span>
+        )}
       </Box>
 
       <Separator
