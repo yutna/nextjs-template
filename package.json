@@ -11,7 +11,7 @@
     "build:storybook": "storybook build",
     "check-types": "tsc --noEmit",
     "dev": "next dev --webpack",
-    "dev:storybook": "storybook dev -p 6006",
+    "dev:storybook": "storybook dev -p 6006 --no-open",
     "format": "prettier --write .",
     "lint": "run-s lint:eslint lint:css lint:check",
     "lint:check": "node --experimental-strip-types --no-warnings bin/tmpl lint:check",
