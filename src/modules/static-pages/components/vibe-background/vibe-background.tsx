@@ -1,34 +1,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useImmer } from "use-immer";
+import { useMediaQuery } from "usehooks-ts";
 
 import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
 import { registerVibePlayerCommand } from "@/modules/static-pages/lib/vibe-player-registry";
 
 import { VIBE_EMBED_SRC } from "./constants";
+import { sendYouTubeCommand } from "./helpers";
 import styles from "./vibe-background.module.css";
-
-interface VibeBackgroundState {
-  isDesktop: boolean;
-}
-
-function sendYouTubeCommand(
-  iframe: HTMLIFrameElement,
-  func: string,
-  args: unknown[] = [],
-) {
-  iframe.contentWindow?.postMessage(
-    JSON.stringify({ args, event: "command", func }),
-    "https://www.youtube.com",
-  );
-}
 
 export function VibeBackground() {
   const { isVibeOn, volume } = useVibe();
-  const [state, updateState] = useImmer<VibeBackgroundState>({
-    isDesktop: false,
-  });
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   // Ref tracks the latest volume so the onReady handler always reads the
   // current value without needing to re-register on every volume change.
   const volumeRef = useRef(volume);
@@ -38,28 +22,10 @@ export function VibeBackground() {
     volumeRef.current = volume;
   }, [volume]);
 
-  // Detect desktop breakpoint (768px = md).
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-
-    updateState((draft) => {
-      draft.isDesktop = mq.matches;
-    });
-
-    function handleChange(e: MediaQueryListEvent) {
-      updateState((draft) => {
-        draft.isDesktop = e.matches;
-      });
-    }
-
-    mq.addEventListener("change", handleChange);
-    return () => mq.removeEventListener("change", handleChange);
-  }, [updateState]);
-
   // postMessage listener: handles onReady (register player command, set volume)
   // and onStateChange state=0 (restart before YouTube shows the end-screen).
   useEffect(() => {
-    if (!state.isDesktop) return;
+    if (!isDesktop) return;
 
     function handleMessage(e: MessageEvent) {
       if (e.origin !== "https://www.youtube.com") return;
@@ -107,7 +73,7 @@ export function VibeBackground() {
       window.removeEventListener("message", handleMessage);
       registerVibePlayerCommand(null);
     };
-  }, [state.isDesktop]);
+  }, [isDesktop]);
 
   // Tell YouTube to start sending API events. Without this listening handshake
   // YouTube does not deliver onReady / onStateChange postMessages, and player
@@ -121,7 +87,7 @@ export function VibeBackground() {
 
   // Signal active state to DOM so hero text can adapt its colour variables.
   useEffect(() => {
-    if (state.isDesktop && isVibeOn) {
+    if (isDesktop && isVibeOn) {
       document.documentElement.setAttribute("data-vibe-active", "1");
     } else {
       document.documentElement.removeAttribute("data-vibe-active");
@@ -129,9 +95,9 @@ export function VibeBackground() {
     return () => {
       document.documentElement.removeAttribute("data-vibe-active");
     };
-  }, [isVibeOn, state.isDesktop]);
+  }, [isVibeOn, isDesktop]);
 
-  if (!state.isDesktop) return null;
+  if (!isDesktop) return null;
 
   return (
     <div

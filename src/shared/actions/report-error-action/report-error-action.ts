@@ -2,7 +2,7 @@
 
 import { reportError } from "@/shared/lib/error-reporter";
 import { actionClient } from "@/shared/lib/safe-action";
-import { reportErrorSchema } from "@/shared/schemas/report-error.schema";
+import { reportErrorSchema } from "@/shared/schemas/report-error";
 
 /**
  * Called from client-side error boundaries.

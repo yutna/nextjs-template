@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   registerVibePlayerCommand,
@@ -6,12 +6,15 @@ import {
 } from "./vibe-player-registry";
 
 describe("vibe-player-registry", () => {
-  it("does nothing when no command function is registered", () => {
+  afterEach(() => {
     registerVibePlayerCommand(null);
+  });
+
+  it("does nothing when no command function is registered", () => {
     expect(() => sendVibePlayerCommand("playVideo")).not.toThrow();
   });
 
-  it("calls registered command function with func and args", () => {
+  it("calls the registered function with func and args", () => {
     const fn = vi.fn();
     registerVibePlayerCommand(fn);
 
@@ -20,7 +23,7 @@ describe("vibe-player-registry", () => {
     expect(fn).toHaveBeenCalledWith("setVolume", [80]);
   });
 
-  it("calls registered command function with no args", () => {
+  it("calls the registered function with no args", () => {
     const fn = vi.fn();
     registerVibePlayerCommand(fn);
 

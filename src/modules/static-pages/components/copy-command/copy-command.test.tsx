@@ -6,6 +6,10 @@ import { renderWithProviders } from "@/test/render-with-providers";
 import { HERO_INSTALL_COMMAND } from "./constants";
 import { CopyCommand } from "./copy-command";
 
+vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
+  useVibe: () => ({ isVibeOn: false, setVolume: vi.fn(), toggleVibe: vi.fn(), volume: 50 }),
+}));
+
 const mockWriteText = vi.fn();
 
 beforeEach(() => {

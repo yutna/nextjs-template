@@ -5,20 +5,12 @@ import { useImmer } from "use-immer";
 import { VibeContext } from "@/modules/static-pages/contexts/vibe";
 import { sendVibePlayerCommand } from "@/modules/static-pages/lib/vibe-player-registry";
 
-import type { VibeProviderProps } from "./types";
+import { INITIAL_VIBE_STATE } from "./constants";
 
-interface VibeState {
-  isVibeOn: boolean;
-  volume: number;
-}
-
-const INITIAL_STATE: VibeState = {
-  isVibeOn: true,
-  volume: 15,
-};
+import type { VibeProviderProps, VibeState } from "./types";
 
 export function VibeProvider({ children }: Readonly<VibeProviderProps>) {
-  const [state, updateState] = useImmer<VibeState>(INITIAL_STATE);
+  const [state, updateState] = useImmer<VibeState>(INITIAL_VIBE_STATE);
 
   function toggleVibe() {
     const newVibeOn = !state.isVibeOn;
@@ -28,6 +20,7 @@ export function VibeProvider({ children }: Readonly<VibeProviderProps>) {
     // Dispatching synchronously keeps the call within the user gesture context
     // so the browser's autoplay-with-sound policy is satisfied.
     if (newVibeOn) {
+      sendVibePlayerCommand("seekTo", [0, true]);
       sendVibePlayerCommand("setVolume", [state.volume]);
       sendVibePlayerCommand("unMute");
       sendVibePlayerCommand("playVideo");

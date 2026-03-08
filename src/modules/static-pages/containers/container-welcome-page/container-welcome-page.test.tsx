@@ -9,7 +9,9 @@ vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => key),
 }));
 
-// Mock all landing section components to isolate container
+vi.mock("@/modules/static-pages/containers/container-landing-hero", () => ({
+  ContainerLandingHero: () => null,
+}));
 vi.mock("@/modules/static-pages/components/landing-ai-workflow", () => ({
   LandingAiWorkflow: () => null,
 }));
@@ -21,9 +23,6 @@ vi.mock("@/modules/static-pages/components/landing-cta", () => ({
 }));
 vi.mock("@/modules/static-pages/components/landing-footer", () => ({
   LandingFooter: () => null,
-}));
-vi.mock("@/modules/static-pages/components/landing-hero", () => ({
-  LandingHero: () => null,
 }));
 vi.mock("@/modules/static-pages/components/landing-cli-usage", () => ({
   LandingCliUsage: () => null,

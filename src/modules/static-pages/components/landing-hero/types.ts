@@ -1,5 +1,5 @@
-import type { Locale } from "next-intl";
-
 export interface LandingHeroProps {
-  locale: Locale;
+  getStarted: string;
+  subtitle: string;
+  title: string;
 }
