@@ -53,7 +53,9 @@ Rules:
 - leaf-level `index.ts` for the public API
 - colocate `types.ts` for prop contracts
 - allow private child components in the same folder
-- allow colocated `constants.ts` and stories files (when using Storybook)
+- allow colocated `constants.ts` and story files
+- story file: `{component-name}.stories.tsx` (see `storybook-stories`
+  instruction for full conventions)
 - tests adjacent to the component
 - no parent barrel files for `components/`
 
