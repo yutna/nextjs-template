@@ -39,7 +39,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Scripts
 
 | Command | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `npm run dev` | Start development server |
 | `npm run build` | Production build |
 | `npm run lint` | Run all linters (ESLint + Stylelint + custom checks) |
@@ -50,7 +50,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
-```
+```txt
 src/
 ├── app/              # App Router (thin route entries)
 │   └── [locale]/     # i18n locale segment
@@ -77,8 +77,8 @@ src/
 
 Copy `.env.example` to `.env.local` and configure:
 
-| Variable | Description |
-|----------|-------------|
+| Variable              | Description                          |
+| --------------------- | ------------------------------------ |
 | `NEXT_PUBLIC_API_URL` | API endpoint for the backend service |
 
 ## Technology Stack
