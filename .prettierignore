@@ -1,5 +1,6 @@
 # AI Agents
 .agent
+.github
 
 # Dependencies
 node_modules
