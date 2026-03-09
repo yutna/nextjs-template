@@ -302,6 +302,62 @@ const noInlineStyle = {
 };
 
 // -------------------------------------------------------------------
+// no-upward-layer-import
+// -------------------------------------------------------------------
+
+/**
+ * Layers that components must never import from.
+ * The data flow is strictly: page → screen → container → component.
+ * Components receive data through props only.
+ */
+const UPWARD_LAYERS = [
+  "actions",
+  "containers",
+  "contexts",
+  "hooks",
+  "providers",
+  "screens",
+];
+
+const noUpwardLayerImport = {
+  create(context) {
+    const filename = context.filename ?? context.getFilename();
+
+    // Only apply to files inside a components/ layer
+    if (!/\/components\//.test(filename)) return {};
+
+    return {
+      ImportDeclaration(node) {
+        const value = node.source.value;
+
+        for (const layer of UPWARD_LAYERS) {
+          if (new RegExp(`/${layer}/`).test(value)) {
+            context.report({
+              data: { layer, path: value },
+              messageId: "upwardLayerImport",
+              node,
+            });
+            return;
+          }
+        }
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Enforce layer boundary: components cannot import from containers, screens, hooks, actions, contexts, or providers",
+    },
+    messages: {
+      upwardLayerImport:
+        'Component imports from "{{layer}}" layer ({{path}}). Layer flow is: page → screen → container → component. Components receive data through props, not by importing upward layers.',
+    },
+    schema: [],
+    type: "problem",
+  },
+};
+
+// -------------------------------------------------------------------
 // Plugin export
 // -------------------------------------------------------------------
 
@@ -312,5 +368,6 @@ export default {
     "no-cross-module-import": noCrossModuleImport,
     "no-hook-spread": noHookSpread,
     "no-inline-style": noInlineStyle,
+    "no-upward-layer-import": noUpwardLayerImport,
   },
 };

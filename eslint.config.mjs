@@ -133,6 +133,10 @@ const eslintConfig = defineConfig([
       // Forbid imports between feature modules (Architecture)
       "project/no-cross-module-import": "error",
 
+      // Enforce layer boundary: components cannot import from containers,
+      // screens, hooks, actions, contexts, or providers (Architecture)
+      "project/no-upward-layer-import": "error",
+
       // Forbid spreading hook return values in JSX (Props)
       "project/no-hook-spread": "error",
 
@@ -317,6 +321,19 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
+  // Error boundary components — must call reportErrorAction directly
+  // because Next.js error boundaries have no parent container layer.
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/components/error-global/**",
+      "src/shared/components/error-app-boundary/**",
+    ],
+    rules: {
+      "project/no-upward-layer-import": "off",
+    },
+  },
+  // --------------------------------------------------
   // Infrastructure — allow process.env in bootstrap code
   // --------------------------------------------------
   {
@@ -351,6 +368,16 @@ const eslintConfig = defineConfig([
     files: ["eslint/**"],
     rules: {
       "import/no-anonymous-default-export": "off",
+      "import/no-default-export": "off",
+    },
+  },
+  // --------------------------------------------------
+  // TypeScript declaration files — allow default exports in module
+  // declarations (used to type-declare Vite alias modules)
+  // --------------------------------------------------
+  {
+    files: ["**/*.d.ts"],
+    rules: {
       "import/no-default-export": "off",
     },
   },

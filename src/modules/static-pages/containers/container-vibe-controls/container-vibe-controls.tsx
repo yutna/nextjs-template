@@ -1,15 +1,11 @@
 "use client";
 
-import { useMediaQuery } from "usehooks-ts";
-
 import { VibeControls } from "@/modules/static-pages/components/vibe-controls";
-import { useVibe } from "@/modules/static-pages/hooks/use-vibe";
+import { useVibeControls } from "@/modules/static-pages/hooks/use-vibe-controls";
 
 export function ContainerVibeControls() {
-  const { handleChangeVolume, handleToggleVibe, isVibeOn, volume } = useVibe();
-  const isDesktop = useMediaQuery("(min-width: 768px)", {
-    initializeWithValue: false,
-  });
+  const { handleChangeVolume, handleToggleVibe, isDesktop, isVibeOn, volume } =
+    useVibeControls();
 
   return (
     <VibeControls

@@ -4,10 +4,11 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 import { ContainerVibeControls } from "./container-vibe-controls";
 
-vi.mock("@/modules/static-pages/hooks/use-vibe", () => ({
-  useVibe: vi.fn(() => ({
+vi.mock("@/modules/static-pages/hooks/use-vibe-controls", () => ({
+  useVibeControls: vi.fn(() => ({
     handleChangeVolume: vi.fn(),
     handleToggleVibe: vi.fn(),
+    isDesktop: false,
     isVibeOn: true,
     volume: 15,
   })),

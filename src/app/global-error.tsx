@@ -4,7 +4,7 @@ import { ErrorGlobal } from "@/shared/components/error-global";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
-export default function GlobalError({ error, reset }: NextErrorProps) {
+export default function GlobalError({ error, reset }: Readonly<NextErrorProps>) {
   return (
     <html lang="en">
       <body style={{ margin: 0 }}>

@@ -1,4 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
+vi.mock("@/shared/config/env", () => ({
+  env: { NODE_ENV: "test" },
+}));
 
 import { logger } from "./logger";
 

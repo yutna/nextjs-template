@@ -544,16 +544,283 @@ const checkCssVariables = Effect.sync((): CheckResult => {
 });
 
 // -------------------------------------------------------------------
+// Check: types-re-export
+// -------------------------------------------------------------------
+
+const checkTypesReExport = Effect.sync((): CheckResult => {
+  const modulesDir = join(PROJECT_ROOT, "src/modules");
+  const sharedDir = join(PROJECT_ROOT, "src/shared");
+  const errors: Violation[] = [];
+
+  function checkLayerDir(layerDir: string): void {
+    try {
+      const entries = readdirSync(layerDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+
+        const leafDir = join(layerDir, entry.name);
+        const typesPath = join(leafDir, "types.ts");
+        const indexPath = join(leafDir, "index.ts");
+
+        if (!fileExists(typesPath) || !fileExists(indexPath)) continue;
+
+        const indexContent = readFile(indexPath);
+
+        if (!indexContent.includes("export type")) {
+          errors.push({
+            file: rel(indexPath),
+            message:
+              'types.ts exists but index.ts has no "export type" re-export',
+            rule: "types-re-export",
+          });
+        }
+      }
+    } catch {
+      // Directory doesn't exist
+    }
+  }
+
+  try {
+    for (const mod of readdirSync(modulesDir, { withFileTypes: true })) {
+      if (!mod.isDirectory()) continue;
+
+      for (const layer of BARREL_REQUIRED_LAYERS) {
+        checkLayerDir(join(modulesDir, mod.name, layer));
+      }
+    }
+  } catch {
+    // modules dir doesn't exist
+  }
+
+  for (const layer of BARREL_REQUIRED_LAYERS) {
+    checkLayerDir(join(sharedDir, layer));
+  }
+
+  return { errors, name: "types-re-export", warnings: [] };
+});
+
+// -------------------------------------------------------------------
+// Check: stories-placement
+// -------------------------------------------------------------------
+
+const FORBIDDEN_STORY_LAYERS = [
+  "actions",
+  "containers",
+  "contexts",
+  "hooks",
+  "layouts",
+  "lib",
+  "providers",
+  "screens",
+  "utils",
+];
+
+const checkStoriesPlacement = Effect.sync((): CheckResult => {
+  const errors: Violation[] = [];
+  const storyFiles = walkFiles(join(PROJECT_ROOT, "src"), [
+    ".stories.tsx",
+    ".stories.ts",
+  ]);
+
+  for (const file of storyFiles) {
+    const relPath = rel(file);
+
+    for (const layer of FORBIDDEN_STORY_LAYERS) {
+      if (relPath.includes(`/${layer}/`)) {
+        errors.push({
+          file: relPath,
+          message: `Story files are only allowed in components/ directories (found in ${layer}/)`,
+          rule: "stories-placement",
+        });
+        break;
+      }
+    }
+  }
+
+  return { errors, name: "stories-placement", warnings: [] };
+});
+
+// -------------------------------------------------------------------
+// Check: screen-server-only
+// -------------------------------------------------------------------
+
+const checkScreenServerOnly = Effect.sync((): CheckResult => {
+  const modulesDir = join(PROJECT_ROOT, "src/modules");
+  const errors: Violation[] = [];
+
+  function checkScreensDir(baseDir: string): void {
+    const screensDir = join(baseDir, "screens");
+    const screenFiles = walkFiles(screensDir, [".tsx", ".ts"]);
+
+    for (const file of screenFiles) {
+      const filename = basename(file);
+
+      if (
+        filename === "index.ts" ||
+        filename === "types.ts" ||
+        filename.endsWith(".test.tsx") ||
+        filename.endsWith(".test.ts") ||
+        filename.endsWith(".stories.tsx") ||
+        filename.endsWith(".stories.ts")
+      ) {
+        continue;
+      }
+
+      const content = readFile(file);
+
+      // Skip client components
+      const firstLine = content.trimStart().slice(0, 20);
+      if (
+        firstLine.startsWith('"use client"') ||
+        firstLine.startsWith("'use client'")
+      ) {
+        continue;
+      }
+
+      if (
+        !content.includes('"server-only"') &&
+        !content.includes("'server-only'")
+      ) {
+        errors.push({
+          file: rel(file),
+          message: 'Screen component missing import "server-only"',
+          rule: "screen-server-only",
+        });
+      }
+    }
+  }
+
+  try {
+    for (const mod of readdirSync(modulesDir, { withFileTypes: true })) {
+      if (mod.isDirectory()) {
+        checkScreensDir(join(modulesDir, mod.name));
+      }
+    }
+  } catch {
+    // modules dir doesn't exist
+  }
+
+  return { errors, name: "screen-server-only", warnings: [] };
+});
+
+// -------------------------------------------------------------------
+// Check: client-container-hooks
+// -------------------------------------------------------------------
+
+/**
+ * Hooks that must NOT be imported directly in client containers.
+ * All stateful logic must be extracted into a custom hook in hooks/.
+ */
+const BANNED_REACT_HOOKS = [
+  "useCallback",
+  "useEffect",
+  "useImperativeHandle",
+  "useLayoutEffect",
+  "useMemo",
+  "useReducer",
+  "useRef",
+];
+
+const BANNED_REACT_HOOKS_REGEX = new RegExp(
+  `\\{[^}]*\\b(${BANNED_REACT_HOOKS.join("|")})\\b[^}]*\\}\\s*from\\s*['"]react['"]`,
+);
+
+const BANNED_USE_IMMER_REGEX = /from\s+['"]use-immer['"]/;
+const BANNED_USEHOOKS_TS_REGEX = /from\s+['"]usehooks-ts['"]/;
+
+const checkClientContainerHooks = Effect.sync((): CheckResult => {
+  const modulesDir = join(PROJECT_ROOT, "src/modules");
+  const errors: Violation[] = [];
+
+  function checkContainersDir(baseDir: string): void {
+    const containersDir = join(baseDir, "containers");
+    const containerFiles = walkFiles(containersDir, [".tsx", ".ts"]);
+
+    for (const file of containerFiles) {
+      const filename = basename(file);
+
+      if (
+        filename === "index.ts" ||
+        filename === "types.ts" ||
+        filename.endsWith(".test.tsx") ||
+        filename.endsWith(".test.ts") ||
+        filename.endsWith(".stories.tsx") ||
+        filename.endsWith(".stories.ts")
+      ) {
+        continue;
+      }
+
+      const content = readFile(file);
+
+      // Only check client containers
+      const firstLine = content.trimStart().slice(0, 20);
+      if (
+        !firstLine.startsWith('"use client"') &&
+        !firstLine.startsWith("'use client'")
+      ) {
+        continue;
+      }
+
+      const relPath = rel(file);
+
+      if (BANNED_REACT_HOOKS_REGEX.test(content)) {
+        const match = content.match(BANNED_REACT_HOOKS_REGEX);
+        errors.push({
+          file: relPath,
+          message: `Client container imports React hook(s) directly: "${match?.[0]}". Move to a custom hook in hooks/.`,
+          rule: "client-container-hooks",
+        });
+      }
+
+      if (BANNED_USE_IMMER_REGEX.test(content)) {
+        errors.push({
+          file: relPath,
+          message:
+            "Client container imports from 'use-immer' directly. Move to a custom hook in hooks/.",
+          rule: "client-container-hooks",
+        });
+      }
+
+      if (BANNED_USEHOOKS_TS_REGEX.test(content)) {
+        errors.push({
+          file: relPath,
+          message:
+            "Client container imports from 'usehooks-ts' directly. Move to a custom hook in hooks/.",
+          rule: "client-container-hooks",
+        });
+      }
+    }
+  }
+
+  try {
+    for (const mod of readdirSync(modulesDir, { withFileTypes: true })) {
+      if (mod.isDirectory()) {
+        checkContainersDir(join(modulesDir, mod.name));
+      }
+    }
+  } catch {
+    // modules dir doesn't exist
+  }
+
+  return { errors, name: "client-container-hooks", warnings: [] };
+});
+
+// -------------------------------------------------------------------
 // Runner
 // -------------------------------------------------------------------
 
 const ALL_CHECKS = {
   "barrel-export": checkBarrelExport,
+  "client-container-hooks": checkClientContainerHooks,
   "css-variables": checkCssVariables,
   "forbidden-deps": checkForbiddenDeps,
   "missing-tests": checkMissingTests,
+  "screen-server-only": checkScreenServerOnly,
   "section-order": checkSectionOrder,
   "server-only": checkServerOnly,
+  "stories-placement": checkStoriesPlacement,
+  "types-re-export": checkTypesReExport,
 } as const;
 
 type CheckName = keyof typeof ALL_CHECKS;
@@ -666,17 +933,22 @@ export function help(): void {
     ./bin/vibe lint:check [options]
 
   Options:
-    --all              Run all checks (default)
-    --server-only      Check page.tsx files for import "server-only"
-    --barrel-export    Check leaf folders for index.ts barrel exports
-    --missing-tests    Check implementation files for test coverage
-    --forbidden-deps   Check for banned packages and lockfiles
-    --section-order    Check component section structure (soft warning)
-    --css-variables    Check CSS modules for hardcoded values (soft warning)
+    --all                    Run all checks (default)
+    --server-only            Check page.tsx files for import "server-only"
+    --screen-server-only     Check screen files for import "server-only"
+    --barrel-export          Check leaf folders for index.ts barrel exports
+    --types-re-export        Check index.ts re-exports types from types.ts
+    --missing-tests          Check implementation files for test coverage
+    --forbidden-deps         Check for banned packages and lockfiles
+    --stories-placement      Check story files are only in components/
+    --client-container-hooks Check client containers for direct hook usage
+    --section-order          Check component section structure (soft warning)
+    --css-variables          Check CSS modules for hardcoded values (soft warning)
 
   Examples:
     ./bin/vibe lint:check
     ./bin/vibe lint:check --server-only --barrel-export
-    ./bin/vibe lint:check --missing-tests
+    ./bin/vibe lint:check --types-re-export --stories-placement
+    ./bin/vibe lint:check --client-container-hooks
 `);
 }
