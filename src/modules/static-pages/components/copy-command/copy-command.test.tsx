@@ -1,68 +1,41 @@
-import { act, fireEvent, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
 import { HERO_INSTALL_COMMAND } from "./constants";
 import { CopyCommand } from "./copy-command";
 
-const mockWriteText = vi.fn();
-
-beforeEach(() => {
-  vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-  mockWriteText.mockResolvedValue(undefined);
-  Object.defineProperty(navigator, "clipboard", {
-    configurable: true,
-    value: { writeText: mockWriteText },
-    writable: true,
-  });
-});
-
-afterEach(() => {
-  vi.useRealTimers();
-  vi.clearAllMocks();
-});
-
 describe("CopyCommand", () => {
   it("renders the install command text", () => {
-    renderWithProviders(<CopyCommand />);
+    renderWithProviders(
+      <CopyCommand isCopied={false} isVibeOn={false} onCopy={vi.fn()} />,
+    );
     expect(screen.getByText(HERO_INSTALL_COMMAND)).toBeInTheDocument();
   });
 
-  it("shows 'Copy command' aria-label initially", () => {
-    renderWithProviders(<CopyCommand />);
+  it("shows 'Copy command' aria-label when not copied", () => {
+    renderWithProviders(
+      <CopyCommand isCopied={false} isVibeOn={false} onCopy={vi.fn()} />,
+    );
     expect(
       screen.getByRole("button", { name: "Copy command" }),
     ).toBeInTheDocument();
   });
 
-  it("calls clipboard.writeText with the install command on click", async () => {
-    renderWithProviders(<CopyCommand />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
-    });
-    expect(mockWriteText).toHaveBeenCalledWith(HERO_INSTALL_COMMAND);
-  });
-
-  it("changes aria-label to 'Copied' after click", async () => {
-    renderWithProviders(<CopyCommand />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
-      await Promise.resolve();
-    });
+  it("shows 'Copied' aria-label when isCopied is true", () => {
+    renderWithProviders(
+      <CopyCommand isCopied={true} isVibeOn={false} onCopy={vi.fn()} />,
+    );
     expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
   });
 
-  it("reverts aria-label to 'Copy command' after 2 seconds", async () => {
-    renderWithProviders(<CopyCommand />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
-    });
-    await act(async () => {
-      vi.advanceTimersByTime(2000);
-    });
-    expect(
-      screen.getByRole("button", { name: "Copy command" }),
-    ).toBeInTheDocument();
+  it("calls onCopy when the button is clicked", () => {
+    const handleCopy = vi.fn();
+    renderWithProviders(
+      <CopyCommand isCopied={false} isVibeOn={false} onCopy={handleCopy} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Copy command" }));
+    expect(handleCopy).toHaveBeenCalledOnce();
   });
 });

@@ -92,6 +92,29 @@ interface EmptyStateProps {
 
 Avoid huge prop bags that mirror internal implementation details.
 
+### Event callback props
+
+Event callback props follow the three-part pattern: `on` + **event verb** +
+**target** (optional). The event verb comes immediately after `on`.
+Enforced by ESLint (`project/enforce-event-prop-naming`).
+
+```ts
+// Good — verb right after on, target last
+interface FormCheckoutProps {
+  onSubmit: (data: FormData) => void;
+  onClickBack?: () => void;
+  onChangeDropdownDepartment?: (value: string) => void;
+}
+
+// Bad — missing on* prefix or wrong word order
+interface FormCheckoutProps {
+  submitForm: (data: FormData) => void;   // should be onSubmitForm
+  onBackClick: () => void;                // should be onClickBack (verb first)
+}
+```
+
+Non-event function props are exempt: `render*`, `get*`, `format*`.
+
 ## No hook spreading
 
 Do not spread hook return values directly into JSX props.
@@ -136,6 +159,57 @@ The flow is: `screen` → `container` → `component`
 Components should **not** absorb orchestration just because no container
 exists yet.
 
+### Import boundaries
+
+Components may import:
+
+- other components (same module or `shared/components/`)
+- shared utilities (`utils/`, `lib/`, `constants/`, `config/`)
+- external libraries
+
+Components must **not** import from:
+
+- `containers/` — containers consume components, never the reverse
+- `screens/` — screens are above components in the layer hierarchy
+- `actions/` — actions are called from containers, not components
+- `hooks/` — hooks are called from containers, not components
+- `contexts/` — context consumption belongs in hooks or containers
+- `providers/` — providers wrap children at boundary layers
+
+This enforces the unidirectional flow: `page → screen → container → component`.
+If a component needs data or behavior from a container, it must receive
+it through props.
+
+### Exception: App Router error boundaries
+
+`error.tsx` and `global-error.tsx` sit **above** the container layer.
+There is no parent container that can wrap them, so their shared delegate
+components (`error-global`, `error-app-boundary`) are granted a documented
+ESLint override that permits:
+
+- `useEffect` and other React hooks directly in the component
+- Importing from `actions/` to call error-reporting actions
+
+This is **narrow and explicit**: only files in
+`src/shared/components/error-global/**` and
+`src/shared/components/error-app-boundary/**` carry this override.
+It is declared in `eslint.config.mjs` with a comment explaining why.
+
+Do not model other shared components after this pattern. If you need
+shared interactive UI outside of error boundaries, use a module-owned
+container backed by a shared hook or provider.
+
+## Leaf index.ts exports
+
+When a `types.ts` file exists in the component folder, `index.ts` must
+re-export its types. Value exports come first, type exports come last.
+
+```ts
+export { LandingHero } from "./landing-hero";
+
+export type { LandingHeroProps } from "./types";
+```
+
 ## Checklist
 
 - [ ] Primarily a presenter or stateless UI concern
@@ -143,6 +217,10 @@ exists yet.
 - [ ] One public component per folder
 - [ ] File names are specific and kebab-case
 - [ ] Props API is clear and presenter-oriented
+- [ ] Event callback props use `on` + verb + target pattern
 - [ ] Server component by default, `"use client"` only when needed
 - [ ] Extracted logic lives in hooks or containers, not inline
+- [ ] No imports from containers, screens, actions, hooks, or contexts (except documented App Router error boundary exception)
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
 - [ ] No parent barrel files

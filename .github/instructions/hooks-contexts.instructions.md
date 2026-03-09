@@ -25,10 +25,40 @@ The `hooks/` folder holds consumer hooks and custom hooks.
 - Package reusable client-side state or effect logic behind a `use*` API
 - Consumed primarily by containers
 - Add `"use client"` at the top of hook implementation files
-- Prefer extracting logic into hooks for clarity and testability,
-  even if only used once
+- Always extract logic into hooks for clarity and testability,
+  even if only used once — client containers must not own logic directly
 - One hook per leaf folder with `index.ts` and optional `types.ts`
 - Keep tests adjacent to the hook they cover
+
+## Event handler return naming
+
+Hooks that return functions intended for containers to bind to component
+`on*` event props must use the `handle*` prefix with the three-part
+pattern: `handle` + **event verb** + **target** (optional). Non-event
+functions (`reset`, `validate`, `refetch`) are exempt.
+
+```ts
+// Good — handle + verb + target
+function useCheckoutForm() {
+  function handleSubmitForm() { /* ... */ }
+  function handleClickBack() { /* ... */ }
+  function validate() { /* ... */ }  // not an event handler — OK
+
+  return { handleClickBack, handleSubmitForm, validate };
+}
+
+// Bad — wrong word order (target before verb)
+function useCheckoutForm() {
+  function handleFormSubmit() { /* ... */ }  // should be handleSubmitForm
+  function handleBackClick() { /* ... */ }   // should be handleClickBack
+
+  return { handleBackClick, handleFormSubmit };
+}
+```
+
+This convention works together with the container-side ESLint rule
+(`project/enforce-handler-naming`) which requires `handle*` identifiers
+when binding to `on*` JSX props.
 
 ## State management
 
@@ -78,7 +108,7 @@ const { data, error, isLoading } = useSWR<User>(
 - Always import `swrFetcher` from `@/shared/lib/fetcher`
 - Prefer server-side data loading when possible — SWR is for
   cases that genuinely need client-side reactivity
-- SWR hooks live in `hooks/` or directly in client `containers/`
+- SWR hooks live in `hooks/`
 
 ## Utility hooks
 
@@ -147,7 +177,10 @@ src/modules/orders/contexts/order-filters/
 - [ ] Module-first scope before promoting to `shared/`
 - [ ] One hook or context per leaf folder
 - [ ] Named exports only
+- [ ] Event handler returns use `handle` + verb + target pattern
 - [ ] `"use client"` present where needed
 - [ ] Tests adjacent to the hook they cover
 - [ ] No parent barrel files
 - [ ] Types colocated when owned by the hook or context
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`

@@ -34,6 +34,11 @@ const config: StorybookConfig = {
       "server-only": join(__dirname, "mocks/server-only.ts"),
       // Provide locale-aware mock for next-intl server APIs
       "next-intl/server": join(__dirname, "mocks/next-intl-server.ts"),
+      // Stub server action that imports node:path via error-reporter
+      "@/shared/actions/report-error-action": join(
+        __dirname,
+        "mocks/report-error-action.ts",
+      ),
     };
 
     // Storybook may pass aliases as an array — handle both formats safely

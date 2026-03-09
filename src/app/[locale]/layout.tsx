@@ -1,5 +1,6 @@
 import "server-only";
 import "@/shared/styles/scrollbar.css";
+import "@/modules/static-pages/styles/vibe.css";
 
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
@@ -39,7 +40,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LayoutLocale({
+export default async function Layout({
   children,
   params,
 }: Readonly<LayoutLocaleProps>) {

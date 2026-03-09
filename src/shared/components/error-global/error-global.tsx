@@ -10,7 +10,7 @@ import styles from "./error-global.module.css";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
-export function ErrorGlobal({ error, reset }: NextErrorProps) {
+export function ErrorGlobal({ error, reset }: Readonly<NextErrorProps>) {
   // Initialize variables / Setup
   const { digest, message } = error;
 

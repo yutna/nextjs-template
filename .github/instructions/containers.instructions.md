@@ -26,23 +26,72 @@ into shared components, hooks, or providers instead.
 
 Containers are bridges, **not** the business logic owner.
 
-Good container behavior:
+### Client containers
 
-- call custom hooks
-- import and invoke actions
-- map hook outputs into presenter props
-- load concern-owned data to stay self-contained
+Client containers (`"use client"`) must delegate **all** stateful logic
+to custom hooks. This is mandatory, even when the logic is only used once.
+
+Zero of these directly in a container file:
+
+- `useImmer`, `useEffect`, `useRef`, `useMemo`, `useCallback`
+- any React hook calls except custom hooks from `hooks/`
+- inline event handlers with logic (handlers that simply forward to a
+  hook function are fine)
+- direct `navigator`, `window`, or browser API usage
+
+The container calls custom hooks + invokes actions + maps outputs to
+presenter props. Nothing more.
+
+```tsx
+// Good — all logic in a custom hook
+"use client";
+
+import { CheckoutForm } from "@/modules/checkout/components/checkout-form";
+import { useCheckoutForm } from "@/modules/checkout/hooks/use-checkout-form";
+
+export function ContainerFormCheckout() {
+  const { errors, handleSubmit, values } = useCheckoutForm();
+
+  return <CheckoutForm errors={errors} onSubmit={handleSubmit} values={values} />;
+}
+```
+
+```tsx
+// Bad — useImmer and inline handler belong in a custom hook
+"use client";
+
+import { useImmer } from "use-immer";
+import { CopyCommand } from "@/modules/example/components/copy-command";
+
+export function ContainerCopyCommand() {
+  const [state, updateState] = useImmer({ copied: false });
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText("npm create");
+    updateState((draft) => { draft.copied = true; });
+  }
+
+  return <CopyCommand isCopied={state.copied} onCopy={handleCopy} />;
+}
+```
+
+### Server containers
+
+Server containers call `lib/` functions, server actions, and async data
+loaders directly. Hooks are not available on the server, so the pattern
+is: load data → pass to presenters.
+
+Good server container behavior:
+
+- call lib functions for data loading
+- import and invoke server actions
+- map loaded data into presenter props
 - select which presenters to render
 
-Bad container behavior:
+Bad server container behavior:
 
-- large inline business rule implementations
-- duplicated domain logic from hooks or actions
+- large inline data transformation logic (move to `lib/` or `utils/`)
 - integration code that belongs in `lib/`
-- deeply nested state machines built inline
-
-If the container starts owning the logic instead of binding it, extract that
-logic into `hooks/`, `actions/`, or `lib/`.
 
 ## Server-first default
 
@@ -58,6 +107,29 @@ logic into `hooks/`, `actions/`, or `lib/`.
 - containers should import their own concern-owned actions and data
 - pass only minimal route-boundary inputs (params-derived identifiers)
 - avoid forwarding long prop chains from screen to container
+
+## Event handler binding
+
+Both `on*` props and `handle*` implementations follow the three-part
+pattern: **prefix** + **event verb** + **target** (optional). The event
+verb comes immediately after the prefix.
+
+Enforced by ESLint (`project/enforce-handler-naming`).
+
+```tsx
+// Good — handle*/on* with verb first, target last
+const { handleSubmitForm, handleClickBack } = useCheckoutForm();
+<CheckoutForm onSubmitForm={handleSubmitForm} onClickBack={handleClickBack} />;
+
+// Bad — non-handle* identifiers on on* props
+const { submitForm, goBack } = useCheckoutForm();
+<CheckoutForm onSubmitForm={submitForm} onClickBack={goBack} />;
+
+// Bad — wrong word order (target before verb)
+const { handleFormSubmit } = useCheckoutForm();
+<CheckoutForm onFormSubmit={handleFormSubmit} />;
+// should be handleSubmitForm / onSubmitForm
+```
 
 ## Folder structure
 
@@ -120,24 +192,39 @@ Client container:
 ```tsx
 "use client";
 
-import { submitCheckoutAction } from "@/modules/checkout/actions/submit-checkout-action";
 import { CheckoutForm } from "@/modules/checkout/components/checkout-form";
 import { useCheckoutForm } from "@/modules/checkout/hooks/use-checkout-form";
 
 export function ContainerFormCheckout() {
-  const form = useCheckoutForm({ submitAction: submitCheckoutAction });
+  const { errors, handleSubmit, values } = useCheckoutForm();
 
-  return <CheckoutForm {...form} />;
+  return <CheckoutForm errors={errors} onSubmit={handleSubmit} values={values} />;
 }
+```
+
+## Leaf index.ts exports
+
+When a `types.ts` file exists in the container folder, `index.ts` must
+re-export its types. Value exports come first, type exports come last.
+
+```ts
+export { ContainerFormCheckout } from "./container-form-checkout";
+
+export type { ContainerFormCheckoutProps } from "./types";
 ```
 
 ## Checklist
 
 - [ ] Sits between screen and components (bridge layer)
 - [ ] Module-owned (not in `src/shared/`)
-- [ ] Binds existing logic, not implementing business rules inline
+- [ ] Client containers delegate all logic to custom hooks — zero
+      hooks, state, effects, or inline handlers directly in the file
+- [ ] Event handlers use `handle` + verb + target, bound to `on` + verb + target props
+- [ ] Server containers call lib functions, not inline logic
 - [ ] Server-first unless client coordination is truly needed
 - [ ] Minimal prop drilling — imports its own concerns
 - [ ] Folder prefixed with `container-`
 - [ ] Exported symbol uses `Container` prefix
 - [ ] `"use client"` only when explicitly required
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`

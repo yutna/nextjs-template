@@ -6,6 +6,24 @@ Story files document and visually test components in isolation using
 Storybook. They live beside the component they cover and provide
 interactive previews with locale switching and color mode toggling.
 
+## Scope
+
+Stories are **only** for presenter components:
+
+- `src/modules/<module>/components/`
+- `src/shared/components/`
+
+Do **not** create stories for:
+
+- screens (`screens/`)
+- containers (`containers/`)
+- layouts (`layouts/`)
+- providers (`providers/`)
+- hooks (`hooks/`)
+
+Screens and containers are architectural layers, not visual units. Test
+them with unit tests. Only presenter components get Storybook stories.
+
 ## File placement
 
 Stories are colocated next to the component:
@@ -152,9 +170,9 @@ from `context.globals` as shown above.
 Match the filesystem path from `src/`:
 
 - `modules/static-pages/components/landing-hero`
-- `modules/static-pages/containers/container-welcome-page`
-- `modules/static-pages/screens/screen-welcome`
+- `modules/static-pages/components/copy-command`
 - `shared/components/error-global`
+- `shared/components/not-found`
 
 This keeps the Storybook sidebar organized by module and layer.
 
@@ -177,6 +195,7 @@ its most common state. Add named variants for:
 ## Checklist
 
 - [ ] Story file is colocated beside the component
+- [ ] Component is in `components/` (not screens, containers, or other layers)
 - [ ] Named `{component-name}.stories.tsx`
 - [ ] Meta uses `satisfies Meta<typeof Component>`
 - [ ] Types imported with `import type`

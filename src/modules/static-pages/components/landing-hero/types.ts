@@ -1,5 +1,9 @@
-import type { Locale } from "next-intl";
+import type { ReactNode } from "react";
 
 export interface LandingHeroProps {
-  locale: Locale;
+  getStarted: string;
+  subtitle: string;
+  title: string;
+
+  copyCommand?: ReactNode;
 }

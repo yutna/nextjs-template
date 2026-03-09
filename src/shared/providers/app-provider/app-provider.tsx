@@ -15,7 +15,7 @@ export function AppProvider({
   messages,
   now,
   timeZone,
-}: AppProviderProps) {
+}: Readonly<AppProviderProps>) {
   return (
     <NextIntlClientProvider
       formats={formats}

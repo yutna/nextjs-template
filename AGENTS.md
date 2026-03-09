@@ -39,6 +39,8 @@ keep working.
 - all existing tests still pass — no regressions
 - new tests cover the new feature
 - code review passed — no security or convention issues
+- QA verified in a real browser when the feature has UI
+  (visual layout, responsive, dark/light mode, locales)
 - ready for production use — not a prototype, not a draft
 - human has nothing to fix, debug, or clean up
 
@@ -227,6 +229,76 @@ domain-last** pattern:
   `form-checkout`, `card-product-detail`,
   `container-form-checkout`, `screen-checkout`
 
+### Event naming
+
+Event callback props and handler functions follow a
+strict three-part naming pattern enforced by ESLint.
+
+The pattern is: **prefix** + **event verb** +
+**target** (optional).
+
+The event verb (Click, Change, Submit, Toggle, Load,
+Focus, Blur, etc.) always comes immediately after the
+prefix. The optional target describes what is being
+acted on and comes last.
+
+**Event callback props** (`on` + event verb + target):
+
+Props that accept event callbacks must start with `on`
+followed by the event verb, then an optional target.
+
+- `onClick`, `onChange`, `onSubmit`
+- `onClickBack`, `onChangeDropdownDepartment`
+- `onSubmitFormContact`, `onToggleVibe`
+
+Non-event function props (`render*`, `get*`, `format*`)
+are exempt from the `on*` rule.
+
+**Handler implementations** (`handle` + event verb +
+target):
+
+Functions that implement event handlers must start with
+`handle` followed by the event verb, then an optional
+target.
+
+- `handleClick`, `handleChange`, `handleSubmit`
+- `handleClickBack`, `handleChangeDropdownDepartment`
+- `handleSubmitFormContact`, `handleToggleVibe`
+
+**Hook return values for event binding:**
+
+Custom hooks that return functions intended for containers
+to bind to component `on*` event props must also use the
+`handle*` prefix with the same verb-first pattern.
+
+```ts
+// Hook
+function useCheckoutForm() {
+  function handleSubmitForm() { /* ... */ }
+  return { handleSubmitForm };
+}
+
+// Container
+const { handleSubmitForm } = useCheckoutForm();
+<CheckoutForm onSubmitForm={handleSubmitForm} />;
+
+// Component
+interface CheckoutFormProps {
+  onSubmitForm: () => void;
+}
+```
+
+Common event verbs: Click, Change, Submit, Toggle, Load,
+Focus, Blur, Scroll, Select, Close, Open, Press, Drag,
+Drop, Copy, Reset.
+
+This convention is enforced by:
+
+- `project/enforce-event-prop-naming` — event callbacks
+  in `*Props` interfaces must use `on*`
+- `project/enforce-handler-naming` — identifiers passed
+  to `on*` JSX attributes must use `handle*`
+
 ### Imports and modules
 
 Use the repository path alias for internal imports:
@@ -316,6 +388,63 @@ export default function SectionHero() {
 
 Exceptions: only when the framework requires a default
 export (e.g., `page.tsx`, `layout.tsx`).
+
+### Leaf folder index.ts
+
+Every leaf folder with a public API must have an
+`index.ts` that re-exports public symbols.
+
+Rules:
+
+- value exports come first, type exports come last
+  (mirrors the import sorting rule where `import type`
+  is the last group)
+- when a sibling `types.ts` exists, `index.ts` must
+  `export type` from it — never omit type re-exports
+- use `export type` for type-only re-exports
+- keep index files as pure re-exports with no logic
+
+Canonical pattern:
+
+```ts
+export { LandingHero } from "./landing-hero";
+
+export type { LandingHeroProps } from "./types";
+```
+
+Multiple exports:
+
+```ts
+export { ErrorBoundary } from "./error-boundary";
+
+export type {
+  ErrorBoundaryFallbackProps,
+  ErrorBoundaryProps,
+} from "./types";
+```
+
+### Layer boundaries
+
+The architecture enforces a strict unidirectional import
+flow. Each layer may only import from layers below it,
+never above.
+
+```text
+page.tsx  →  screens  →  containers  →  components
+                              ↓
+                           hooks
+```
+
+Forbidden directions:
+
+- components must **not** import from containers, screens,
+  or hooks
+- containers must **not** import from screens
+- screens must **not** import from page.tsx boundaries
+
+Components may import other components (same module or
+shared). Containers may import components, hooks, actions,
+lib, and schemas.
 
 ### Server-first mindset
 
@@ -549,7 +678,12 @@ Before writing or changing code, check:
 
 - strict TypeScript without `any`?
 - naming and casing consistent?
+- event naming: `on/handle` + event verb + target?
+- handler implementations use `handle*` prefix?
 - named export (unless framework requires default)?
+- `index.ts` re-exports types from `types.ts`?
+- value exports before type exports in `index.ts`?
+- layer boundaries respected (no upward imports)?
 - server-side by default?
 - comments only where they help?
 - errors handled explicitly?
@@ -566,7 +700,15 @@ Before writing or changing code, check:
 - `SCREAMING_SNAKE_CASE` constants
 - `kebab-case` files/folders
 - component names: UI-type first, domain last
+- event naming: `on/handle` + verb + target (`onClickBack`, `handleSubmitForm`)
+- hooks return `handle*` for event handler bindings
 - named exports by default
+- `index.ts` always re-exports types from `types.ts`
+- value exports first, type exports last
+- layer flow: page → screen → container → component
+- components never import containers or screens
+- client containers delegate all logic to hooks
+- stories only for components, not containers or screens
 - server components by default
 - comments only when needed
 - no silent error handling
@@ -608,8 +750,10 @@ Supporting layers:
   returns one screen. Handles params and locale setup.
 - **`screens/`** — module-level page UI. 1:1 with page.
   Composes containers only. Server-first.
-- **`containers/`** — required bridge layer. Binds logic
-  to presenters. Server or client. Self-contained.
+- **`containers/`** — required bridge layer. Binds hooks
+  and actions to presenters. Client containers must
+  delegate all logic to custom hooks. Server or client.
+  Self-contained.
 - **`components/`** — presenter UI. Stateless or
   logic-light. Receives prepared props.
 - **`actions/`** — server actions. `"use server"`,
@@ -746,6 +890,31 @@ src/app/[locale]/checkout/page.tsx
   stay in `app/`; do not replace with screen or container
   patterns
 
+### App Router error boundary exception
+
+`error.tsx` and `global-error.tsx` sit **above** the
+container layer. There is no module container that can
+wrap them, so they and the shared components they delegate
+to (`error-global`, `error-app-boundary`) are granted a
+documented exception:
+
+- **What is permitted**: importing from `actions/` and
+  using React hooks directly in the component (instead of
+  delegating to a container)
+- **Qualifying condition**: the file is an App Router error
+  boundary or a `shared/components/` delegate that only
+  `error.tsx` / `global-error.tsx` relies on
+- **How it is enforced**: `eslint.config.mjs` disables
+  `project/no-upward-layer-import` for
+  `src/shared/components/error-global/**` and
+  `src/shared/components/error-app-boundary/**` with a
+  comment explaining why
+
+Do **not** use this exception as a general escape hatch.
+If you need shared interactive UI outside error boundaries,
+use a module-owned container backed by a shared hook or
+provider.
+
 ### Practical diagrams
 
 Minimal page rendering flow:
@@ -791,21 +960,28 @@ app/[locale]/page.tsx
 5. define actions for mutations
 6. define schemas for validation
 7. extract reusable service logic into `lib/`
-8. extract client logic into hooks if interaction requires
-   it
+8. extract client logic into hooks — client containers
+   must not own logic directly
 
 ### Common mistakes to avoid
 
 - `page.tsx` assembling containers directly
 - screens rendering presenter components directly as the
   main pattern
-- containers owning business logic inline
+- containers owning business logic inline — extract to
+  hooks (client) or lib (server)
+- containers using hooks, state, or effects directly
+  instead of delegating to a custom hook
+- components importing containers or screens (violates
+  unidirectional flow)
 - components becoming mini controllers
 - actions embedding reusable service logic that belongs
   in `lib/`
 - hooks becoming the home of server-side behavior
 - route-boundary App Router responsibilities leaking into
   screens or containers
+- `index.ts` missing `export type` when a `types.ts`
+  sibling exists
 
 ### Quick placement reference
 
@@ -838,6 +1014,15 @@ These load when editing matching files.
 - **`layout-entry`** —
   applies to `src/app/**/layout.tsx`.
   Thin route-boundary adapters, Layout naming.
+- **`app-router-specials`** —
+  applies to `src/app/**/loading.*`, `error.*`,
+  `not-found.*`, `template.*`, `forbidden.*`,
+  `unauthorized.*`, `default.*`, `global-error.*`,
+  `instrumentation.*`, and metadata files.
+  Rules for every App Router boundary file beyond
+  `page.tsx` and `layout.tsx`. Covers server/client
+  requirements, exception conditions, and which files
+  need `<html>`/`<body>`.
 - **`screens`** —
   applies to `src/modules/**/screens/**`.
   1:1 page relationship, compose containers only.
@@ -892,7 +1077,9 @@ These load when editing matching files.
 - **`storybook-stories`** —
   applies to `**/*.stories.ts` and `**/*.stories.tsx`.
   Story file patterns, meta structure, server component
-  stories, locale and color mode handling.
+  stories, locale and color mode handling. Stories are
+  only for components (`shared/components/` and
+  `modules/<module>/components/`).
 
 ### On-demand skills
 
@@ -920,7 +1107,8 @@ These provide deep knowledge when the task needs it.
 - **`project-storybook`** —
   writing component stories, preview setup, mocking
   server components and next-intl, configuration files,
-  locale and color mode toolbar integration.
+  locale and color mode toolbar integration. Stories
+  are only for components — not screens or containers.
 - **`effect`** —
   Effect TypeScript library for typed error handling.
   Mandatory in `shared/api/`. Free to use in `shared/lib/`,
@@ -944,6 +1132,13 @@ These provide deep knowledge when the task needs it.
   with zero human interaction after plan approval. Defines
   the 2-touchpoint model, role-to-tool mapping, self-healing
   loops, retry budgets, and Definition of Done.
+- **`qa-verification`** —
+  E2E browser verification protocol using `agent-browser`.
+  Use after implementing a UI feature to verify it works
+  in a real browser. Covers visual checks, responsive
+  viewports (desktop, tablet, mobile), color schemes,
+  locale switching, console errors, interaction testing,
+  and annotated screenshots.
 
 ### Installed skills
 
@@ -1018,17 +1213,37 @@ src/modules/static-pages/
 │   ├── page-chrome/
 │   └── scroll-indicator/
 ├── containers/
+│   ├── container-copy-command/
+│   │   ├── container-copy-command.tsx
+│   │   ├── container-copy-command.test.tsx
+│   │   └── index.ts
+│   ├── container-landing-hero/
+│   │   ├── container-landing-hero.tsx
+│   │   ├── container-landing-hero.test.tsx
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── container-page-chrome/
+│   │   ├── container-page-chrome.tsx
+│   │   ├── container-page-chrome.test.tsx
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── container-vibe-background/
+│   │   ├── container-vibe-background.tsx
+│   │   ├── container-vibe-background.test.tsx
+│   │   └── index.ts
+│   ├── container-vibe-controls/
+│   │   ├── container-vibe-controls.tsx
+│   │   ├── container-vibe-controls.test.tsx
+│   │   └── index.ts
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
 │       ├── container-welcome-page.test.tsx
-│       ├── container-welcome-page.stories.tsx
 │       ├── index.ts
 │       └── types.ts
 └── screens/
     └── screen-welcome/
         ├── screen-welcome.tsx
         ├── screen-welcome.test.tsx
-        ├── screen-welcome.stories.tsx
         ├── index.ts
         └── types.ts
 ```
@@ -1075,7 +1290,7 @@ export async function ScreenWelcome({ locale }: Readonly<ScreenWelcomeProps>) {
 ```
 
 The container is the required bridge layer — it binds
-presenter components together:
+presenter components together and composes sub-containers:
 
 ```tsx
 // container-welcome-page/container-welcome-page.tsx
@@ -1088,10 +1303,11 @@ import { LandingCliUsage } from "@/modules/static-pages/components/landing-cli-u
 import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
 import { LandingCta } from "@/modules/static-pages/components/landing-cta";
 import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
-import { LandingHero } from "@/modules/static-pages/components/landing-hero";
 import { LandingStrengths } from "@/modules/static-pages/components/landing-strengths";
 import { LandingTechStack } from "@/modules/static-pages/components/landing-tech-stack";
-import { PageChrome } from "@/modules/static-pages/components/page-chrome";
+import { ContainerLandingHero } from "@/modules/static-pages/containers/container-landing-hero";
+import { ContainerPageChrome } from "@/modules/static-pages/containers/container-page-chrome";
+import { VibeProvider } from "@/modules/static-pages/providers/vibe-provider";
 
 import type { ContainerWelcomePageProps } from "./types";
 
@@ -1099,17 +1315,19 @@ export async function ContainerWelcomePage({
   locale,
 }: Readonly<ContainerWelcomePageProps>) {
   return (
-    <Box as="main" position="relative">
-      <PageChrome locale={locale} />
-      <LandingHero locale={locale} />
-      <LandingStrengths locale={locale} />
-      <LandingAiWorkflow locale={locale} />
-      <LandingCopilot locale={locale} />
-      <LandingCliUsage locale={locale} />
-      <LandingTechStack locale={locale} />
-      <LandingCta locale={locale} />
-      <LandingFooter locale={locale} />
-    </Box>
+    <VibeProvider>
+      <Box as="main" position="relative">
+        <ContainerPageChrome locale={locale} />
+        <ContainerLandingHero locale={locale} />
+        <LandingStrengths locale={locale} />
+        <LandingAiWorkflow locale={locale} />
+        <LandingCopilot locale={locale} />
+        <LandingCliUsage locale={locale} />
+        <LandingTechStack locale={locale} />
+        <LandingCta locale={locale} />
+        <LandingFooter locale={locale} />
+      </Box>
+    </VibeProvider>
   );
 }
 ```
@@ -1120,11 +1338,14 @@ Key patterns demonstrated:
   `ScreenWelcome`
 - **screen → container → component** — the screen
   composes a container, the container binds presenter
-  components
+  components and sub-containers
 - **server-only throughout** — `page.tsx`, screen, and
   container all use `import "server-only"`
 - **container as required bridge** — even for a static
   page, the container layer is present
+- **containers compose containers** — `ContainerWelcomePage`
+  mounts `ContainerPageChrome` and `ContainerLandingHero`;
+  each sub-container owns its own concern independently
 - **leaf folder convention** — each component has its own
   folder with implementation, types, index re-export, and
   colocated tests
