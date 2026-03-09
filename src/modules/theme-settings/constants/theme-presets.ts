@@ -1,12 +1,10 @@
-import type { ThemePreset } from "@/modules/theme-settings/types";
+import type {
+  ThemePreset,
+  ThemePresetId,
+} from "@/modules/theme-settings/types";
 
-// NOTE: Chakra UI v3 uses kebab-case CSS variable names for color palette tokens.
-// The correct variable name is "--chakra-colors-color-palette-solid" (NOT camelCase).
-// Components with colorPalette="blue" generate inline styles:
-//   --chakra-colors-color-palette-solid: var(--chakra-colors-blue-solid)
-// Since --chakra-colors-blue-solid is NOT set inline on the component, it inherits
-// from ancestor elements. By setting --chakra-colors-blue-* on the preview Box,
-// the chain resolves to the preset's primary color. ✓
+// Chakra UI v3 uses kebab-case CSS variable names for color palette tokens.
+// Setting --chakra-colors-{color}-* on a container lets descendants resolve them via colorPalette.
 
 export const THEME_PRESETS: ThemePreset[] = [
   {
@@ -1786,8 +1784,10 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l1": "16px",
         "--chakra-radii-l2": "20px",
         "--chakra-radii-l3": "28px",
-        "--chakra-shadows-md": "inset 0 1px 0 rgba(100,150,255,0.3), 0 2px 4px rgba(0,0,0,0.6)",
-        "--chakra-shadows-sm": "inset 0 1px 0 rgba(100,150,255,0.3), 0 1px 2px rgba(0,0,0,0.5)",
+        "--chakra-shadows-md":
+          "inset 0 1px 0 rgba(100,150,255,0.3), 0 2px 4px rgba(0,0,0,0.6)",
+        "--chakra-shadows-sm":
+          "inset 0 1px 0 rgba(100,150,255,0.3), 0 1px 2px rgba(0,0,0,0.5)",
       },
       light: {
         "--chakra-colors-bg": "#F0F8FF",
@@ -1890,8 +1890,10 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l1": "16px",
         "--chakra-radii-l2": "20px",
         "--chakra-radii-l3": "28px",
-        "--chakra-shadows-md": "inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.3)",
-        "--chakra-shadows-sm": "inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.2)",
+        "--chakra-shadows-md":
+          "inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.3)",
+        "--chakra-shadows-sm":
+          "inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.2)",
       },
     },
     description: "Chrome blues and metallic tones from the early internet era",
@@ -2791,4 +2793,4 @@ export const THEME_PRESETS: ThemePreset[] = [
   },
 ];
 
-export const DEFAULT_PRESET_ID = "default";
+export const DEFAULT_PRESET_ID = "default" satisfies ThemePresetId;
