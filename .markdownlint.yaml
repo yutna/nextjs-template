@@ -1,0 +1,3 @@
+default: true
+# Line length is impractical for tables, code blocks, and checklist items
+MD013: false
