@@ -62,6 +62,13 @@ export default async function Layout({
       lang={locale}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var r=localStorage.getItem('theme-css-vars');if(r){var a=JSON.parse(r);var d=document.documentElement.classList.contains('dark');var v=d?a.dark:a.light;if(v){Object.keys(v).forEach(function(k){document.documentElement.style.setProperty(k,v[k]);});}}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={notoSansThai.className}>
         <AppProvider
           locale={locale}
