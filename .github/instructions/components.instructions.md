@@ -180,6 +180,25 @@ This enforces the unidirectional flow: `page → screen → container → compon
 If a component needs data or behavior from a container, it must receive
 it through props.
 
+### Exception: App Router error boundaries
+
+`error.tsx` and `global-error.tsx` sit **above** the container layer.
+There is no parent container that can wrap them, so their shared delegate
+components (`error-global`, `error-app-boundary`) are granted a documented
+ESLint override that permits:
+
+- `useEffect` and other React hooks directly in the component
+- Importing from `actions/` to call error-reporting actions
+
+This is **narrow and explicit**: only files in
+`src/shared/components/error-global/**` and
+`src/shared/components/error-app-boundary/**` carry this override.
+It is declared in `eslint.config.mjs` with a comment explaining why.
+
+Do not model other shared components after this pattern. If you need
+shared interactive UI outside of error boundaries, use a module-owned
+container backed by a shared hook or provider.
+
 ## Leaf index.ts exports
 
 When a `types.ts` file exists in the component folder, `index.ts` must
@@ -201,7 +220,7 @@ export type { LandingHeroProps } from "./types";
 - [ ] Event callback props use `on` + verb + target pattern
 - [ ] Server component by default, `"use client"` only when needed
 - [ ] Extracted logic lives in hooks or containers, not inline
-- [ ] No imports from containers, screens, actions, hooks, or contexts
+- [ ] No imports from containers, screens, actions, hooks, or contexts (except documented App Router error boundary exception)
 - [ ] `index.ts` re-exports types from `types.ts` when it exists
 - [ ] Value exports before type exports in `index.ts`
 - [ ] No parent barrel files

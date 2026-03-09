@@ -890,6 +890,31 @@ src/app/[locale]/checkout/page.tsx
   stay in `app/`; do not replace with screen or container
   patterns
 
+### App Router error boundary exception
+
+`error.tsx` and `global-error.tsx` sit **above** the
+container layer. There is no module container that can
+wrap them, so they and the shared components they delegate
+to (`error-global`, `error-app-boundary`) are granted a
+documented exception:
+
+- **What is permitted**: importing from `actions/` and
+  using React hooks directly in the component (instead of
+  delegating to a container)
+- **Qualifying condition**: the file is an App Router error
+  boundary or a `shared/components/` delegate that only
+  `error.tsx` / `global-error.tsx` relies on
+- **How it is enforced**: `eslint.config.mjs` disables
+  `project/no-upward-layer-import` for
+  `src/shared/components/error-global/**` and
+  `src/shared/components/error-app-boundary/**` with a
+  comment explaining why
+
+Do **not** use this exception as a general escape hatch.
+If you need shared interactive UI outside error boundaries,
+use a module-owned container backed by a shared hook or
+provider.
+
 ### Practical diagrams
 
 Minimal page rendering flow:
@@ -989,6 +1014,15 @@ These load when editing matching files.
 - **`layout-entry`** —
   applies to `src/app/**/layout.tsx`.
   Thin route-boundary adapters, Layout naming.
+- **`app-router-specials`** —
+  applies to `src/app/**/loading.*`, `error.*`,
+  `not-found.*`, `template.*`, `forbidden.*`,
+  `unauthorized.*`, `default.*`, `global-error.*`,
+  `instrumentation.*`, and metadata files.
+  Rules for every App Router boundary file beyond
+  `page.tsx` and `layout.tsx`. Covers server/client
+  requirements, exception conditions, and which files
+  need `<html>`/`<body>`.
 - **`screens`** —
   applies to `src/modules/**/screens/**`.
   1:1 page relationship, compose containers only.
@@ -1179,6 +1213,28 @@ src/modules/static-pages/
 │   ├── page-chrome/
 │   └── scroll-indicator/
 ├── containers/
+│   ├── container-copy-command/
+│   │   ├── container-copy-command.tsx
+│   │   ├── container-copy-command.test.tsx
+│   │   └── index.ts
+│   ├── container-landing-hero/
+│   │   ├── container-landing-hero.tsx
+│   │   ├── container-landing-hero.test.tsx
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── container-page-chrome/
+│   │   ├── container-page-chrome.tsx
+│   │   ├── container-page-chrome.test.tsx
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── container-vibe-background/
+│   │   ├── container-vibe-background.tsx
+│   │   ├── container-vibe-background.test.tsx
+│   │   └── index.ts
+│   ├── container-vibe-controls/
+│   │   ├── container-vibe-controls.tsx
+│   │   ├── container-vibe-controls.test.tsx
+│   │   └── index.ts
 │   └── container-welcome-page/
 │       ├── container-welcome-page.tsx
 │       ├── container-welcome-page.test.tsx
@@ -1234,7 +1290,7 @@ export async function ScreenWelcome({ locale }: Readonly<ScreenWelcomeProps>) {
 ```
 
 The container is the required bridge layer — it binds
-presenter components together:
+presenter components together and composes sub-containers:
 
 ```tsx
 // container-welcome-page/container-welcome-page.tsx
@@ -1247,10 +1303,11 @@ import { LandingCliUsage } from "@/modules/static-pages/components/landing-cli-u
 import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
 import { LandingCta } from "@/modules/static-pages/components/landing-cta";
 import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
-import { LandingHero } from "@/modules/static-pages/components/landing-hero";
 import { LandingStrengths } from "@/modules/static-pages/components/landing-strengths";
 import { LandingTechStack } from "@/modules/static-pages/components/landing-tech-stack";
-import { PageChrome } from "@/modules/static-pages/components/page-chrome";
+import { ContainerLandingHero } from "@/modules/static-pages/containers/container-landing-hero";
+import { ContainerPageChrome } from "@/modules/static-pages/containers/container-page-chrome";
+import { VibeProvider } from "@/modules/static-pages/providers/vibe-provider";
 
 import type { ContainerWelcomePageProps } from "./types";
 
@@ -1258,17 +1315,19 @@ export async function ContainerWelcomePage({
   locale,
 }: Readonly<ContainerWelcomePageProps>) {
   return (
-    <Box as="main" position="relative">
-      <PageChrome locale={locale} />
-      <LandingHero locale={locale} />
-      <LandingStrengths locale={locale} />
-      <LandingAiWorkflow locale={locale} />
-      <LandingCopilot locale={locale} />
-      <LandingCliUsage locale={locale} />
-      <LandingTechStack locale={locale} />
-      <LandingCta locale={locale} />
-      <LandingFooter locale={locale} />
-    </Box>
+    <VibeProvider>
+      <Box as="main" position="relative">
+        <ContainerPageChrome locale={locale} />
+        <ContainerLandingHero locale={locale} />
+        <LandingStrengths locale={locale} />
+        <LandingAiWorkflow locale={locale} />
+        <LandingCopilot locale={locale} />
+        <LandingCliUsage locale={locale} />
+        <LandingTechStack locale={locale} />
+        <LandingCta locale={locale} />
+        <LandingFooter locale={locale} />
+      </Box>
+    </VibeProvider>
   );
 }
 ```
@@ -1279,11 +1338,14 @@ Key patterns demonstrated:
   `ScreenWelcome`
 - **screen → container → component** — the screen
   composes a container, the container binds presenter
-  components
+  components and sub-containers
 - **server-only throughout** — `page.tsx`, screen, and
   container all use `import "server-only"`
 - **container as required bridge** — even for a static
   page, the container layer is present
+- **containers compose containers** — `ContainerWelcomePage`
+  mounts `ContainerPageChrome` and `ContainerLandingHero`;
+  each sub-container owns its own concern independently
 - **leaf folder convention** — each component has its own
   folder with implementation, types, index re-export, and
   colocated tests

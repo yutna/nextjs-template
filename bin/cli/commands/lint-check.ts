@@ -807,10 +807,47 @@ const checkClientContainerHooks = Effect.sync((): CheckResult => {
 });
 
 // -------------------------------------------------------------------
+// Check: action-schema
+// -------------------------------------------------------------------
+
+const checkActionSchema = Effect.sync((): CheckResult => {
+  const srcDir = join(PROJECT_ROOT, "src");
+  const errors: Violation[] = [];
+
+  const actionFiles = walkFiles(srcDir, [".ts", ".tsx"]).filter((f) => {
+    const name = basename(f);
+
+    return (
+      f.includes("/actions/") &&
+      name !== "index.ts" &&
+      name !== "types.ts" &&
+      !name.endsWith(".test.ts") &&
+      !name.endsWith(".test.tsx")
+    );
+  });
+
+  for (const file of actionFiles) {
+    const content = readFile(file);
+
+    if (!content.includes(".inputSchema(")) {
+      errors.push({
+        file: rel(file),
+        message:
+          "Missing .inputSchema(...). Every server action must validate input with Zod via actionClient.inputSchema(schema).action(...).",
+        rule: "action-schema",
+      });
+    }
+  }
+
+  return { errors, name: "action-schema", warnings: [] };
+});
+
+// -------------------------------------------------------------------
 // Runner
 // -------------------------------------------------------------------
 
 const ALL_CHECKS = {
+  "action-schema": checkActionSchema,
   "barrel-export": checkBarrelExport,
   "client-container-hooks": checkClientContainerHooks,
   "css-variables": checkCssVariables,
@@ -934,6 +971,7 @@ export function help(): void {
 
   Options:
     --all                    Run all checks (default)
+    --action-schema          Check action files for .inputSchema(...) usage
     --server-only            Check page.tsx files for import "server-only"
     --screen-server-only     Check screen files for import "server-only"
     --barrel-export          Check leaf folders for index.ts barrel exports
