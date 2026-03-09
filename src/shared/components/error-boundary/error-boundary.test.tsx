@@ -28,7 +28,7 @@ describe("ErrorBoundary", () => {
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     renderWithProviders(
-      <ErrorBoundary fallback={({ error }) => <p>caught: {error.message}</p>}>
+      <ErrorBoundary renderFallback={({ error }) => <p>caught: {error.message}</p>}>
         <ThrowingChild />
       </ErrorBoundary>,
     );
@@ -66,7 +66,7 @@ describe("ErrorBoundary", () => {
 
     renderWithProviders(
       <ErrorBoundary
-        fallback={({ reset }) => <button onClick={reset}>retry</button>}
+        renderFallback={({ reset }) => <button onClick={reset}>retry</button>}
       >
         <ConditionalChild />
       </ErrorBoundary>,

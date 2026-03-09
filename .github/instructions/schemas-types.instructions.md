@@ -16,6 +16,10 @@ Schemas are Zod validation contracts. Classify each schema before placing it:
 
 ## Schema folder structure
 
+Schemas must always live in their own leaf folder with `index.ts`.
+Do **not** place standalone `.schema.ts` files directly in the `schemas/`
+directory — every schema gets a folder.
+
 ```text
 src/shared/schemas/models/user/
 ├── user.schema.ts
@@ -32,6 +36,7 @@ src/modules/users/schemas/create-user-input/
 - File suffix: `.schema.ts`
 - Schema constant: `camelCase` + `Schema` (e.g. `userSchema`)
 - Derive types from schemas with `z.infer<typeof schema>` — do not hand-duplicate
+- `types.ts` must exist with the inferred type(s)
 
 ## Schema naming
 
@@ -41,13 +46,18 @@ src/modules/users/schemas/create-user-input/
 
 ## Schema exports
 
+`index.ts` must re-export both the schema and its derived types.
+Value exports come first, type exports come last.
+
 ```ts
 export { createUserInputSchema } from "./create-user-input.schema";
+
 export type { CreateUserInput } from "./types";
 ```
 
 - Named exports only
 - Use `export type` for type re-exports
+- Never omit type re-exports when `types.ts` exists
 - No top-level barrel `src/shared/schemas/index.ts`
 
 ## Types — overview
@@ -98,8 +108,12 @@ export interface FetchClientOptions extends Omit<RequestInit, "body"> {
 
 - [ ] Model vs validation schema correctly classified
 - [ ] Model schemas live in `src/shared/schemas/models/`
+- [ ] Schema lives in its own folder with `index.ts` (not standalone)
+- [ ] `types.ts` exists with `z.infer` derived type(s)
 - [ ] Types derived via `z.infer` — not hand-duplicated
 - [ ] File name explicit about the schema role
+- [ ] `index.ts` re-exports both schema and types
+- [ ] Value exports before type exports in `index.ts`
 - [ ] Named exports with `export type` for types
 
 ### Types

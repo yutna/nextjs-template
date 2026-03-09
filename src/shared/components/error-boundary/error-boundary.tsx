@@ -11,7 +11,7 @@ import type { ErrorBoundaryProps, ErrorBoundaryState } from "./types";
  * rather than letting them bubble up to the Next.js error boundary.
  *
  * @example
- * <ErrorBoundary fallback={({ error, reset }) => <MyFallback error={error} reset={reset} />}>
+ * <ErrorBoundary renderFallback={({ error, reset }) => <MyFallback error={error} reset={reset} />}>
  *   <SomeFeatureSection />
  * </ErrorBoundary>
  */
@@ -38,10 +38,10 @@ export class ErrorBoundary extends Component<
 
   override render() {
     const { error } = this.state;
-    const { children, fallback } = this.props;
+    const { children, renderFallback } = this.props;
 
     if (error) {
-      return fallback?.({ error, reset: this.reset }) ?? null;
+      return renderFallback?.({ error, reset: this.reset }) ?? null;
     }
 
     return children;

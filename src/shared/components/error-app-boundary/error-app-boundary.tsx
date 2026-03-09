@@ -20,7 +20,7 @@ import { routes } from "@/shared/routes";
 
 import type { NextErrorProps } from "@/shared/types/next";
 
-export function ErrorAppBoundary({ error, reset }: NextErrorProps) {
+export function ErrorAppBoundary({ error, reset }: Readonly<NextErrorProps>) {
   // Initialize variables / Setup
   const { digest, message } = error;
 

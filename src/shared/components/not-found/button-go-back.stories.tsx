@@ -6,9 +6,6 @@ const meta = {
   component: ButtonGoBack,
   parameters: {
     layout: "centered",
-    nextjs: {
-      appDirectory: true,
-    },
   },
   title: "shared/components/not-found/button-go-back",
 } satisfies Meta<typeof ButtonGoBack>;
@@ -19,11 +16,13 @@ type Story = StoryObj<typeof meta>;
 export const English: Story = {
   args: {
     label: "Go Back",
+    onClick: () => undefined,
   },
 };
 
 export const Thai: Story = {
   args: {
     label: "ย้อนกลับ",
+    onClick: () => undefined,
   },
 };

@@ -81,8 +81,12 @@ Rules:
 
 ## Leaf export example
 
+When a `types.ts` file exists, `index.ts` must re-export its types.
+Value exports come first, type exports come last.
+
 ```ts
 export { OrderFiltersProvider } from "./order-filters-provider";
+
 export type { OrderFiltersProviderProps } from "./types";
 ```
 
@@ -96,4 +100,6 @@ export type { OrderFiltersProviderProps } from "./types";
 - [ ] Props typed clearly in `types.ts`
 - [ ] Named exports only
 - [ ] No parent barrel files
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
 - [ ] Tests covering provider behavior or composition

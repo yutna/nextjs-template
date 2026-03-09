@@ -5,8 +5,8 @@
  * Project CLI entry point.
  *
  * Usage:
- *   ./bin/tmpl <command> [options]
- *   ./bin/tmpl --help
+ *   ./bin/vibe <command> [options]
+ *   ./bin/vibe --help
  *
  * Node.js 24+ runs TypeScript natively — no compilation needed.
  */

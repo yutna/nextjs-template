@@ -15,9 +15,10 @@ export { isOperationalError } from "./helpers/is-operational-error";
 export { toAppError } from "./helpers/to-app-error";
 export { FetchError } from "./http/fetch-error";
 export { HttpError } from "./http/http-error";
-export type { FetchErrorOptions } from "./http/types";
 export { DatabaseError } from "./infrastructure/database-error";
 export { ExternalServiceError } from "./infrastructure/external-service-error";
 export { InfrastructureError } from "./infrastructure/infrastructure-error";
 export { UnknownError } from "./infrastructure/unknown-error";
+
+export type { FetchErrorOptions } from "./http/types";
 export type { AppErrorOptions, FieldErrors, SerializedError } from "./types";

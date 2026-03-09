@@ -37,7 +37,8 @@ Each software engineering role maps to a concrete Copilot CLI tool.
 | PM / Tech Lead | Main orchestrator | Decisions, planning, delegation, state management |
 | SA / Researcher | `explore` agent | Read-only codebase analysis, pattern discovery |
 | Senior Developer | `general-purpose` agent | Implementation, file creation, code changes |
-| QA / Reviewer | `code-review` agent | Architecture validation, bug detection |
+| Code Reviewer | `code-review` agent | Architecture validation, bug detection |
+| QA Engineer | `qa` agent + `agent-browser` | E2E browser verification, visual/responsive/locale checks |
 | DevOps / CI | `task` agent + `bash` | Build, test, lint, type-check |
 | State Tracker | SQL database | Todo progress, dependencies, retry counts |
 
@@ -210,23 +211,74 @@ Blocked todos are reported to the user at Touchpoint 2.
 
 ### Step 7 — Runtime verification
 
-After all todos are done (or remaining are blocked), verify the feature works at
-runtime before presenting to the user.
+After all todos are done (or remaining are blocked), verify the feature works
+in a real browser before presenting to the user. Load the `qa-verification`
+skill for the full protocol.
 
-1. Start the dev server if not already running (`npm run dev`)
-2. Navigate to affected pages using `agent-browser` (open, snapshot, screenshot)
-3. Check for:
-   - No console errors or runtime exceptions
-   - Feature renders correctly and matches requirements
-   - Responsive behavior on different viewport sizes (when applicable)
-   - Light and dark theme support (when applicable)
-4. If runtime issues are found, treat as a self-healing case: analyze the error,
-   spawn a `general-purpose` agent to fix it, rerun quality gates, and re-verify
+**This step is mandatory for any change that affects rendered output.** It is
+the most common source of bugs that reach the user — do not skip it for UI
+features.
 
-Skip this step only when:
+#### Option A — Spawn a QA agent (recommended)
+
+Spawn the `qa` agent with the feature context:
+
+```
+task(agent_type="qa", prompt="
+  Verify the following feature in a real browser.
+
+  FEATURE DESCRIPTION:
+  [what was built]
+
+  AFFECTED ROUTES:
+  [list of URL paths to verify]
+
+  REQUIREMENTS / ACCEPTANCE CRITERIA:
+  [what the feature should look like and how it should behave]
+
+  DEV SERVER:
+  Running on http://localhost:3000 (or specify port)
+
+  Follow the qa-verification skill protocol exactly.
+  Report results in the QA Verification Report format.
+")
+```
+
+The QA agent is read-only — it verifies and reports but does not modify code.
+
+#### Option B — Verify directly
+
+If a QA agent is not available, execute the verification sequence from the
+`qa-verification` skill directly using `agent-browser`:
+
+1. **Start dev server** if not already running (`npm run dev`)
+2. **For each affected route**, execute in order:
+   a. Open and wait for network idle
+   b. Check for console errors and failed requests
+   c. Take an annotated screenshot (visual layout check)
+   d. Take a snapshot (content/accessibility check)
+   e. Test responsive viewports:
+      - Desktop: 1280×800 (default)
+      - Tablet: 768×1024
+      - Mobile: 375×667
+   f. Test color schemes: dark mode and light mode
+   g. Test locales: English (`/en/...`) and Thai (`/th/...`)
+   h. Test interactions if applicable (forms, links, modals)
+3. **If issues are found**, treat as a self-healing case:
+   - Analyze the issue from screenshots and snapshots
+   - Spawn a `general-purpose` agent with the error context and evidence
+   - Rerun ALL quality gates after fixing
+   - Re-verify the affected route
+   - Apply the retry budget (max 3 attempts per issue)
+4. **If all checks pass**, proceed to delivery
+
+#### When to skip
+
+Skip runtime verification only when:
 
 - The change is purely backend (schemas, lib, actions with no UI)
 - The change is configuration or tooling only (no rendered output)
+- The change is test-only or type-definition-only
 
 ### Step 8 — Deliver
 
@@ -320,8 +372,10 @@ EXECUTION ORDER
 7. Code review (code-review agent)
 8. Fix review issues → rerun gates
 9. Mark done → loop to step 2
-10. All done → runtime verification (agent-browser)
-11. Present to user
+10. All done → QA verification (qa agent + agent-browser)
+    - Visual layout, responsive, dark/light mode, locales, interactions
+11. Self-heal QA issues → rerun gates → re-verify
+12. Present to user
 
 DEFINITION OF DONE
 ══════════════════
@@ -330,6 +384,6 @@ DEFINITION OF DONE
 ✅ All existing tests pass (no regressions)
 ✅ New tests cover the new feature
 ✅ Code review passed
-✅ Runtime verified in browser (when applicable)
+✅ QA verified in real browser (visual, responsive, themes, locales)
 ✅ Production-ready — human has nothing to fix
 ```

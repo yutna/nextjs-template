@@ -40,7 +40,8 @@ const eslintConfig = defineConfig([
       // Groups: 1) side-effect  2) external  3) @/ internal  4) ./ local  5) import type
       // Type imports (suffix \u0000) are kept in one block without blank lines.
       // Within the type block, pattern order enforces: external → @/ → ./
-      "simple-import-sort/exports": "error",
+      // Export sorting is handled by perfectionist/sort-exports below
+      "simple-import-sort/exports": "off",
       "simple-import-sort/imports": [
         "error",
         {
@@ -123,8 +124,18 @@ const eslintConfig = defineConfig([
       // Project-specific rules (eslint/local-plugin.mjs)
       // ------------------------------------------------
 
+      // Enforce on* prefix for event callback props in *Props interfaces (Event naming)
+      "project/enforce-event-prop-naming": "error",
+
+      // Enforce handle* prefix for handler identifiers in on* JSX props (Event naming)
+      "project/enforce-handler-naming": "error",
+
       // Forbid imports between feature modules (Architecture)
       "project/no-cross-module-import": "error",
+
+      // Enforce layer boundary: components cannot import from containers,
+      // screens, hooks, actions, contexts, or providers (Architecture)
+      "project/no-upward-layer-import": "error",
 
       // Forbid spreading hook return values in JSX (Props)
       "project/no-hook-spread": "error",
@@ -157,11 +168,23 @@ const eslintConfig = defineConfig([
       // Sorting — enforce consistent key/prop ordering
       // ------------------------------------------------
 
-      // Disable perfectionist import/export rules (simple-import-sort handles these)
-      "perfectionist/sort-exports": "off",
+      // Disable perfectionist import rules (simple-import-sort handles these)
       "perfectionist/sort-imports": "off",
       "perfectionist/sort-named-exports": "off",
       "perfectionist/sort-named-imports": "off",
+
+      // Export sorting — value exports first, type exports last
+      // simple-import-sort/exports handles alphabetical order;
+      // perfectionist/sort-exports enforces type-after-value grouping
+      "perfectionist/sort-exports": [
+        "error",
+        {
+          groups: ["value-export", "type-export"],
+          newlinesBetween: 1,
+          order: "asc",
+          type: "natural",
+        },
+      ],
 
       // Object keys + destructuring (natural alphabetical)
       "perfectionist/sort-objects": [
@@ -282,6 +305,8 @@ const eslintConfig = defineConfig([
       "no-restricted-imports": "off",
       "perfectionist/sort-jsx-props": "off",
       "perfectionist/sort-objects": "off",
+      "project/enforce-event-prop-naming": "off",
+      "project/enforce-handler-naming": "off",
       "project/no-hook-spread": "off",
       "project/no-inline-style": "off",
     },
@@ -293,6 +318,19 @@ const eslintConfig = defineConfig([
     files: ["src/app/global-error.tsx"],
     rules: {
       "project/no-inline-style": "off",
+    },
+  },
+  // --------------------------------------------------
+  // Error boundary components — must call reportErrorAction directly
+  // because Next.js error boundaries have no parent container layer.
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/components/error-global/**",
+      "src/shared/components/error-app-boundary/**",
+    ],
+    rules: {
+      "project/no-upward-layer-import": "off",
     },
   },
   // --------------------------------------------------
@@ -330,6 +368,16 @@ const eslintConfig = defineConfig([
     files: ["eslint/**"],
     rules: {
       "import/no-anonymous-default-export": "off",
+      "import/no-default-export": "off",
+    },
+  },
+  // --------------------------------------------------
+  // TypeScript declaration files — allow default exports in module
+  // declarations (used to type-declare Vite alias modules)
+  // --------------------------------------------------
+  {
+    files: ["**/*.d.ts"],
+    rules: {
       "import/no-default-export": "off",
     },
   },

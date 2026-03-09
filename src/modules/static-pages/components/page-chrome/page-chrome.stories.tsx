@@ -6,12 +6,6 @@ const meta = {
   component: PageChrome,
   parameters: {
     layout: "fullscreen",
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: "/",
-      },
-    },
   },
   title: "modules/static-pages/components/page-chrome",
 } satisfies Meta<typeof PageChrome>;
@@ -22,11 +16,13 @@ type Story = StoryObj<typeof meta>;
 export const English: Story = {
   args: {
     locale: "en",
+    onSwitchLocale: () => undefined,
   },
 };
 
 export const Thai: Story = {
   args: {
     locale: "th",
+    onSwitchLocale: () => undefined,
   },
 };

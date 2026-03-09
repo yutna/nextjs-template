@@ -2,31 +2,24 @@
 
 import { HStack, IconButton, Text } from "@chakra-ui/react";
 import { LuCheck, LuCopy } from "react-icons/lu";
-import { useImmer } from "use-immer";
 
 import { HERO_INSTALL_COMMAND } from "./constants";
 
-export function CopyCommand() {
-  const [state, updateState] = useImmer({ copied: false });
+import type { CopyCommandProps } from "./types";
 
-  async function handleCopy() {
-    await navigator.clipboard.writeText(HERO_INSTALL_COMMAND);
-    updateState((draft) => {
-      draft.copied = true;
-    });
-    setTimeout(() => {
-      updateState((draft) => {
-        draft.copied = false;
-      });
-    }, 2000);
-  }
-
+export function CopyCommand({
+  isCopied,
+  isVibeOn,
+  onCopy,
+}: Readonly<CopyCommandProps>) {
   return (
     <HStack
-      backdropFilter="blur(8px)"
-      bg={{ _dark: "gray.900/60", base: "gray.50/80" }}
+      backdropFilter="blur(12px)"
+      bg={isVibeOn ? "gray.950/85" : { _dark: "gray.950/85", base: "white/85" }}
       border="1px solid"
-      borderColor={{ _dark: "gray.700/60", base: "gray.200" }}
+      borderColor={
+        isVibeOn ? "gray.600/70" : { _dark: "gray.600/70", base: "gray.400/60" }
+      }
       borderRadius="xl"
       gap={3}
       maxW="xl"
@@ -46,7 +39,7 @@ export function CopyCommand() {
         $
       </Text>
       <Text
-        color={{ _dark: "gray.300", base: "gray.700" }}
+        color={isVibeOn ? "gray.100" : { _dark: "gray.100", base: "gray.700" }}
         flex={1}
         fontFamily="mono"
         fontSize="xs"
@@ -55,18 +48,26 @@ export function CopyCommand() {
         {HERO_INSTALL_COMMAND}
       </Text>
       <IconButton
-        _hover={{ color: { _dark: "gray.100", base: "gray.800" } }}
-        aria-label={state.copied ? "Copied" : "Copy command"}
+        _hover={{
+          color: isVibeOn
+            ? "gray.100"
+            : { _dark: "gray.100", base: "gray.800" },
+        }}
+        aria-label={isCopied ? "Copied" : "Copy command"}
         color={
-          state.copied ? "green.400" : { _dark: "gray.400", base: "gray.500" }
+          isCopied
+            ? "green.400"
+            : isVibeOn
+              ? "gray.400"
+              : { _dark: "gray.400", base: "gray.500" }
         }
         flexShrink={0}
-        onClick={handleCopy}
+        onClick={onCopy}
         size="xs"
         transition="all 0.2s ease"
         variant="ghost"
       >
-        {state.copied ? <LuCheck /> : <LuCopy />}
+        {isCopied ? <LuCheck /> : <LuCopy />}
       </IconButton>
     </HStack>
   );

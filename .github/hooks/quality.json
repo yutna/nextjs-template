@@ -3,14 +3,14 @@
     "PostToolUse": [
       {
         "type": "command",
-        "command": "./bin/tmpl hooks:format",
+        "command": "./bin/vibe hooks:format",
         "timeout": 15
       }
     ],
     "Stop": [
       {
         "type": "command",
-        "command": "./bin/tmpl hooks:lint",
+        "command": "./bin/vibe hooks:lint",
         "timeout": 60
       }
     ]

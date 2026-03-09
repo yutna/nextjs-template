@@ -83,6 +83,8 @@ Avoid: `lib.ts`, `helpers.ts` as main file, `service.ts`, `manager.ts`, `base.ts
 - Keep internal helpers private
 - Use `export type` for type-only exports
 - Avoid `export *`
+- When a `types.ts` file exists, `index.ts` must re-export its types
+- Value exports come first, type exports come last
 
 ```ts
 export { fetchClient } from "./fetch-client";
@@ -111,5 +113,7 @@ export type { FetchClientOptions } from "./types";
 - [ ] Scope correct: module-first, shared only when cross-cutting
 - [ ] Folder named after one clear concern
 - [ ] Public API is small and intentional
+- [ ] `index.ts` re-exports types from `types.ts` when it exists
+- [ ] Value exports before type exports in `index.ts`
 - [ ] Server-only boundaries are explicit
 - [ ] Types, errors, and tests handled as part of the contract
