@@ -316,10 +316,12 @@ import { fetchClient } from "@/shared/lib/fetcher";
 
 Sort imports into five groups in this exact order:
 
-1. side-effect imports
-2. external modules
-3. internal modules using `@/`
-4. local same-directory imports using `./`
+1. runtime boundary side-effect imports (`server-only`)
+2. external modules (including package side-effect imports)
+3. internal modules using `@/` (including internal CSS
+   side-effect imports)
+4. local same-directory imports using `./` (including
+   local side-effect imports)
 5. `import type` statements
 
 Rules:
@@ -341,6 +343,8 @@ import { getTranslations } from "next-intl/server";
 
 import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { fetchClient } from "@/shared/lib/fetcher";
+
+import "@/shared/styles/scrollbar.css";
 
 import { CopyCommand } from "./copy-command";
 
