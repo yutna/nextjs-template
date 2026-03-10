@@ -1,6 +1,5 @@
-import "dayjs/locale/th";
-
 import _dayjs from "dayjs";
+import "dayjs/locale/th";
 import buddhistEra from "dayjs/plugin/buddhistEra";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";

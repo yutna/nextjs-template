@@ -1,7 +1,7 @@
+import { Effect } from "effect";
 import { readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Effect } from "effect";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
