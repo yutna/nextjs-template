@@ -141,6 +141,50 @@ describe("fetchClient", () => {
     expect((callInit.headers as Headers).get("Authorization")).toBeNull();
   });
 
+  it("keeps tuple-array headers when custom headers are provided as entries", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({}), { status: 200 }),
+    );
+
+    await fetchClient({
+      headers: [["X-Trace-Id", "trace-123"]],
+      path: "/with-entries",
+    });
+
+    const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
+    expect((callInit.headers as Headers).get("X-Trace-Id")).toBe("trace-123");
+  });
+
+  it("keeps Headers instances when merging custom headers", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({}), { status: 200 }),
+    );
+
+    await fetchClient({
+      headers: new Headers({
+        "X-Client-Version": "1.2.3",
+      }),
+      path: "/with-headers-instance",
+    });
+
+    const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
+    expect((callInit.headers as Headers).get("X-Client-Version")).toBe("1.2.3");
+  });
+
+  it("does not set Content-Type when there is no request body", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({}), { status: 200 }),
+    );
+
+    await fetchClient({
+      method: "GET",
+      path: "/without-body",
+    });
+
+    const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
+    expect((callInit.headers as Headers).get("Content-Type")).toBeNull();
+  });
+
   it("returns undefined for 204 No Content", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(null, { status: 204, statusText: "No Content" }),
@@ -166,5 +210,22 @@ describe("fetchClient", () => {
 
     const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
     expect(callInit.body).toBe(JSON.stringify({ name: "test" }));
+  });
+
+  it("sets Content-Type when a JSON body is provided", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ id: 1 }), { status: 201 }),
+    );
+
+    await fetchClient({
+      body: { name: "test" },
+      method: "POST",
+      path: "/items",
+    });
+
+    const callInit = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
+    expect((callInit.headers as Headers).get("Content-Type")).toBe(
+      "application/json",
+    );
   });
 });
