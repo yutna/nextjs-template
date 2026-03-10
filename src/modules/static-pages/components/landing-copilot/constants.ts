@@ -1,12 +1,6 @@
 import { LuBrain, LuFileText, LuGitBranch, LuZap } from "react-icons/lu";
 
-import type { IconType } from "react-icons";
-
-export interface CopilotFeature {
-  descriptionKey: string;
-  icon: IconType;
-  titleKey: string;
-}
+import type { CopilotFeature } from "./types";
 
 export const COPILOT_FEATURES: CopilotFeature[] = [
   {

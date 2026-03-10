@@ -1,9 +1,9 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/constants/install-command";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { HERO_INSTALL_COMMAND } from "./constants";
 import { CopyCommand } from "./copy-command";
 
 describe("CopyCommand", () => {

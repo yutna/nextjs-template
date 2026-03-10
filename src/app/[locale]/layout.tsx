@@ -1,6 +1,6 @@
 import "server-only";
-import "@/shared/styles/scrollbar.css";
 import "@/modules/static-pages/styles/vibe.css";
+import "@/shared/styles/scrollbar.css";
 
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";

@@ -1,0 +1,1 @@
+export const COPIED_RESET_DELAY_MS = 2000;

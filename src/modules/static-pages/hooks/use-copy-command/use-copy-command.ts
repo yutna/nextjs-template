@@ -2,11 +2,11 @@
 
 import { useImmer } from "use-immer";
 
-import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/components/copy-command/constants";
+import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/constants/install-command";
+
+import { COPIED_RESET_DELAY_MS } from "./constants";
 
 import type { UseCopyCommandReturn } from "./types";
-
-const COPIED_RESET_DELAY_MS = 2000;
 
 export function useCopyCommand(): UseCopyCommandReturn {
   const [state, updateState] = useImmer({ copied: false });

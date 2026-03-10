@@ -3,7 +3,7 @@
 import { HStack, IconButton, Text } from "@chakra-ui/react";
 import { LuCheck, LuCopy } from "react-icons/lu";
 
-import { HERO_INSTALL_COMMAND } from "./constants";
+import { HERO_INSTALL_COMMAND } from "@/modules/static-pages/constants/install-command";
 
 import type { CopyCommandProps } from "./types";
 
