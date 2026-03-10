@@ -8,9 +8,7 @@ const meta = {
     onClickSelect: () => {},
     preset: {
       cssVars: { dark: {}, light: {} },
-      description: "Zero shadows, sharp corners, monochromatic palette",
       id: "minimalism",
-      name: "Minimalism / Swiss Style",
       swatches: ["#000000", "#333333", "#666666", "#CCCCCC", "#FFFFFF"],
     },
   },
@@ -34,9 +32,7 @@ export const ShortDescription: Story = {
   args: {
     preset: {
       cssVars: { dark: {}, light: {} },
-      description: "Clean",
       id: "brutalism",
-      name: "Brutalism",
       swatches: ["#000000", "#FFFFFF"],
     },
   },

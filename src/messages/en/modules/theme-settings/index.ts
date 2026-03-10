@@ -1,4 +1,5 @@
-import actions from "./actions.json";
+import { components } from "./components";
+import presets from "./presets.json";
 import screen from "./screen.json";
 
-export const themeSettings = { actions, screen };
+export const themeSettings = { components, presets, screen };

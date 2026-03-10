@@ -26,12 +26,12 @@ export function AppProvider({
       timeZone={timeZone}
     >
       <NuqsAdapter>
-        <ThemeSettingsProvider>
-          <Provider>
+        <Provider>
+          <ThemeSettingsProvider>
             {children}
             <Toaster />
-          </Provider>
-        </ThemeSettingsProvider>
+          </ThemeSettingsProvider>
+        </Provider>
       </NuqsAdapter>
     </NextIntlClientProvider>
   );

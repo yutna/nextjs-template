@@ -1,29 +1,84 @@
-import { describe, expect, it, vi } from "vitest";
+import { render } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { renderWithProviders } from "@/test/render-with-providers";
+const mockClearThemeCssVars = vi.hoisted(() => vi.fn());
+const mockInjectThemeCssVars = vi.hoisted(() => vi.fn());
+const mockLoadThemeCssVars = vi.hoisted(() => vi.fn());
+const mockLoadThemePresetId = vi.hoisted(() => vi.fn());
+let mockColorMode: "dark" | "light" = "light";
 
-import { ThemeSettingsProvider } from "./theme-settings-provider";
-
+vi.mock("@/shared/vendor/chakra-ui/color-mode", () => ({
+  useColorMode: vi.fn(() => ({
+    colorMode: mockColorMode,
+    setColorMode: vi.fn(),
+    toggleColorMode: vi.fn(),
+  })),
+}));
 vi.mock("@/modules/theme-settings/lib/theme-storage", () => ({
   clearThemeCssVars: vi.fn(),
-  loadThemeCssVars: vi.fn().mockReturnValue(null),
-  loadThemePresetId: vi.fn().mockReturnValue(null),
+  loadThemeCssVars: mockLoadThemeCssVars,
+  loadThemePresetId: mockLoadThemePresetId,
   saveThemeCssVars: vi.fn(),
   saveThemePresetId: vi.fn(),
 }));
 vi.mock("@/modules/theme-settings/lib/theme-injector", () => ({
-  clearThemeCssVars: vi.fn(),
-  injectThemeCssVars: vi.fn(),
+  clearThemeCssVars: mockClearThemeCssVars,
+  injectThemeCssVars: mockInjectThemeCssVars,
 }));
+
+import { ThemeSettingsProvider } from "./theme-settings-provider";
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockColorMode = "light";
+  mockLoadThemeCssVars.mockReturnValue({
+    dark: { "--chakra-colors-bg": "#000000" },
+    light: { "--chakra-colors-bg": "#ffffff" },
+  });
+  mockLoadThemePresetId.mockReturnValue("default");
+});
 
 describe("ThemeSettingsProvider", () => {
   it("renders children without errors", () => {
-    const { getByText } = renderWithProviders(
+    const { getByText } = render(
       <ThemeSettingsProvider>
         <span>child content</span>
       </ThemeSettingsProvider>,
     );
 
     expect(getByText("child content")).toBeDefined();
+  });
+
+  it("applies stored CSS vars for the current color mode", () => {
+    render(
+      <ThemeSettingsProvider>
+        <span>child content</span>
+      </ThemeSettingsProvider>,
+    );
+
+    expect(mockClearThemeCssVars).toHaveBeenCalledWith(expect.any(Array));
+    expect(mockInjectThemeCssVars).toHaveBeenCalledWith({
+      "--chakra-colors-bg": "#ffffff",
+    });
+  });
+
+  it("reapplies stored CSS vars after the color mode changes", () => {
+    const { rerender } = render(
+      <ThemeSettingsProvider>
+        <span>child content</span>
+      </ThemeSettingsProvider>,
+    );
+
+    mockColorMode = "dark";
+
+    rerender(
+      <ThemeSettingsProvider>
+        <span>child content</span>
+      </ThemeSettingsProvider>,
+    );
+
+    expect(mockInjectThemeCssVars).toHaveBeenLastCalledWith({
+      "--chakra-colors-bg": "#000000",
+    });
   });
 });

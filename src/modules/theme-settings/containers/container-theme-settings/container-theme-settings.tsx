@@ -1,23 +1,32 @@
 "use client";
 
-import { Box, Button, Grid, GridItem, HStack, VStack } from "@chakra-ui/react";
-import { useTranslations } from "next-intl";
+import { Box, Grid, GridItem, VStack } from "@chakra-ui/react";
 
 import { CardThemePreset } from "@/modules/theme-settings/components/card-theme-preset";
 import { PreviewTheme } from "@/modules/theme-settings/components/preview-theme";
 import { THEME_PRESETS } from "@/modules/theme-settings/constants/theme-presets";
 import { useThemeSettings } from "@/modules/theme-settings/hooks/use-theme-settings";
 
-export function ContainerThemeSettings() {
-  const t = useTranslations("modules.themeSettings.actions");
+import type { ContainerThemeSettingsProps } from "./types";
+
+export function ContainerThemeSettings({
+  locale,
+}: Readonly<ContainerThemeSettingsProps>) {
   const {
     activePresetId,
+    activePreviewGroup,
+    colorMode,
+    currentPreset,
+    handleChangePreviewGroup,
     handleResetToDefault,
     handleSavePreset,
     handleSelectPreset,
+    handleSwitchColorMode,
+    handleSwitchLocale,
+    hasPendingChanges,
     pendingPresetId,
     previewVars,
-  } = useThemeSettings();
+  } = useThemeSettings({ locale });
 
   return (
     <Grid
@@ -43,19 +52,20 @@ export function ContainerThemeSettings() {
         </VStack>
       </GridItem>
       <GridItem>
-        <VStack align="stretch" gap={4}>
-          <Box css={previewVars}>
-            <PreviewTheme />
-          </Box>
-          <HStack gap={3} justifyContent="flex-end">
-            <Button onClick={handleResetToDefault} variant="outline">
-              {t("reset")}
-            </Button>
-            <Button colorPalette="blue" onClick={handleSavePreset}>
-              {t("save")}
-            </Button>
-          </HStack>
-        </VStack>
+        <Box css={previewVars}>
+          <PreviewTheme
+            activePreviewGroup={activePreviewGroup}
+            colorMode={colorMode}
+            hasPendingChanges={hasPendingChanges}
+            locale={locale}
+            onChangePreviewGroup={handleChangePreviewGroup}
+            onClickReset={handleResetToDefault}
+            onClickSave={handleSavePreset}
+            onSwitchColorMode={handleSwitchColorMode}
+            onSwitchLocale={handleSwitchLocale}
+            presetId={currentPreset.id}
+          />
+        </Box>
       </GridItem>
     </Grid>
   );

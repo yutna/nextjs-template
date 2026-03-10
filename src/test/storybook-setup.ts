@@ -24,7 +24,14 @@ class IntersectionObserverStub {
   disconnect = vi.fn();
 }
 
+class ResizeObserverStub {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
 vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 // jsdom does not implement window.matchMedia.
 // next-themes calls it to detect the preferred color scheme.

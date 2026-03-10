@@ -1,3 +1,5 @@
+import { completeThemePresetCssVars } from "@/modules/theme-settings/utils/complete-theme-preset-css-vars";
+
 import type {
   ThemePreset,
   ThemePresetId,
@@ -6,15 +8,13 @@ import type {
 // Chakra UI v3 uses kebab-case CSS variable names for color palette tokens.
 // Setting --chakra-colors-{color}-* on a container lets descendants resolve them via colorPalette.
 
-export const THEME_PRESETS: ThemePreset[] = [
+const RAW_THEME_PRESETS: ThemePreset[] = [
   {
     cssVars: {
       dark: {},
       light: {},
     },
-    description: "Chakra UI default theme with balanced colors and spacing",
     id: "default",
-    name: "Default",
     swatches: ["#3182CE", "#2D3748", "#EDF2F7", "#48BB78", "#E53E3E"],
   },
   {
@@ -216,9 +216,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "none",
       },
     },
-    description: "Zero shadows, sharp corners, monochromatic palette",
     id: "minimalism",
-    name: "Minimalism / Swiss Style",
     swatches: ["#000000", "#333333", "#666666", "#CCCCCC", "#FFFFFF"],
   },
   {
@@ -420,9 +418,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "none",
       },
     },
-    description: "Vivid colors, soft corners, zero shadows",
     id: "flat-design",
-    name: "Flat Design",
     swatches: ["#2196F3", "#4CAF50", "#FF5722", "#9C27B0", "#FFFFFF"],
   },
   {
@@ -594,9 +590,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-colors-yellow-subtle": "#FFFFF0",
       },
     },
-    description: "Pure black backgrounds for OLED displays",
     id: "dark-oled",
-    name: "Dark Mode OLED",
     swatches: ["#000000", "#0A0A0A", "#1A1A1A", "#FFFFFF", "#BB86FC"],
   },
   {
@@ -806,9 +800,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l3": "8px",
       },
     },
-    description: "Maximum contrast ratios, WCAG AAA compliant",
     id: "accessible",
-    name: "Accessible & Ethical",
     swatches: ["#000000", "#FFFFFF", "#0000EE", "#006600", "#CC0000"],
   },
   {
@@ -1032,9 +1024,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "none",
       },
     },
-    description: "Grid-based, black/white/red, monospaced type",
     id: "swiss-modernism",
-    name: "Swiss Modernism 2.0",
     swatches: ["#E3000F", "#000000", "#FFFFFF", "#333333", "#CCCCCC"],
   },
   {
@@ -1248,9 +1238,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l3": "0px",
       },
     },
-    description: "Neon teal and cyan on dark surfaces, monospaced",
     id: "retro-futurism",
-    name: "Retro-Futurism",
     swatches: ["#00FFCC", "#00E5FF", "#0D1117", "#1A2A3A", "#FFFFFF"],
   },
   {
@@ -1464,9 +1452,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l3": "0px",
       },
     },
-    description: "Neon pink and purple on near-black, sharp edges",
     id: "cyberpunk",
-    name: "Cyberpunk UI",
     swatches: ["#FF007F", "#BD00FF", "#00FFFF", "#0A0A0F", "#FFFFFF"],
   },
   {
@@ -1676,9 +1662,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-radii-l3": "24px",
       },
     },
-    description: "Dreamy pink and purple gradients, soft rounded corners",
     id: "vaporwave",
-    name: "Vaporwave",
     swatches: ["#FF6EB4", "#BD93F9", "#F8F0FF", "#44475A", "#AAFFFF"],
   },
   {
@@ -1896,9 +1880,7 @@ export const THEME_PRESETS: ThemePreset[] = [
           "inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.2)",
       },
     },
-    description: "Chrome blues and metallic tones from the early internet era",
     id: "y2k",
-    name: "Y2K Aesthetic",
     swatches: ["#0080FF", "#C0C0C0", "#AADDFF", "#003399", "#FFFFFF"],
   },
   {
@@ -2114,9 +2096,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-sm": "2px 2px 0px #000000",
       },
     },
-    description: "Bold geometric shapes, high contrast primary colors",
     id: "memphis",
-    name: "Memphis Design",
     swatches: ["#FF4500", "#FFD700", "#00BFFF", "#000000", "#FFFFFF"],
   },
   {
@@ -2336,9 +2316,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "2px 2px 0 #000000",
       },
     },
-    description: "Heavy offset box shadows, thick borders, raw aesthetics",
     id: "neubrutalism",
-    name: "Neubrutalism",
     swatches: ["#FFDE00", "#000000", "#FF3366", "#00C2A8", "#FFFFFF"],
   },
   {
@@ -2558,9 +2536,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "none",
       },
     },
-    description: "Stark black and white, no decoration, raw structure",
     id: "brutalism",
-    name: "Brutalism",
     swatches: ["#000000", "#FFFFFF", "#000000", "#FFFFFF", "#000000"],
   },
   {
@@ -2786,11 +2762,14 @@ export const THEME_PRESETS: ThemePreset[] = [
         "--chakra-shadows-xs": "none",
       },
     },
-    description: "Zero border radius, high-contrast retro pixel palette",
     id: "pixel-art",
-    name: "Pixel Art",
     swatches: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#1F2937"],
   },
 ];
+
+export const THEME_PRESETS = RAW_THEME_PRESETS.map((preset) => ({
+  ...preset,
+  cssVars: completeThemePresetCssVars(preset.cssVars),
+}));
 
 export const DEFAULT_PRESET_ID = "default" satisfies ThemePresetId;

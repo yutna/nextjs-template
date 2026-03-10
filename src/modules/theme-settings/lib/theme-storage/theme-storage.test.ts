@@ -36,6 +36,16 @@ describe("theme-storage", () => {
     expect(loadThemeCssVars()).toBeNull();
   });
 
+  it("clears invalid CSS vars payloads", () => {
+    mockStorage["theme-css-vars"] = JSON.stringify({
+      dark: { "--chakra-colors-bg": 42 },
+      light: { "--chakra-colors-bg": "#ffffff" },
+    });
+
+    expect(loadThemeCssVars()).toBeNull();
+    expect(mockStorage["theme-css-vars"]).toBeUndefined();
+  });
+
   it("clears stored CSS vars", () => {
     saveThemeCssVars({
       dark: { "--chakra-colors-bg": "#000000" },
@@ -53,5 +63,12 @@ describe("theme-storage", () => {
   it("returns null when no preset ID is stored", () => {
     delete mockStorage["theme-preset-id"];
     expect(loadThemePresetId()).toBeNull();
+  });
+
+  it("clears invalid preset IDs", () => {
+    mockStorage["theme-preset-id"] = "unknown-preset";
+
+    expect(loadThemePresetId()).toBeNull();
+    expect(mockStorage["theme-preset-id"]).toBeUndefined();
   });
 });

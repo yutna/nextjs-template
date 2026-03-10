@@ -1,0 +1,58 @@
+{
+  "accessible": {
+    "description": "คอนทราสต์สูงสุดและสีสถานะที่ออกแบบเพื่อการเข้าถึงและการอ่านที่ชัดเจนที่สุด",
+    "name": "เข้าถึงง่ายและคำนึงถึงผู้ใช้"
+  },
+  "brutalism": {
+    "description": "surface ขาวดำจัดจ้าน โครงสร้างดิบ และลดความตกแต่งให้น้อยที่สุด",
+    "name": "Brutalism"
+  },
+  "cyberpunk": {
+    "description": "accent นีออนชมพูและม่วงบนพื้นหลังเกือบดำ พร้อมขอบคมและคอนทราสต์จัดจ้าน",
+    "name": "Cyberpunk UI"
+  },
+  "dark-oled": {
+    "description": "surface สีดำสนิทสำหรับจอ OLED พร้อม accent ที่สว่างและคอนทราสต์ลึก",
+    "name": "โหมดมืด OLED"
+  },
+  "default": {
+    "description": "ธีมมาตรฐานของ Chakra UI ที่สมดุลทั้งสีและ spacing",
+    "name": "ค่าเริ่มต้น"
+  },
+  "flat-design": {
+    "description": "สีสด มุมโค้งนุ่ม และลดเงาให้เหลือน้อยเพื่อกลิ่นอาย flat interface แบบคลาสสิก",
+    "name": "Flat Design"
+  },
+  "memphis": {
+    "description": "พลังงานแบบเรขาคณิต สีหลักสดจัด และ accent ที่ตัดกันชัดเจน",
+    "name": "Memphis Design"
+  },
+  "minimalism": {
+    "description": "ไม่มีเงา มุมคม และใช้โทนขาวดำแบบมีวินัยตามกลิ่นอาย Swiss",
+    "name": "Minimalism / Swiss Style"
+  },
+  "neubrutalism": {
+    "description": "เงา offset หนา เส้นขอบใหญ่ และคอนทราสต์แรงแบบไม่ประนีประนอม",
+    "name": "Neubrutalism"
+  },
+  "pixel-art": {
+    "description": "ไม่มี border radius และใช้พาเลตเรโทรที่คมชัดแบบ pixel-perfect",
+    "name": "Pixel Art"
+  },
+  "retro-futurism": {
+    "description": "accent เขียวอมฟ้าและฟ้าสว่างบน surface มืด พร้อมกลิ่นอายเทอร์มินัลย้อนยุค",
+    "name": "Retro-Futurism"
+  },
+  "swiss-modernism": {
+    "description": "คอมโพสด้วยกริด ขาว ดำ แดง และวินัยทางตัวอักษรที่ชัดเจน",
+    "name": "Swiss Modernism 2.0"
+  },
+  "vaporwave": {
+    "description": "โทนชมพูและม่วงแบบฝัน ๆ เส้นโค้งนุ่ม และความเรืองแสงดิจิทัลแบบ nostalgic",
+    "name": "Vaporwave"
+  },
+  "y2k": {
+    "description": "โทนโครมสีน้ำเงินและความเงาแบบอินเทอร์เน็ตยุคต้น 2000",
+    "name": "Y2K Aesthetic"
+  }
+}

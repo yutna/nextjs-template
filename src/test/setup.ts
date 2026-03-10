@@ -11,7 +11,14 @@ class IntersectionObserverStub {
   disconnect = vi.fn();
 }
 
+class ResizeObserverStub {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
 vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+vi.stubGlobal("ResizeObserver", ResizeObserverStub);
 
 // ---------------------------------------------------------------------------
 // Fail tests that produce unexpected console.error or console.warn (stderr).

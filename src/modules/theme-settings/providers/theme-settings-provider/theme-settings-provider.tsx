@@ -18,6 +18,7 @@ import {
   loadThemePresetId,
   saveThemePresetId,
 } from "@/modules/theme-settings/lib/theme-storage";
+import { useColorMode } from "@/shared/vendor/chakra-ui/color-mode";
 
 import type {
   ThemePreset,
@@ -29,57 +30,59 @@ interface ThemeSettingsState {
   activePresetId: ThemePresetId;
 }
 
-function getAllKnownCssVarKeys(isDark: boolean): string[] {
-  return [
-    ...new Set(
-      THEME_PRESETS.flatMap((p) =>
-        isDark ? Object.keys(p.cssVars.dark) : Object.keys(p.cssVars.light),
-      ),
-    ),
-  ];
-}
+const ALL_KNOWN_CSS_VAR_KEYS = [
+  ...new Set(
+    THEME_PRESETS.flatMap((preset) => [
+      ...Object.keys(preset.cssVars.dark),
+      ...Object.keys(preset.cssVars.light),
+    ]),
+  ),
+];
 
 export function ThemeSettingsProvider({
   children,
 }: Readonly<ThemeSettingsProviderProps>) {
+  const { colorMode } = useColorMode();
   const [state, updateState] = useImmer<ThemeSettingsState>({
     activePresetId: DEFAULT_PRESET_ID,
   });
+  const resolvedColorMode = colorMode === "dark" ? "dark" : "light";
 
   useEffect(() => {
     const storedPresetId = loadThemePresetId();
+
+    if (!storedPresetId) {
+      return;
+    }
+
+    updateState((draft) => {
+      draft.activePresetId = storedPresetId;
+    });
+  }, [updateState]);
+
+  useEffect(() => {
+    clearThemeCssVarsDom(ALL_KNOWN_CSS_VAR_KEYS);
+
     const storedCssVars = loadThemeCssVars();
 
-    if (storedPresetId) {
-      updateState((draft) => {
-        draft.activePresetId = storedPresetId;
-      });
+    if (!storedCssVars) {
+      return;
     }
 
-    if (storedCssVars) {
-      const isDark = document.documentElement.classList.contains("dark");
-      const vars = isDark ? storedCssVars.dark : storedCssVars.light;
-      injectThemeCssVars(vars);
-    }
-  }, [updateState]);
+    injectThemeCssVars(storedCssVars[resolvedColorMode]);
+  }, [resolvedColorMode, state.activePresetId]);
 
   function setPreset(preset: ThemePreset) {
     updateState((draft) => {
       draft.activePresetId = preset.id;
     });
 
-    const isDark = document.documentElement.classList.contains("dark");
-    const vars = isDark ? preset.cssVars.dark : preset.cssVars.light;
-
-    // Clear all previously overridden vars before applying new ones
-    clearThemeCssVarsDom(getAllKnownCssVarKeys(isDark));
-    injectThemeCssVars(vars);
+    clearThemeCssVarsDom(ALL_KNOWN_CSS_VAR_KEYS);
+    injectThemeCssVars(preset.cssVars[resolvedColorMode]);
   }
 
   function resetToDefault() {
-    const isDark = document.documentElement.classList.contains("dark");
-
-    clearThemeCssVarsDom(getAllKnownCssVarKeys(isDark));
+    clearThemeCssVarsDom(ALL_KNOWN_CSS_VAR_KEYS);
     clearThemeCssVarsStorage();
     saveThemePresetId(DEFAULT_PRESET_ID);
 

@@ -8,11 +8,21 @@ import { CardThemePreset } from "./card-theme-preset";
 
 import type { ThemePreset } from "@/modules/theme-settings/types";
 
+vi.mock("next-intl", () => ({
+  useTranslations: vi.fn((namespace: string) => (key: string) => {
+    const translations: Record<string, string> = {
+      "modules.themeSettings.presets.cyberpunk.description": "A test preset",
+      "modules.themeSettings.presets.cyberpunk.name": "Cyberpunk UI",
+    };
+
+    const messageKey = `${namespace}.${key}`;
+    return translations[messageKey] ?? messageKey;
+  }),
+}));
+
 const mockPreset: ThemePreset = {
   cssVars: { dark: {}, light: {} },
-  description: "A test preset",
   id: "cyberpunk",
-  name: "Cyberpunk UI",
   swatches: ["#FF007F", "#BD00FF", "#00FFFF"],
 };
 
@@ -42,8 +52,19 @@ describe("CardThemePreset", () => {
       />,
     );
 
-    await user.click(screen.getByText("Cyberpunk UI"));
+    await user.click(screen.getByRole("button", { name: /Cyberpunk UI/i }));
     expect(handleClickSelect).toHaveBeenCalledWith(mockPreset);
+  });
+
+  it("exposes pressed state for assistive technology", () => {
+    renderWithProviders(
+      <CardThemePreset isActive onClickSelect={vi.fn()} preset={mockPreset} />,
+    );
+
+    expect(screen.getByRole("button", { name: /Cyberpunk UI/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   it("renders swatches", () => {

@@ -14,6 +14,13 @@ export type ThemePresetId =
   | "vaporwave"
   | "y2k";
 
+export type ThemePreviewGroupId =
+  | "feedback"
+  | "forms"
+  | "overview"
+  | "surfaces"
+  | "tokens";
+
 export interface ThemePresetCssVars {
   dark: Record<string, string>;
   light: Record<string, string>;
@@ -21,9 +28,7 @@ export interface ThemePresetCssVars {
 
 export interface ThemePreset {
   cssVars: ThemePresetCssVars;
-  description: string;
   id: ThemePresetId;
-  name: string;
   /** 3–5 hex colors shown as swatches in the preset card thumbnail */
   swatches: string[];
 }

@@ -1,0 +1,58 @@
+{
+  "accessible": {
+    "description": "Maximum contrast ratios and accessibility-first feedback colors for high legibility.",
+    "name": "Accessible & Ethical"
+  },
+  "brutalism": {
+    "description": "Stark black and white surfaces with raw structure and almost no decorative softness.",
+    "name": "Brutalism"
+  },
+  "cyberpunk": {
+    "description": "Neon pink and purple accents on near-black surfaces with sharp edges and glowing contrast.",
+    "name": "Cyberpunk UI"
+  },
+  "dark-oled": {
+    "description": "Pure black surfaces tuned for OLED screens with bright accents and deep contrast.",
+    "name": "Dark Mode OLED"
+  },
+  "default": {
+    "description": "Chakra UI default theme with balanced colors and spacing",
+    "name": "Default"
+  },
+  "flat-design": {
+    "description": "Vivid colors, soft corners, and almost no shadows for a classic flat interface feel.",
+    "name": "Flat Design"
+  },
+  "memphis": {
+    "description": "Bold geometric energy with playful primary colors and high-contrast accents.",
+    "name": "Memphis Design"
+  },
+  "minimalism": {
+    "description": "Zero shadows, sharp corners, and a monochromatic palette inspired by Swiss restraint.",
+    "name": "Minimalism / Swiss Style"
+  },
+  "neubrutalism": {
+    "description": "Heavy offset shadows, thick borders, and unapologetically loud contrast.",
+    "name": "Neubrutalism"
+  },
+  "pixel-art": {
+    "description": "Zero border radius and a crisp retro palette inspired by pixel-perfect UI.",
+    "name": "Pixel Art"
+  },
+  "retro-futurism": {
+    "description": "Neon teal and cyan accents over dark surfaces with a monospaced retro-terminal feel.",
+    "name": "Retro-Futurism"
+  },
+  "swiss-modernism": {
+    "description": "Grid-first black, white, and red composition with typographic discipline.",
+    "name": "Swiss Modernism 2.0"
+  },
+  "vaporwave": {
+    "description": "Dreamy pink and purple tones with soft curves and nostalgic digital glow.",
+    "name": "Vaporwave"
+  },
+  "y2k": {
+    "description": "Chrome blues and metallic internet-era tones with glossy early-2000s energy.",
+    "name": "Y2K Aesthetic"
+  }
+}

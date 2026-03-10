@@ -21,7 +21,7 @@ export async function ScreenThemeSettings({
       <Text color="fg.muted" mb={6}>
         {t("subheading")}
       </Text>
-      <ContainerThemeSettings />
+      <ContainerThemeSettings locale={locale} />
     </Container>
   );
 }
