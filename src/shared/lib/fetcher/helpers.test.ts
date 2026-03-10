@@ -7,7 +7,11 @@ describe("isNetworkError", () => {
     expect(isNetworkError(new TypeError("Failed to fetch"))).toBe(true);
   });
 
-  it("returns false for TypeError with a different message", () => {
+  it("returns true for TypeError with 'fetch failed' message", () => {
+    expect(isNetworkError(new TypeError("fetch failed"))).toBe(true);
+  });
+
+  it("returns false for TypeError with an unrelated message", () => {
     expect(
       isNetworkError(new TypeError("Cannot read properties of null")),
     ).toBe(false);

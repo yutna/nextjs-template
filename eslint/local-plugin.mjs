@@ -6,6 +6,7 @@
  * - enforce-handler-naming: Enforce handle* prefix for event handler identifiers in JSX
  * - no-cross-module-import: Forbid imports between feature modules
  * - no-hook-spread: Forbid spreading hook return values in JSX
+ * - sort-imports: Enforce repository import ordering
  * - no-inline-style: Forbid inline style attribute in JSX
  */
 
@@ -85,6 +86,110 @@ function getParentTypeName(node) {
     current = current.parent;
   }
   return null;
+}
+
+function compareNaturalCaseInsensitive(left, right) {
+  return left.localeCompare(right, undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+}
+
+function getNewline(text) {
+  return text.includes("\r\n") ? "\r\n" : "\n";
+}
+
+function getImportSource(node) {
+  return typeof node.source.value === "string" ? node.source.value : "";
+}
+
+function getImportPathGroup(source) {
+  if (source.startsWith("@/")) return "internal";
+  if (source.startsWith(".")) return "local";
+
+  return "external";
+}
+
+function getImportGroup(node) {
+  const source = getImportSource(node);
+
+  if (node.importKind === "type") return "type";
+  if (source === "server-only") return "runtime-boundary";
+
+  return getImportPathGroup(source);
+}
+
+function getTypeImportSubgroup(node) {
+  return getImportPathGroup(getImportSource(node));
+}
+
+function sortImportChunk(nodes, sourceCode) {
+  const newline = getNewline(sourceCode.text);
+  const groupOrder = [
+    "runtime-boundary",
+    "external",
+    "internal",
+    "local",
+    "type",
+  ];
+  const typeSubgroupOrder = ["external", "internal", "local"];
+  const items = nodes.map((node, index) => ({
+    group: getImportGroup(node),
+    index,
+    source: getImportSource(node),
+    text: sourceCode.getText(node),
+    typeSubgroup: getTypeImportSubgroup(node),
+  }));
+
+  items.sort((left, right) => {
+    const groupDiff =
+      groupOrder.indexOf(left.group) - groupOrder.indexOf(right.group);
+
+    if (groupDiff !== 0) return groupDiff;
+
+    if (left.group === "type" && right.group === "type") {
+      const subgroupDiff =
+        typeSubgroupOrder.indexOf(left.typeSubgroup) -
+        typeSubgroupOrder.indexOf(right.typeSubgroup);
+
+      if (subgroupDiff !== 0) return subgroupDiff;
+    }
+
+    const sourceDiff = compareNaturalCaseInsensitive(left.source, right.source);
+
+    if (sourceDiff !== 0) return sourceDiff;
+
+    return left.index - right.index;
+  });
+
+  return groupOrder
+    .map((group) => items.filter((item) => item.group === group))
+    .filter((itemsInGroup) => itemsInGroup.length > 0)
+    .map((itemsInGroup) => itemsInGroup.map((item) => item.text).join(newline))
+    .join(`${newline}${newline}`);
+}
+
+function getImportChunks(programBody) {
+  const chunks = [];
+  let currentChunk = [];
+
+  for (const node of programBody) {
+    if (node.type === "ImportDeclaration") {
+      currentChunk.push(node);
+      continue;
+    }
+
+    if (currentChunk.length > 0) {
+      chunks.push(currentChunk);
+      currentChunk = [];
+    }
+  }
+
+  if (currentChunk.length > 0) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks;
 }
 
 const enforceEventPropNaming = {
@@ -271,6 +376,51 @@ const noHookSpread = {
 };
 
 // -------------------------------------------------------------------
+// sort-imports
+// -------------------------------------------------------------------
+
+const sortImports = {
+  create(context) {
+    const sourceCode = context.sourceCode ?? context.getSourceCode();
+
+    return {
+      Program(node) {
+        for (const chunk of getImportChunks(node.body)) {
+          if (chunk.length < 2) continue;
+
+          const start = chunk[0].range[0];
+          const end = chunk[chunk.length - 1].range[1];
+          const actual = sourceCode.text.slice(start, end);
+          const sorted = sortImportChunk(chunk, sourceCode);
+
+          if (actual === sorted) continue;
+
+          context.report({
+            fix(fixer) {
+              return fixer.replaceTextRange([start, end], sorted);
+            },
+            messageId: "sortImports",
+            node: chunk[0],
+          });
+        }
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Enforce repository import ordering with server-only first and path-based grouping for all other imports",
+    },
+    fixable: "code",
+    messages: {
+      sortImports: "Imports must follow the repository import ordering.",
+    },
+    schema: [],
+    type: "layout",
+  },
+};
+
+// -------------------------------------------------------------------
 // no-inline-style
 // -------------------------------------------------------------------
 
@@ -369,5 +519,6 @@ export default {
     "no-hook-spread": noHookSpread,
     "no-inline-style": noInlineStyle,
     "no-upward-layer-import": noUpwardLayerImport,
+    "sort-imports": sortImports,
   },
 };

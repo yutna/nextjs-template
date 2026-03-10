@@ -7,13 +7,7 @@ import {
   LuShieldCheck,
 } from "react-icons/lu";
 
-import type { IconType } from "react-icons";
-
-export interface Strength {
-  descriptionKey: string;
-  icon: IconType;
-  titleKey: string;
-}
+import type { Strength } from "./types";
 
 export const STRENGTHS: Strength[] = [
   {

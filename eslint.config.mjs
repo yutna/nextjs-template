@@ -1,11 +1,10 @@
-import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import checkFile from "eslint-plugin-check-file";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
-import simpleImportSort from "eslint-plugin-simple-import-sort";
 import storybook from "eslint-plugin-storybook";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 import localPlugin from "./eslint/local-plugin.mjs";
 
@@ -13,7 +12,13 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // Override default ignores of eslint-config-next.
-  globalIgnores([".next/**", "out/**", "build/**", "storybook-static/**", "next-env.d.ts"]),
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "storybook-static/**",
+    "next-env.d.ts",
+  ]),
   // --------------------------------------------------
   // Project rules — enforce AGENTS.md conventions
   // --------------------------------------------------
@@ -23,7 +28,6 @@ const eslintConfig = defineConfig([
       "check-file": checkFile,
       perfectionist,
       "project": localPlugin,
-      "simple-import-sort": simpleImportSort,
     },
     rules: {
       // Import type enforcement (Common Style Guide §3)
@@ -37,29 +41,12 @@ const eslintConfig = defineConfig([
       ],
 
       // Import sorting — 5-group order (Common Style Guide §3)
-      // Groups: 1) side-effect  2) external  3) @/ internal  4) ./ local  5) import type
-      // Type imports (suffix \u0000) are kept in one block without blank lines.
-      // Within the type block, pattern order enforces: external → @/ → ./
-      // Export sorting is handled by perfectionist/sort-exports below
-      "simple-import-sort/exports": "off",
-      "simple-import-sort/imports": [
-        "error",
-        {
-          groups: [
-            ["^\\u0000"],
-            ["^node:", "^@(?!/)\\w", "^\\w"],
-            ["^@/"],
-            ["^\\."],
-            [
-              "^node:.*\\u0000$",
-              "^@(?!/)\\w.*\\u0000$",
-              "^\\w.*\\u0000$",
-              "^@/.*\\u0000$",
-              "^\\..*\\u0000$",
-            ],
-          ],
-        },
-      ],
+      // 1) import "server-only"
+      // 2) external value imports and package side-effect imports
+      // 3) @/ internal value imports and internal side-effect imports
+      // 4) ./ local value imports and local side-effect imports
+      // 5) import type statements (sorted external → @/ → ./)
+      "project/sort-imports": "error",
 
       // Ban parent directory imports (Common Style Guide §3)
       // Ban useState — use useImmer (Hooks §State)
@@ -168,13 +155,12 @@ const eslintConfig = defineConfig([
       // Sorting — enforce consistent key/prop ordering
       // ------------------------------------------------
 
-      // Disable perfectionist import rules (simple-import-sort handles these)
+      // Disable perfectionist import rules (project/sort-imports handles declaration order)
       "perfectionist/sort-imports": "off",
       "perfectionist/sort-named-exports": "off",
       "perfectionist/sort-named-imports": "off",
 
       // Export sorting — value exports first, type exports last
-      // simple-import-sort/exports handles alphabetical order;
       // perfectionist/sort-exports enforces type-after-value grouping
       "perfectionist/sort-exports": [
         "error",
@@ -308,15 +294,6 @@ const eslintConfig = defineConfig([
       "project/enforce-event-prop-naming": "off",
       "project/enforce-handler-naming": "off",
       "project/no-hook-spread": "off",
-      "project/no-inline-style": "off",
-    },
-  },
-  // --------------------------------------------------
-  // Global error boundary — runs outside Chakra provider
-  // --------------------------------------------------
-  {
-    files: ["src/app/global-error.tsx"],
-    rules: {
       "project/no-inline-style": "off",
     },
   },

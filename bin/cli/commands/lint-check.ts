@@ -1,7 +1,7 @@
+import { Array as Arr, Effect, pipe } from "effect";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Array as Arr, Effect, pipe } from "effect";
 
 // -------------------------------------------------------------------
 // Types
