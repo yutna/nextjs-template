@@ -12,8 +12,8 @@
 
 /// <reference types="vite/client" />
 
-import { composeStories, setProjectAnnotations } from "@storybook/react";
 import * as previewAnnotations from "@storybook-preview";
+import { composeStories, setProjectAnnotations } from "@storybook/react";
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 

@@ -1,7 +1,7 @@
-import "./src/shared/config/env";
-
 import bundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
+
+import "./src/shared/config/env";
 
 import type { NextConfig } from "next";
 

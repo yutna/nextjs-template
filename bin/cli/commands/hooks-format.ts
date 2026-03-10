@@ -1,6 +1,6 @@
+import { Effect } from "effect";
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { Effect } from "effect";
 
 interface HookInput {
   tool_input?: Record<string, string>;

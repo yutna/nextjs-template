@@ -1,5 +1,4 @@
 import "@testing-library/jest-dom";
-
 import { beforeEach, vi } from "vitest";
 
 // jsdom does not implement IntersectionObserver.

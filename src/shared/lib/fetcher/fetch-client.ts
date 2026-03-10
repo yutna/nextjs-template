@@ -22,11 +22,15 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
     : `${env.NEXT_PUBLIC_API_URL}${path}`;
 
   // Build headers
-  const headers = new Headers({
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-    ...Object(customHeaders),
-  });
+  const headers = new Headers(customHeaders);
+
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
+  }
+
+  if (body !== undefined && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
 
   const token = getToken?.();
 
@@ -35,10 +39,11 @@ export async function fetchClient<T>(options: FetchClientOptions): Promise<T> {
   }
 
   const method = restOptions.method ?? "GET";
+  const serializedBody = body !== undefined ? JSON.stringify(body) : undefined;
 
   const init: RequestInit = {
     ...restOptions,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+    body: serializedBody,
     headers,
     method,
   };

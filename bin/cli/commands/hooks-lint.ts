@@ -1,6 +1,6 @@
+import { Effect } from "effect";
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { Effect } from "effect";
 
 function outputContinue(systemMessage?: string): void {
   const payload: Record<string, unknown> = { continue: true };

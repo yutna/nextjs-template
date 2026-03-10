@@ -38,7 +38,7 @@ export default defineConfig({
         test: {
           environment: "jsdom",
           globals: true,
-          include: ["src/**/*.test.{ts,tsx}"],
+          include: ["src/**/*.test.{ts,tsx}", "eslint/**/*.test.ts"],
           exclude: ["src/test/stories-smoke.test.tsx"],
           name: "unit",
           setupFiles: ["./src/test/setup.ts"],

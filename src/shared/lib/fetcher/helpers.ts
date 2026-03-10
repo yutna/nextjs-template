@@ -3,5 +3,9 @@ export function delay(ms: number): Promise<void> {
 }
 
 export function isNetworkError(err: unknown): boolean {
-  return err instanceof TypeError && err.message === "Failed to fetch";
+  if (!(err instanceof TypeError)) return false;
+
+  const message = err.message.trim().toLowerCase();
+
+  return message === "failed to fetch" || message === "fetch failed";
 }

@@ -1,5 +1,4 @@
 import "@testing-library/jest-dom";
-
 import { vi } from "vitest";
 
 // Suppress known React warnings when rendering async server components in jsdom.
