@@ -1,0 +1,18 @@
+{
+  "actionLabel": "Open example",
+  "description": "Choose the workflow foundations proof or open the live Galactic Archive portfolio for the full Light Side vs Dark Side SWAPI-backed experience.",
+  "eyebrow": "Reference patterns",
+  "heading": "Pattern examples and implementation directions",
+  "items": {
+    "galacticArchive": {
+      "description": "A cinematic Light Side vs Dark Side portfolio demo with SWAPI-backed metadata, live search, side persistence, and interactive 3D atmosphere.",
+      "statusLabel": "Live example",
+      "title": "Galactic Archive"
+    },
+    "workflowFoundations": {
+      "description": "The live architecture proof for route → screen → container → component → hook → action → schema boundaries.",
+      "statusLabel": "Live example",
+      "title": "Workflow foundations"
+    }
+  }
+}

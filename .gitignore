@@ -34,6 +34,7 @@ yarn-error.log*
 
 # runtime logs
 src/tmp/logs/*.log
+/tmp/PLAN.md
 
 # storybook build
 storybook-static

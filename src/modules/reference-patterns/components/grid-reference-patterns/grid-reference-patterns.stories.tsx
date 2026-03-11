@@ -20,7 +20,7 @@ export const Default: Story = {
     heading: "Reference patterns you can inspect in code",
     items: [
       {
-        codePath: "src/app/[locale]/(public)/reference-patterns/page.tsx",
+        codePath: "src/app/[locale]/(public)/reference-patterns/workflow-foundations/page.tsx",
         description:
           "Thin page file that unwraps locale params and hands off to a screen.",
         kind: "App Router",

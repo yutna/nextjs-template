@@ -128,8 +128,7 @@ If you're new to the template, start with
   [`docs/developers/WORKED_EXAMPLE.md`](./docs/developers/WORKED_EXAMPLE.md)
 - Review deliberate deviations in
   [`docs/developers/ESCAPE_HATCHES.md`](./docs/developers/ESCAPE_HATCHES.md)
-- After `npm run dev`, open `/en/reference-patterns` for a concrete in-app
-  reference example
+- After `npm run dev`, open `/en/reference-patterns` for the reference-patterns hub
 
 ## Contributing
 

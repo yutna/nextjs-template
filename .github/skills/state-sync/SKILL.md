@@ -27,12 +27,15 @@ Update the state file whenever any of these change:
 - quality gate results
 - delivery readiness
 
+If the session `plan.md` changes, mirror the same content into `tmp/PLAN.md` in the repository and keep it gitignored.
+
 ## Rules
 
 - keep state factual and current
 - prefer explicit statuses over prose
 - do not leave stale "pending" values after a gate has run
 - if uncertainty remains, capture it in `requirements.openQuestions` or delivery notes instead of hiding it
+- keep the local plan mirror current so the user can inspect the latest plan from the repository workspace
 
 ## Recommended status vocabulary
 

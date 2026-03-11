@@ -28,7 +28,8 @@ Reference:
    - tests to add or update
    - existing quality commands to run
    - verification needed after automation
-6. Update workflow state:
+6. If the session `plan.md` is created or updated, mirror the same content into `tmp/PLAN.md` in the repository and keep it gitignored.
+7. Update workflow state:
    - `phase = "planning"`
    - `plan.status = "proposed"` or `"approved"`
    - `plan.filesInScope = [...]`

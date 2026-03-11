@@ -1,0 +1,18 @@
+{
+  "actionLabel": "เปิดตัวอย่าง",
+  "description": "เลือกตัวอย่าง workflow foundations หรือเปิด Galactic Archive portfolio เวอร์ชันจริงที่มี Light Side vs Dark Side, SWAPI metadata, live search และบรรยากาศแบบภาพยนตร์",
+  "eyebrow": "Reference patterns",
+  "heading": "สารบัญตัวอย่าง patterns และทิศทางการพัฒนา",
+  "items": {
+    "galacticArchive": {
+      "description": "เดโม portfolio แบบภาพยนตร์ที่สลับ Light Side / Dark Side ได้จริง พร้อม SWAPI metadata, live search, side persistence และฉาก interactive 3D",
+      "statusLabel": "Live example",
+      "title": "Galactic Archive"
+    },
+    "workflowFoundations": {
+      "description": "ตัวอย่างจริงที่พิสูจน์ boundary แบบ route → screen → container → component → hook → action → schema",
+      "statusLabel": "Live example",
+      "title": "Workflow foundations"
+    }
+  }
+}

@@ -214,6 +214,8 @@ Work is done only when all applicable conditions are true:
 
 Agents must keep task state explicit. The Copilot-specific state bridge lives in `.github/workflow-state.json`.
 
+When the session `plan.md` is created or updated, mirror the same content into `tmp/PLAN.md` in the repository so the user can inspect the current plan locally. Keep `tmp/PLAN.md` gitignored.
+
 At minimum, state must include:
 
 - current phase

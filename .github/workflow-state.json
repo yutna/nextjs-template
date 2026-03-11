@@ -1,45 +1,65 @@
 {
   "version": "1.0",
   "phase": "delivery",
-  "taskId": "move-reference-route-public",
-  "taskSummary": "Move the reference-patterns route entry under src/app/[locale]/(public)/ and update every affected reference.",
+  "taskId": "implement-galactic-archive-portfolio",
+  "taskSummary": "Replace galactic-archive with a production-grade Choose Your Side portfolio experience.",
   "requirements": {
     "status": "clarified",
     "acceptanceCriteria": [
-      "The reference-patterns route entry lives under src/app/[locale]/(public)/.",
-      "All docs, stories, tests, and reference metadata point at the new route file path.",
-      "The route still renders at /en/reference-patterns after the move."
+      "The galactic-archive route becomes a real Light Side vs Dark Side portfolio experience instead of static copy.",
+      "Switching sides transforms the scene, UI styling, motion, and sound cues with persistent state across navigation.",
+      "The page includes hero, about, skills, projects, timeline, contact, and live archive search sections.",
+      "The implementation uses a focused Three.js/react-three-fiber scene plus a GLSL-backed transition overlay.",
+      "SWAPI metadata is integrated through shared wrappers under src/shared/api/swapi/ without leaking Effect into React layers.",
+      "The implementation passes typecheck, lint, tests, and runtime verification on port 4000."
     ],
     "constraints": [
-      "Do not change the public URL.",
+      "Use port 4000 for runtime verification.",
       "Do not stop services on port 3000.",
-      "Preserve the existing route behavior."
+      "Keep the feature under the existing reference-patterns module family.",
+      "Use placeholder portfolio content and non-copyright placeholder sound cues when needed."
     ],
     "openQuestions": []
   },
   "plan": {
     "status": "approved",
-    "summary": "Move the page file into the public route group structure, then update every path reference and rerun the normal gates plus runtime verification on port 4000.",
+    "summary": "Build a server-first Galactic Archive portfolio with a client experience container for side switching, live search, audio cues, and WebGL transitions, backed by shared SWAPI wrappers and dynamic 3D scene loading.",
     "filesInScope": [
-      ".github/workflow-state.json",
+      "package.json",
+      "package-lock.json",
+      "src/app/[locale]/(public)/reference-patterns/galactic-archive/**",
+      "src/app/api/reference-patterns/galactic-archive/**",
+      "src/modules/reference-patterns/**",
+      "src/shared/api/swapi/**",
+      "src/messages/en/modules/reference-patterns/**",
+      "src/messages/th/modules/reference-patterns/**",
       "docs/developers/WORKED_EXAMPLE.md",
-      "src/app/[locale]/(public)/reference-patterns/page.tsx",
-      "src/modules/reference-patterns/constants/reference-pattern-definitions.ts",
-      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.stories.tsx",
-      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.test.tsx"
+      "tmp/PLAN.md"
     ]
   },
   "implementation": {
-    "status": "completed",
+    "status": "done",
     "filesTouched": [
-      ".github/workflow-state.json",
-      "docs/developers/WORKED_EXAMPLE.md",
-      "src/app/[locale]/(public)/reference-patterns/page.tsx",
-      "src/modules/reference-patterns/constants/reference-pattern-definitions.ts",
-      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.stories.tsx",
-      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.test.tsx"
+      "package.json",
+      "package-lock.json",
+      "src/app/[locale]/(public)/reference-patterns/galactic-archive/page.tsx",
+      "src/app/api/reference-patterns/galactic-archive/search/route.ts",
+      "src/modules/reference-patterns/components/reference-patterns-galactic-archive/**",
+      "src/modules/reference-patterns/components/reference-patterns-galactic-archive-scene/**",
+      "src/modules/reference-patterns/containers/container-reference-patterns-galactic-archive/**",
+      "src/modules/reference-patterns/containers/container-reference-patterns-galactic-archive-experience/**",
+      "src/modules/reference-patterns/hooks/use-galactic-archive-audio/**",
+      "src/modules/reference-patterns/hooks/use-galactic-archive-experience/**",
+      "src/modules/reference-patterns/lib/galactic-archive-query-state/**",
+      "src/modules/reference-patterns/lib/galactic-archive-view-models/**",
+      "src/shared/api/swapi/**",
+      "src/messages/en/modules/reference-patterns/components/reference-patterns-galactic-archive.json",
+      "src/messages/th/modules/reference-patterns/components/reference-patterns-galactic-archive.json",
+      "src/messages/en/modules/reference-patterns/components/reference-patterns-hub.json",
+      "src/messages/th/modules/reference-patterns/components/reference-patterns-hub.json",
+      "docs/developers/START_HERE.md"
     ],
-    "retryCount": 1,
+    "retryCount": 3,
     "blockedItems": []
   },
   "qualityGates": {
@@ -47,12 +67,12 @@
     "lint": "passed",
     "tests": "passed",
     "verification": "passed",
-    "lastRunSummary": "Passed npm run check-types, npm run lint, and npm run test after cleaning the stale .next/dev/types artifact left by the move. Runtime verification on port 4000 confirmed /en/reference-patterns still renders and shows the new (public) route path."
+    "lastRunSummary": "check-types, lint, and test all passed after the Galactic Archive portfolio implementation; Next.js runtime diagnostics on port 4000 reported no errors in active browser sessions."
   },
   "delivery": {
     "status": "ready-for-review",
     "userApproved": false,
-    "notes": "Ready for user review. The route entry now lives under (public), references were updated, and the public URL stayed the same."
+    "notes": "Galactic Archive is now a live Choose Your Side portfolio with SWAPI-backed data, persistent side switching, live search, and runtime-safe WebGL fallback. Reference hub and onboarding copy were updated to reflect the live example."
   },
-  "lastUpdated": "2026-03-11T10:57:57+00:00"
+  "lastUpdated": "2026-03-11T12:47:57Z"
 }

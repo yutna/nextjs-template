@@ -13,7 +13,7 @@ describe("GridReferencePatterns", () => {
         heading="Reference patterns you can inspect in code"
         items={[
           {
-            codePath: "src/app/[locale]/(public)/reference-patterns/page.tsx",
+            codePath: "src/app/[locale]/(public)/reference-patterns/workflow-foundations/page.tsx",
             description: "Thin page file.",
             kind: "App Router",
             title: "Route entry",
@@ -26,7 +26,7 @@ describe("GridReferencePatterns", () => {
       screen.getByText("Reference patterns you can inspect in code"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("src/app/[locale]/(public)/reference-patterns/page.tsx"),
+      screen.getByText("src/app/[locale]/(public)/reference-patterns/workflow-foundations/page.tsx"),
     ).toBeInTheDocument();
   });
 });

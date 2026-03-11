@@ -68,4 +68,4 @@ Every non-trivial deviation should record four things:
 Reach for an escape hatch only after you have checked
 [`ADOPTION_LEVELS.md`](./ADOPTION_LEVELS.md),
 [`CODE_STYLE_GUIDES.md`](./CODE_STYLE_GUIDES.md), and the reference example
-at `/en/reference-patterns`.
+at the reference-patterns hub `/en/reference-patterns`.

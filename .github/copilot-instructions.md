@@ -24,6 +24,7 @@ Hard rules:
 - treat [`docs/developers/CODE_STYLE_GUIDES.md`](../docs/developers/CODE_STYLE_GUIDES.md) as the permanent code-style, convention, and placement law
 - use [`docs/developers/AI_SURFACE_MAP.md`](../docs/developers/AI_SURFACE_MAP.md) when choosing between prompts, skills, and agents
 - update [`.github/workflow-state.json`](./workflow-state.json) as the task moves between phases
+- when the session `plan.md` changes, mirror it to `tmp/PLAN.md` and keep that file gitignored
 
 Use the customization layers for their intended purpose:
 

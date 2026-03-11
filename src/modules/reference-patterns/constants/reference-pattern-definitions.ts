@@ -1,6 +1,6 @@
 export const REFERENCE_PATTERN_DEFINITIONS = [
   {
-    codePath: "src/app/[locale]/(public)/reference-patterns/page.tsx",
+    codePath: "src/app/[locale]/(public)/reference-patterns/workflow-foundations/page.tsx",
     descriptionKey: "cards.routeEntry.description",
     kindKey: "cards.routeEntry.kind",
     titleKey: "cards.routeEntry.title",

@@ -38,20 +38,15 @@ You do not need to memorize every file under `.github/`.
 | Verification | confirm the UI and behavior match the acceptance criteria | `verify-rendered-ui.prompt.md`, `rendered-ui-verification` |
 | Delivery | summarize honestly and keep remaining follow-up explicit | `verify-and-deliver.prompt.md`, `delivery-validation` |
 
-## Open the concrete reference example
+## Open the reference-patterns hub
 
 After `npm run dev`, visit `/en/reference-patterns`.
 
-That route is intentionally small, but it shows the template's core pieces
-working together:
+That route is now the table of contents for the live examples under the
+`reference-patterns` family:
 
-- thin route entry
-- screen assembly
-- server container for translated data
-- client container plus hook for interactivity
-- server action plus schema validation
-- localized message files and route helpers
-- colocated tests and stories
+- `workflow-foundations` for the current architecture proof
+- `galactic-archive` for the live Choose Your Side portfolio powered by SWAPI
 
 ## If you only have a few minutes
 
@@ -61,5 +56,5 @@ Do these five things first:
 2. read the project structure section in [`README.md`](../../README.md)
 3. skim the ownership and boundary rules in
    [`CODE_STYLE_GUIDES.md`](./CODE_STYLE_GUIDES.md)
-4. open `/en/reference-patterns`
+4. open `/en/reference-patterns` and choose an example
 5. run `npm run lint` before you trust your first change

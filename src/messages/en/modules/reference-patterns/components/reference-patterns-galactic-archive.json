@@ -1,0 +1,187 @@
+{
+  "about": {
+    "descriptions": {
+      "dark": "I build high-pressure product systems for teams that need sharp contrast, operational confidence, and ruthless clarity under launch stress.",
+      "light": "I craft calm product systems that make complex work feel hopeful, legible, and stable across long-lived teams."
+    },
+    "heading": "About Me",
+    "metrics": {
+      "liveSystemsLabel": "Live systems",
+      "missionModesLabel": "Mission modes",
+      "missionModesValue": "Design systems · product platforms · developer UX",
+      "stackLabel": "Core stack",
+      "stackValue": "Next.js 16 · React 19 · Chakra UI · Motion"
+    },
+    "titles": {
+      "dark": "Sith command dossier",
+      "light": "Jedi hologram dossier"
+    }
+  },
+  "contact": {
+    "channelLabel": "Primary channel",
+    "channelValue": "transmissions@galactic-archive.dev",
+    "descriptions": {
+      "dark": "Open the command terminal for launches that need sharper edges, stronger contrast, and fast decision loops.",
+      "light": "Open a calm transmission channel for thoughtful collaboration, system stewardship, and durable product direction."
+    },
+    "heading": "Contact",
+    "primaryActionLabel": "Open transmission",
+    "responseLabel": "Response protocol",
+    "responseValue": "Human-first, system-minded, async-friendly",
+    "secondaryActionLabel": "Inspect workflow proof"
+  },
+  "featured": {
+    "collections": {
+      "dark": "Dark Side operators",
+      "light": "Light Side champions"
+    },
+    "heading": "Light Side vs Dark Side",
+    "labels": {
+      "birthYear": "Birth year",
+      "films": "Films",
+      "noStarships": "No registered starships",
+      "starships": "Starships"
+    },
+    "profiles": {
+      "bobaFett": {
+        "title": "Contract hunter"
+      },
+      "leia": {
+        "title": "Resistance diplomat"
+      },
+      "luke": {
+        "title": "Rebel tactician"
+      },
+      "obiWan": {
+        "title": "Patient mentor"
+      },
+      "palpatine": {
+        "title": "Shadow strategist"
+      },
+      "tarkin": {
+        "title": "Doctrine architect"
+      },
+      "vader": {
+        "title": "Imperial enforcer"
+      },
+      "yoda": {
+        "title": "Force elder"
+      }
+    }
+  },
+  "hero": {
+    "description": "Choose the Light Side or Dark Side and watch the entire portfolio mutate: scene, palette, motion, contrast, and sonic cues all bend around your decision.",
+    "eyebrow": "Choose Your Side",
+    "heading": "Galactic Archive Portfolio",
+    "sideOptions": {
+      "dark": {
+        "description": "Sharp contrast, red distortion, aggressive motion, and heavy command-console pressure.",
+        "label": "Dark Side"
+      },
+      "light": {
+        "description": "Luminous gradients, soft particles, elegant motion, and calm Jedi-inspired precision.",
+        "label": "Light Side"
+      }
+    },
+    "soundDisabled": "Sound off",
+    "soundEnabled": "Sound on",
+    "status": {
+      "degradedDescription": "Some external metadata is degraded, but the portfolio shell stays operational.",
+      "degradedLabel": "Transmission degraded",
+      "syncedDescription": "All live systems are synchronized and feeding the portfolio shell.",
+      "syncedLabel": "Archive synchronized"
+    },
+    "systems": {
+      "films": "Films",
+      "people": "People",
+      "root": "API root",
+      "starships": "Starships"
+    }
+  },
+  "projects": {
+    "description": "Each mission card pairs placeholder portfolio work with live SWAPI ship and film metadata so the demo proves both craft and architecture.",
+    "heading": "Projects",
+    "items": {
+      "auroraRelay": {
+        "description": "A design system command bridge that keeps cross-team releases calm, legible, and resilient.",
+        "title": "Aurora Relay"
+      },
+      "kyberAtlas": {
+        "description": "A product intelligence map that turns scattered platform signals into a readable navigation layer.",
+        "title": "Kyber Atlas"
+      },
+      "shadowCommand": {
+        "description": "A launch-ops cockpit for red-team reviews, incident posture, and high-pressure release rehearsals.",
+        "title": "Shadow Command"
+      }
+    },
+    "labels": {
+      "film": "Featured film",
+      "manufacturer": "Manufacturer",
+      "shipClass": "Ship class"
+    }
+  },
+  "search": {
+    "birthYearLabel": "Birth year",
+    "description": "Pull real SWAPI character data without leaving the cinematic shell.",
+    "emptyDescription": "Type at least two characters to open a live transmission into the archive.",
+    "emptyTitle": "No search results yet",
+    "errorPrefix": "Search error",
+    "filmsLabel": "Films",
+    "genderLabel": "Gender",
+    "heading": "Live archive search",
+    "hint": "Results appear after two characters.",
+    "label": "Search characters",
+    "placeholder": "Try Luke, Vader, Leia, Yoda...",
+    "starshipsLabel": "Starships"
+  },
+  "skills": {
+    "description": "The same capability grid shifts emotional tone with the chosen side: calm crystal discipline or fracture-forged intensity.",
+    "heading": "Skills",
+    "items": {
+      "experienceDirection": {
+        "description": "Narrative hierarchy, pacing, and emotional framing across complex product surfaces.",
+        "title": "Experience direction"
+      },
+      "motionSystems": {
+        "description": "Micro-interactions, transition choreography, and state feedback with strong intent.",
+        "title": "Motion systems"
+      },
+      "performance": {
+        "description": "Bundle discipline, server-first rendering, and interactive islands that stay responsive.",
+        "title": "Performance engineering"
+      },
+      "storytelling": {
+        "description": "Brand systems and product narratives that make technical complexity feel memorable.",
+        "title": "Product storytelling"
+      },
+      "systemDesign": {
+        "description": "Architecture, ownership boundaries, and reusable UI systems that scale without drift.",
+        "title": "System design"
+      },
+      "tooling": {
+        "description": "Developer workflows, AI surfaces, and operational ergonomics that shorten feedback loops.",
+        "title": "Workflow tooling"
+      }
+    }
+  },
+  "starships": {
+    "description": "Focused starship spotlights add cinematic hardware language to the portfolio and prove the SWAPI integration stays visible.",
+    "heading": "Starship spotlight",
+    "labels": {
+      "crew": "Crew",
+      "hyperdrive": "Hyperdrive",
+      "manufacturer": "Manufacturer",
+      "speed": "Atmospheric speed"
+    }
+  },
+  "timeline": {
+    "description": "A server-rendered saga rail that keeps the portfolio grounded in live Star Wars metadata.",
+    "episodePrefix": "Episode",
+    "heading": "Timeline",
+    "labels": {
+      "director": "Director",
+      "release": "Release"
+    }
+  }
+}

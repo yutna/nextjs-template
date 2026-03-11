@@ -2,7 +2,7 @@
 
 ## Scenario
 
-Use the `/[locale]/reference-patterns` route as the canonical example task.
+Use the `/[locale]/reference-patterns/workflow-foundations` route as the canonical example task.
 
 The goal of that task is simple: add one public page that teaches the
 template's architecture by showing a real route, real containers, one small
@@ -20,7 +20,7 @@ interactive form, and one server action with schema validation.
 
 ## Where the work lands
 
-- `src/app/[locale]/(public)/reference-patterns/page.tsx`
+- `src/app/[locale]/(public)/reference-patterns/workflow-foundations/page.tsx`
 - `src/modules/reference-patterns/**`
 - `src/messages/en/modules/reference-patterns/**`
 - `src/messages/th/modules/reference-patterns/**`
@@ -94,7 +94,7 @@ Useful surfaces:
 Verify the route in a real browser.
 
 - run the dev server
-- open `/en/reference-patterns`
+- open `/en/reference-patterns/workflow-foundations`
 - confirm both sections render
 - submit the form and confirm the preview updates
 

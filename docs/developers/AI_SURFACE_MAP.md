@@ -50,5 +50,5 @@ everything at once:
 
 1. [`START_HERE.md`](./START_HERE.md)
 2. [`WORKED_EXAMPLE.md`](./WORKED_EXAMPLE.md)
-3. the reference route at `/en/reference-patterns`
+3. the reference-patterns hub at `/en/reference-patterns`
 4. the specific prompt, skill, or agent for your current phase

@@ -1,0 +1,187 @@
+{
+  "about": {
+    "descriptions": {
+      "dark": "ฉันสร้างระบบผลิตภัณฑ์สำหรับสถานการณ์แรงกดดันสูงที่ต้องการความคมชัด ความมั่นใจเชิงปฏิบัติการ และความชัดเจนแบบไม่อ้อมค้อมในช่วงเปิดตัวงาน.",
+      "light": "ฉันออกแบบระบบผลิตภัณฑ์ที่สงบและยั่งยืน เพื่อทำให้งานซับซ้อนรู้สึกมีความหวัง อ่านง่าย และเสถียรสำหรับทีมระยะยาว."
+    },
+    "heading": "About Me",
+    "metrics": {
+      "liveSystemsLabel": "ระบบที่กำลังออนไลน์",
+      "missionModesLabel": "โหมดภารกิจ",
+      "missionModesValue": "Design systems · product platforms · developer UX",
+      "stackLabel": "Core stack",
+      "stackValue": "Next.js 16 · React 19 · Chakra UI · Motion"
+    },
+    "titles": {
+      "dark": "Sith command dossier",
+      "light": "Jedi hologram dossier"
+    }
+  },
+  "contact": {
+    "channelLabel": "ช่องทางหลัก",
+    "channelValue": "transmissions@galactic-archive.dev",
+    "descriptions": {
+      "dark": "เปิด command terminal สำหรับงานเปิดตัวที่ต้องการขอบที่คมกว่า คอนทราสต์ที่หนักกว่า และวงจรการตัดสินใจที่เร็วขึ้น.",
+      "light": "เปิด transmission channel แบบสงบสำหรับการร่วมงานที่ใช้ความคิด ระบบที่ดูแลต่อเนื่องได้ และทิศทางผลิตภัณฑ์ที่ยั่งยืน."
+    },
+    "heading": "Contact",
+    "primaryActionLabel": "Open transmission",
+    "responseLabel": "Response protocol",
+    "responseValue": "Human-first, system-minded, async-friendly",
+    "secondaryActionLabel": "Inspect workflow proof"
+  },
+  "featured": {
+    "collections": {
+      "dark": "Dark Side operators",
+      "light": "Light Side champions"
+    },
+    "heading": "Light Side vs Dark Side",
+    "labels": {
+      "birthYear": "Birth year",
+      "films": "Films",
+      "noStarships": "No registered starships",
+      "starships": "Starships"
+    },
+    "profiles": {
+      "bobaFett": {
+        "title": "Contract hunter"
+      },
+      "leia": {
+        "title": "Resistance diplomat"
+      },
+      "luke": {
+        "title": "Rebel tactician"
+      },
+      "obiWan": {
+        "title": "Patient mentor"
+      },
+      "palpatine": {
+        "title": "Shadow strategist"
+      },
+      "tarkin": {
+        "title": "Doctrine architect"
+      },
+      "vader": {
+        "title": "Imperial enforcer"
+      },
+      "yoda": {
+        "title": "Force elder"
+      }
+    }
+  },
+  "hero": {
+    "description": "เลือก Light Side หรือ Dark Side แล้วปล่อยให้ทั้ง portfolio เปลี่ยนไปพร้อมกัน: scene, palette, motion, contrast และ sonic cues ทั้งหมดจะบิดตามการตัดสินใจของคุณ.",
+    "eyebrow": "Choose Your Side",
+    "heading": "Galactic Archive Portfolio",
+    "sideOptions": {
+      "dark": {
+        "description": "คอนทราสต์จัด รอยบิดสีแดง motion ที่ดุดัน และแรงกดดันแบบ command-console หนักแน่น.",
+        "label": "Dark Side"
+      },
+      "light": {
+        "description": "ไล่เฉดสว่าง อนุภาคนุ่ม motion ที่สง่างาม และความแม่นยำแบบ Jedi ที่นิ่งสงบ.",
+        "label": "Light Side"
+      }
+    },
+    "soundDisabled": "Sound off",
+    "soundEnabled": "Sound on",
+    "status": {
+      "degradedDescription": "metadata ภายนอกบางส่วนอาจขาดหาย แต่ shell ของ portfolio ยังทำงานได้ตามปกติ.",
+      "degradedLabel": "Transmission degraded",
+      "syncedDescription": "ระบบ live ทั้งหมดเชื่อมตรงกับ portfolio shell แล้ว.",
+      "syncedLabel": "Archive synchronized"
+    },
+    "systems": {
+      "films": "Films",
+      "people": "People",
+      "root": "API root",
+      "starships": "Starships"
+    }
+  },
+  "projects": {
+    "description": "การ์ดแต่ละใบจับคู่งาน portfolio แบบ placeholder กับ metadata จริงจาก SWAPI เพื่อพิสูจน์ทั้งงานออกแบบและสถาปัตยกรรมพร้อมกัน.",
+    "heading": "Projects",
+    "items": {
+      "auroraRelay": {
+        "description": "ศูนย์บัญชาการ design system ที่ทำให้การปล่อยงานข้ามทีมยังคงสงบ อ่านง่าย และทนทาน.",
+        "title": "Aurora Relay"
+      },
+      "kyberAtlas": {
+        "description": "แผนที่ product intelligence ที่รวมสัญญาณกระจัดกระจายของแพลตฟอร์มให้กลายเป็นชั้นนำทางที่อ่านง่าย.",
+        "title": "Kyber Atlas"
+      },
+      "shadowCommand": {
+        "description": "cockpit สำหรับ launch-ops, red-team review, incident posture และการซ้อมเปิดตัวภายใต้แรงกดดันสูง.",
+        "title": "Shadow Command"
+      }
+    },
+    "labels": {
+      "film": "Featured film",
+      "manufacturer": "Manufacturer",
+      "shipClass": "Ship class"
+    }
+  },
+  "search": {
+    "birthYearLabel": "Birth year",
+    "description": "ดึงข้อมูลตัวละครจริงจาก SWAPI โดยไม่ต้องออกจาก cinematic shell.",
+    "emptyDescription": "พิมพ์อย่างน้อย 2 ตัวอักษรเพื่อเปิด transmission แบบสดเข้าสู่ archive.",
+    "emptyTitle": "No search results yet",
+    "errorPrefix": "Search error",
+    "filmsLabel": "Films",
+    "genderLabel": "Gender",
+    "heading": "Live archive search",
+    "hint": "ผลลัพธ์จะปรากฏเมื่อพิมพ์ครบสองตัวอักษร.",
+    "label": "Search characters",
+    "placeholder": "ลองพิมพ์ Luke, Vader, Leia, Yoda...",
+    "starshipsLabel": "Starships"
+  },
+  "skills": {
+    "description": "grid ของความสามารถชุดเดียวกันจะเปลี่ยนอารมณ์ตาม side ที่เลือก: ระเบียบแบบ crystal อันนิ่งสงบ หรือพลังแบบ fracture ที่คมและหนักแน่น.",
+    "heading": "Skills",
+    "items": {
+      "experienceDirection": {
+        "description": "การกำกับลำดับชั้น จังหวะ และกรอบอารมณ์ของประสบการณ์บน product surfaces ที่ซับซ้อน.",
+        "title": "Experience direction"
+      },
+      "motionSystems": {
+        "description": "micro-interactions, choreography ของ transition และ state feedback ที่มีเจตนาชัดเจน.",
+        "title": "Motion systems"
+      },
+      "performance": {
+        "description": "วินัยด้าน bundle, server-first rendering และ interactive islands ที่ยังตอบสนองได้ดี.",
+        "title": "Performance engineering"
+      },
+      "storytelling": {
+        "description": "ระบบแบรนด์และ narrative ของผลิตภัณฑ์ที่ทำให้ความซับซ้อนทางเทคนิคกลายเป็นเรื่องที่น่าจดจำ.",
+        "title": "Product storytelling"
+      },
+      "systemDesign": {
+        "description": "สถาปัตยกรรม ขอบเขตความเป็นเจ้าของ และ reusable UI systems ที่ขยายต่อได้โดยไม่ drift.",
+        "title": "System design"
+      },
+      "tooling": {
+        "description": "developer workflows, AI surfaces และ ergonomics เชิงปฏิบัติการที่ช่วยให้ feedback loop สั้นลง.",
+        "title": "Workflow tooling"
+      }
+    }
+  },
+  "starships": {
+    "description": "starship spotlight แบบโฟกัสช่วยเติมภาษาภาพเชิง cinematic ให้ portfolio และทำให้การเชื่อม SWAPI มองเห็นได้ชัด.",
+    "heading": "Starship spotlight",
+    "labels": {
+      "crew": "Crew",
+      "hyperdrive": "Hyperdrive",
+      "manufacturer": "Manufacturer",
+      "speed": "Atmospheric speed"
+    }
+  },
+  "timeline": {
+    "description": "saga rail แบบ server-rendered ที่ทำให้ portfolio ยึดโยงอยู่กับ metadata จริงของ Star Wars.",
+    "episodePrefix": "Episode",
+    "heading": "Timeline",
+    "labels": {
+      "director": "Director",
+      "release": "Release"
+    }
+  }
+}
