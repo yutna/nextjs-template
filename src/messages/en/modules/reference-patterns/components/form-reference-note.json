@@ -1,0 +1,15 @@
+{
+  "description": "Submit a short note to see the container → hook → action → schema flow with a minimal client boundary.",
+  "emptyPreviewDescription": "Submit the form to see the validated payload come back from the server.",
+  "emptyPreviewTitle": "No preview yet",
+  "heading": "Interactive example: action-backed note preview",
+  "helperText": "This form uses a client container plus hook and submits to a server action validated by Zod. Title max: {titleCount} characters. Message max: {messageCount} characters.",
+  "messageLabel": "Message",
+  "messagePlaceholder": "Describe what changed and why it matters",
+  "previewDescription": "The box below renders the normalized data returned from the server action.",
+  "previewHeading": "Last submitted preview",
+  "submitLabel": "Generate preview",
+  "submittingLabel": "Generating preview...",
+  "titleLabel": "Title",
+  "titlePlaceholder": "Summarize the change in one line"
+}

@@ -1,0 +1,15 @@
+{
+  "description": "ส่ง note สั้น ๆ เพื่อดู flow แบบ container → hook → action → schema โดยมี client boundary เท่าที่จำเป็น",
+  "emptyPreviewDescription": "ลอง submit ฟอร์มเพื่อดู payload ที่ผ่านการ validate แล้วจากฝั่ง server",
+  "emptyPreviewTitle": "ยังไม่มี preview",
+  "heading": "ตัวอย่าง interactive: preview note ผ่าน server action",
+  "helperText": "ฟอร์มนี้ใช้ client container กับ hook และส่งข้อมูลไปยัง server action ที่ validate ด้วย Zod. Title ยาวได้ไม่เกิน {titleCount} ตัวอักษร และ message ยาวได้ไม่เกิน {messageCount} ตัวอักษร",
+  "messageLabel": "Message",
+  "messagePlaceholder": "อธิบายว่าอะไรเปลี่ยนและทำไมจึงสำคัญ",
+  "previewDescription": "กล่องด้านล่างจะแสดงข้อมูลที่ถูก normalize แล้วซึ่งส่งกลับมาจาก server action",
+  "previewHeading": "Preview ล่าสุดที่ submit",
+  "submitLabel": "สร้าง preview",
+  "submittingLabel": "กำลังสร้าง preview...",
+  "titleLabel": "Title",
+  "titlePlaceholder": "สรุปการเปลี่ยนแปลงในหนึ่งบรรทัด"
+}

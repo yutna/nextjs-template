@@ -1,0 +1,51 @@
+{
+  "cards": {
+    "action": {
+      "description": "ห่อขอบเขตของ server-side mutation เพื่อให้ client รับมือเฉพาะผลลัพธ์ที่มี type แล้วเท่านั้น",
+      "kind": "Server action",
+      "title": "Server action boundary"
+    },
+    "clientContainer": {
+      "description": "เก็บ form ไว้ใน client island เล็ก ๆ และให้ custom hook จัดการ state transition",
+      "kind": "Client container",
+      "title": "Interactive form boundary"
+    },
+    "hook": {
+      "description": "ดูแล state ของฟอร์มฝั่ง client การแมป validation errors และ lifecycle ของการเรียก action",
+      "kind": "Hook",
+      "title": "Client state orchestration"
+    },
+    "messageTree": {
+      "description": "ชี้ให้เห็นว่า message namespace ของ feature นี้ถูกรวมเข้ากับ locale tree อย่างไร",
+      "kind": "i18n messages",
+      "title": "Localized message tree"
+    },
+    "routeEntry": {
+      "description": "ไฟล์ page แบบบางที่คลี่ locale params, ตั้ง request locale และส่งงานต่อให้ screen",
+      "kind": "App Router",
+      "title": "Route entry"
+    },
+    "routeHelper": {
+      "description": "เก็บ public path ไว้ใน helper ที่ reuse ได้ แทนการกระจาย raw route string ไปหลายที่",
+      "kind": "Route helper",
+      "title": "Shared route mapping"
+    },
+    "schema": {
+      "description": "กำหนด validation contract และข้อจำกัดความยาวที่ใช้ร่วมกับขอบเขตฝั่ง server",
+      "kind": "Schema",
+      "title": "Validation contract"
+    },
+    "screen": {
+      "description": "screen แบบ server-first ที่ประกอบ containers โดยไม่รับภาระ business logic หรือ route concern เอง",
+      "kind": "Screen",
+      "title": "Screen assembly"
+    },
+    "serverContainer": {
+      "description": "เตรียมข้อมูลการ์ดที่แปลแล้วโดยไม่ทำให้ทั้ง section กลายเป็น client code",
+      "kind": "Server container",
+      "title": "Server data preparation"
+    }
+  },
+  "description": "หน้านี้ชี้ไปยังไฟล์จริงที่ประกอบกันเป็น route, screen, container, hook, action, schema, route helper และ i18n boundary ของ template นี้",
+  "heading": "ตัวอย่าง pattern ที่เปิดดูจากโค้ดได้จริง"
+}

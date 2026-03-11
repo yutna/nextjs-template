@@ -1,0 +1,51 @@
+{
+  "cards": {
+    "action": {
+      "description": "Wraps the server-side mutation boundary so the client only deals with typed results.",
+      "kind": "Server action",
+      "title": "Server action boundary"
+    },
+    "clientContainer": {
+      "description": "Keeps the interactive form in a small client island and delegates state transitions to a custom hook.",
+      "kind": "Client container",
+      "title": "Interactive form boundary"
+    },
+    "hook": {
+      "description": "Owns client-side form state, validation error mapping, and the action call lifecycle.",
+      "kind": "Hook",
+      "title": "Client state orchestration"
+    },
+    "messageTree": {
+      "description": "Shows where the feature message namespaces are aggregated before they join the locale tree.",
+      "kind": "i18n messages",
+      "title": "Localized message tree"
+    },
+    "routeEntry": {
+      "description": "Thin page file that unwraps locale params, sets the request locale, and hands off to a screen.",
+      "kind": "App Router",
+      "title": "Route entry"
+    },
+    "routeHelper": {
+      "description": "Keeps the public path in one reusable helper instead of scattering raw route strings.",
+      "kind": "Route helper",
+      "title": "Shared route mapping"
+    },
+    "schema": {
+      "description": "Defines the validation contract and length limits shared by the server boundary.",
+      "kind": "Schema",
+      "title": "Validation contract"
+    },
+    "screen": {
+      "description": "Server-first screen that composes containers instead of owning business logic or route concerns.",
+      "kind": "Screen",
+      "title": "Screen assembly"
+    },
+    "serverContainer": {
+      "description": "Prepares translated card data without turning the entire section into client code.",
+      "kind": "Server container",
+      "title": "Server data preparation"
+    }
+  },
+  "description": "This page points at the exact files that implement the template's route, screen, container, hook, action, schema, route-helper, and i18n boundaries.",
+  "heading": "Reference patterns you can inspect in code"
+}
