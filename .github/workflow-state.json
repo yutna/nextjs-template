@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "phase": "discovery",
+  "taskId": "",
+  "taskSummary": "",
+  "requirements": {
+    "status": "needs-clarification",
+    "acceptanceCriteria": [],
+    "constraints": [],
+    "openQuestions": []
+  },
+  "plan": {
+    "status": "not-started",
+    "summary": "",
+    "filesInScope": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "filesTouched": [],
+    "retryCount": 0,
+    "blockedItems": []
+  },
+  "qualityGates": {
+    "typecheck": "pending",
+    "lint": "pending",
+    "tests": "pending",
+    "verification": "pending",
+    "lastRunSummary": ""
+  },
+  "delivery": {
+    "status": "blocked",
+    "userApproved": false,
+    "notes": ""
+  },
+  "lastUpdated": ""
+}

@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python3 .github/hooks/scripts/workflow_hook.py stop-gate",
+        "timeout": 10
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "python3 .github/hooks/scripts/workflow_hook.py stop-gate",
+        "timeout": 10
+      }
+    ]
+  }
+}

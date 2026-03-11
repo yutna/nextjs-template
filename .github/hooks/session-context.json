@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python3 .github/hooks/scripts/workflow_hook.py session-context",
+        "timeout": 10
+      }
+    ]
+  }
+}
