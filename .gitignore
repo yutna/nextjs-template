@@ -32,6 +32,9 @@ yarn-error.log*
 # production
 /build
 
+# prompts
+src/tmp/PROMPT.md
+
 # runtime logs
 src/tmp/logs/*.log
 /tmp/PLAN.md
