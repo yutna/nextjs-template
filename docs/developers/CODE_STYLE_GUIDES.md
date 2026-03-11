@@ -4,6 +4,19 @@
 
 This document defines the canonical coding standards, architecture rules, naming conventions, folder ownership rules, and library-specific policies for this project. It is the source of truth for how code should look, where it should live, and how each layer should behave.
 
+## Related developer guides
+
+- [`START_HERE.md`](./START_HERE.md) for the quickest human onboarding path
+- [`ADOPTION_LEVELS.md`](./ADOPTION_LEVELS.md) for Lite, Standard, and Strict
+  rollout choices
+- [`AI_SURFACE_MAP.md`](./AI_SURFACE_MAP.md) for prompt, skill, and agent
+  selection
+- [`WORKED_EXAMPLE.md`](./WORKED_EXAMPLE.md) for one end-to-end task
+- [`ESCAPE_HATCHES.md`](./ESCAPE_HATCHES.md) for narrow, explicit deviations
+
+These guides explain how to adopt this law. This file remains the canonical
+source of code style, placement, and boundary rules.
+
 ## Rule Precedence
 
 When rules overlap, apply them in this order:
