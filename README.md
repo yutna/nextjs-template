@@ -113,6 +113,24 @@ Copy [`.env.example`](./.env.example) to `.env.local` and fill in:
 | --------------------- | ------------------------------------ |
 | `NEXT_PUBLIC_API_URL` | Base URL for the backend API         |
 
+## Developer Guides
+
+If you're new to the template, start with
+[`docs/developers/START_HERE.md`](./docs/developers/START_HERE.md).
+
+- Choose a rollout mode in
+  [`docs/developers/ADOPTION_LEVELS.md`](./docs/developers/ADOPTION_LEVELS.md)
+- Learn the permanent code and placement law in
+  [`docs/developers/CODE_STYLE_GUIDES.md`](./docs/developers/CODE_STYLE_GUIDES.md)
+- See when prompts, skills, and agents matter in
+  [`docs/developers/AI_SURFACE_MAP.md`](./docs/developers/AI_SURFACE_MAP.md)
+- Walk one end-to-end task in
+  [`docs/developers/WORKED_EXAMPLE.md`](./docs/developers/WORKED_EXAMPLE.md)
+- Review deliberate deviations in
+  [`docs/developers/ESCAPE_HATCHES.md`](./docs/developers/ESCAPE_HATCHES.md)
+- After `npm run dev`, open `/en/reference-patterns` for a concrete in-app
+  reference example
+
 ## Contributing
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md).

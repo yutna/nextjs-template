@@ -1,8 +1,15 @@
 # Contributing
 
+New to the template? Start with
+[`docs/developers/START_HERE.md`](./docs/developers/START_HERE.md), then choose
+an operating mode in
+[`docs/developers/ADOPTION_LEVELS.md`](./docs/developers/ADOPTION_LEVELS.md).
+
 Follow [`docs/developers/CODE_STYLE_GUIDES.md`](./docs/developers/CODE_STYLE_GUIDES.md) for the project's permanent code style,
-conventions, placement rules, and layer boundaries. Workflow and delivery rules
-still live in [`AGENTS.md`](./AGENTS.md).
+conventions, placement rules, and layer boundaries. Use
+[`docs/developers/AI_SURFACE_MAP.md`](./docs/developers/AI_SURFACE_MAP.md) when
+you need to decide which prompt, skill, or agent matters for a task. Workflow
+and delivery rules still live in [`AGENTS.md`](./AGENTS.md).
 
 ## Branch naming
 
