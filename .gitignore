@@ -18,6 +18,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# github hooks
+.github/hooks/scripts/__pycache__
+
 # misc
 *.pem
 .DS_Store
