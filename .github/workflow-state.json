@@ -1,50 +1,58 @@
 {
   "version": "1.0",
   "phase": "delivery",
-  "taskId": "markdownlint-zero-editor",
-  "taskSummary": "Remove markdownlint editor warnings/errors from markdown files outside .agents.",
+  "taskId": "move-reference-route-public",
+  "taskSummary": "Move the reference-patterns route entry under src/app/[locale]/(public)/ and update every affected reference.",
   "requirements": {
     "status": "clarified",
     "acceptanceCriteria": [
-      "Markdown files outside .agents show zero markdownlint warnings/errors in the editor.",
-      "No markdownlint-disabling config hack is introduced.",
-      "The code-style guide content remains intact while duplicate headings become unique."
+      "The reference-patterns route entry lives under src/app/[locale]/(public)/.",
+      "All docs, stories, tests, and reference metadata point at the new route file path.",
+      "The route still renders at /en/reference-patterns after the move."
     ],
     "constraints": [
-      "Ignore markdown files under .agents.",
-      "Fix markdown content instead of disabling markdownlint rules.",
-      "Validate against editor diagnostics."
+      "Do not change the public URL.",
+      "Do not stop services on port 3000.",
+      "Preserve the existing route behavior."
     ],
     "openQuestions": []
   },
   "plan": {
     "status": "approved",
-    "summary": "Rename duplicate headings in docs/developers/CODE_STYLE_GUIDES.md to unique descriptive headings, then recheck editor markdownlint diagnostics.",
+    "summary": "Move the page file into the public route group structure, then update every path reference and rerun the normal gates plus runtime verification on port 4000.",
     "filesInScope": [
       ".github/workflow-state.json",
-      "docs/developers/CODE_STYLE_GUIDES.md"
+      "docs/developers/WORKED_EXAMPLE.md",
+      "src/app/[locale]/(public)/reference-patterns/page.tsx",
+      "src/modules/reference-patterns/constants/reference-pattern-definitions.ts",
+      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.stories.tsx",
+      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.test.tsx"
     ]
   },
   "implementation": {
     "status": "completed",
     "filesTouched": [
       ".github/workflow-state.json",
-      "docs/developers/CODE_STYLE_GUIDES.md"
+      "docs/developers/WORKED_EXAMPLE.md",
+      "src/app/[locale]/(public)/reference-patterns/page.tsx",
+      "src/modules/reference-patterns/constants/reference-pattern-definitions.ts",
+      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.stories.tsx",
+      "src/modules/reference-patterns/components/grid-reference-patterns/grid-reference-patterns.test.tsx"
     ],
-    "retryCount": 0,
+    "retryCount": 1,
     "blockedItems": []
   },
   "qualityGates": {
-    "typecheck": "not-applicable",
-    "lint": "not-applicable",
-    "tests": "not-applicable",
+    "typecheck": "passed",
+    "lint": "passed",
+    "tests": "passed",
     "verification": "passed",
-    "lastRunSummary": "Editor diagnostics returned zero markdownlint warnings/errors for markdown files outside .agents, and no markdownlint config files were added."
+    "lastRunSummary": "Passed npm run check-types, npm run lint, and npm run test after cleaning the stale .next/dev/types artifact left by the move. Runtime verification on port 4000 confirmed /en/reference-patterns still renders and shows the new (public) route path."
   },
   "delivery": {
     "status": "ready-for-review",
     "userApproved": false,
-    "notes": "Ready for user review. Markdown files outside .agents now show zero markdownlint warnings/errors in the editor without disabling markdownlint rules."
+    "notes": "Ready for user review. The route entry now lives under (public), references were updated, and the public URL stayed the same."
   },
-  "lastUpdated": "2026-03-11T08:54:27+00:00"
+  "lastUpdated": "2026-03-11T10:57:57+00:00"
 }
