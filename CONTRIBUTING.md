@@ -1,5 +1,9 @@
 # Contributing
 
+Follow [`docs/developers/CODE_STYLE_GUIDES.md`](./docs/developers/CODE_STYLE_GUIDES.md) for the project's permanent code style,
+conventions, placement rules, and layer boundaries. Workflow and delivery rules
+still live in [`AGENTS.md`](./AGENTS.md).
+
 ## Branch naming
 
 ```text

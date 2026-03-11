@@ -1,36 +1,50 @@
 {
   "version": "1.0",
-  "phase": "discovery",
-  "taskId": "",
-  "taskSummary": "",
+  "phase": "delivery",
+  "taskId": "markdownlint-zero-editor",
+  "taskSummary": "Remove markdownlint editor warnings/errors from markdown files outside .agents.",
   "requirements": {
-    "status": "needs-clarification",
-    "acceptanceCriteria": [],
-    "constraints": [],
+    "status": "clarified",
+    "acceptanceCriteria": [
+      "Markdown files outside .agents show zero markdownlint warnings/errors in the editor.",
+      "No markdownlint-disabling config hack is introduced.",
+      "The code-style guide content remains intact while duplicate headings become unique."
+    ],
+    "constraints": [
+      "Ignore markdown files under .agents.",
+      "Fix markdown content instead of disabling markdownlint rules.",
+      "Validate against editor diagnostics."
+    ],
     "openQuestions": []
   },
   "plan": {
-    "status": "not-started",
-    "summary": "",
-    "filesInScope": []
+    "status": "approved",
+    "summary": "Rename duplicate headings in docs/developers/CODE_STYLE_GUIDES.md to unique descriptive headings, then recheck editor markdownlint diagnostics.",
+    "filesInScope": [
+      ".github/workflow-state.json",
+      "docs/developers/CODE_STYLE_GUIDES.md"
+    ]
   },
   "implementation": {
-    "status": "not-started",
-    "filesTouched": [],
+    "status": "completed",
+    "filesTouched": [
+      ".github/workflow-state.json",
+      "docs/developers/CODE_STYLE_GUIDES.md"
+    ],
     "retryCount": 0,
     "blockedItems": []
   },
   "qualityGates": {
-    "typecheck": "pending",
-    "lint": "pending",
-    "tests": "pending",
-    "verification": "pending",
-    "lastRunSummary": ""
+    "typecheck": "not-applicable",
+    "lint": "not-applicable",
+    "tests": "not-applicable",
+    "verification": "passed",
+    "lastRunSummary": "Editor diagnostics returned zero markdownlint warnings/errors for markdown files outside .agents, and no markdownlint config files were added."
   },
   "delivery": {
-    "status": "blocked",
+    "status": "ready-for-review",
     "userApproved": false,
-    "notes": ""
+    "notes": "Ready for user review. Markdown files outside .agents now show zero markdownlint warnings/errors in the editor without disabling markdownlint rules."
   },
-  "lastUpdated": ""
+  "lastUpdated": "2026-03-11T08:54:27+00:00"
 }

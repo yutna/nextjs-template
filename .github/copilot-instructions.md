@@ -21,6 +21,7 @@ Hard rules:
 - do not deliver before applicable gates and verification pass
 - ask clarifying questions when ambiguity changes behavior or scope
 - preserve existing architecture, conventions, and naming unless the user explicitly wants change
+- treat [`docs/developers/CODE_STYLE_GUIDES.md`](../docs/developers/CODE_STYLE_GUIDES.md) as the permanent code-style, convention, and placement law
 - update [`.github/workflow-state.json`](./workflow-state.json) as the task moves between phases
 
 Use the customization layers for their intended purpose:
