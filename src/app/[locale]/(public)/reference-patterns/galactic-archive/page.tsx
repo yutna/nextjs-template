@@ -3,9 +3,7 @@ import "server-only";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 
-import {
-  loadGalacticArchiveQueryState,
-} from "@/modules/reference-patterns/lib/galactic-archive-query-state";
+import { loadGalacticArchiveQueryState } from "@/modules/reference-patterns/lib/galactic-archive-query-state/server";
 import { ScreenReferencePatternsGalacticArchive } from "@/modules/reference-patterns/screens/screen-reference-patterns-galactic-archive";
 
 interface PageProps {

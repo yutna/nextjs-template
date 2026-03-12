@@ -13,28 +13,21 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { motion } from "motion/react";
-import dynamic from "next/dynamic";
 
 import { GALACTIC_ARCHIVE_SIDE_CONFIG } from "@/modules/reference-patterns/constants/galactic-archive-side-config";
 import { Link } from "@/shared/lib/navigation";
 
+import { ReferencePatternsGalacticArchiveSceneLoader } from "./reference-patterns-galactic-archive-scene-loader";
+
 import type {
   GalacticArchiveFeaturedCollection,
+  GalacticArchiveFeaturedLabels,
   GalacticArchiveProjectCard,
+  GalacticArchiveProjectsLabels,
   ReferencePatternsGalacticArchiveProps,
 } from "./types";
 
 const MotionDiv = motion.div;
-const Scene = dynamic(
-  () =>
-    import("../reference-patterns-galactic-archive-scene").then(
-      (module) => module.ReferencePatternsGalacticArchiveScene,
-    ),
-  {
-    loading: () => <div aria-hidden />,
-    ssr: false,
-  },
-);
 
 function buildTransition(currentSide: "dark" | "light") {
   return {
@@ -51,7 +44,7 @@ function FeaturedCollection({
 }: Readonly<{
   collection: GalacticArchiveFeaturedCollection;
   currentSide: "dark" | "light";
-  labels: ReferencePatternsGalacticArchiveProps["featured"]["labels"];
+  labels: GalacticArchiveFeaturedLabels;
   mutedTextColor: string;
 }>) {
   return (
@@ -145,7 +138,7 @@ function ProjectCard({
 }: Readonly<{
   currentSide: "dark" | "light";
   item: GalacticArchiveProjectCard;
-  labels: ReferencePatternsGalacticArchiveProps["projects"]["labels"];
+  labels: GalacticArchiveProjectsLabels;
 }>) {
   return (
     <MotionDiv
@@ -244,7 +237,7 @@ export function ReferencePatternsGalacticArchive({
       py={{ base: 12, md: 20 }}
     >
       <Box inset={0} opacity={currentSide === "light" ? 0.95 : 1} pointerEvents="none" position="absolute">
-        <Scene side={currentSide} />
+        <ReferencePatternsGalacticArchiveSceneLoader side={currentSide} />
       </Box>
 
       <Box maxW="7xl" mx="auto" position="relative" zIndex={1}>

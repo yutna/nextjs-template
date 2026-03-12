@@ -79,6 +79,7 @@ Use a leaf-folder pattern for public concerns that own a reusable API:
 - folder and main file share the same name
 - leaf-level `index.ts` as the public API
 - colocated `types.ts` when the concern owns contracts
+- colocated `constants.ts` when the concern owns values narrower in scope than the module constants folder
 - colocated tests beside the implementation
 - no parent barrel files for concern directories unless a specific area explicitly allows them
 
@@ -135,6 +136,45 @@ Use `type` for:
 - schema-derived aliases
 - function-signature aliases when they are clearer
 
+### Interface nesting rules
+
+- Do not use inline object literals as interface property types when the object has two or more fields.
+- Extract nested multi-field objects into named interfaces.
+- Keep the extracted interface name descriptive and close to its context.
+
+Good shape:
+
+```typescript
+interface GalacticArchiveFeaturedLabels {
+  birthYear: string;
+  films: string;
+  noStarships: string;
+  starships: string;
+}
+
+interface GalacticArchiveFeaturedContent {
+  heading: string;
+  labels: GalacticArchiveFeaturedLabels;
+}
+```
+
+Avoid:
+
+```typescript
+interface GalacticArchiveFeaturedContent {
+  heading: string;
+  labels: { birthYear: string; films: string; noStarships: string; starships: string };
+}
+```
+
+### Constants and types placement
+
+- Constants must not live in `types.ts`.
+- Types must not live in `constants.ts`.
+- Keep constants in `constants.ts` or the module constants folder.
+- Module-internal shared types that are not part of the public API must not be re-exported from `index.ts`.
+- Module-internal shared types that are used only within a leaf folder belong in that folder's `types.ts`.
+
 ### Interface property order
 
 Order interface members like this:
@@ -163,6 +203,7 @@ Rules:
 
 - Prefer domain-specific, intention-revealing names.
 - Avoid vague names such as `common`, `shared`, `thing`, `widget`, `data`, `value`, `temp`, `helpers`, `misc`, `service`, `manager`, or `base` when they do not describe a real concern.
+- When extracting shared helpers within a leaf folder, prefer specific file names that describe the extracted concern rather than a generic `helpers.ts`. Use a generic helpers file only as a last resort when no single name fits the concern, and document the reason.
 
 ### React naming pattern
 
@@ -256,7 +297,8 @@ When a leaf folder has a public API:
 - `index.ts` must contain pure re-exports only
 - value exports come first
 - type exports come last
-- when `types.ts` exists, `index.ts` must re-export its types
+- when `types.ts` exists, `index.ts` must re-export only its public types; internal types that are not part of the external contract must stay unexported
+- when `constants.ts` exists, `index.ts` must re-export only the constants that are genuinely part of the public API
 
 ## JSX Prop Binding
 
@@ -517,7 +559,8 @@ Structure rules:
 
 - one public component per folder
 - folder and main file share the same name
-- private child components may live in the same folder
+- private child components may live in the same folder as sibling files or within the same file when they are small and have no independent test needs
+- extract sub-components with real component concerns (loading states, dynamic imports, independent rendering logic, or SSR configuration) to their own files within the folder rather than defining them inline at the module scope
 - colocated `constants.ts`, tests, and stories are allowed
 - no parent barrel files
 
@@ -598,6 +641,7 @@ Do not use lib for:
 Public API rules:
 
 - one architectural concern per folder
+- prefer one primary exported function per file; add additional exports from the same file only when they share strong cohesion with the primary concern and extracting them to separate files would obscure the relationship
 - leaf `index.ts` exposes the stable public API
 - avoid `export *`
 - keep helpers private unless they are part of the real contract
@@ -616,6 +660,35 @@ Error rules:
 - wrap infrastructure failures in meaningful app errors
 - preserve original causes when rethrowing
 - reuse the application error hierarchy
+
+## Shared API Wrappers
+
+Shared API wrappers live in `src/shared/api/`.
+
+Organize by resource: each external API resource or integration gets its own folder under `src/shared/api/<resource>/`.
+
+Rules:
+
+- one resource per folder
+- one primary operation per file within the folder
+- use `types.ts` for shared API type contracts
+- use `index.ts` as the leaf public API; do not import individual operation files from outside the folder
+- keep API client setup in a dedicated client file when a shared client is needed
+- use `Effect` for async operations; keep Effect imports out of React rendering layers
+- errors belong in a focused `errors.ts`; do not scatter error definitions across operation files
+
+Example shape:
+
+```
+src/shared/api/
+  swapi/
+    errors.ts
+    get-swapi-root.ts
+    index.ts
+    list-swapi-films.ts
+    swapi-client.ts
+    types.ts
+```
 
 ## Vendor Wrappers
 
@@ -683,7 +756,7 @@ Placement rules:
 - validation schemas live with the owning feature or in shared code when truly cross-cutting
 - every schema lives in its own leaf folder
 - schema files use the `.schema.ts` suffix
-- `types.ts` must exist for schema-derived types
+- `types.ts` must exist for schema-derived types; do not define inferred types directly inside `.schema.ts` files
 
 Naming rules:
 
@@ -696,10 +769,12 @@ Source-of-truth rules:
 - Zod is the source of truth for schema-owned types
 - derive types with `z.infer<typeof schema>`
 - do not hand-duplicate schema-owned types
+- do not place constants in `.schema.ts` files; keep them in `constants.ts`
 
 Export rules:
 
-- re-export both the schema and its derived types
+- re-export both the schema and its derived types from `index.ts`
+- re-export schema-derived types from `types.ts`
 - do not create catch-all top-level schema barrels
 
 ### Types
@@ -722,7 +797,7 @@ Mandatory rules:
 State rules:
 
 - always use `useImmer`; never use `useState`
-- state value must be an object
+- state value must be an object; never pass a scalar directly to `useImmer`
 - maximum one `useImmer({ ... })` call per file
 - use `useImmerReducer` for more complex state transitions
 
@@ -830,11 +905,21 @@ Rules:
 - use `as const` when literal inference is useful
 - use named exports only
 - keep constants static and behavior-free
+- do not define interfaces or types in constants files; put them in `types.ts`
 - do not create barrel files for constants directories
 
 Exception:
 
 If a value supports only one leaf folder, keep it as colocated `constants.ts` instead of promoting it.
+
+## Package Management
+
+### Mandatory rules
+
+- use `npm install -E <package>` when adding an exact-version production dependency
+- use `npm install -E -D <package>` when adding an exact-version dev dependency
+- do not allow floating version ranges for new dependencies unless an integration explicitly requires it
+- keep installed versions locked in `package-lock.json`
 
 ## Routes and Navigation
 

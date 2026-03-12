@@ -1,17 +1,8 @@
-import type { GalacticArchiveSide } from "@/modules/reference-patterns/lib/galactic-archive-query-state";
+import type {
+  GalacticArchiveFeaturedCharacterDefinition,
+  GalacticArchiveProjectDefinition,
+} from "./galactic-archive-curation.types";
 
-export interface GalacticArchiveFeaturedCharacterDefinition {
-  id: number;
-  profileKey: string;
-  side: GalacticArchiveSide;
-}
-
-export interface GalacticArchiveProjectDefinition {
-  episodeId: number;
-  projectKey: string;
-  shipName: string;
-  side: GalacticArchiveSide;
-}
 
 export const GALACTIC_ARCHIVE_FEATURED_CHARACTER_DEFINITIONS: ReadonlyArray<
   GalacticArchiveFeaturedCharacterDefinition

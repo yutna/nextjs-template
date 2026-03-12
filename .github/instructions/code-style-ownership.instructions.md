@@ -17,6 +17,9 @@ Keep the project shape stable:
 - keep the folder name and main file aligned to the owned concern
 - use leaf `index.ts` files as the public API instead of parent barrel files
 - colocate tests and local `types.ts` files with the owning concern when appropriate
+- colocate `constants.ts` when the concern owns values narrower in scope than the module constants folder
+- constants must not live in `types.ts`; types must not live in `constants.ts`
+- module-internal shared types that are not part of the public API must stay unexported from `index.ts`
 - prefer extending an existing owned surface before inventing a parallel structure
 
 Load narrower or deeper guidance when relevant:

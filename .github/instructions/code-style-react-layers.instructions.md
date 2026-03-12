@@ -17,7 +17,8 @@ Keep the server-first layer model intact:
 - keep containers as the bridge layer that binds logic to presenter components
 - bind presenter props explicitly instead of spreading hook return objects into JSX
 - keep presenter components logic-light and do not import containers, screens, actions, hooks, contexts, or providers into them
-- keep hooks as the home for extracted client logic and browser interaction state
+- extract sub-components with real component concerns (dynamic imports with loading state, SSR configuration, or independent rendering logic) to their own files within the component folder rather than defining them at the module level inline
+- keep hooks as the home for extracted client logic and browser interaction state; hook state must always be an object — never a scalar — when using `useImmer`
 - keep contexts responsible for the context object and contracts only; keep providers separate
 - keep App Router error boundaries as the narrow documented exception that may use hooks or actions directly
 - add `"use client"` only at the smallest leaf that truly needs client behavior

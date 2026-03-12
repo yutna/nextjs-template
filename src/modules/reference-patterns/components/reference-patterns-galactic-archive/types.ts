@@ -1,8 +1,10 @@
 import type { GalacticArchiveSide } from "@/modules/reference-patterns/lib/galactic-archive-query-state";
-import type { GalacticArchiveProjectMetadata } from "@/modules/reference-patterns/lib/galactic-archive-view-models";
-import type { GalacticArchiveSearchResult } from "@/modules/reference-patterns/lib/galactic-archive-view-models";
-import type { GalacticArchiveStarshipSpotlight } from "@/modules/reference-patterns/lib/galactic-archive-view-models";
-import type { GalacticArchiveTimelineEntry } from "@/modules/reference-patterns/lib/galactic-archive-view-models";
+import type {
+  GalacticArchiveProjectMetadata,
+  GalacticArchiveSearchResult,
+  GalacticArchiveStarshipSpotlight,
+  GalacticArchiveTimelineEntry,
+} from "@/modules/reference-patterns/lib/galactic-archive-view-models";
 
 export interface GalacticArchiveSystemState {
   label: string;
@@ -67,15 +69,17 @@ export interface GalacticArchiveFeaturedCollection {
   side: GalacticArchiveSide;
 }
 
+export interface GalacticArchiveFeaturedLabels {
+  birthYear: string;
+  films: string;
+  noStarships: string;
+  starships: string;
+}
+
 export interface GalacticArchiveFeaturedContent {
   collections: ReadonlyArray<GalacticArchiveFeaturedCollection>;
   heading: string;
-  labels: {
-    birthYear: string;
-    films: string;
-    noStarships: string;
-    starships: string;
-  };
+  labels: GalacticArchiveFeaturedLabels;
 }
 
 export interface GalacticArchiveProjectCard extends GalacticArchiveProjectMetadata {
@@ -83,41 +87,47 @@ export interface GalacticArchiveProjectCard extends GalacticArchiveProjectMetada
   title: string;
 }
 
+export interface GalacticArchiveProjectsLabels {
+  film: string;
+  manufacturer: string;
+  shipClass: string;
+}
+
 export interface GalacticArchiveProjectsContent {
   description: string;
   heading: string;
   items: ReadonlyArray<GalacticArchiveProjectCard>;
-  labels: {
-    film: string;
-    manufacturer: string;
-    shipClass: string;
-  };
+  labels: GalacticArchiveProjectsLabels;
+}
+
+export interface GalacticArchiveStarshipsLabels {
+  crew: string;
+  hyperdrive: string;
+  manufacturer: string;
+  speed: string;
 }
 
 export interface GalacticArchiveStarshipsContent {
   description: string;
   heading: string;
   items: ReadonlyArray<GalacticArchiveStarshipSpotlight>;
-  labels: {
-    crew: string;
-    hyperdrive: string;
-    manufacturer: string;
-    speed: string;
-  };
+  labels: GalacticArchiveStarshipsLabels;
 }
 
 export interface GalacticArchiveTimelineCard extends GalacticArchiveTimelineEntry {
   episodeLabel: string;
 }
 
+export interface GalacticArchiveTimelineLabels {
+  director: string;
+  release: string;
+}
+
 export interface GalacticArchiveTimelineContent {
   description: string;
   heading: string;
   items: ReadonlyArray<GalacticArchiveTimelineCard>;
-  labels: {
-    director: string;
-    release: string;
-  };
+  labels: GalacticArchiveTimelineLabels;
 }
 
 export interface GalacticArchiveSearchContent {

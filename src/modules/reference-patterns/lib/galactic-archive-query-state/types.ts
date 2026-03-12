@@ -1,4 +1,4 @@
-export const GALACTIC_ARCHIVE_SIDE_VALUES = ["light", "dark"] as const;
+import type { GALACTIC_ARCHIVE_SIDE_VALUES } from "./constants";
 
 export type GalacticArchiveSide = (typeof GALACTIC_ARCHIVE_SIDE_VALUES)[number];
 

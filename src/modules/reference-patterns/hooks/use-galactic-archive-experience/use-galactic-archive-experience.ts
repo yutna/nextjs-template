@@ -5,7 +5,7 @@ import { useDeferredValue } from "react";
 import useSWR from "swr";
 
 import { useGalacticArchiveAudio } from "@/modules/reference-patterns/hooks/use-galactic-archive-audio";
-import { galacticArchiveQueryParsers } from "@/modules/reference-patterns/lib/galactic-archive-query-state/galactic-archive-query-state";
+import { galacticArchiveQueryParsers } from "@/modules/reference-patterns/lib/galactic-archive-query-state";
 
 import type { GalacticArchiveSide } from "@/modules/reference-patterns/lib/galactic-archive-query-state";
 import type { GalacticArchiveSearchResult } from "@/modules/reference-patterns/lib/galactic-archive-view-models";

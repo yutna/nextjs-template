@@ -13,13 +13,17 @@ Keep service and boundary concerns explicit:
 - every public action implementation file begins with `"use server"`
 - use the shared safe-action clients and validate action input with `.inputSchema(...)`
 - keep actions thin and push reusable service logic into `lib` or `src/shared/api/` as appropriate
-- keep shared API wrappers in `src/shared/api/`, use `Effect` there, and keep normal React rendering layers free from Effect imports
+- keep shared API wrappers in `src/shared/api/<resource>/`; use `Effect` there, and keep normal React rendering layers free from Effect imports
+- prefer one primary exported function per `lib` file; add additional exports only when they share strong cohesion with the primary concern
 - keep `lib` focused on integrations, service boundaries, and operational concerns rather than presenters or schemas
 - keep vendor wrappers thin and library-specific under `src/shared/vendor/`
 - keep utils pure and free from React, browser, and framework-side orchestration
-- keep Zod as the schema source of truth and derive schema-owned types from the schema
+- keep Zod as the schema source of truth and derive schema-owned types from the schema with `z.infer`
+- schema-derived types belong in `types.ts`; do not define inferred types in `.schema.ts` files
+- do not place constants in `.schema.ts` files
 - keep config declarative, centralize environment access, and keep constants static and behavior-free
 - do not swallow errors silently; reuse meaningful application error shapes
+- never re-export a `server-only` module (or any file that imports `"server-only"`) from a barrel `index.ts` that client code may import; put server-only exports in a dedicated `server.ts` sibling entrypoint so client-safe and server-only surfaces are always on separate import paths
 
 Load deeper guidance when relevant:
 

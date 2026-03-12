@@ -178,4 +178,52 @@ describe("useGalacticArchiveExperience", () => {
     expect(result.current.isSearchLoading).toBe(true);
     expect(result.current.searchResults).toEqual(liveResults);
   });
+
+  it("exposes a search error message when SWR yields an Error object", () => {
+    mockUseQueryStates.mockReturnValue([
+      { search: "Vader", side: null },
+      mockSetQueryState,
+    ]);
+    mockUseSWR.mockReturnValue({
+      data: undefined,
+      error: new Error("SWAPI timeout"),
+      isLoading: false,
+    });
+
+    const { result } = renderHook(() =>
+      useGalacticArchiveExperience({
+        initialSearchQuery: "",
+        initialSearchResults,
+        initialSide: "light",
+      }),
+    );
+
+    expect(result.current.searchError).toBe("SWAPI timeout");
+  });
+
+  it("uses initialSearchResults as fallbackData when the deferred query matches the initial query", () => {
+    mockUseQueryStates.mockReturnValue([
+      { search: "Luke", side: null },
+      mockSetQueryState,
+    ]);
+    mockUseSWR.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
+
+    renderHook(() =>
+      useGalacticArchiveExperience({
+        initialSearchQuery: "Luke",
+        initialSearchResults,
+        initialSide: "light",
+      }),
+    );
+
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Function),
+      expect.objectContaining({ fallbackData: initialSearchResults }),
+    );
+  });
 });

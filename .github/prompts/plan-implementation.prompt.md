@@ -26,4 +26,4 @@ Rules:
 - reuse existing architecture and conventions
 - keep the plan specific enough that implementation does not need to guess
 - update [`.github/workflow-state.json`](../workflow-state.json) with planning status and files in scope
-- if the session `plan.md` is created or updated, mirror the same content into `tmp/PLAN.md` and keep it gitignored
+- if a plan draft is created or updated, mirror the same content into `src/tmp/PLAN.md` and keep it gitignored

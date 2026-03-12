@@ -16,7 +16,7 @@ function getToneFrequencies(side: GalacticArchiveSide) {
 
 export function useGalacticArchiveAudio(): UseGalacticArchiveAudioReturn {
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [isSoundEnabled, updateIsSoundEnabled] = useImmer(true);
+  const [state, updateState] = useImmer({ isSoundEnabled: true });
 
   useEffect(() => {
     return () => {
@@ -39,12 +39,14 @@ export function useGalacticArchiveAudio(): UseGalacticArchiveAudioReturn {
   }, []);
 
   const handleToggleSound = useCallback(() => {
-    updateIsSoundEnabled((currentValue) => !currentValue);
-  }, [updateIsSoundEnabled]);
+    updateState((draft) => {
+      draft.isSoundEnabled = !draft.isSoundEnabled;
+    });
+  }, [updateState]);
 
   const playSideCue = useCallback(
     (side: GalacticArchiveSide) => {
-      if (!isSoundEnabled) {
+      if (!state.isSoundEnabled) {
         return;
       }
 
@@ -77,12 +79,12 @@ export function useGalacticArchiveAudio(): UseGalacticArchiveAudioReturn {
         oscillator.stop(noteEndTime);
       });
     },
-    [getAudioContext, isSoundEnabled],
+    [getAudioContext, state.isSoundEnabled],
   );
 
   return {
     handleToggleSound,
-    isSoundEnabled,
+    isSoundEnabled: state.isSoundEnabled,
     playSideCue,
   };
 }

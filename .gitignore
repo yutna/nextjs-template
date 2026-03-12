@@ -37,7 +37,9 @@ src/tmp/PROMPT.md
 
 # runtime logs
 src/tmp/logs/*.log
-/tmp/PLAN.md
+
+# session plan mirrors
+src/tmp/PLAN.md
 
 # storybook build
 storybook-static

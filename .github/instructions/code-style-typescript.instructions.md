@@ -15,8 +15,11 @@ Keep the default TypeScript discipline tight:
 - use `interface` for public object-shaped contracts such as props, options, state, and context values
 - use `type` for unions, intersections, mapped types, conditional types, and schema-derived aliases
 - use `import type` and `export type` for type-only imports and re-exports
+- consolidate multiple `import type` statements from the same module into a single import
 - wrap React boundary props with `Readonly<...>` by default unless a specific API truly needs mutability
 - keep interface members grouped as required fields, required functions, optional fields, then optional functions
+- do not use inline object literals as property types when the object has two or more fields; extract them into named interfaces
+- constants must not live in `types.ts`; types must not live in `constants.ts`
 
 Load narrower or deeper guidance when relevant:
 

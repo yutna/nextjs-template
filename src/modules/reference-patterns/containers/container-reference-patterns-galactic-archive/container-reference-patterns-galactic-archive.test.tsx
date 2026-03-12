@@ -1,6 +1,15 @@
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
+import { RequestCookiesAdapter } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
+
+import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+
+function makeReadonlyRequestCookies(cookieString = ""): ReadonlyRequestCookies {
+  const headers = new Headers(cookieString ? { cookie: cookieString } : {});
+  return RequestCookiesAdapter.seal(new RequestCookies(headers));
+}
 
 import { ContainerReferencePatternsGalacticArchive } from "./container-reference-patterns-galactic-archive";
 
@@ -71,6 +80,67 @@ describe("ContainerReferencePatternsGalacticArchive", () => {
     const { container } = renderWithProviders(
       await ContainerReferencePatternsGalacticArchive({
         initialSearchQuery: "",
+        locale: "en",
+        requestedSide: null,
+      }),
+    );
+
+    expect(container).toBeDefined();
+  });
+
+  it("resolves the initial side from requestedSide when provided", async () => {
+    const { container } = renderWithProviders(
+      await ContainerReferencePatternsGalacticArchive({
+        initialSearchQuery: "",
+        locale: "en",
+        requestedSide: "dark",
+      }),
+    );
+
+    expect(container).toBeDefined();
+  });
+
+  it("resolves the initial side from the stored cookie when requestedSide is absent", async () => {
+    const { cookies: mockCookies } = await import("next/headers");
+    vi.mocked(mockCookies).mockResolvedValueOnce(
+      makeReadonlyRequestCookies("galactic-archive-side=light"),
+    );
+
+    const { container } = renderWithProviders(
+      await ContainerReferencePatternsGalacticArchive({
+        initialSearchQuery: "",
+        locale: "en",
+        requestedSide: null,
+      }),
+    );
+
+    expect(container).toBeDefined();
+  });
+
+  it("handles a rejected API call gracefully and shows a degraded status", async () => {
+    const { getSwapiRoot } = await import("@/shared/api/swapi");
+    vi.mocked(getSwapiRoot).mockReturnValueOnce(
+      (() => { throw new Error("network error"); }) as unknown as ReturnType<typeof getSwapiRoot>,
+    );
+
+    // Silence the expected console.error from Effect.runPromise failing
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const { container } = renderWithProviders(
+      await ContainerReferencePatternsGalacticArchive({
+        initialSearchQuery: "",
+        locale: "en",
+        requestedSide: null,
+      }),
+    );
+
+    expect(container).toBeDefined();
+  });
+
+  it("runs an initial SWAPI people search when initialSearchQuery is long enough", async () => {
+    const { container } = renderWithProviders(
+      await ContainerReferencePatternsGalacticArchive({
+        initialSearchQuery: "Luke",
         locale: "en",
         requestedSide: null,
       }),

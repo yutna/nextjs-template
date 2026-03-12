@@ -199,4 +199,42 @@ describe("galacticArchiveViewModels", () => {
       }),
     ]);
   });
+
+  it("returns the opening crawl verbatim when it fits within the preview length", () => {
+    const shortCrawl = "A short crawl.";
+    const viewModel = buildGalacticArchiveViewModel({
+      featuredPeople: [],
+      films: [
+        createFilm({ opening_crawl: shortCrawl, url: "https://swapi.dev/api/films/1/" }),
+      ],
+      root: null,
+      starships: [],
+    });
+
+    expect(viewModel.timeline[0].openingCrawl).toBe(shortCrawl);
+  });
+
+  it("returns an empty featured character list when provided people do not match any curation entry", () => {
+    const viewModel = buildGalacticArchiveViewModel({
+      featuredPeople: [
+        createPerson({ name: "Unknown Person", url: "https://swapi.dev/api/people/999/" }),
+      ],
+      films: [],
+      root: null,
+      starships: [],
+    });
+
+    expect(viewModel.featuredCharacters).toHaveLength(0);
+  });
+
+  it("marks apiStatus.rootOnline as false when root is null", () => {
+    const viewModel = buildGalacticArchiveViewModel({
+      featuredPeople: [],
+      films: [],
+      root: null,
+      starships: [],
+    });
+
+    expect(viewModel.apiStatus.rootOnline).toBe(false);
+  });
 });
