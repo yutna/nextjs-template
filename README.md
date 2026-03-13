@@ -1,9 +1,10 @@
-# Next.js Template
+# Vibe Next Template
 
-Built for front-end developers shipping polished UIs on top of an external
-API — **NOT** a full-stack template. No database. No auth server. Just a
-fast, opinionated [Next.js 16][nextjs] starter for clean front-ends that
-talk to a backend.
+> AI‑Powered Code. Human‑Level Control.
+
+Built for developers and teams shipping polished apps with confidence.
+A fast, opinionated [Next.js 16][nextjs] starter with server-first
+architecture, strict TypeScript, and production-ready UI foundations.
 
 ## Features
 
@@ -48,19 +49,27 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Tech Stack
 
-| Category        | Technology                                           |
-| --------------- | ---------------------------------------------------- |
-| Framework       | [Next.js 16][nextjs] · [React 19][react]             |
-| Language        | [TypeScript][typescript] (strict)                    |
-| UI              | [Chakra UI v3][chakra] · [Ark UI][ark]               |
-| i18n            | [next-intl][intl]                                    |
-| Validation      | [Zod][zod]                                           |
-| Server Actions  | [next-safe-action][safe-action]                      |
-| Data Fetching   | [SWR][swr]                                           |
-| Error Handling  | [Effect][effect]                                     |
-| Testing         | [Vitest][vitest] · [Testing Library][testing-lib]    |
-| Logging         | [Pino][pino]                                         |
-| Components      | [Storybook][storybook]                               |
+| Category | Technology |
+| --- | --- |
+| Framework | [Next.js 16][nextjs] · [React 19][react] |
+| Language | [TypeScript][typescript] (strict) |
+| UI | [Chakra UI v3][chakra] · [Ark UI][ark] |
+| Component Icons | [React Icons][react-icons] |
+| i18n | [next-intl][intl] |
+| Validation | [Zod][zod] |
+| Server Actions | [next-safe-action][safe-action] |
+| Data Fetching | [SWR][swr] |
+| URL State | [nuqs][nuqs] |
+| State | [use-immer][use-immer] · [Immer][immer] |
+| State Machines | [XState][xstate] · [Zag.js][zag] |
+| Animation | [motion][motion] |
+| Theming | [next-themes][next-themes] |
+| Utilities | [dayjs][dayjs] · [clsx][clsx] · [usehooks-ts][usehooks-ts] |
+| Env Validation | [@t3-oss/env-nextjs][env-nextjs] |
+| Error Handling | [Effect][effect] |
+| Logging | [Pino][pino] |
+| Testing | [Vitest][vitest] · [Testing Library][testing-lib] |
+| Component Dev | [Storybook][storybook] |
 
 ## Project Structure
 
@@ -123,18 +132,30 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 [ark]: https://ark-ui.com
 [chakra]: https://chakra-ui.com
+[clsx]: https://github.com/lukeed/clsx
+[dayjs]: https://day.js.org
 [effect]: https://effect.website
+[env-nextjs]: https://env.t3.gg/docs/nextjs
 [eslint]: https://eslint.org
+[immer]: https://immerjs.github.io/immer/
 [intl]: https://next-intl-docs.vercel.app
 [mise]: https://mise.jdx.dev
+[motion]: https://motion.dev
+[next-themes]: https://github.com/pacocoursey/next-themes
 [nextjs]: https://nextjs.org
+[nuqs]: https://nuqs.dev
 [pino]: https://getpino.io
 [react]: https://react.dev
+[react-icons]: https://react-icons.github.io/react-icons
 [safe-action]: https://next-safe-action.dev
 [storybook]: https://storybook.js.org
 [stylelint]: https://stylelint.io
 [swr]: https://swr.vercel.app
 [testing-lib]: https://testing-library.com
 [typescript]: https://www.typescriptlang.org
+[use-immer]: https://github.com/immerjs/use-immer
+[usehooks-ts]: https://usehooks-ts.com
 [vitest]: https://vitest.dev
+[xstate]: https://stately.ai/docs/xstate
+[zag]: https://zagjs.com
 [zod]: https://zod.dev
