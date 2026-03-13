@@ -5,6 +5,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import type { StorybookConfig } from "@storybook/nextjs-vite";
 import type { Plugin } from "vite";
 
+process.env.NEXT_PUBLIC_API_URL ||= "https://api.example.com";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 

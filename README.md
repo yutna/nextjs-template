@@ -33,7 +33,7 @@ cd my-app
 
 ### Prerequisites
 
-- **Node.js 24+** — managed by [mise][mise], see [`mise.toml`](./mise.toml)
+- **Node.js 24.14.0+** — managed by [mise][mise], see [`mise.toml`](./mise.toml)
 - **npm** — no yarn/pnpm/bun
 
 ### Setup
