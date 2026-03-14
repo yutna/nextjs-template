@@ -1,11 +1,12 @@
-import { join } from "path";
-
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { join } from "path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [tsconfigPaths(), react()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     coverage: {
       exclude: [
@@ -34,7 +35,10 @@ export default defineConfig({
     globals: true,
     projects: [
       {
-        plugins: [tsconfigPaths(), react()],
+        plugins: [react()],
+        resolve: {
+          tsconfigPaths: true,
+        },
         test: {
           environment: "jsdom",
           globals: true,
@@ -45,8 +49,9 @@ export default defineConfig({
         },
       },
       {
-        plugins: [tsconfigPaths(), react()],
+        plugins: [react()],
         resolve: {
+          tsconfigPaths: true,
           alias: {
             "@storybook-preview": join(
               import.meta.dirname,
@@ -83,9 +88,7 @@ export default defineConfig({
           globals: true,
           include: ["src/test/stories-smoke.test.tsx"],
           name: "storybook",
-          setupFiles: [
-            "./src/test/storybook-setup.ts",
-          ],
+          setupFiles: ["./src/test/storybook-setup.ts"],
         },
       },
     ],

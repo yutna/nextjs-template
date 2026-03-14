@@ -30,7 +30,7 @@ yarn-error.log*
 /build
 
 # runtime logs
-src/tmp/logs/*.log
+tmp/logs/*.log
 
 # storybook build
 storybook-static
