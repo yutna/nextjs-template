@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-template",
+  "name": "vibe-next-template",
   "version": "0.0.0",
   "private": true,
   "engines": {
@@ -89,7 +89,6 @@
     "stylelint-order": "8.1.0",
     "typescript": "5.9.3",
     "vite": "8.0.0",
-    "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.0"
   }
 }
