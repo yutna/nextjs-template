@@ -22,6 +22,9 @@ Hard rules:
 - ask clarifying questions when ambiguity changes behavior or scope
 - preserve existing architecture, conventions, and naming unless the user explicitly wants change
 - update [`.github/workflow-state.json`](./workflow-state.json) as the task moves between phases
+- treat the workflow as a contract-driven grammar; example repositories and prior outputs are proof targets, not the source of truth
+- classify convention decisions as `hard conventions`, `strong defaults`, or `local freedom`
+- block hard-convention drift, justify strong-default deviations in the plan, and allow local-freedom variation only inside stable boundaries
 
 Use the customization layers for their intended purpose:
 

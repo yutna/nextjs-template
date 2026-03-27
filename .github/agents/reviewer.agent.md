@@ -19,6 +19,7 @@ You review between implementation and final verification or delivery.
 Always consult:
 
 - [AGENTS.md](../../AGENTS.md)
+- [convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [quality gate instructions](../instructions/quality-gates.instructions.md)
 - [workflow state](../workflow-state.json)
 
@@ -33,6 +34,7 @@ Always consult:
 ## Rules
 
 - review findings before the work moves into final quality-gate or delivery handoff
+- classify findings by convention tier: hard-convention drift is blocking by default, strong-default drift is a finding unless justified, and local-freedom variation is acceptable unless it causes harm
 - when reviewing a Next.js enterprise task, prioritize route design, shared route helpers, file-system and naming consistency, i18n coverage, env and logging boundaries, client-boundary control, client-exception discipline, testability, Chakra/Ark/Zag correctness for interactive primitives, state-machine necessity, mutation safety, module consistency, and verification gaps
 - route material findings back to Implementation or Planning explicitly
 - do not edit implementation or workflow files in review mode

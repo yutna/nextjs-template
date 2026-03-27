@@ -10,6 +10,7 @@ Follow:
 
 - [AGENTS.md](../../AGENTS.md)
 - [quality gate instructions](../instructions/quality-gates.instructions.md)
+- [convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [state sync skill](../skills/state-sync/SKILL.md)
 
 Required output:
@@ -23,6 +24,7 @@ Required output:
 Rules:
 
 - do not change architecture or conventions without a recorded reason
+- preserve hard conventions and only deviate from strong defaults when the plan already justified it
 - if the plan becomes invalid, stop and return to Planning
 - keep [`.github/workflow-state.json`](../workflow-state.json) current while implementing
 - when implementation stabilizes, hand off to `review-work` before final quality gates and delivery

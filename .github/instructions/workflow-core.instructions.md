@@ -12,7 +12,8 @@ Before taking action:
 1. identify the current phase
 2. check [`.github/workflow-state.json`](../workflow-state.json)
 3. check [`.github/workflow-profile.json`](../workflow-profile.json) when the task depends on repo-specific roots, quality gates, or adoption state
-4. confirm the preconditions for the next step
+4. identify whether the decision surface falls under a hard convention, a strong default, or local freedom
+5. confirm the preconditions for the next step
 
 Rules:
 
@@ -22,5 +23,7 @@ Rules:
 - if the user rejects the plan, go back to Planning
 - if the user rejects the result, go back to Discovery or Implementation based on the feedback
 - for fresh adoptions, prefer `workflow_adopt_report.cjs`, `workflow_bootstrap.cjs`, and `workflow_doctor.cjs` before the first implementation task
+- use the local workflow contract as the reason a decision is correct; do not justify design choices only because another repository happened to use them
+- preserve hard conventions automatically, reuse strong defaults unless the plan records a reason to deviate, and keep local freedom inside the approved scope
 
 When completing a phase, update the workflow state so the next tool, prompt, or agent can continue without guessing.

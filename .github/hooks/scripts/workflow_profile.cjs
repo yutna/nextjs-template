@@ -9,6 +9,25 @@ const PROFILE_FILE = path.join('.github', 'workflow-profile.json');
 const REPOSITORY_ROLES = new Set(['workflow-template', 'nextjs-app', 'monorepo', 'react-app', 'generic']);
 const ADOPTION_MODES = ['from-scratch', 'adopt-existing-project', 'migrate-existing-nextjs'];
 const DEFAULT_GENERATED_IGNORE_PATTERNS = ['.github/hooks/*.log', '.next/', 'storybook-static/', 'coverage/', 'dist/'];
+const DEFAULT_CONVENTION_TIERS = {
+  model: 'contract-driven',
+  principle: 'convention-over-deliberation',
+  hardConventions: [
+    'Respect the six-phase workflow and state contract.',
+    'Preserve repository naming, route, and boundary grammar declared by the active profile.',
+    'Use the repository quality-gate sequence before delivery.',
+  ],
+  strongDefaults: [
+    'Reuse the repository module shapes, adoption defaults, and approved libraries before inventing new patterns.',
+    'Prefer the smallest boundary change and the narrowest side-effect surface that solves the task.',
+    'Prefer extending the existing repository grammar over reorganizing it.',
+  ],
+  localFreedom: [
+    'Private helper extraction inside an approved boundary.',
+    'Internal function decomposition and local component factoring that do not change public grammar.',
+    'Implementation detail that stays inside the approved plan and validation path.',
+  ],
+};
 const DEFAULT_COMMANDS = {
   validateState: 'node .github/hooks/scripts/workflow_hook.cjs validate-state',
   validateRepo: 'node .github/hooks/scripts/validate_repo.cjs',
@@ -237,6 +256,7 @@ function buildSuggestedProfile(root) {
       localePrefix: true,
       visibleRouteBoundary: '[locale]',
     },
+    conventions: structuredClone(DEFAULT_CONVENTION_TIERS),
     structure: {
       clientComponentSuffix: '.client.tsx',
       forbiddenLegacyDirectories: ['containers', 'screens'],
@@ -380,6 +400,25 @@ function validateProfile(root, profile) {
     }
   }
 
+  const conventions = profile.conventions;
+  if (!isPlainObject(conventions)) {
+    errors.push(`${PROFILE_FILE} must define a conventions object.`);
+  } else {
+    if (typeof conventions.model !== 'string' || !conventions.model.trim()) {
+      errors.push(`${PROFILE_FILE} conventions.model must be a non-empty string.`);
+    } else if (conventions.model !== DEFAULT_CONVENTION_TIERS.model) {
+      errors.push(`${PROFILE_FILE} conventions.model must be "${DEFAULT_CONVENTION_TIERS.model}".`);
+    }
+    if (typeof conventions.principle !== 'string' || !conventions.principle.trim()) {
+      errors.push(`${PROFILE_FILE} conventions.principle must be a non-empty string.`);
+    } else if (conventions.principle !== DEFAULT_CONVENTION_TIERS.principle) {
+      errors.push(`${PROFILE_FILE} conventions.principle must be "${DEFAULT_CONVENTION_TIERS.principle}".`);
+    }
+    for (const key of ['hardConventions', 'strongDefaults', 'localFreedom']) {
+      validateStringArray(conventions[key], `${PROFILE_FILE} conventions.${key}`, errors);
+    }
+  }
+
   const structure = profile.structure;
   if (!isPlainObject(structure)) {
     errors.push(`${PROFILE_FILE} must define a structure object.`);
@@ -464,6 +503,7 @@ function templateBootstrapStateIssues(state, profile) {
 module.exports = {
   ADOPTION_MODES,
   DEFAULT_COMMANDS,
+  DEFAULT_CONVENTION_TIERS,
   DEFAULT_GENERATED_IGNORE_PATTERNS,
   PROFILE_FILE,
   PROFILE_VERSION,

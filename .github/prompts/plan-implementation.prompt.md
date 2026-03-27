@@ -10,6 +10,7 @@ Follow:
 
 - [AGENTS.md](../../AGENTS.md)
 - [workflow core instructions](../instructions/workflow-core.instructions.md)
+- [convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [implementation planning skill](../skills/implementation-planning/SKILL.md)
 
 Required output:
@@ -19,10 +20,12 @@ Required output:
 3. Dependencies and sequencing
 4. Risks and rollback points
 5. Validation strategy
-6. Approval checkpoint for moving to Implementation
+6. Convention-tier notes: hard conventions preserved, strong defaults reused, and any justified deviations
+7. Approval checkpoint for moving to Implementation
 
 Rules:
 
 - reuse existing architecture and conventions
 - keep the plan specific enough that implementation does not need to guess
+- do not justify structural choices only because another repository used them before
 - update [`.github/workflow-state.json`](../workflow-state.json) with planning status and files in scope

@@ -50,6 +50,7 @@ Always consult:
 6. Do not perform commit, push, release, or PR actions unless the user explicitly asks.
 7. When the active stack is the Next.js enterprise profile, route work through the matching Next.js instructions, skills, prompts, file-system governance, i18n rules, route-registry conventions, testability guidance, and the optional Migrator when legacy surfaces are involved.
 8. When MCP or approved upstream skill packs are available, use them as evidence and framework-reference layers without bypassing the local workflow contract.
+9. Treat the workflow contract as the source of truth; examples and migrated repositories are evidence, not the reason a design is correct.
 
 ## Delegation policy
 

@@ -35,12 +35,16 @@ node .github/hooks/scripts/workflow_doctor.cjs
 
 6. Start with the `discover-requirements` prompt and keep the project in Discovery until scope, constraints, and acceptance criteria are explicit.
 
+The resulting workflow profile should be treated as the repository's contract
+grammar, not as a copy of a sample application's shape.
+
 ## What should be customized immediately
 
 - [`.github/workflow-profile.json`](../../.github/workflow-profile.json)
 - [`.vscode/mcp.json`](../../.vscode/mcp.json)
 - `quality gate commands` in the workflow profile once the repo has real scripts
 - `roots.appRoots`, `roots.featureRoots`, and `roots.localeRoots` after the app layout is chosen
+- `conventions.*` in the workflow profile when the repository needs stricter or narrower convention tiers
 
 ## Recommended first pilot
 

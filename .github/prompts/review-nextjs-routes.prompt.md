@@ -9,6 +9,7 @@ Review the route design and route-level implementation.
 Follow:
 
 - [AGENTS.md](../../AGENTS.md)
+- [Convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [Next.js routing skill](../skills/nextjs-routing/SKILL.md)
 - [Next.js file-system governance skill](../skills/nextjs-file-system-governance/SKILL.md)
 
@@ -18,10 +19,12 @@ Required output:
 2. URL and layout issues
 3. Route segment naming or route-registry consistency issues
 4. Dynamic segment or `searchParams` misuse
-5. Whether the route tree can proceed to verification
+5. Convention-tier classification for material route findings
+6. Whether the route tree can proceed to verification
 
 Rules:
 
 - findings come first
 - flag route groups, dynamic segments, special files, and route segment names that do not match the intended UX or naming contract
+- treat route-grammar violations as hard-convention findings unless the plan justified a change
 - require explicit justification for parallel or intercepting routes

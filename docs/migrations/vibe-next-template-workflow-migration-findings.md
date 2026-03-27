@@ -78,6 +78,22 @@ Resolution:
 - updated CI to run `workflow:doctor` in the integrity job
 - updated `README.md` and `CONTRIBUTING.md` so contributors use the same commands locally that CI uses
 
+### 9. Consumer repositories cannot reuse the source template profile verbatim
+
+Syncing the latest workflow contract from the source repository copied `.github/workflow-profile.json` exactly as it appears in the template. That profile correctly describes the source repository as a `workflow-template`, but it is invalid for a real application repository.
+
+Impact:
+
+- `workflow:doctor` immediately flagged the repository name mismatch
+- `validate-repo` treated the application as a template repo and incorrectly required a bootstrap discovery state
+
+Resolution:
+
+- rewrote `.github/workflow-profile.json` so the repository identifies itself as `vibe-next-template`
+- switched the repository role to `nextjs-app`
+- restored app-specific roots and quality-gate commands inferred from the consumer repository
+- reran the full gate stack to confirm the synced workflow now validates correctly in a real application repo
+
 ## Workflow gaps discovered
 
 ### 1. `workflow-state.json` can be semantically stale but still schema-valid

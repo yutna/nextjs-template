@@ -98,9 +98,25 @@ Compatibility rule:
 
 - if the target repository is not a monorepo, all `apps/web/src/*` conventions map directly to `src/*`
 
+### 5. Use a contract-driven convention model
+
+This profile does not depend on a canonical reference repository.
+
+- the source of truth is the local workflow contract plus the active repository profile
+- example applications are useful as validation targets, not as the reason a design is correct
+- recurring structural choices should be encoded as conventions so AI does not re-litigate them in every task
+
+Convention tiers in this profile:
+
+- Hard conventions: locale-prefixed visible URLs, route-shell boundaries, feature-module grammar, file naming grammar, i18n contract, quality-gate order
+- Strong defaults: Turbo-style topology, recommended library choices, recommended route taxonomy, recommended `components/client/` placement, recommended test seams
+- Local freedom: helper extraction, internal component factoring, and private module decomposition that does not change the public grammar
+
 ## Dependency baseline
 
-The profile assumes the dependency set from `vibe-next-template` as a minimum baseline, with newer versions allowed.
+The profile defines its own minimum dependency baseline. Repositories may use
+newer versions, and they may omit packages that are not needed for the active
+scope, but substitutions should preserve the same responsibilities.
 
 ### Foundation
 
@@ -830,7 +846,7 @@ These belong in the eventual implementation profile:
 - Turbopack as the default bundler path, with compatibility fallback only when evidence requires it
 - shared route helpers for reusable user-facing URLs
 - Figma MCP and Next DevTools MCP available in teams that rely on design or runtime evidence
-- Ark UI MCP and Chakra UI MCP available when the dependency baseline follows `vibe-next-template`
+- Ark UI MCP and Chakra UI MCP available when the active dependency baseline includes those UI layers
 - Zag.js available as the explicit interaction-machine layer for custom primitives
 - locale-aware routing with `en` default and `en`/`th` support
 - `next-intl` as the required locale-routing and message-loading layer

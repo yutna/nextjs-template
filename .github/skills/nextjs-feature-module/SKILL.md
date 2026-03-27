@@ -10,6 +10,7 @@ Use this skill when designing or reviewing feature structure.
 Reference:
 
 - [AGENTS.md](../../../AGENTS.md)
+- [Convention tier model](../../../docs/convention-tier-model.md)
 - [Next.js enterprise design](../../../docs/nextjs-enterprise-workflow-design.md)
 - [Next.js file-system governance skill](../nextjs-file-system-governance/SKILL.md)
 - [Next.js i18n skill](../nextjs-i18n/SKILL.md)
@@ -32,6 +33,7 @@ src/features/<feature>/
 
 ## Responsibility rules
 
+- the feature root shape is a hard convention when this profile is active
 - `actions/`: Server Actions and mutation orchestration
 - `components/`: server-rendered views and presenters
 - `components/client/`: narrow interactive islands
@@ -43,6 +45,12 @@ src/features/<feature>/
 - `tests/`: feature-local tests
 - visible feature copy should live in the feature namespace of the message tree, not inline in components
 - Chakra/Ark/Zag-backed primitive logic should stay close to the client leaf that owns the interaction
+
+## Convention tiers
+
+- Hard conventions: feature slug grammar, top-level feature shape, route/i18n alignment, client-boundary rules declared by the active profile
+- Strong defaults: recommended placement for actions, schemas, policies, and data modules; recommended use of `components/client/`
+- Local freedom: internal file breakdown, helper extraction, and component factoring inside the approved feature boundary
 
 ## Naming rules
 
@@ -66,3 +74,4 @@ src/features/<feature>/
 - dump all logic into `lib/`
 - mix unrelated features in the same module
 - scatter nested barrels or vague utility files through feature internals
+- justify the module shape only because another project happened to use it

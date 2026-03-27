@@ -44,6 +44,9 @@ node .github/hooks/scripts/workflow_doctor.cjs
 
 7. Use Planning to split the migration into explicit waves.
 
+Treat the rewritten workflow profile as the target repository's grammar. It is
+not a reference snapshot from the source template.
+
 ## Suggested migration waves
 
 1. workflow and tooling installation

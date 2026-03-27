@@ -7,7 +7,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const workflowHook = require('./workflow_hook.cjs');
-const { ADOPTION_MODES, DEFAULT_COMMANDS, DEFAULT_GENERATED_IGNORE_PATTERNS } = require('./workflow_profile.cjs');
+const { ADOPTION_MODES, DEFAULT_COMMANDS, DEFAULT_CONVENTION_TIERS, DEFAULT_GENERATED_IGNORE_PATTERNS } = require('./workflow_profile.cjs');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const HOOK_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_hook.cjs');
 const NEXTJS_HOOK_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'nextjs_policy.cjs');
@@ -109,6 +109,7 @@ function loadStaleTemplateProfile() {
       localePrefix: true,
       visibleRouteBoundary: '[locale]',
     },
+    conventions: structuredClone(DEFAULT_CONVENTION_TIERS),
     structure: {
       clientComponentSuffix: '.client.tsx',
       forbiddenLegacyDirectories: ['containers', 'screens'],

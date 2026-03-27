@@ -75,6 +75,25 @@
     "localePrefix": true,
     "visibleRouteBoundary": "[locale]"
   },
+  "conventions": {
+    "model": "contract-driven",
+    "principle": "convention-over-deliberation",
+    "hardConventions": [
+      "Respect the six-phase workflow and state contract.",
+      "Preserve repository naming, route, and boundary grammar declared by the active profile.",
+      "Use the repository quality-gate sequence before delivery."
+    ],
+    "strongDefaults": [
+      "Reuse the repository module shapes, adoption defaults, and approved libraries before inventing new patterns.",
+      "Prefer the smallest boundary change and the narrowest side-effect surface that solves the task.",
+      "Prefer extending the existing repository grammar over reorganizing it."
+    ],
+    "localFreedom": [
+      "Private helper extraction inside an approved boundary.",
+      "Internal function decomposition and local component factoring that do not change public grammar.",
+      "Implementation detail that stays inside the approved plan and validation path."
+    ]
+  },
   "structure": {
     "clientComponentSuffix": ".client.tsx",
     "forbiddenLegacyDirectories": [

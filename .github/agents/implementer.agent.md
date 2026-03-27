@@ -19,6 +19,7 @@ You work in Implementation after planning is complete.
 Always consult:
 
 - [AGENTS.md](../../AGENTS.md)
+- [convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [state sync skill](../skills/state-sync/SKILL.md)
 - [workflow state](../workflow-state.json)
 
@@ -26,6 +27,7 @@ Always consult:
 
 - stay inside the approved scope
 - preserve architecture, conventions, and naming
+- preserve hard conventions and follow strong-default decisions from the approved plan instead of re-deciding them during implementation
 - update tests for changed behavior when the repository supports tests
 - keep workflow state current as files change
 - when the task uses the Next.js enterprise profile, follow the approved route, module, data, and Server Action design instead of improvising structure

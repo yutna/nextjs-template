@@ -11,6 +11,7 @@ Preserve working behavior while moving the repository toward:
 - feature-first structure
 - server-first boundaries
 - deterministic workflow state and gates
+- contract-driven conventions instead of example-driven structure copying
 
 ## Sequence
 
@@ -47,6 +48,7 @@ node .github/hooks/scripts/workflow_audit_structure.cjs
 - client shells that should become `*.client.tsx`
 - missing or incorrect quality gate commands
 - CI steps that still reflect the previous workflow
+- strong-default deviations the migration intentionally keeps
 
 ## Common fixes the workflow now expects
 

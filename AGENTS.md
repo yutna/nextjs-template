@@ -268,6 +268,34 @@ Agents must be predictable:
 - keep always-on guidance short and stable
 - move detailed procedures into on-demand skills
 
+## Convention contract
+
+The workflow is contract-driven, not reference-driven.
+
+- sample repositories, generated apps, and migrations can validate the workflow, but they are not the source of truth
+- the source of truth is the local workflow contract expressed through `AGENTS.md`, instructions, prompts, skills, profiles, and hooks
+- prefer convention over deliberation: remove recurring structural decisions from task-level reasoning when the workflow can decide them once
+
+Classify convention decisions into these tiers:
+
+- Hard conventions: fixed rules that should not drift without an explicit user or profile-level decision
+- Strong defaults: preferred answers that should be reused unless the plan records a justified deviation
+- Local freedom: implementation details that may vary inside a stable contract without harming consistency
+
+Examples:
+
+- Hard conventions: workflow phase order, state contract, required quality gates, required route or boundary grammar, required naming schemes declared by the active profile
+- Strong defaults: recommended repo topology, recommended module shapes, preferred library choices, preferred verification paths
+- Local freedom: helper extraction, internal function decomposition, local component factoring, small private naming choices that do not change public grammar
+
+Rules:
+
+- Planning must state when work follows strong defaults and when it intentionally deviates from them
+- Review must treat hard-convention violations as blocking unless the requirements changed deliberately
+- Review may treat unjustified strong-default drift as a finding even when the code still works
+- Local-freedom variation is acceptable unless it harms correctness, testability, or future consistency
+- do not use a sample repository as the reason a design is correct; use the contract that governs the repository
+
 ## Delegation model
 
 Use specialized roles when available:

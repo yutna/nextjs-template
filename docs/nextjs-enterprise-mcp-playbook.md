@@ -14,12 +14,11 @@ real projects.
 | Server | Primary use | Why it matters |
 | --- | --- | --- |
 | `ark-ui` | headless component anatomy and composition reference | helps AI use Ark-backed component structure correctly when Chakra or custom wrappers expose Ark patterns |
-| `chakra-ui` | component API, composition rules, and design-system usage | keeps generated UI aligned with the Chakra-based dependency baseline from `vibe-next-template` |
+| `chakra-ui` | component API, composition rules, and design-system usage | keeps generated UI aligned with the profile's Chakra-based design-system baseline |
 | `figma` | design truth, frame inspection, component usage, Code Connect context | prevents AI from inventing layout and component details |
 | `next-devtools` | runtime debugging, route behavior, caching, Server Action inspection | gives route and rendering evidence beyond static reasoning |
 
-The baseline expectation for this profile is the MCP set inherited from
-`vibe-next-template`:
+The baseline expectation for this profile is the following MCP set:
 
 - `ark-ui`
 - `chakra-ui`

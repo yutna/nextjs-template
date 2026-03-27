@@ -10,6 +10,7 @@ Follow:
 
 - [AGENTS.md](../../AGENTS.md)
 - [workflow core instructions](../instructions/workflow-core.instructions.md)
+- [convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [Next.js MCP orchestration skill](../skills/nextjs-mcp-orchestration/SKILL.md)
 - [Next.js architecture skill](../skills/nextjs-architecture/SKILL.md)
 - [Next.js feature module skill](../skills/nextjs-feature-module/SKILL.md)
@@ -39,10 +40,12 @@ Required output:
 10. Testability plan and expected automated coverage seams
 11. Canonical feature slug, folder shape, and file naming plan
 12. Library decision notes for env, logging, client exceptions, machines, or UI runtime if any are involved
+13. Convention-tier notes covering hard conventions, strong defaults, and any justified local deviations
 
 Rules:
 
 - keep route files thin
 - prefer Server Components and Server Actions
 - justify every client island and every dynamic segment
+- use the profile contract and convention tiers as the reason the structure is correct, not a reference repository shape
 - update [`.github/workflow-state.json`](../workflow-state.json) with planning status and files in scope

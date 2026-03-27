@@ -45,6 +45,7 @@ const REQUIRED_PROMPT_FILES = [
 const REQUIRED_INSTRUCTION_FILES = [
   'agent-skills-standard.instructions.md',
   'ai-customization.instructions.md',
+  'convention-tiering.instructions.md',
   'nextjs-docs-first.instructions.md',
   'nextjs-app-router.instructions.md',
   'nextjs-app-router-specials.instructions.md',
@@ -70,6 +71,7 @@ const REQUIRED_INSTRUCTION_FILES = [
   'workflow-core.instructions.md',
 ];
 const REQUIRED_SKILL_DIRS = [
+  'convention-tiering',
   'nextjs-architecture',
   'nextjs-env',
   'nextjs-logging',
@@ -114,6 +116,7 @@ const REQUIRED_HOOK_SCRIPT_FILES = [
 ];
 const REQUIRED_SUPPORT_FILES = [
   'docs/agent-skills-standard.md',
+  'docs/convention-tier-model.md',
   'docs/adoption/from-scratch.md',
   'docs/adoption/adopt-existing-project.md',
   'docs/adoption/migrate-existing-nextjs.md',

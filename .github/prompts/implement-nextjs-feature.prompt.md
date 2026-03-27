@@ -9,6 +9,7 @@ Implement the approved Next.js feature without expanding scope.
 Follow:
 
 - [AGENTS.md](../../AGENTS.md)
+- [Convention tiering skill](../skills/convention-tiering/SKILL.md)
 - [state sync skill](../skills/state-sync/SKILL.md)
 - [Next.js feature module skill](../skills/nextjs-feature-module/SKILL.md)
 - [Next.js file-system governance skill](../skills/nextjs-file-system-governance/SKILL.md)
@@ -39,10 +40,12 @@ Required output:
 9. Testability notes and any new seams, stubs, or fixtures
 10. File-system or naming decisions confirmed
 11. Library-decision notes for env, logging, client exceptions, state machines, or UI runtime if used
+12. Convention-tier notes confirming hard conventions preserved and any planned strong-default deviations followed as approved
 
 Rules:
 
 - keep route files thin and business logic in feature modules
 - preserve the approved route and module design
+- preserve hard conventions and do not improvise new structural defaults during implementation
 - do not widen client boundaries without a recorded reason
 - keep [`.github/workflow-state.json`](../workflow-state.json) current while implementing

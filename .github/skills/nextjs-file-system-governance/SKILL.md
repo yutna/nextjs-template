@@ -10,6 +10,7 @@ Use this skill whenever a task creates, moves, renames, or reviews files in the 
 Reference:
 
 - [AGENTS.md](../../../AGENTS.md)
+- [Convention tier model](../../../docs/convention-tier-model.md)
 - [Next.js file-system instruction](../../instructions/nextjs-file-system.instructions.md)
 - [Next.js enterprise design](../../../docs/nextjs-enterprise-workflow-design.md)
 - [Next.js file-system playbook](../../../docs/nextjs-enterprise-file-system-playbook.md)
@@ -22,6 +23,12 @@ Reference:
 - feature modules share the same top-level shape
 - public barrels are intentional and minimal
 - generic catch-all file names are not allowed
+
+## Convention tiers
+
+- Hard conventions: naming grammar, forbidden generic buckets, route-segment grammar, top-level feature folders, public-barrel boundaries
+- Strong defaults: preferred folder placement such as `components/client/`, route-family helpers in `shared/routes/`, and role-specific suffixes
+- Local freedom: private helper layout inside an already approved module boundary
 
 ## Standard feature shape
 
@@ -68,3 +75,4 @@ Exported symbols can stay PascalCase when appropriate. File names should not.
 - create `helpers/`, `utils/`, `common/`, or `lib/` as escape hatches inside features
 - let route files proxy into technical folder names that do not match the domain shape
 - rename by personal preference when the canonical slug already exists
+- treat a copied example as stronger evidence than the active repository contract

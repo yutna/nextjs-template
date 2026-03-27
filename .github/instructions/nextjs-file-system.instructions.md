@@ -9,6 +9,7 @@ Treat file placement and naming as part of the architecture contract.
 
 Rules:
 
+- treat the naming and folder grammar below as hard conventions for this profile
 - use lowercase kebab-case for product folders and file names unless the framework requires a reserved name
 - keep each feature under a canonical slug that matches the route family, route-registry family, and i18n namespace when practical
 - feature modules may only introduce these top-level folders: `actions`, `components`, `constants`, `contracts`, `data`, `policies`, `schemas`, `tests`
@@ -16,6 +17,7 @@ Rules:
 - use role-specific file names such as `create-order.action.ts`, `order-form.schema.ts`, `can-manage-orders.policy.ts`, or `customer-summary.contract.ts`
 - keep client leaves under `components/client/` or use a `.client.tsx` suffix when exceptional colocated client files are justified
 - keep shared route helper files under `shared/routes/` with kebab-case family names and intentional `index.ts` exports only at route-family boundaries
+- allow local freedom only inside a stable feature boundary; do not let local preferences rewrite the public grammar
 
 Do not:
 
