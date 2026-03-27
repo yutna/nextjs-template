@@ -509,7 +509,7 @@ The design reference for this profile lives at [docs/nextjs-enterprise-workflow-
 The MCP operating guide lives at [docs/nextjs-enterprise-mcp-playbook.md](./docs/nextjs-enterprise-mcp-playbook.md).
 The workspace MCP sample prompts for a Figma Personal Access Token through a
 workspace input instead of hardcoding credentials into the repository.
-Approved upstream packs are vendored in [`.agents/skills/`](/Users/yutthana/Projects/vibe-copilot-workflow/.agents/skills) and locked by [skills-lock.json](./skills-lock.json).
+Approved upstream packs are vendored in [`.agents/skills/`](./.agents/skills/) and locked by [skills-lock.json](./skills-lock.json).
 
 ### Step 7 — Run the proof and structural checks
 
