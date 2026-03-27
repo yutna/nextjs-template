@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs session-context",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

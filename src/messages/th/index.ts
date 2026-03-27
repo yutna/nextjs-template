@@ -1,9 +1,9 @@
 import { common } from "./common";
-import { modules } from "./modules";
+import { features } from "./features";
 import { shared } from "./shared";
 
 export const th = {
   common,
-  modules,
+  features,
   shared,
 };

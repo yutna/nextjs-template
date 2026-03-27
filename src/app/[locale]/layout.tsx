@@ -8,7 +8,7 @@ import {
 } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import "@/modules/static-pages/styles/vibe.css";
+import "@/features/landing/components/landing-vibe.css";
 import { jetBrainsMono, notoSansThai } from "@/shared/config/fonts";
 import { routing } from "@/shared/config/i18n/routing";
 import { TIME_ZONE } from "@/shared/constants/timezone";

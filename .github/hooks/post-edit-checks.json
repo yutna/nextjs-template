@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs post-edit-checks",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

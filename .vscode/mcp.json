@@ -1,5 +1,12 @@
 {
-  "inputs": [],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "figma-personal-access-token",
+      "description": "Figma Personal Access Token",
+      "password": true
+    }
+  ],
   "servers": {
     "ark-ui": {
       "args": ["-y", "@ark-ui/mcp"],
@@ -11,6 +18,13 @@
       "command": "npx",
       "env": {},
       "type": "stdio"
+    },
+    "figma": {
+      "headers": {
+        "Authorization": "Bearer ${input:figma-personal-access-token}"
+      },
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
     },
     "next-devtools": {
       "args": ["-y", "next-devtools-mcp@latest"],

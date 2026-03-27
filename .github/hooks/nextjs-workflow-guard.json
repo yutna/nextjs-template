@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "windows": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "bash": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "powershell": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "windows": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "bash": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "powershell": "node .github/hooks/scripts/nextjs_policy.cjs workflow-guard",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

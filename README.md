@@ -1,161 +1,148 @@
 # Vibe Next Template
 
-> AI‑Powered Code. Human‑Level Control.
+> Next.js 16 starter plus a GitHub Copilot-first workflow contract.
 
-Built for developers and teams shipping polished apps with confidence.
-A fast, opinionated [Next.js 16][nextjs] starter with server-first
-architecture, strict TypeScript, and production-ready UI foundations.
+This repository is a production-ready Next.js 16 and React 19 template with:
 
-## Features
-
-- 🏗️ **Server-first** — App Router, React 19 RSC, minimal client surface
-- 🎨 **UI** — [Chakra UI v3][chakra] + [Ark UI][ark] headless primitives
-- 🌐 **i18n** — [next-intl][intl] with Thai 🇹🇭 and English 🇺🇸 locales
-- ✅ **TypeScript** — [strict][typescript], no `any`, zero exceptions
-- ⚡ **Server Actions** — [next-safe-action][safe-action] for type-safe
-  mutations
-- 🛡️ **Error Handling** — structured hierarchy, operational vs
-  non-operational
-- 🧪 **Testing** — [Vitest][vitest] + [Testing Library][testing-lib],
-  80% coverage
-- 🔍 **Linting** — [ESLint][eslint] + [Stylelint][stylelint] + custom
-  [Effect][effect]-based checks
-- 🤖 **AI-ready** — [`AGENTS.md`](./AGENTS.md) with Copilot instruction
-  files and skills
+- server-first App Router architecture
+- `next-intl` locale-prefixed routing for `en` and `th`
+- Chakra UI, Ark UI, and Zag.js-ready primitives
+- strict TypeScript, Vitest, Storybook, and structured logging
+- the six-phase AI workflow from [AGENTS.md](./AGENTS.md)
 
 ## Quick Start
 
 ```bash
 npx create-next-app \
-  --example https://github.com/yutna/nextjs-template \
+  --example https://github.com/yutna/vibe-next-template \
   my-app
 cd my-app
-```
-
-### Prerequisites
-
-- **Node.js 24.14.0+** — managed by [mise][mise], see [`mise.toml`](./mise.toml)
-- **npm** — no yarn/pnpm/bun
-
-### Setup
-
-```bash
 npm install
-cp .env.example .env.local   # edit with your values
+cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open `http://localhost:3000`.
+
+## Prerequisites
+
+- Node.js `24.14.0+`
+- npm
+
+## Environment
+
+Copy [`.env.example`](./.env.example) to `.env.local`.
+
+Required variables:
+
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | Base URL for the backend API |
+
+For CI or local verification without a real backend URL, use:
+
+```bash
+npm run build:example-env
+```
+
+## Project Shape
+
+```txt
+src/
+├── app/                    # Thin App Router entries
+│   └── [locale]/           # /en and /th route boundary
+├── features/
+│   └── landing/            # Landing-page feature family
+├── shared/                 # Cross-feature UI, config, routes, and infra
+├── messages/               # next-intl messages
+└── test/                   # Shared test helpers
+
+.github/                    # Workflow prompts, skills, hooks, agents
+.agents/                    # Vendored upstream skill packs
+docs/                       # Workflow playbooks and governance docs
+```
+
+The current template app keeps the landing experience under [`src/features/landing`](/Users/yutthana/Projects/vibe-next-template/src/features/landing) while shared cross-cutting code remains under [`src/shared`](/Users/yutthana/Projects/vibe-next-template/src/shared).
+
+## Workflow
+
+This repository uses the GitHub Copilot-first six-phase workflow from [AGENTS.md](./AGENTS.md):
+
+1. Discovery
+2. Planning
+3. Implementation
+4. Quality Gates
+5. Verification
+6. Delivery
+
+Supporting artifacts live in:
+
+- [`.github/copilot-instructions.md`](/Users/yutthana/Projects/vibe-next-template/.github/copilot-instructions.md)
+- [`.github/instructions/`](/Users/yutthana/Projects/vibe-next-template/.github/instructions)
+- [`.github/prompts/`](/Users/yutthana/Projects/vibe-next-template/.github/prompts)
+- [`.github/skills/`](/Users/yutthana/Projects/vibe-next-template/.github/skills)
+- [`.github/agents/`](/Users/yutthana/Projects/vibe-next-template/.github/agents)
+- [`.github/hooks/`](/Users/yutthana/Projects/vibe-next-template/.github/hooks)
+
+The Next.js enterprise profile and MCP playbooks live in:
+
+- [docs/nextjs-enterprise-workflow-design.md](/Users/yutthana/Projects/vibe-next-template/docs/nextjs-enterprise-workflow-design.md)
+- [docs/nextjs-enterprise-mcp-playbook.md](/Users/yutthana/Projects/vibe-next-template/docs/nextjs-enterprise-mcp-playbook.md)
+- [docs/pre-commit-audit-policy.md](/Users/yutthana/Projects/vibe-next-template/docs/pre-commit-audit-policy.md)
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Next.js dev server |
+| `npm run build` | Production build with real env |
+| `npm run build:example-env` | Production build using the example API URL |
+| `npm run build:analyze` | Build with bundle analyzer |
+| `npm run dev:storybook` | Start Storybook |
+| `npm run build:storybook` | Build Storybook |
+| `npm run typecheck` | TypeScript validation |
+| `npm run lint` | ESLint and Stylelint |
+| `npm run test` | Run Vitest |
+| `npm run test:coverage` | Run Vitest with coverage |
+| `npm run workflow:validate-state` | Validate `.github/workflow-state.json` |
+| `npm run workflow:validate-repo` | Validate workflow artifacts and vendored skills |
+| `npm run workflow:proof` | Run workflow proof suite |
+
+## Verification
+
+Recommended production-readiness pass:
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run workflow:validate-state
+npm run workflow:validate-repo
+npm run workflow:proof
+npm run build:example-env
+```
 
 ## Tech Stack
 
 | Category | Technology |
 | --- | --- |
-| Framework | [Next.js 16][nextjs] · [React 19][react] |
-| Language | [TypeScript][typescript] (strict) |
-| UI | [Chakra UI v3][chakra] · [Ark UI][ark] |
-| Component Icons | [React Icons][react-icons] |
-| i18n | [next-intl][intl] |
-| Validation | [Zod][zod] |
-| Server Actions | [next-safe-action][safe-action] |
-| Data Fetching | [SWR][swr] |
-| URL State | [nuqs][nuqs] |
-| State | [use-immer][use-immer] · [Immer][immer] |
-| State Machines | [XState][xstate] · [Zag.js][zag] |
-| Animation | [motion][motion] |
-| Theming | [next-themes][next-themes] |
-| Utilities | [dayjs][dayjs] · [clsx][clsx] · [usehooks-ts][usehooks-ts] |
-| Env Validation | [@t3-oss/env-nextjs][env-nextjs] |
-| Error Handling | [Effect][effect] |
-| Logging | [Pino][pino] |
-| Testing | [Vitest][vitest] · [Testing Library][testing-lib] |
-| Component Dev | [Storybook][storybook] |
-
-## Project Structure
-
-```txt
-src/
-├── app/              # App Router (thin route entries)
-│   └── [locale]/     # i18n locale segment
-├── modules/          # Feature modules
-│   └── {module}/
-│       ├── actions/      # Server actions
-│       ├── components/   # Presenter UI
-│       ├── containers/   # Logic binding (bridge layer)
-│       ├── hooks/        # Client logic
-│       ├── screens/      # Page-level composition
-│       └── schemas/      # Validation contracts
-├── shared/           # Cross-cutting code
-│   ├── components/   # Shared UI
-│   ├── config/       # Env, fonts, i18n
-│   ├── lib/          # Integrations and services
-│   └── ...
-├── messages/         # i18n translations (en/th)
-└── test/             # Shared test helpers
-```
-
-Data flows `page → screen → container → component`. Server components by
-default — `"use client"` only at the smallest leaf.
-
-## Scripts
-
-| Command                   | Description                            |
-| ------------------------- | -------------------------------------- |
-| `npm run dev`             | Start development server               |
-| `npm run build`           | Production build                       |
-| `npm run build:analyze`   | Build with bundle analyzer             |
-| `npm run build:storybook` | Build Storybook for production         |
-| `npm run start`           | Start production server                |
-| `npm run dev:storybook`   | Start Storybook dev server             |
-| `npm run check-types`     | TypeScript type check                  |
-| `npm run lint`            | ESLint + Stylelint + custom checks     |
-| `npm run format`          | Format with Prettier                   |
-| `npm run test`            | Run all tests                          |
-| `npm run test:coverage`   | Run tests with coverage report         |
-| `npm run test:watch`      | Run tests in watch mode                |
-
-## Environment Variables
-
-Copy [`.env.example`](./.env.example) to `.env.local` and fill in:
-
-| Variable              | Description                          |
-| --------------------- | ------------------------------------ |
-| `NEXT_PUBLIC_API_URL` | Base URL for the backend API         |
+| Framework | Next.js 16 · React 19 |
+| i18n | next-intl |
+| UI | Chakra UI v3 · Ark UI |
+| Interaction primitives | Zag.js |
+| State machines | XState |
+| Server actions | next-safe-action |
+| URL state | nuqs |
+| Data fetching | SWR |
+| Logging | Pino |
+| Validation | Zod |
+| Testing | Vitest · Testing Library |
+| Component dev | Storybook |
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
 [MIT](./LICENSE)
-
-[ark]: https://ark-ui.com
-[chakra]: https://chakra-ui.com
-[clsx]: https://github.com/lukeed/clsx
-[dayjs]: https://day.js.org
-[effect]: https://effect.website
-[env-nextjs]: https://env.t3.gg/docs/nextjs
-[eslint]: https://eslint.org
-[immer]: https://immerjs.github.io/immer/
-[intl]: https://next-intl-docs.vercel.app
-[mise]: https://mise.jdx.dev
-[motion]: https://motion.dev
-[next-themes]: https://github.com/pacocoursey/next-themes
-[nextjs]: https://nextjs.org
-[nuqs]: https://nuqs.dev
-[pino]: https://getpino.io
-[react]: https://react.dev
-[react-icons]: https://react-icons.github.io/react-icons
-[safe-action]: https://next-safe-action.dev
-[storybook]: https://storybook.js.org
-[stylelint]: https://stylelint.io
-[swr]: https://swr.vercel.app
-[testing-lib]: https://testing-library.com
-[typescript]: https://www.typescriptlang.org
-[use-immer]: https://github.com/immerjs/use-immer
-[usehooks-ts]: https://usehooks-ts.com
-[vitest]: https://vitest.dev
-[xstate]: https://stately.ai/docs/xstate
-[zag]: https://zagjs.com
-[zod]: https://zod.dev

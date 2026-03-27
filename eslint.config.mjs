@@ -1,6 +1,7 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import checkFile from "eslint-plugin-check-file";
+import importPlugin from "eslint-plugin-import";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import storybook from "eslint-plugin-storybook";
@@ -13,12 +14,17 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Override default ignores of eslint-config-next.
   globalIgnores([
+    ".agents/**",
+    ".github/**",
     ".next/**",
+    ".vscode/**",
     "out/**",
     "build/**",
     "coverage/**",
+    "docs/**",
     "storybook-static/**",
     "next-env.d.ts",
+    "tmp/**",
   ]),
   // --------------------------------------------------
   // Project rules — enforce AGENTS.md conventions
@@ -27,6 +33,7 @@ const eslintConfig = defineConfig([
     files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
       "check-file": checkFile,
+      import: importPlugin,
       perfectionist,
       "project": localPlugin,
     },
@@ -118,12 +125,12 @@ const eslintConfig = defineConfig([
       // Enforce handle* prefix for handler identifiers in on* JSX props (Event naming)
       "project/enforce-handler-naming": "error",
 
-      // Forbid imports between feature modules (Architecture)
+      // Forbid imports between domain features (Architecture)
       "project/no-cross-module-import": "error",
 
-      // Enforce layer boundary: components cannot import from containers,
-      // screens, hooks, actions, contexts, or providers (Architecture)
-      "project/no-upward-layer-import": "error",
+      // The new feature-module profile relies on deterministic folders plus
+      // workflow review/hooks more than a layered shell taxonomy.
+      "project/no-upward-layer-import": "off",
 
       // Forbid spreading hook return values in JSX (Props)
       "project/no-hook-spread": "error",
@@ -145,8 +152,9 @@ const eslintConfig = defineConfig([
         {
           "bin/**/": "KEBAB_CASE",
           "eslint/**/": "KEBAB_CASE",
+          "src/features/**/": "KEBAB_CASE",
           "src/messages/**/": "KEBAB_CASE",
-          "src/modules/**/": "KEBAB_CASE",
+          "src/server/**/": "KEBAB_CASE",
           "src/shared/**/": "KEBAB_CASE",
           "src/test/**/": "KEBAB_CASE",
         },
@@ -272,6 +280,7 @@ const eslintConfig = defineConfig([
   {
     files: [
       "src/shared/config/**",
+      "src/server/**",
       "next.config.ts",
       "vitest.config.mts",
       "eslint.config.mjs",
@@ -299,23 +308,10 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
-  // Error boundary components — must call reportErrorAction directly
-  // because Next.js error boundaries have no parent container layer.
-  // --------------------------------------------------
-  {
-    files: [
-      "src/shared/components/error-global/**",
-      "src/shared/components/error-app-boundary/**",
-    ],
-    rules: {
-      "project/no-upward-layer-import": "off",
-    },
-  },
-  // --------------------------------------------------
   // Infrastructure — allow process.env in bootstrap code
   // --------------------------------------------------
   {
-    files: ["src/shared/lib/logger/**"],
+    files: ["src/shared/lib/logger/**", "src/server/**"],
     rules: {
       "no-restricted-syntax": "off",
     },

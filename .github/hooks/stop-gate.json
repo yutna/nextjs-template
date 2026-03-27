@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ],
+    "subagentStop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "windows": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "bash": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "powershell": "node .github/hooks/scripts/workflow_hook.cjs stop-gate",
+        "cwd": ".",
+        "timeout": 10,
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

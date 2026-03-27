@@ -4,7 +4,7 @@
  * Rules:
  * - enforce-event-prop-naming: Enforce on* prefix for event callback props
  * - enforce-handler-naming: Enforce handle* prefix for event handler identifiers in JSX
- * - no-cross-module-import: Forbid imports between feature modules
+ * - no-cross-module-import: Forbid imports between feature roots
  * - no-hook-spread: Forbid spreading hook return values in JSX
  * - sort-imports: Enforce repository import ordering
  * - no-inline-style: Forbid inline style attribute in JSX
@@ -293,20 +293,20 @@ const enforceHandlerNaming = {
 const noCrossModuleImport = {
   create(context) {
     const filename = context.filename ?? context.getFilename();
-    const match = filename.match(/src\/modules\/([^/]+)\//);
+    const match = filename.match(/src\/(?:features|modules)\/([^/]+)\//);
 
     if (!match) return {};
 
-    const sourceModule = match[1];
+    const sourceFeature = match[1];
 
     return {
       ImportDeclaration(node) {
         const value = node.source.value;
-        const target = value.match(/^@\/modules\/([^/]+)/);
+        const target = value.match(/^@\/(?:features|modules)\/([^/]+)/);
 
-        if (target && target[1] !== sourceModule) {
+        if (target && target[1] !== sourceFeature) {
           context.report({
-            data: { sourceModule, targetModule: target[1] },
+            data: { sourceFeature, targetFeature: target[1] },
             messageId: "crossModule",
             node,
           });
@@ -317,11 +317,11 @@ const noCrossModuleImport = {
   meta: {
     docs: {
       description:
-        "Disallow imports between different feature modules under src/modules/",
+        "Disallow imports between different feature roots under src/features/",
     },
     messages: {
       crossModule:
-        'Cross-module import: "{{sourceModule}}" cannot import from "{{targetModule}}". Move shared code to src/shared/ instead.',
+        'Cross-feature import: "{{sourceFeature}}" cannot import from "{{targetFeature}}". Move shared code to src/shared/ instead.',
     },
     schema: [],
     type: "problem",

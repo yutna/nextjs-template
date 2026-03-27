@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "phase": "delivery",
+  "taskId": "migrate-vibe-next-template-to-nextjs-workflow",
+  "taskSummary": "Replace vibe-next-template's legacy AI workflow/governance layer with the new GitHub Copilot-first six-phase workflow, then migrate the application structure, conventions, tooling, and docs to the new Next.js enterprise profile without breaking existing behavior.",
+  "requirements": {
+    "status": "approved",
+    "acceptanceCriteria": [
+      "The repository removes the previous workflow/governance artifacts and adopts this repository's workflow layer as the only active AI workflow contract.",
+      "The application keeps its current user-facing behavior, including locale-prefixed next-intl routing and the existing landing-page experience.",
+      "The codebase is migrated toward the new Next.js enterprise profile conventions, especially feature-module structure, naming, routing, i18n, testability, and server-first boundaries.",
+      "Repository scripts, linting, docs, MCP config, and validation flows are updated so the app and the workflow can coexist cleanly.",
+      "Applicable quality gates pass for the migrated repository, including workflow validation plus app typecheck, lint, tests, and build with a valid example env.",
+      "Any remaining workflow gaps or migration blockers discovered during the real-repo test are captured explicitly for follow-up."
+    ],
+    "constraints": [
+      "Preserve the existing functional behavior of the template application while replacing the workflow layer 100%.",
+      "Keep Next.js 16+, React 19, next-intl en/th locale-prefix routing, and the current dependency baseline unless a change is required for correctness.",
+      "Prefer incremental migration slices over a one-shot rewrite so regressions can be isolated and fixed deliberately.",
+      "The migrated repository must be usable with GitHub Copilot VS Code, GitHub Copilot CLI, and Codex-based pre-commit auditing."
+    ],
+    "openQuestions": []
+  },
+  "plan": {
+    "status": "approved",
+    "summary": "Migrate in four slices: replace workflow/governance artifacts, align toolchain/docs with the new workflow, refactor application structure into the new feature-module conventions while preserving behavior, then run full gates and capture remaining workflow gaps.",
+    "filesInScope": [
+      ".agents",
+      ".github",
+      ".vscode/mcp.json",
+      "AGENTS.md",
+      "README.md",
+      "skills-lock.json",
+      "package.json",
+      "eslint.config.mjs",
+      "tsconfig.json",
+      "next.config.ts",
+      "src",
+      "docs"
+    ]
+  },
+  "implementation": {
+    "status": "completed",
+    "filesTouched": [
+      ".agents",
+      ".github",
+      ".vscode/mcp.json",
+      "AGENTS.md",
+      "CONTRIBUTING.md",
+      "README.md",
+      "skills-lock.json",
+      "package.json",
+      "package-lock.json",
+      "eslint.config.mjs",
+      "eslint/local-plugin.mjs",
+      "src",
+      "docs"
+    ],
+    "retryCount": 0,
+    "blockedItems": []
+  },
+  "qualityGates": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "tests": "passed",
+    "verification": "passed",
+    "lastRunSummary": "typecheck, lint, tests, workflow state validation, workflow repository validation, workflow proof, build:example-env, build:storybook, and git diff --check all passed after replacing the legacy workflow layer, removing the old bin-based workflow helpers, migrating the landing app surface from src/modules/static-pages to src/features/landing, and completing the final landing feature naming cleanup."
+  },
+  "delivery": {
+    "status": "ready-for-review",
+    "userApproved": false,
+    "notes": "The repository now uses the new six-phase workflow contract end-to-end, application CI covers both workflow and app gates, the landing surface lives under src/features/landing, the legacy container/screen naming has been removed from the active feature tree, and migration findings are documented in docs/migrations/vibe-next-template-workflow-migration-findings.md."
+  },
+  "lastUpdated": "2026-03-27T09:07:36Z",
+  "stackContext": {
+    "profile": "nextjs-enterprise-workflow",
+    "repoTopology": "workflow-template",
+    "appLocation": "apps/web|src",
+    "routeMode": "app-router",
+    "routeDesign": {
+      "canonicalAreas": [
+        "(public)",
+        "(app)"
+      ],
+      "dynamicSegments": [],
+      "specialRoutingFeatures": [
+        "parallel-routes-require-plan",
+        "intercepting-routes-require-plan"
+      ]
+    },
+    "runtimeModel": "server-first",
+    "localization": {
+      "library": "next-intl",
+      "urlStrategy": "locale-prefix",
+      "visibleRouteBoundary": "[locale]",
+      "supportedLocales": [
+        "en",
+        "th"
+      ],
+      "defaultLocale": "en",
+      "hardcodedUserFacingText": "forbidden"
+    },
+    "evidenceLayer": {
+      "design": "figma-mcp-preferred",
+      "runtime": "next-devtools-mcp-or-browser-evidence",
+      "uiSystem": [
+        "ark-ui-mcp",
+        "chakra-ui-mcp"
+      ],
+      "upstreamSkillPacks": "skills-lock"
+    },
+    "interactiveUi": {
+      "preferredOrder": [
+        "chakra-ui",
+        "ark-ui",
+        "zag-js"
+      ],
+      "adHocPrimitiveState": "discouraged"
+    },
+    "fileSystemGovernance": {
+      "featureSlugStyle": "kebab-case",
+      "routeSegmentStyle": "kebab-case-or-framework-special",
+      "allowedFeatureTopLevelFolders": [
+        "actions",
+        "components",
+        "constants",
+        "contracts",
+        "data",
+        "policies",
+        "schemas",
+        "tests"
+      ],
+      "genericUtilityBuckets": "forbidden"
+    },
+    "testability": {
+      "designGoal": "changed-behavior-must-remain-easy-to-test",
+      "routeShells": "thin",
+      "sideEffects": "isolated",
+      "browserVerification": "supplements-automation"
+    },
+    "libraryDecisions": {
+      "env": "@t3-oss/env-nextjs-centralized",
+      "logging": "pino-via-shared-logger",
+      "clientExceptions": [
+        "swr-requires-explicit-browser-ownership",
+        "nuqs-requires-explicit-url-state-ownership",
+        "immer-and-client-hooks-stay-local"
+      ],
+      "stateMachines": "xstate-only-for-explicit-workflows",
+      "functionalPatterns": [
+        "effect-is-an-escalation-not-default",
+        "ts-pattern-for-exhaustive-domain-branching",
+        "dayjs-via-shared-formatting-helpers"
+      ],
+      "uiRuntime": [
+        "motion-in-client-leaves-only",
+        "next-themes-at-app-shell-boundary",
+        "react-icons-explicit-subpackages-only",
+        "sharp-server-or-build-only"
+      ]
+    },
+    "cacheModel": "cache-components",
+    "clientBudget": {
+      "defaultPolicy": "minimal",
+      "approvedIslands": []
+    },
+    "migration": {
+      "mode": "greenfield-and-legacy-support",
+      "legacySurface": [
+        "pages-router",
+        "client-heavy-nextjs-repos"
+      ]
+    }
+  }
+}

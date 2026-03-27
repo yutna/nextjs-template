@@ -1,0 +1,6 @@
+{
+  "getStarted": "ดูบน GitHub",
+  "installCommand": "npx create-next-app --example https://github.com/yutna/vibe-next-template my-app",
+  "subtitle": "เทมเพลต Next.js 16 พร้อมใช้งานจริง สร้างมาสำหรับยุค Vibe Coding เปลี่ยน prompt ของคุณให้กลายเป็นผลิตภัณฑ์ — server-first, type-safe, และพร้อมสำหรับ GitHub Copilot",
+  "title": "Vibe Coding\nจาก Prompt สู่ IPO"
+}
