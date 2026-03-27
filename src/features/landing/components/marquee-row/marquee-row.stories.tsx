@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 
-import { MarqueeRow } from "./marquee-row";
+import { MarqueeRow } from "./marquee-row.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

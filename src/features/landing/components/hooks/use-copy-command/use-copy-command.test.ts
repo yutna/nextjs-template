@@ -12,7 +12,7 @@ vi.mock("@/shared/vendor/chakra-ui/toaster", () => ({
   },
 }));
 
-import { useCopyCommand } from "./use-copy-command";
+import { useCopyCommand } from "./use-copy-command.client";
 
 const mockWriteText = vi.fn();
 

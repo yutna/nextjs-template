@@ -8,7 +8,7 @@ vi.mock("@/shared/lib/navigation", () => ({
   useRouter: vi.fn(() => ({ replace: mockReplace })),
 }));
 
-import { usePageChrome } from "./use-page-chrome";
+import { usePageChrome } from "./use-page-chrome.client";
 
 beforeEach(() => {
   vi.clearAllMocks();

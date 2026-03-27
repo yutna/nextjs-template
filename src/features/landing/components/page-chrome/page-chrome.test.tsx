@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { PageChrome } from "./page-chrome";
+import { PageChrome } from "./page-chrome.client";
 
 describe("PageChrome", () => {
   it("renders locale buttons and color mode toggle", () => {

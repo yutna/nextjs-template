@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { VibeProvider } from "./vibe-provider";
+import { VibeProvider } from "./vibe-provider.client";
 
 describe("VibeProvider", () => {
   it("renders children", () => {

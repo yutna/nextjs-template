@@ -1,3 +1,3 @@
-export { useCopyCommand } from "./use-copy-command";
+export { useCopyCommand } from "./use-copy-command.client";
 
 export type { UseCopyCommandReturn } from "./types";

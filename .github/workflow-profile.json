@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "profileId": "nextjs-enterprise-workflow",
+  "repository": {
+    "name": "vibe-next-template",
+    "role": "nextjs-app",
+    "packageManager": "npm",
+    "generatedIgnorePatterns": [
+      ".github/hooks/*.log",
+      ".next/",
+      "storybook-static/",
+      "coverage/",
+      "dist/"
+    ]
+  },
+  "commands": {
+    "validateState": "node .github/hooks/scripts/workflow_hook.cjs validate-state",
+    "validateRepo": "node .github/hooks/scripts/validate_repo.cjs",
+    "proof": "node .github/hooks/scripts/workflow_hook_proof.cjs",
+    "doctor": "node .github/hooks/scripts/workflow_doctor.cjs",
+    "bootstrap": "node .github/hooks/scripts/workflow_bootstrap.cjs --force --sync-generated-ignores",
+    "auditStructure": "node .github/hooks/scripts/workflow_audit_structure.cjs",
+    "adoptReport": "node .github/hooks/scripts/workflow_adopt_report.cjs",
+    "typecheck": "npm run typecheck",
+    "lint": "npm run lint",
+    "tests": "npm run test",
+    "builds": [
+      "npm run build",
+      "npm run build:example-env",
+      "npm run build:storybook"
+    ]
+  },
+  "adoption": {
+    "supportedModes": [
+      "from-scratch",
+      "adopt-existing-project",
+      "migrate-existing-nextjs"
+    ],
+    "defaultTaskId": "bootstrap-workflow-adoption",
+    "defaultTaskSummary": "Bootstrap workflow adoption and discovery for this repository.",
+    "recommendedAppRoots": [
+      "src/app",
+      "apps/web/src/app"
+    ],
+    "recommendedFeatureRoots": [
+      "src/features",
+      "apps/web/src/features"
+    ],
+    "recommendedLocaleRoots": [
+      "src/messages",
+      "apps/web/src/messages"
+    ]
+  },
+  "roots": {
+    "appRoots": [
+      "src/app"
+    ],
+    "featureRoots": [
+      "src/features"
+    ],
+    "routeRoots": [
+      "src/app"
+    ],
+    "localeRoots": [
+      "src/messages"
+    ]
+  },
+  "nextjs": {
+    "enabled": true,
+    "defaultLocale": "en",
+    "supportedLocales": [
+      "en",
+      "th"
+    ],
+    "localePrefix": true,
+    "visibleRouteBoundary": "[locale]"
+  },
+  "structure": {
+    "clientComponentSuffix": ".client.tsx",
+    "forbiddenLegacyDirectories": [
+      "containers",
+      "screens"
+    ],
+    "forbiddenLegacyRoots": [
+      "src/modules",
+      "apps/web/src/modules"
+    ],
+    "forbiddenGenericFileNames": [
+      "utils.ts",
+      "utils.tsx",
+      "helpers.ts",
+      "helpers.tsx",
+      "common.ts",
+      "common.tsx"
+    ]
+  }
+}

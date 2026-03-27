@@ -104,6 +104,10 @@ The Next.js enterprise profile and MCP playbooks live in:
 | `npm run lint` | ESLint and Stylelint |
 | `npm run test` | Run Vitest |
 | `npm run test:coverage` | Run Vitest with coverage |
+| `npm run workflow:doctor` | Run the full workflow health check |
+| `npm run workflow:audit-structure` | Audit repo-wide structure against the workflow profile |
+| `npm run workflow:adopt-report` | Regenerate the repo-specific workflow profile and drift report |
+| `npm run workflow:bootstrap` | Reset workflow state for a fresh adoption/discovery bootstrap |
 | `npm run workflow:validate-state` | Validate `.github/workflow-state.json` |
 | `npm run workflow:validate-repo` | Validate workflow artifacts and vendored skills |
 | `npm run workflow:proof` | Run workflow proof suite |
@@ -116,8 +120,10 @@ Recommended production-readiness pass:
 npm run typecheck
 npm run lint
 npm test
+npm run workflow:doctor
 npm run workflow:validate-state
 npm run workflow:validate-repo
+npm run workflow:audit-structure
 npm run workflow:proof
 npm run build:example-env
 ```

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { VibeBackground } from "./vibe-background";
+import { VibeBackground } from "./vibe-background.client";
 
 describe("VibeBackground", () => {
   it("renders nothing when not on desktop", () => {

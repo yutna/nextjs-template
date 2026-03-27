@@ -44,6 +44,7 @@
     "filesTouched": [
       ".agents",
       ".github",
+      ".gitignore",
       ".vscode/mcp.json",
       "AGENTS.md",
       "CONTRIBUTING.md",
@@ -53,6 +54,7 @@
       "package-lock.json",
       "eslint.config.mjs",
       "eslint/local-plugin.mjs",
+      ".github/workflows/ci.yml",
       "src",
       "docs"
     ],
@@ -64,18 +66,18 @@
     "lint": "passed",
     "tests": "passed",
     "verification": "passed",
-    "lastRunSummary": "typecheck, lint, tests, workflow state validation, workflow repository validation, workflow proof, build:example-env, build:storybook, and git diff --check all passed after replacing the legacy workflow layer, removing the old bin-based workflow helpers, migrating the landing app surface from src/modules/static-pages to src/features/landing, and completing the final landing feature naming cleanup."
+    "lastRunSummary": "typecheck, lint, tests, workflow doctor, workflow state validation, workflow repository validation, workflow structure audit, workflow proof, build:example-env, build:storybook, and git diff --check all passed after syncing the new adoption tooling, tightening client-file naming to explicit .client.* boundaries, and wiring CI/package scripts to the new doctor-based workflow entrypoints."
   },
   "delivery": {
     "status": "ready-for-review",
     "userApproved": false,
-    "notes": "The repository now uses the new six-phase workflow contract end-to-end, application CI covers both workflow and app gates, the landing surface lives under src/features/landing, the legacy container/screen naming has been removed from the active feature tree, and migration findings are documented in docs/migrations/vibe-next-template-workflow-migration-findings.md."
+    "notes": "The repository now uses the new six-phase workflow contract end-to-end, application CI covers the doctor-based workflow checks plus app gates, the landing surface lives under src/features/landing, client-owned files now use explicit .client.* boundaries, and migration findings are documented in docs/migrations/vibe-next-template-workflow-migration-findings.md."
   },
-  "lastUpdated": "2026-03-27T09:07:36Z",
+  "lastUpdated": "2026-03-27T10:04:00Z",
   "stackContext": {
     "profile": "nextjs-enterprise-workflow",
-    "repoTopology": "workflow-template",
-    "appLocation": "apps/web|src",
+    "repoTopology": "nextjs-app",
+    "appLocation": "src/app",
     "routeMode": "app-router",
     "routeDesign": {
       "canonicalAreas": [

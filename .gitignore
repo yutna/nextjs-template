@@ -28,6 +28,7 @@ yarn-error.log*
 
 # production
 /build
+dist/
 
 # runtime logs
 tmp/logs/*.log

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { sendYouTubeCommand } from "./helpers";
+import { sendYouTubeCommand } from "./youtube-command";
 
 describe("sendYouTubeCommand", () => {
   it("posts a JSON command message to the YouTube iframe", () => {

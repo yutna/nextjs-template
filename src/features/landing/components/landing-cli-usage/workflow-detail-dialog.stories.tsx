@@ -1,4 +1,4 @@
-import { WorkflowDetailDialog } from "./workflow-detail-dialog";
+import { WorkflowDetailDialog } from "./workflow-detail-dialog.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

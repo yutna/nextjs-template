@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { MotionReveal } from "./motion-reveal";
+import { MotionReveal } from "./motion-reveal.client";
 
 describe("MotionReveal", () => {
   it("renders children with the default variant", () => {

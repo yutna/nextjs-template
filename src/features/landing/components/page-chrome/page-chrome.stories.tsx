@@ -1,4 +1,4 @@
-import { PageChrome } from "./page-chrome";
+import { PageChrome } from "./page-chrome.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

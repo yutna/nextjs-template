@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { VibeControls } from "./vibe-controls";
+import { VibeControls } from "./vibe-controls.client";
 
 describe("VibeControls", () => {
   it("renders nothing on mobile", () => {

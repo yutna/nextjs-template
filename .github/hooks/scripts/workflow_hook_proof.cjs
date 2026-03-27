@@ -7,9 +7,13 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const workflowHook = require('./workflow_hook.cjs');
+const { ADOPTION_MODES, DEFAULT_COMMANDS, DEFAULT_GENERATED_IGNORE_PATTERNS } = require('./workflow_profile.cjs');
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const HOOK_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_hook.cjs');
 const NEXTJS_HOOK_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'nextjs_policy.cjs');
+const BOOTSTRAP_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_bootstrap.cjs');
+const AUDIT_STRUCTURE_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_audit_structure.cjs');
+const ADOPT_REPORT_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_adopt_report.cjs');
 
 function runHook(mode, cwd, payload) {
   const result = spawnSync('node', [HOOK_SCRIPT, mode], {
@@ -41,6 +45,17 @@ function runNextjsHook(mode, cwd, payload) {
   return JSON.parse(result.stdout);
 }
 
+function runTool(scriptPath, cwd, args = []) {
+  const result = spawnSync('node', [scriptPath, ...args], {
+    encoding: 'utf8',
+    cwd,
+  });
+  if (result.error) {
+    throw result.error;
+  }
+  return result;
+}
+
 function writeState(repo, state) {
   const statePath = path.join(repo, '.github', 'workflow-state.json');
   fs.mkdirSync(path.dirname(statePath), { recursive: true });
@@ -54,6 +69,53 @@ function writeText(filePath, text) {
 
 function loadTemplateState() {
   return workflowHook.deepCopyDefaultState();
+}
+
+function loadStaleTemplateProfile() {
+  return {
+    version: 1,
+    profileId: 'nextjs-enterprise-workflow',
+    repository: {
+      name: 'workflow-template-source',
+      role: 'workflow-template',
+      packageManager: 'none',
+      generatedIgnorePatterns: DEFAULT_GENERATED_IGNORE_PATTERNS,
+    },
+    commands: {
+      ...DEFAULT_COMMANDS,
+      typecheck: null,
+      lint: null,
+      tests: null,
+      builds: [],
+    },
+    adoption: {
+      supportedModes: ADOPTION_MODES,
+      defaultTaskId: 'bootstrap-workflow-adoption',
+      defaultTaskSummary: 'Bootstrap workflow adoption and discovery for this repository.',
+      recommendedAppRoots: ['src/app', 'apps/web/src/app'],
+      recommendedFeatureRoots: ['src/features', 'apps/web/src/features'],
+      recommendedLocaleRoots: ['src/messages', 'apps/web/src/messages'],
+    },
+    roots: {
+      appRoots: [],
+      featureRoots: [],
+      routeRoots: [],
+      localeRoots: [],
+    },
+    nextjs: {
+      enabled: true,
+      defaultLocale: 'en',
+      supportedLocales: ['en', 'th'],
+      localePrefix: true,
+      visibleRouteBoundary: '[locale]',
+    },
+    structure: {
+      clientComponentSuffix: '.client.tsx',
+      forbiddenLegacyDirectories: ['containers', 'screens'],
+      forbiddenLegacyRoots: ['src/modules', 'apps/web/src/modules'],
+      forbiddenGenericFileNames: ['utils.ts', 'utils.tsx', 'helpers.ts', 'helpers.tsx', 'common.ts', 'common.tsx'],
+    },
+  };
 }
 
 function expect(condition, message) {
@@ -1250,6 +1312,107 @@ function scenarioNextjsSharpClientBlocked(repo) {
   expect(result.decision === 'block', 'expected sharp usage in client files to be blocked');
 }
 
+function scenarioAdoptionBootstrapAndStructureAudit(repo) {
+  writeText(
+    path.join(repo, 'package.json'),
+    `${JSON.stringify(
+      {
+        name: 'proof-adopted-nextjs',
+        private: true,
+        scripts: {
+          typecheck: 'tsc --noEmit',
+          lint: 'eslint',
+          test: 'vitest run',
+          'build:example-env': 'next build',
+        },
+        dependencies: {
+          next: '16.2.0',
+          react: '19.0.0',
+          'react-dom': '19.0.0',
+        },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  writeText(path.join(repo, '.github', 'workflow-profile.json'), `${JSON.stringify(loadStaleTemplateProfile(), null, 2)}\n`);
+  writeState(repo, {
+    ...loadTemplateState(),
+    phase: 'delivery',
+    taskId: 'stale-template-task',
+    taskSummary: 'Stale workflow task copied from the template.',
+    requirements: {
+      status: 'approved',
+      acceptanceCriteria: [],
+      constraints: [],
+      openQuestions: [],
+    },
+    plan: {
+      status: 'approved',
+      summary: '',
+      filesInScope: [],
+    },
+    implementation: {
+      status: 'completed',
+      filesTouched: [],
+      retryCount: 0,
+      blockedItems: [],
+    },
+    qualityGates: {
+      typecheck: 'passed',
+      lint: 'passed',
+      tests: 'passed',
+      verification: 'passed',
+      lastRunSummary: 'stale template summary',
+    },
+    delivery: {
+      status: 'ready-for-review',
+      userApproved: false,
+      notes: 'stale template notes',
+    },
+  });
+  writeText(path.join(repo, 'src', 'app', 'customers', 'page.tsx'), 'export default function Page() { return null; }\n');
+  writeText(path.join(repo, 'src', 'modules', 'legacy-feature', 'containers', 'hero.tsx'), 'export function Hero() { return null; }\n');
+  writeText(path.join(repo, 'src', 'messages', 'en', 'index.ts'), 'export {};\n');
+  writeText(path.join(repo, 'src', 'messages', 'th', 'index.ts'), 'export {};\n');
+
+  const reportResult = runTool(ADOPT_REPORT_SCRIPT, repo, ['--json']);
+  expect(reportResult.status === 0, 'expected adoption report to run successfully');
+  const reportPayload = JSON.parse(reportResult.stdout);
+  expect(reportPayload.suggestedProfile.repository.role === 'nextjs-app', 'expected adoption report to detect a nextjs app');
+  expect(reportPayload.drifts.some((entry) => entry.field === 'repository.role'), 'expected adoption report to detect stale template profile drift');
+
+  const writeProfileResult = runTool(ADOPT_REPORT_SCRIPT, repo, ['--write-profile', '--force', '--json']);
+  expect(writeProfileResult.status === 0, 'expected adoption report to write the detected profile');
+  const writtenProfile = JSON.parse(fs.readFileSync(path.join(repo, '.github', 'workflow-profile.json'), 'utf8'));
+  expect(writtenProfile.repository.role === 'nextjs-app', 'expected written profile to target a nextjs app');
+
+  const bootstrapResult = runTool(BOOTSTRAP_SCRIPT, repo, [
+    '--force',
+    '--sync-generated-ignores',
+    'taskId=bootstrap-existing-project',
+    'taskSummary=Bootstrap workflow adoption for proof.',
+  ]);
+  expect(bootstrapResult.status === 0, 'expected workflow bootstrap to reset stale state');
+  const bootstrappedState = JSON.parse(fs.readFileSync(path.join(repo, '.github', 'workflow-state.json'), 'utf8'));
+  expect(bootstrappedState.phase === 'discovery', 'expected bootstrap to reset phase to discovery');
+  expect(bootstrappedState.taskId === 'bootstrap-existing-project', 'expected bootstrap to update the task id');
+  const gitignoreText = fs.readFileSync(path.join(repo, '.gitignore'), 'utf8');
+  expect(gitignoreText.includes('.github/hooks/*.log'), 'expected bootstrap ignore sync to add workflow hook logs');
+
+  const auditResult = runTool(AUDIT_STRUCTURE_SCRIPT, repo, ['--json']);
+  expect(auditResult.status === 1, 'expected structure audit to fail on legacy nextjs shapes');
+  const auditPayload = JSON.parse(auditResult.stdout);
+  expect(
+    auditPayload.findings.some((entry) => entry.includes('Legacy feature root detected: src/modules')),
+    'expected structure audit to flag legacy feature roots',
+  );
+  expect(
+    auditPayload.findings.some((entry) => entry.includes('Visible route shell is outside [locale]: src/app/customers/page.tsx')),
+    'expected structure audit to flag visible route shells outside the locale boundary',
+  );
+}
+
 function main() {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-hook-proof-'));
   const repo = path.join(tempRoot, 'repo');
@@ -1322,6 +1485,7 @@ function main() {
     scenarioNextjsMachinePolicyPasses(repo);
     scenarioNextjsReactIconsRootImportBlocked(repo);
     scenarioNextjsSharpClientBlocked(repo);
+    scenarioAdoptionBootstrapAndStructureAudit(repo);
 
     process.stdout.write('WORKFLOW_HOOK_PROOF_OK\n');
     return 0;

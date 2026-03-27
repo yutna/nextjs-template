@@ -1,4 +1,4 @@
-import { VibeControls } from "./vibe-controls";
+import { VibeControls } from "./vibe-controls.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

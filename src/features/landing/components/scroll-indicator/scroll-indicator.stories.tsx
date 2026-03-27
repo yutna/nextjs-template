@@ -1,4 +1,4 @@
-import { ScrollIndicator } from "./scroll-indicator";
+import { ScrollIndicator } from "./scroll-indicator.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

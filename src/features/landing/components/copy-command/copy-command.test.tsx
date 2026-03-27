@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { HERO_INSTALL_COMMAND } from "@/features/landing/constants/install-command";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { CopyCommand } from "./copy-command";
+import { CopyCommand } from "./copy-command.client";
 
 describe("CopyCommand", () => {
   it("renders the install command text", () => {

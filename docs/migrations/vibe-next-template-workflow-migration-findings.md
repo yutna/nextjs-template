@@ -49,6 +49,35 @@ Resolution:
 - added `.github/hooks/*.log` to `.gitignore`
 - kept the generated log out of the committed branch
 
+### 6. Generated-artifact ignore handling needed normalization, not exact string matches
+
+The new adoption tooling introduced `workflow_bootstrap --sync-generated-ignores` and profile-driven `.gitignore` checks. Real repositories often already had equivalent ignore entries such as `/.next/`, `storybook-static`, or `/coverage`, but the first implementation compared raw strings and reported false failures.
+
+Resolution:
+
+- normalized generated ignore patterns before both validation and bootstrap syncing
+- kept the profile contract strict while allowing semantically equivalent `.gitignore` entries
+- added the only truly missing pattern, `dist/`, to this repository
+
+### 7. Proof scenarios must be portable across template and consumer repositories
+
+The first adoption proof copied `.github/workflow-profile.json` from the repository running the proof. That worked in the source workflow repository, but failed in the migrated app because the copied profile was already `nextjs-app` and no longer represented a stale template profile.
+
+Resolution:
+
+- changed the proof suite to synthesize an explicit stale `workflow-template` profile
+- reran the proof suite inside the migrated application repository to confirm the scenario now works in both contexts
+
+### 8. The consumer repository needed first-class doctor entrypoints
+
+The migrated repository already had `workflow:validate-state`, `workflow:validate-repo`, and `workflow:proof`, but the new adoption tooling also depends on `workflow:doctor`, `workflow:audit-structure`, `workflow:adopt-report`, and `workflow:bootstrap`.
+
+Resolution:
+
+- added the new workflow scripts to `package.json`
+- updated CI to run `workflow:doctor` in the integrity job
+- updated `README.md` and `CONTRIBUTING.md` so contributors use the same commands locally that CI uses
+
 ## Workflow gaps discovered
 
 ### 1. `workflow-state.json` can be semantically stale but still schema-valid
@@ -63,6 +92,11 @@ Recommended follow-up:
 
 - add a bootstrap/adoption command that resets state automatically for the target repository
 - optionally add a validator warning when `taskId`, `filesInScope`, or `delivery` notes clearly belong to another repository
+
+Current mitigation in this repository:
+
+- `workflow_bootstrap --force --sync-generated-ignores` now resets the adopted repo state cleanly
+- the shipped state file in this repository was updated so `stackContext.repoTopology`, `appLocation`, touched files, and delivery notes match the migrated application rather than the source template
 
 ### 2. Deterministic Next.js policy checks are event-driven, not repo-wide
 
@@ -98,8 +132,10 @@ The repository now uses the new workflow contract and the landing feature lives 
 - `npm run typecheck`
 - `npm run lint`
 - `npm test`
+- `npm run workflow:doctor`
 - `npm run workflow:validate-state`
 - `npm run workflow:validate-repo`
+- `npm run workflow:audit-structure`
 - `npm run workflow:proof`
 - `npm run build:example-env`
 - `npm run build:storybook`

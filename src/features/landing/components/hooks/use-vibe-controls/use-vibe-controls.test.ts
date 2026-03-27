@@ -22,7 +22,7 @@ beforeEach(() => {
 
 describe("useVibeControls", () => {
   it("returns isDesktop false when matchMedia does not match", async () => {
-    const { useVibeControls } = await import("./use-vibe-controls");
+    const { useVibeControls } = await import("./use-vibe-controls.client");
     const { renderHook } = await import("@testing-library/react");
 
     const { result } = renderHook(() => useVibeControls());

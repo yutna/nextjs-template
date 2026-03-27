@@ -2,7 +2,7 @@ import { Box, Text, VStack } from "@chakra-ui/react";
 
 import { MotionReveal } from "@/features/landing/components/motion-reveal";
 
-import { MotionStagger } from "./motion-stagger";
+import { MotionStagger } from "./motion-stagger.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

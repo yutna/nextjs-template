@@ -27,11 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate shipped workflow state
-        run: node .github/hooks/scripts/workflow_hook.cjs validate-state
-
-      - name: Validate repository artifacts
-        run: node .github/hooks/scripts/validate_repo.cjs
+      - name: Run workflow doctor
+        run: npm run workflow:doctor
 
   proof:
     name: Proof Suite

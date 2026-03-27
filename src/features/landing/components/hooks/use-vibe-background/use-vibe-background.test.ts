@@ -23,7 +23,7 @@ beforeEach(() => {
 describe("useVibeBackground", () => {
   it("returns isDesktop false when matchMedia does not match", async () => {
     // Dynamic import after mocks are set up
-    const { useVibeBackground } = await import("./use-vibe-background");
+    const { useVibeBackground } = await import("./use-vibe-background.client");
     const { renderHook } = await import("@testing-library/react");
 
     const { result } = renderHook(() => useVibeBackground());

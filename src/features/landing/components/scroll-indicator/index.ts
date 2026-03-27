@@ -1,1 +1,1 @@
-export { ScrollIndicator } from "./scroll-indicator";
+export { ScrollIndicator } from "./scroll-indicator.client";

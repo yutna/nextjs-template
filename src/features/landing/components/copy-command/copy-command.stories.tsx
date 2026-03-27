@@ -1,4 +1,4 @@
-import { CopyCommand } from "./copy-command";
+import { CopyCommand } from "./copy-command.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

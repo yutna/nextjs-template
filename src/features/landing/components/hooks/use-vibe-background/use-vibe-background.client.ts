@@ -6,7 +6,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { useVibe } from "@/features/landing/components/hooks/use-vibe";
 import { registerVibePlayerCommand } from "@/features/landing/components/lib/vibe-player-registry";
 
-import { sendYouTubeCommand } from "./helpers";
+import { sendYouTubeCommand } from "./youtube-command";
 
 import type { UseVibeBackgroundReturn } from "./types";
 

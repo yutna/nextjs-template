@@ -17,7 +17,11 @@ const DELIVERY_STATUSES = new Set(['blocked', 'ready-for-review', 'approved']);
 const GREEN_GATE_VALUES = new Set(['passed', 'not-applicable']);
 const STATE_FILE = '.github/workflow-state.json';
 const DELIVERY_ACTION_PATTERNS = [/\bgit\s+commit\b/, /\bgit\s+push\b/, /\bgh\s+pr\b/, /\brelease\b/];
-const STATE_API_COMMAND_PATTERNS = [/workflow_hook\.(?:js|cjs)\s+update-state\b/, /workflow_hook\.(?:js|cjs)\s+validate-state\b/];
+const STATE_API_COMMAND_PATTERNS = [
+  /workflow_hook\.(?:js|cjs)\s+update-state\b/,
+  /workflow_hook\.(?:js|cjs)\s+validate-state\b/,
+  /workflow_bootstrap\.(?:js|cjs)\b/,
+];
 const READ_ONLY_COMMAND_PATTERNS = [
   /\b(ls|pwd|find|which|cat|head|tail|sed|awk|rg|ripgrep|grep)\b/,
   /\bgit\s+(status|diff|log|show)\b/,
@@ -29,6 +33,9 @@ const READ_ONLY_COMMAND_PATTERNS = [
   /\bgradle\s+test\b/,
   /validate_repo\.(?:js|cjs)\b/,
   /workflow_hook_proof\.(?:js|cjs)\b/,
+  /workflow_doctor\.(?:js|cjs)\b/,
+  /workflow_audit_structure\.(?:js|cjs)\b/,
+  /workflow_adopt_report\.(?:js|cjs)\b/,
 ];
 
 const DEFAULT_STATE = {

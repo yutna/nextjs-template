@@ -1,1 +1,1 @@
-export { useVibe } from "./use-vibe";
+export { useVibe } from "./use-vibe.client";

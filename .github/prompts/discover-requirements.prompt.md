@@ -8,6 +8,14 @@ Turn the request into a Discovery deliverable without planning or implementing.
 
 Use this as the default entrypoint for a fresh repository or any reset bootstrap state.
 
+If this repository was just adopted from the template, prefer running:
+
+- `node .github/hooks/scripts/workflow_adopt_report.cjs`
+- `node .github/hooks/scripts/workflow_bootstrap.cjs --force --sync-generated-ignores`
+- `node .github/hooks/scripts/workflow_doctor.cjs`
+
+before using this prompt for the first real task.
+
 Follow:
 
 - [AGENTS.md](../../AGENTS.md)

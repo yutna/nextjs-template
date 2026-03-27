@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { MarqueeRow } from "./marquee-row";
+import { MarqueeRow } from "./marquee-row.client";
 
 describe("MarqueeRow", () => {
   it("duplicates children for the infinite scroll effect", () => {

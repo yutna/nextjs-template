@@ -1,4 +1,4 @@
-import { VibeBackground } from "./vibe-background";
+import { VibeBackground } from "./vibe-background.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

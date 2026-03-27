@@ -1,6 +1,6 @@
 import { Box, Heading } from "@chakra-ui/react";
 
-import { MotionReveal } from "./motion-reveal";
+import { MotionReveal } from "./motion-reveal.client";
 
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 

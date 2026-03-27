@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { ScrollIndicator } from "./scroll-indicator";
+import { ScrollIndicator } from "./scroll-indicator.client";
 
 describe("ScrollIndicator", () => {
   it("mounts without error", () => {

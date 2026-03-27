@@ -5,6 +5,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
+const {
+  generatedIgnoreIssues,
+  loadProfile,
+  templateBootstrapStateIssues,
+  validateProfile,
+} = require('./workflow_profile.cjs');
 
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const WORKFLOW_HOOK_SCRIPT = path.join(ROOT, '.github', 'hooks', 'scripts', 'workflow_hook.cjs');
@@ -97,9 +103,20 @@ const REQUIRED_HOOK_CONFIG_FILES = [
   'nextjs-workflow-guard.json',
   'nextjs-post-edit-checks.json',
 ];
-const REQUIRED_HOOK_SCRIPT_FILES = ['.github/hooks/scripts/workflow_hook.cjs', '.github/hooks/scripts/nextjs_policy.cjs'];
+const REQUIRED_HOOK_SCRIPT_FILES = [
+  '.github/hooks/scripts/workflow_hook.cjs',
+  '.github/hooks/scripts/nextjs_policy.cjs',
+  '.github/hooks/scripts/workflow_profile.cjs',
+  '.github/hooks/scripts/workflow_bootstrap.cjs',
+  '.github/hooks/scripts/workflow_doctor.cjs',
+  '.github/hooks/scripts/workflow_audit_structure.cjs',
+  '.github/hooks/scripts/workflow_adopt_report.cjs',
+];
 const REQUIRED_SUPPORT_FILES = [
   'docs/agent-skills-standard.md',
+  'docs/adoption/from-scratch.md',
+  'docs/adoption/adopt-existing-project.md',
+  'docs/adoption/migrate-existing-nextjs.md',
   'docs/nextjs-enterprise-workflow-design.md',
   'docs/nextjs-enterprise-mcp-playbook.md',
   'docs/nextjs-enterprise-file-system-playbook.md',
@@ -110,7 +127,7 @@ const REQUIRED_SUPPORT_FILES = [
   'docs/migrations/MIGRATION.template.md',
   '.agents/README.md',
 ];
-const REQUIRED_CONFIG_FILES = ['.vscode/mcp.json', 'skills-lock.json'];
+const REQUIRED_CONFIG_FILES = ['.vscode/mcp.json', 'skills-lock.json', '.github/workflow-profile.json'];
 const REQUIRED_MCP_SERVERS = ['ark-ui', 'chakra-ui', 'figma', 'next-devtools'];
 const REQUIRED_MCP_INPUTS = [
   {
@@ -309,6 +326,8 @@ function validateWorkflowState(errors) {
     const details = Array.isArray(payload.errors) ? payload.errors.join('; ') : 'unknown workflow-state validation error';
     errors.push(`workflow-state.json is invalid: ${details}`);
   }
+
+  return payload;
 }
 
 function extractHookCommandPaths(command) {
@@ -472,6 +491,28 @@ function validateSupportConfigs(errors) {
         }
       }
     }
+
+    if (filePath === '.github/workflow-profile.json') {
+      const validation = validateProfile(ROOT, parsed);
+      errors.push(...validation.errors);
+
+      for (const issue of generatedIgnoreIssues(ROOT, parsed)) {
+        errors.push(issue);
+      }
+
+      const commandEntries = Object.entries(isPlainObject(parsed.commands) ? parsed.commands : {});
+      for (const [, command] of commandEntries) {
+        if (typeof command !== 'string') {
+          continue;
+        }
+        for (const commandPath of extractHookCommandPaths(command)) {
+          const resolvedPath = path.resolve(ROOT, commandPath);
+          if (!fs.existsSync(resolvedPath)) {
+            errors.push(`${filePath} references missing command path: ${commandPath}.`);
+          }
+        }
+      }
+    }
   }
 
   return validatedPaths;
@@ -597,6 +638,7 @@ function validateSkillStandards(skillInfos, errors) {
 
 function main() {
   const errors = [];
+  const warnings = [];
 
   const markdownFiles = walkDirectory(ROOT, (filePath) => filePath.endsWith('.md'));
   const instructionFiles = walkDirectory(path.join(ROOT, '.github', 'instructions'), (filePath) => filePath.endsWith('.instructions.md'));
@@ -605,9 +647,17 @@ function main() {
   const skillFiles = walkDirectory(path.join(ROOT, '.github', 'skills'), (filePath) => path.basename(filePath) === 'SKILL.md');
   const copilotInstructionFiles = [path.join(ROOT, '.github', 'copilot-instructions.md')];
 
-  validateWorkflowState(errors);
+  const workflowStatePayload = validateWorkflowState(errors);
   const hookConfigPaths = validateHookConfigs(errors);
   const supportConfigPaths = validateSupportConfigs(errors);
+  const [workflowProfile, workflowProfileLoadErrors] = loadProfile(ROOT);
+  errors.push(...workflowProfileLoadErrors);
+
+  if (workflowProfile) {
+    const profileValidation = validateProfile(ROOT, workflowProfile);
+    warnings.push(...profileValidation.warnings);
+    errors.push(...templateBootstrapStateIssues(workflowStatePayload?.state, workflowProfile));
+  }
 
   validateFrontmatterFiles(copilotInstructionFiles, ['applyTo'], 'copilot instruction', errors);
   const instructionInfos = validateFrontmatterFiles(instructionFiles, ['name', 'description', 'applyTo'], 'instruction', errors);
@@ -624,6 +674,12 @@ function main() {
     for (const error of errors) {
       process.stderr.write(`- ${error}\n`);
     }
+    if (warnings.length > 0) {
+      process.stderr.write('Warnings:\n');
+      for (const warning of warnings) {
+        process.stderr.write(`- ${warning}\n`);
+      }
+    }
     return 1;
   }
 
@@ -632,6 +688,12 @@ function main() {
   process.stdout.write(
     `Repository validation passed: ${checkedArtifactCount} artifact files, ${hookConfigPaths.length} hook configs, ${supportConfigPaths.length} support configs, and ${checkedLinks} markdown links checked.\n`,
   );
+  if (warnings.length > 0) {
+    process.stdout.write('Warnings:\n');
+    for (const warning of warnings) {
+      process.stdout.write(`- ${warning}\n`);
+    }
+  }
   return 0;
 }
 

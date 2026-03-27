@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { MotionStagger } from "./motion-stagger";
+import { MotionStagger } from "./motion-stagger.client";
 
 describe("MotionStagger", () => {
   it("renders children", () => {

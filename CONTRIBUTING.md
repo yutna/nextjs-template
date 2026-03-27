@@ -37,8 +37,10 @@ Run:
 npm run typecheck
 npm run lint
 npm test
+npm run workflow:doctor
 npm run workflow:validate-state
 npm run workflow:validate-repo
+npm run workflow:audit-structure
 npm run workflow:proof
 npm run build:example-env
 ```
