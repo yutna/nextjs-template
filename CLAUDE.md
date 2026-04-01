@@ -616,19 +616,113 @@ import { something } from "@/modules/other-module/...";    // No cross-module
 | Jobs | Background task execution | **Always Effect** |
 | Policies | Authorization checks | **Always Effect** |
 
-#### Entities (Drizzle Schemas)
+#### Backend File Structure
 
-**Always in `shared/entities/`** — never in modules.
+##### Services (folders, tests required)
+```
+services/
+└── create-user-service/
+    ├── index.ts
+    ├── types.ts                    # Input/output types
+    ├── helpers.ts                  # (optional, internal)
+    ├── create-user-service.ts      # Effect-based logic
+    └── create-user-service.test.ts
+```
+
+##### Repositories (folders, tests required)
+```
+repositories/
+└── user-repository/
+    ├── index.ts
+    ├── types.ts                    # Query result types
+    ├── user-repository.ts          # Drizzle + Effect
+    └── user-repository.test.ts
+```
+
+##### Jobs (folders, tests required)
+```
+jobs/
+└── send-welcome-email-job/
+    ├── index.ts
+    ├── types.ts                    # Payload types
+    ├── send-welcome-email-job.ts   # Trigger.dev job
+    └── send-welcome-email-job.test.ts
+```
+
+##### Policies (folders, tests required)
+```
+policies/
+└── user-policy/
+    ├── index.ts
+    ├── types.ts                    # Actor, resource types
+    ├── user-policy.ts              # Authorization rules
+    └── user-policy.test.ts
+```
+
+##### API Handlers (folders, tests required)
+```
+api/
+└── webhook-stripe-handler/
+    ├── index.ts
+    ├── types.ts                    # Request/response types
+    ├── helpers.ts                  # (optional) signature verification
+    ├── webhook-stripe-handler.ts   # Effect-based handler
+    └── webhook-stripe-handler.test.ts
+```
+
+##### Middleware (shared only, folders, tests required)
+```
+shared/middleware/
+└── auth-middleware/
+    ├── index.ts
+    ├── types.ts
+    ├── auth-middleware.ts
+    └── auth-middleware.test.ts
+```
+
+##### Entities (shared only, folders, NO tests required)
+
+Entities are declarative Drizzle schemas — no business logic to test.
+Repository tests verify schema works correctly.
 
 ```
 shared/entities/
-├── user/
-│   ├── index.ts
-│   ├── user.ts           # Drizzle schema
-│   └── types.ts          # Inferred types
-├── post/
-└── order/
+└── user/
+    ├── index.ts
+    ├── user.ts                     # Drizzle schema
+    ├── types.ts                    # Inferred types (InferSelectModel, etc.)
+    └── relations.ts                # (optional) Drizzle relations
 ```
+
+##### DB (shared only, infrastructure, flat)
+```
+shared/db/
+├── client.ts                       # Drizzle client instance
+├── schema.ts                       # Re-exports all entities
+├── types.ts                        # DB-level types
+└── migrations/                     # Drizzle migrations
+    ├── 0000_initial.sql
+    └── 0001_add_posts.sql
+```
+
+##### Queue (shared only, infrastructure, flat)
+```
+shared/queue/
+├── client.ts                       # Queue client (Redis, etc.)
+├── types.ts                        # Queue types
+└── helpers.ts                      # (optional) Queue utilities
+```
+
+#### Shared-Only Folders
+
+These folders exist **only in `shared/`**, never in modules:
+
+| Folder | Reason |
+|--------|--------|
+| `db/` | Single database connection |
+| `entities/` | Drizzle schemas shared across modules |
+| `middleware/` | Request interceptors are cross-cutting |
+| `queue/` | Single queue connection |
 
 ### Forbidden Patterns
 

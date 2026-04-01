@@ -103,7 +103,9 @@
     "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "providers", "queue", "routes", "schemas", "services", "styles", "types", "utils", "vendor"],
     "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "providers", "repositories", "schemas", "services", "utils"],
     "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
-    "specialFolders": ["routes", "db"],
+    "infrastructureFolders": ["db", "queue"],
+    "sharedOnlyFolders": ["db", "entities", "middleware", "queue"],
+    "specialFolders": ["routes"],
     "namingPatterns": {
       "components": "<semantic-type>-<name>",
       "containers": "container-<name>",
@@ -121,10 +123,12 @@
     "requiredFiles": {
       "inFolders": ["index.ts", "*.test.ts(x)"],
       "componentsOnly": ["*.stories.tsx"],
+      "noTestsRequired": ["entities"],
       "conditionalFiles": {
         "types.ts": "if types or props exist",
         "constants.ts": "if constants exist",
-        "helpers.ts": "if helper functions exist (internal only, not exported)"
+        "helpers.ts": "if helper functions exist (internal only, not exported)",
+        "relations.ts": "for entities with Drizzle relations"
       }
     },
     "importRules": {
