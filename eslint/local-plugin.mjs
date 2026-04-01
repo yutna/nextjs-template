@@ -537,8 +537,8 @@ const FOLDER_NAMING_RULES = [
     folderType: "policies",
   },
   {
-    example: "create-user-schema.ts",
-    filePattern: /^[a-z][a-z0-9-]*-schema\.[jt]sx?$/,
+    example: "create-user-schema.ts or create-user.schema.ts",
+    filePattern: /^[a-z][a-z0-9-]*(-schema|\.schema)\.[jt]sx?$/,
     folderPattern: /\/schemas\/([^/]+)\/$/,
     folderType: "schemas",
   },
@@ -569,7 +569,18 @@ const COMPONENT_SEMANTIC_TYPES = [
 const enforceFileNamingPattern = {
   create(context) {
     const filename = context.filename ?? context.getFilename();
-    const basename = filename.split("/").pop();
+    const normalizedPath = filename.replace(/\\/g, "/");
+    const basename = normalizedPath.split("/").pop();
+
+    // Skip files outside src/ (e.g., .claude/, eslint/, bin/)
+    if (!normalizedPath.includes("/src/")) return {};
+
+    // Get the parent folder path (ending with /)
+    const parentFolder = normalizedPath.substring(0, normalizedPath.lastIndexOf("/") + 1);
+
+    // Get the immediate parent folder name
+    const pathParts = normalizedPath.split("/");
+    const parentFolderName = pathParts[pathParts.length - 2];
 
     // Skip support files
     if (SUPPORT_FILES.has(basename)) return {};
@@ -577,12 +588,13 @@ const enforceFileNamingPattern = {
     // Skip test/story files
     if (ALLOWED_PATTERNS.some((pattern) => pattern.test(basename))) return {};
 
-    // Normalize path for matching
-    const normalizedPath = filename.replace(/\\/g, "/");
+    // Skip if file matches parent folder name (main component file)
+    const basenameWithoutExt = basename.replace(/\.[jt]sx?$/, "");
+    if (basenameWithoutExt === parentFolderName) return {};
 
     // Check each folder naming rule
     for (const rule of FOLDER_NAMING_RULES) {
-      if (rule.folderPattern.test(normalizedPath + "/")) {
+      if (rule.folderPattern.test(parentFolder)) {
         if (!rule.filePattern.test(basename)) {
           return {
             Program(node) {
@@ -603,12 +615,13 @@ const enforceFileNamingPattern = {
     }
 
     // Check components folder for semantic type prefix
-    if (/\/components\/([^/]+)\/$/.test(normalizedPath + "/")) {
+    // Only check .tsx files that are not the main component file
+    if (/\/components\/[^/]+\/$/.test(parentFolder) && basename.endsWith(".tsx")) {
       const hasSemanticPrefix = COMPONENT_SEMANTIC_TYPES.some((type) =>
         basename.startsWith(`${type}-`)
       );
 
-      if (!hasSemanticPrefix && basename.endsWith(".tsx")) {
+      if (!hasSemanticPrefix) {
         return {
           Program(node) {
             context.report({

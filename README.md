@@ -14,23 +14,29 @@ architecture, strict TypeScript, and production-ready UI foundations.
 - ✅ **TypeScript** — [strict][typescript], no `any`, zero exceptions
 - ⚡ **Server Actions** — [next-safe-action][safe-action] for type-safe
   mutations
-- 🛡️ **Error Handling** — structured hierarchy, operational vs
-  non-operational
+- 🛡️ **Error Handling** — [Effect][effect] for type-safe errors, structured hierarchy
 - 🧪 **Testing** — [Vitest][vitest] + [Testing Library][testing-lib],
   80% coverage
 - 🔍 **Linting** — [ESLint][eslint] + [Stylelint][stylelint] + custom
-  [Effect][effect]-based checks
-- 🤖 **AI-ready** — [`AGENTS.md`](./AGENTS.md) with Copilot instruction
-  files and skills
+  project-specific rules
+- 🤖 **AI-ready** — Optimized for both GitHub Copilot and Claude Code
 
 ## Quick Start
 
+Choose your preferred AI coding assistant:
+
 ```bash
-npx create-next-app \
-  --example https://github.com/yutna/nextjs-template \
-  my-app
-cd my-app
+# For GitHub Copilot (main branch)
+npx create-next-app --example https://github.com/yutna/nextjs-template my-app
+
+# For Claude Code (claude-workflow branch)
+npx create-next-app --example https://github.com/yutna/nextjs-template/tree/claude-workflow my-app
 ```
+
+| Branch | AI Assistant | Configuration |
+| ------ | ------------ | ------------- |
+| `main` | [GitHub Copilot][copilot] | `AGENTS.md` + `.github/instructions/` |
+| `claude-workflow` | [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
 
 ### Prerequisites
 
@@ -79,23 +85,31 @@ src/
 │   └── [locale]/     # i18n locale segment
 ├── modules/          # Feature modules
 │   └── {module}/
-│       ├── actions/      # Server actions
-│       ├── components/   # Presenter UI
-│       ├── containers/   # Logic binding (bridge layer)
-│       ├── hooks/        # Client logic
-│       ├── screens/      # Page-level composition
-│       └── schemas/      # Validation contracts
+│       ├── actions/      # Server actions (next-safe-action + Zod)
+│       ├── services/     # Business logic (Effect)
+│       ├── repositories/ # Data access (Effect + Drizzle)
+│       ├── schemas/      # Zod validation schemas
+│       ├── components/   # Presenter UI (server-first)
+│       ├── containers/   # Logic binding (client when needed)
+│       ├── screens/      # Page-level composition (server)
+│       └── hooks/        # Client logic
 ├── shared/           # Cross-cutting code
+│   ├── db/           # Database client (Drizzle)
+│   ├── entities/     # Drizzle schemas (tables)
 │   ├── components/   # Shared UI
 │   ├── config/       # Env, fonts, i18n
-│   ├── lib/          # Integrations and services
+│   ├── lib/          # Integrations and wrappers
 │   └── ...
 ├── messages/         # i18n translations (en/th)
 └── test/             # Shared test helpers
 ```
 
-Data flows `page → screen → container → component`. Server components by
-default — `"use client"` only at the smallest leaf.
+**Data flow:** `page → screen → container → component`
+
+**Backend flow:** `action → service → repository → entity`
+
+Server components by default — `"use client"` only at the smallest leaf.
+Effect is required for all backend layers (services, repositories, jobs).
 
 ## Scripts
 
@@ -131,6 +145,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 [MIT](./LICENSE)
 
 [ark]: https://ark-ui.com
+[claude-code]: https://docs.anthropic.com/en/docs/claude-code
+[copilot]: https://github.com/features/copilot
 [chakra]: https://chakra-ui.com
 [clsx]: https://github.com/lukeed/clsx
 [dayjs]: https://day.js.org

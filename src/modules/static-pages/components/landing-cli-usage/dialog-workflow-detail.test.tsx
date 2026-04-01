@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
 
-import { WorkflowDetailDialog } from "./workflow-detail-dialog";
+import { WorkflowDetailDialog } from "./dialog-workflow-detail";
 
 vi.mock("next-intl", () => ({
   useTranslations: vi.fn(() => (key: string) => key),
