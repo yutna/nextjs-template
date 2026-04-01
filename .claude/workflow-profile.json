@@ -19,6 +19,8 @@
     "ui": ["chakra-ui@3", "ark-ui"],
     "state": ["xstate", "zag-js", "nuqs", "immer"],
     "functional": "effect",
+    "database": "drizzle",
+    "jobs": "trigger.dev",
     "i18n": "next-intl",
     "serverActions": "next-safe-action",
     "validation": "zod",
@@ -59,21 +61,29 @@
     "principle": "convention-over-deliberation",
     "hard": [
       "Respect the six-phase workflow and state contract.",
-      "Preserve src/modules/<feature>/{actions,components,containers,screens,hooks,schemas,providers} structure.",
-      "Preserve src/shared/{lib,config,components,providers,schemas,styles} structure.",
+      "Preserve src/modules/<feature>/{actions,api,services,repositories,components,containers,screens,hooks,schemas,providers} structure.",
+      "Preserve src/shared/{db,entities,services,lib,config,components,providers,schemas,styles} structure.",
       "Use quality-gate sequence before delivery.",
       "Preserve repository naming, route, and boundary grammar declared by the active profile.",
-      "Schemas live in schemas/ folder, not in lib/.",
-      "Global styles live in shared/styles/ only; modules use CSS modules if needed."
+      "Entities (Drizzle schemas) live in shared/entities/ only, never in modules.",
+      "Schemas (Zod) live in schemas/ folder, not in lib/.",
+      "Global styles live in shared/styles/ only; modules use CSS modules if needed.",
+      "No cross-module imports; if module A needs something from module B, move it to shared.",
+      "No relative imports beyond current folder; use ./ for same folder, @/ alias for everything else.",
+      "No barrel re-exports from grouping folders (e.g., no components/index.ts that re-exports all)."
     ],
     "strong": [
+      "Heavy server-side approach: minimize client logic, maximize server-side processing.",
       "Server-first components (RSC by default).",
       "Chakra UI v3 for UI components.",
       "XState for complex state machines, Zag.js for UI primitives.",
       "next-safe-action + Zod for server actions.",
-      "Effect for composable, type-safe error handling and complex async flows.",
+      "Effect ALWAYS for backend layers (services, repositories, jobs, api handlers).",
+      "Drizzle for database access, always through repositories.",
+      "Trigger.dev for background jobs.",
       "Pino for structured logging.",
       "@t3-oss/env-nextjs for environment validation.",
+      "actions/ for internal mutations (from Next.js UI); api/ for external consumers (webhooks, mobile, third-party).",
       "lib/ for domain implementations and wrappers (e.g., Stripe API); utils/ for pure utility functions (e.g., format-thai-currency).",
       "Reuse the repository module shapes, adoption defaults, and approved libraries before inventing new patterns.",
       "Prefer the smallest boundary change and the narrowest side-effect surface that solves the task.",
@@ -89,17 +99,23 @@
   },
   "structure": {
     "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
-    "moduleSubdirs": ["actions", "components", "constants", "containers", "contexts", "hooks", "layouts", "lib", "providers", "schemas", "screens", "types", "utils"],
-    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "hooks", "images", "layouts", "lib", "providers", "routes", "schemas", "styles", "types", "utils", "vendor"],
-    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "hooks", "layouts", "lib", "providers", "schemas", "utils"],
+    "moduleSubdirs": ["actions", "api", "components", "constants", "containers", "contexts", "hooks", "jobs", "layouts", "lib", "policies", "providers", "repositories", "schemas", "screens", "services", "types", "utils"],
+    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "providers", "queue", "routes", "schemas", "services", "styles", "types", "utils", "vendor"],
+    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "providers", "repositories", "schemas", "services", "utils"],
     "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
-    "specialFolders": ["routes"],
+    "specialFolders": ["routes", "db"],
     "namingPatterns": {
       "components": "<semantic-type>-<name>",
       "containers": "container-<name>",
       "screens": "screen-<name>",
       "hooks": "use-<name>",
-      "actions": "<name>-action"
+      "actions": "<name>-action",
+      "apiHandlers": "<name>-handler",
+      "services": "<name>-service",
+      "repositories": "<name>-repository",
+      "jobs": "<name>-job",
+      "policies": "<name>-policy",
+      "entities": "<name>"
     },
     "componentSemanticTypes": ["form", "modal", "alert", "section", "menu", "card", "table", "list", "button", "input", "dialog", "drawer", "toast", "badge", "avatar", "icon"],
     "requiredFiles": {
@@ -110,6 +126,12 @@
         "constants.ts": "if constants exist",
         "helpers.ts": "if helper functions exist (internal only, not exported)"
       }
+    },
+    "importRules": {
+      "sameFolderRelative": "./",
+      "crossFolderAlias": "@/",
+      "forbiddenPatterns": ["../", "../../"],
+      "noBarrelReexports": "grouping folders (e.g., components/) must not have index.ts that re-exports all"
     }
   }
 }

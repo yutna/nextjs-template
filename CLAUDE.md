@@ -344,7 +344,13 @@ Each module in `src/modules/` follows:
 
 ```
 <module>/
-├── actions/       # Server actions (next-safe-action + Zod)
+├── actions/       # Server actions (internal mutations, next-safe-action + Zod)
+├── api/           # Route handlers (external endpoints, webhooks)
+├── services/      # Business logic (Effect)
+├── repositories/  # Data access (Effect + Drizzle)
+├── jobs/          # Background jobs (Trigger.dev)
+├── policies/      # Authorization logic
+├── schemas/       # Zod schemas (validation)
 ├── components/    # Pure UI components (mostly server)
 ├── constants/     # Module constants
 ├── containers/    # Logic binding layer (client when needed)
@@ -353,7 +359,6 @@ Each module in `src/modules/` follows:
 ├── layouts/       # Feature-specific layouts (rare)
 ├── lib/           # Domain implementations, wrappers (e.g., Stripe API)
 ├── providers/     # Feature-scoped React providers
-├── schemas/       # Zod schemas (not in lib/)
 ├── screens/       # Page-level composition (server)
 ├── types/         # Module-wide types (when co-location isn't enough)
 └── utils/         # Pure utility functions (e.g., format-thai-currency)
@@ -365,6 +370,13 @@ The `src/shared/` directory follows:
 
 ```
 shared/
+├── db/            # Drizzle client, migrations
+├── entities/      # ALL Drizzle schemas (always here, never in modules)
+├── services/      # Shared services (auth, email)
+├── middleware/    # Request middleware
+├── jobs/          # Job infrastructure (Trigger.dev client)
+├── queue/         # Queue utilities
+├── policies/      # Shared authorization helpers
 ├── actions/       # Shared server actions
 ├── api/           # API clients
 ├── components/    # Shared UI components
@@ -397,7 +409,9 @@ shared/
 |----------|------------|-------|
 | UI | Chakra UI v3 + Ark UI | Headless primitives from Ark UI |
 | State | XState, Zag.js, nuqs, immer | XState for machines, Zag for UI primitives, nuqs for URL state |
-| Functional | Effect | Composable, type-safe error handling and async flows |
+| Functional | Effect | **ALWAYS for backend** (services, repositories, jobs, api handlers) |
+| Database | Drizzle | Always through repositories |
+| Jobs | Trigger.dev | Background job processing |
 | Server Actions | next-safe-action + Zod | Type-safe server mutations |
 | i18n | next-intl | en/th locales, always prefix |
 | Logging | Pino | Structured logging |
@@ -422,6 +436,12 @@ shared/
 | Screens | `screen-<name>/` | `screen-welcome/`, `screen-user-detail/` |
 | Hooks | `use-<name>/` | `use-vibe-background/`, `use-user-form/` |
 | Actions | `<name>-action/` | `create-user-action/`, `report-error-action/` |
+| API Handlers | `<name>-handler/` | `webhook-stripe-handler/`, `get-users-handler/` |
+| Services | `<name>-service/` | `create-user-service/`, `checkout-service/` |
+| Repositories | `<name>-repository/` | `user-repository/`, `order-repository/` |
+| Jobs | `<name>-job/` | `send-welcome-email-job/`, `sync-inventory-job/` |
+| Policies | `<name>-policy/` | `user-policy/`, `post-policy/` |
+| Entities | `<name>/` | `user/`, `post/`, `order/` |
 
 Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `card-`, `table-`, `list-`, `button-`, `input-`, `dialog-`, `drawer-`, `toast-`, `badge-`, `avatar-`, `icon-`
 
@@ -429,9 +449,9 @@ Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `car
 
 | Structure | Subdirs | Notes |
 |-----------|---------|-------|
-| **Always folders** | actions, api, components, containers, contexts, hooks, layouts, lib, providers, schemas, utils | Each item is a folder with `index.ts` barrel export |
+| **Always folders** | actions, api, components, containers, contexts, entities, hooks, jobs, layouts, lib, middleware, policies, providers, repositories, schemas, services, utils | Each item is a folder with `index.ts` barrel export |
 | **Always flat files** | config, constants, images, styles, types | Can have nested folders for grouping, but NO `index.ts` re-export |
-| **Special** | routes | Mirrors app router path structure |
+| **Special** | routes, db | routes mirrors app router; db has client and migrations |
 
 #### Required Files in Folders
 
@@ -484,9 +504,140 @@ constants/
     └── breakpoints.ts            # No index.ts for re-export
 ```
 
+**Service (Effect-based):**
+```
+create-user-service/
+├── index.ts
+├── types.ts
+├── create-user-service.ts        # Effect-based business logic
+└── create-user-service.test.ts
+```
+
+**Repository (Effect + Drizzle):**
+```
+user-repository/
+├── index.ts
+├── types.ts
+├── user-repository.ts            # Drizzle queries wrapped in Effect
+└── user-repository.test.ts
+```
+
+### Import Rules
+
+| Context | Allowed | Example |
+|---------|---------|---------|
+| Same folder | `./` relative | `import { UserProps } from "./types"` |
+| Cross folder | `@/` alias only | `import { db } from "@/shared/db"` |
+
+**Forbidden:**
+- `../` or `../../` relative imports — use `@/` alias instead
+- Barrel re-exports from grouping folders — no `components/index.ts` that re-exports all
+- Cross-module imports — if module A needs from module B, move to shared
+
+```typescript
+// ✅ Allowed
+import { UserForm } from "./user-form";
+import { UserRepository } from "@/modules/users/repositories/user-repository";
+import { db } from "@/shared/db";
+
+// ❌ Not allowed
+import { UserForm } from "../../components/user-form";
+import { Button, Card, Modal } from "@/shared/components"; // No barrel re-export
+import { something } from "@/modules/other-module/...";    // No cross-module
+```
+
+### Backend Architecture (BFF/Full-Stack)
+
+#### Architecture Principle
+
+**Heavy server-side approach:** Minimize client logic, maximize server-side processing.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CLIENT (Minimal)                         │
+│               Only: UI state, interactions                  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+┌─────────────────────────┐     ┌─────────────────────────────┐
+│   Server Components     │     │      Server Actions         │
+│  (Data fetching, UI)    │     │  (Internal mutations)       │
+└─────────────────────────┘     └─────────────────────────────┘
+              │                               │
+              └───────────────┬───────────────┘
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   SERVICES LAYER (Effect)                   │
+│             Business logic, orchestration                   │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                REPOSITORIES LAYER (Effect + Drizzle)        │
+│                      Data access                            │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    DATABASE (Drizzle)                       │
+└─────────────────────────────────────────────────────────────┘
+
+        EXTERNAL CONSUMERS (webhooks, mobile, third-party)
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  API ROUTES (Effect)                        │
+│              External endpoints only                        │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                    SERVICES LAYER (same)
+```
+
+#### actions/ vs api/ Distinction
+
+| Folder | Purpose | Triggered By |
+|--------|---------|--------------|
+| `actions/` | Internal mutations | Next.js UI (Server Actions) |
+| `api/` | External endpoints | Webhooks, mobile apps, third-party |
+
+**Rule:** From your own UI → Server Actions (`actions/`)
+**Rule:** From external sources → API Routes (`api/`)
+
+#### Layer Responsibilities
+
+| Layer | Responsibility | Effect Usage |
+|-------|----------------|--------------|
+| Actions | Validate input, call services, return response | next-safe-action |
+| API Handlers | Parse request, call services, format response | **Always Effect** |
+| Services | Business logic, orchestration, side effects | **Always Effect** |
+| Repositories | Data access, Drizzle queries | **Always Effect** |
+| Jobs | Background task execution | **Always Effect** |
+| Policies | Authorization checks | **Always Effect** |
+
+#### Entities (Drizzle Schemas)
+
+**Always in `shared/entities/`** — never in modules.
+
+```
+shared/entities/
+├── user/
+│   ├── index.ts
+│   ├── user.ts           # Drizzle schema
+│   └── types.ts          # Inferred types
+├── post/
+└── order/
+```
+
 ### Forbidden Patterns
 
 - Generic files: `utils.ts`, `helpers.ts`, `common.ts` — use specific named modules
 - "use client" in screens/ — screens should be server components
 - Direct DOM manipulation — use React patterns
 - Untyped server actions — always use Zod validation
+- `../` relative imports — use `@/` alias
+- Barrel re-exports from grouping folders — import directly from item folder
+- Cross-module imports — move shared code to `shared/`
+- Entities in modules — always in `shared/entities/`
+- Backend code without Effect — services, repositories, jobs, api handlers must use Effect
