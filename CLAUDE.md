@@ -346,13 +346,17 @@ Each module in `src/modules/` follows:
 <module>/
 ├── actions/       # Server actions (next-safe-action + Zod)
 ├── components/    # Pure UI components (mostly server)
+├── constants/     # Module constants
 ├── containers/    # Logic binding layer (client when needed)
-├── screens/       # Page-level composition (server)
-├── hooks/         # Custom hooks (client)
 ├── contexts/      # React contexts
-├── lib/           # Module-specific utilities
-├── styles/        # Module CSS
-└── constants/     # Module constants
+├── hooks/         # Custom hooks (client)
+├── layouts/       # Feature-specific layouts (rare)
+├── lib/           # Domain implementations, wrappers (e.g., Stripe API)
+├── providers/     # Feature-scoped React providers
+├── schemas/       # Zod schemas (not in lib/)
+├── screens/       # Page-level composition (server)
+├── types/         # Module-wide types (when co-location isn't enough)
+└── utils/         # Pure utility functions (e.g., format-thai-currency)
 ```
 
 ### Shared Structure
@@ -361,15 +365,22 @@ The `src/shared/` directory follows:
 
 ```
 shared/
-├── lib/           # Shared utilities
-├── config/        # Configuration
+├── actions/       # Shared server actions
+├── api/           # API clients
 ├── components/    # Shared UI components
-├── providers/     # React providers
+├── config/        # Configuration
+├── constants/     # App-wide constants
+├── contexts/      # Shared React contexts
 ├── hooks/         # Shared hooks
+├── images/        # Static assets
+├── layouts/       # App-wide layouts (main, auth, dashboard)
+├── lib/           # Domain implementations, wrappers
+├── providers/     # App-wide React providers (theme, auth, i18n)
 ├── routes/        # Route definitions
-├── schemas/       # Zod schemas
-├── types/         # TypeScript types
-├── utils/         # Named utilities (not generic)
+├── schemas/       # Shared Zod schemas
+├── styles/        # Global styles only (modules use CSS modules)
+├── types/         # Cross-cutting TypeScript types
+├── utils/         # Pure utility functions
 └── vendor/        # Third-party integrations
 ```
 
@@ -386,11 +397,19 @@ shared/
 |----------|------------|-------|
 | UI | Chakra UI v3 + Ark UI | Headless primitives from Ark UI |
 | State | XState, Zag.js, nuqs, immer | XState for machines, Zag for UI primitives, nuqs for URL state |
+| Functional | Effect | Composable, type-safe error handling and async flows |
 | Server Actions | next-safe-action + Zod | Type-safe server mutations |
 | i18n | next-intl | en/th locales, always prefix |
 | Logging | Pino | Structured logging |
 | Env | @t3-oss/env-nextjs | Environment validation |
 | Testing | Vitest + Testing Library | 80% coverage target |
+
+### lib/ vs utils/ Distinction
+
+| Folder | Purpose | Examples |
+|--------|---------|----------|
+| `lib/` | Domain implementations, wrappers, integrations | `lib/stripe/`, `lib/analytics/` |
+| `utils/` | Pure, stateless utility functions | `format-thai-currency.ts`, `transform-date.ts` |
 
 ### Forbidden Patterns
 
