@@ -297,25 +297,177 @@ export * from '@testing-library/react';
 export { renderWithProviders as render };
 ```
 
-### Mock Factories
+## Factories
+
+Factories live in `shared/factories/` and generate test/seed data.
+
+### Factory Structure
+
+```
+shared/factories/
+├── index.ts                # Barrel export
+├── user-factory/
+│   ├── index.ts
+│   ├── user-factory.ts
+│   └── types.ts
+└── post-factory/
+    ├── index.ts
+    ├── post-factory.ts
+    └── types.ts
+```
+
+### Factory Pattern
 
 ```typescript
-// src/test/factories.ts
-import { faker } from '@faker-js/faker';
+// shared/factories/user-factory/user-factory.ts
+import { faker } from "@faker-js/faker";
 
-export function createMockUser(overrides = {}) {
-  return {
-    id: faker.string.uuid(),
-    name: faker.person.fullName(),
-    email: faker.internet.email(),
-    createdAt: faker.date.past(),
-    ...overrides,
-  };
-}
+import type { NewUser, User } from "@/shared/entities/user";
 
-export function createMockUsers(count: number) {
-  return Array.from({ length: count }, () => createMockUser());
+export const UserFactory = {
+  /**
+   * Build a user object (not persisted)
+   */
+  build(overrides: Partial<NewUser> = {}): NewUser {
+    return {
+      email: faker.internet.email(),
+      name: faker.person.fullName(),
+      avatarUrl: faker.image.avatar(),
+      isActive: true,
+      ...overrides,
+    };
+  },
+
+  /**
+   * Build multiple user objects
+   */
+  buildList(count: number, overrides: Partial<NewUser> = {}): NewUser[] {
+    return Array.from({ length: count }, () => this.build(overrides));
+  },
+
+  /**
+   * Build a complete user with ID (for mocking)
+   */
+  buildComplete(overrides: Partial<User> = {}): User {
+    return {
+      id: faker.string.uuid(),
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent(),
+      ...this.build(),
+      ...overrides,
+    };
+  },
+
+  /**
+   * Build multiple complete users
+   */
+  buildCompleteList(count: number, overrides: Partial<User> = []): User[] {
+    return Array.from({ length: count }, () => this.buildComplete(overrides));
+  },
+};
+```
+
+### Factory Index
+
+```typescript
+// shared/factories/user-factory/index.ts
+export { UserFactory } from "./user-factory";
+```
+
+```typescript
+// shared/factories/index.ts
+export { UserFactory } from "./user-factory";
+export { PostFactory } from "./post-factory";
+```
+
+### Using Factories in Tests
+
+```typescript
+// user-card.test.tsx
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import { UserFactory } from "@/shared/factories";
+
+import { UserCard } from "./user-card";
+
+describe("UserCard", () => {
+  it("renders user information", () => {
+    const user = UserFactory.buildComplete({ name: "John Doe" });
+
+    render(<UserCard user={user} />);
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+  });
+
+  it("renders multiple users", () => {
+    const users = UserFactory.buildCompleteList(3);
+
+    render(<UserList users={users} />);
+
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+  });
+});
+```
+
+### Using Factories in Seeds
+
+```typescript
+// shared/db/seeds/users.seed.ts
+import { db } from "@/shared/db";
+import { users } from "@/shared/entities/user";
+import { UserFactory } from "@/shared/factories";
+
+export async function seedUsers() {
+  // Create specific users
+  await db.insert(users).values({
+    email: "admin@example.com",
+    name: "Admin User",
+  });
+
+  // Create random users using factory
+  const randomUsers = UserFactory.buildList(50);
+  await db.insert(users).values(randomUsers);
 }
+```
+
+### Factory with Associations
+
+```typescript
+// shared/factories/post-factory/post-factory.ts
+import { faker } from "@faker-js/faker";
+
+import { UserFactory } from "@/shared/factories/user-factory";
+
+import type { NewPost, Post } from "@/shared/entities/post";
+import type { User } from "@/shared/entities/user";
+
+export const PostFactory = {
+  build(overrides: Partial<NewPost> = {}): NewPost {
+    return {
+      title: faker.lorem.sentence(),
+      content: faker.lorem.paragraphs(3),
+      authorId: faker.string.uuid(),
+      publishedAt: null,
+      ...overrides,
+    };
+  },
+
+  /**
+   * Build post with associated author
+   */
+  buildWithAuthor(overrides: Partial<Post> = {}): Post & { author: User } {
+    const author = UserFactory.buildComplete();
+    return {
+      id: faker.string.uuid(),
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent(),
+      ...this.build({ authorId: author.id }),
+      ...overrides,
+      author,
+    };
+  },
+};
 ```
 
 ## Running Tests

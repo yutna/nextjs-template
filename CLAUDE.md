@@ -370,8 +370,10 @@ The `src/shared/` directory follows:
 
 ```
 shared/
-├── db/            # Drizzle client, migrations
+├── db/            # Drizzle client, migrations, seeds
+│   └── seeds/     # Database seed scripts
 ├── entities/      # ALL Drizzle schemas (always here, never in modules)
+├── factories/     # Test data factories (@faker-js/faker)
 ├── services/      # Shared services (auth, email)
 ├── middleware/    # Request middleware
 ├── jobs/          # Job infrastructure (Trigger.dev client)

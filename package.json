@@ -26,6 +26,7 @@
     "@ark-ui/react": "5.35.0",
     "@chakra-ui/react": "3.34.0",
     "@emotion/react": "11.14.0",
+    "@faker-js/faker": "10.4.0",
     "@libsql/client": "0.17.2",
     "@t3-oss/env-nextjs": "0.13.11",
     "@trigger.dev/sdk": "4.4.3",

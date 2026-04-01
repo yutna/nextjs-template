@@ -457,3 +457,85 @@ export const upsert = (data: NewUser): Effect.Effect<User, DatabaseError> =>
     catch: (error) => new DatabaseError(error),
   });
 ```
+
+## Seeds
+
+Seeds live in `shared/db/seeds/` and provide initial/sample data.
+
+### Seed Structure
+
+```
+shared/db/seeds/
+├── index.ts           # Main seed runner
+├── users.seed.ts      # User seed data
+├── posts.seed.ts      # Post seed data
+└── _order.ts          # Seed execution order
+```
+
+### Seed File Example
+
+```typescript
+// shared/db/seeds/users.seed.ts
+import { db } from "@/shared/db";
+import { users } from "@/shared/entities/user";
+import { UserFactory } from "@/shared/factories/user-factory";
+
+export async function seedUsers() {
+  console.log("🌱 Seeding users...");
+
+  // Clear existing data (dev only)
+  await db.delete(users);
+
+  // Create admin user
+  await db.insert(users).values({
+    email: "admin@example.com",
+    name: "Admin User",
+    role: "admin",
+  });
+
+  // Create sample users using factory
+  const sampleUsers = UserFactory.buildList(10);
+  await db.insert(users).values(sampleUsers);
+
+  console.log("✅ Users seeded");
+}
+```
+
+### Seed Runner
+
+```typescript
+// shared/db/seeds/index.ts
+import { seedUsers } from "./users.seed";
+import { seedPosts } from "./posts.seed";
+
+const seeds = [
+  seedUsers,
+  seedPosts,
+];
+
+async function main() {
+  console.log("🌱 Starting database seed...");
+
+  for (const seed of seeds) {
+    await seed();
+  }
+
+  console.log("✅ Database seeded successfully");
+  process.exit(0);
+}
+
+main().catch((error) => {
+  console.error("❌ Seed failed:", error);
+  process.exit(1);
+});
+```
+
+### Package.json Script
+
+```json
+{
+  "scripts": {
+    "db:seed": "npx tsx shared/db/seeds/index.ts"
+  }
+}
+```

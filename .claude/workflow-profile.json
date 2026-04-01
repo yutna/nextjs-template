@@ -25,7 +25,7 @@
     "serverActions": "next-safe-action",
     "validation": "zod",
     "logging": "pino",
-    "testing": ["vitest", "testing-library"],
+    "testing": ["vitest", "testing-library", "@faker-js/faker"],
     "env": "@t3-oss/env-nextjs"
   },
   "locales": {
@@ -38,7 +38,10 @@
     "typecheck": "npm run check-types",
     "lint": "npm run lint",
     "tests": "npm run test",
-    "coverage": "npm run test:coverage"
+    "coverage": "npm run test:coverage",
+    "dbGenerate": "npm run db:generate",
+    "dbMigrate": "npm run db:migrate",
+    "dbSeed": "npm run db:seed"
   },
   "adoption": {
     "supportedModes": ["from-scratch", "adopt-existing-project"],
@@ -100,11 +103,11 @@
   "structure": {
     "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
     "moduleSubdirs": ["actions", "api", "components", "constants", "containers", "contexts", "hooks", "jobs", "layouts", "lib", "policies", "providers", "repositories", "schemas", "screens", "services", "types", "utils"],
-    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "providers", "queue", "routes", "schemas", "services", "styles", "types", "utils", "vendor"],
+    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "factories", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "providers", "queue", "routes", "schemas", "seeds", "services", "styles", "types", "utils", "vendor"],
     "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "providers", "repositories", "schemas", "services", "utils"],
     "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
     "infrastructureFolders": ["db", "queue"],
-    "sharedOnlyFolders": ["db", "entities", "middleware", "queue"],
+    "sharedOnlyFolders": ["db", "entities", "middleware", "queue", "seeds", "factories"],
     "specialFolders": ["routes"],
     "namingPatterns": {
       "components": "<semantic-type>-<name>",
