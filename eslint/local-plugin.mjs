@@ -4,6 +4,7 @@
  * Rules:
  * - enforce-event-prop-naming: Enforce on* prefix for event callback props
  * - enforce-handler-naming: Enforce handle* prefix for event handler identifiers in JSX
+ * - enforce-file-naming-pattern: Enforce naming patterns for files in specific folders
  * - no-cross-module-import: Forbid imports between feature modules
  * - no-hook-spread: Forbid spreading hook return values in JSX
  * - sort-imports: Enforce repository import ordering
@@ -452,6 +453,196 @@ const noInlineStyle = {
 };
 
 // -------------------------------------------------------------------
+// enforce-file-naming-pattern
+// -------------------------------------------------------------------
+
+/**
+ * Support files that are allowed in any folder regardless of naming pattern.
+ */
+const SUPPORT_FILES = new Set([
+  "index.ts",
+  "index.tsx",
+  "types.ts",
+  "types.tsx",
+  "helpers.ts",
+  "helpers.tsx",
+  "constants.ts",
+  "constants.tsx",
+  "relations.ts",
+]);
+
+/**
+ * File patterns that are always allowed (tests, stories).
+ */
+const ALLOWED_PATTERNS = [
+  /\.test\.[jt]sx?$/,
+  /\.stories\.[jt]sx?$/,
+  /\.spec\.[jt]sx?$/,
+];
+
+/**
+ * Naming rules for specific folder types.
+ * Each rule has:
+ * - folderPattern: regex to match the folder path
+ * - filePattern: regex the main file must match
+ * - example: example of correct naming
+ */
+const FOLDER_NAMING_RULES = [
+  {
+    example: "container-user-list.tsx",
+    filePattern: /^container-[a-z][a-z0-9-]*\.[jt]sx?$/,
+    folderPattern: /\/containers\/([^/]+)\/$/,
+    folderType: "containers",
+  },
+  {
+    example: "screen-user-list.tsx",
+    filePattern: /^screen-[a-z][a-z0-9-]*\.[jt]sx?$/,
+    folderPattern: /\/screens\/([^/]+)\/$/,
+    folderType: "screens",
+  },
+  {
+    example: "use-user-filters.ts",
+    filePattern: /^use-[a-z][a-z0-9-]*\.[jt]sx?$/,
+    folderPattern: /\/hooks\/([^/]+)\/$/,
+    folderType: "hooks",
+  },
+  {
+    example: "create-user-action.ts",
+    filePattern: /^[a-z][a-z0-9-]*-action\.[jt]sx?$/,
+    folderPattern: /\/actions\/([^/]+)\/$/,
+    folderType: "actions",
+  },
+  {
+    example: "create-user-service.ts",
+    filePattern: /^[a-z][a-z0-9-]*-service\.[jt]sx?$/,
+    folderPattern: /\/services\/([^/]+)\/$/,
+    folderType: "services",
+  },
+  {
+    example: "user-repository.ts",
+    filePattern: /^[a-z][a-z0-9-]*-repository\.[jt]sx?$/,
+    folderPattern: /\/repositories\/([^/]+)\/$/,
+    folderType: "repositories",
+  },
+  {
+    example: "send-welcome-email-job.ts",
+    filePattern: /^[a-z][a-z0-9-]*-job\.[jt]sx?$/,
+    folderPattern: /\/jobs\/([^/]+)\/$/,
+    folderType: "jobs",
+  },
+  {
+    example: "user-policy.ts",
+    filePattern: /^[a-z][a-z0-9-]*-policy\.[jt]sx?$/,
+    folderPattern: /\/policies\/([^/]+)\/$/,
+    folderType: "policies",
+  },
+  {
+    example: "create-user-schema.ts",
+    filePattern: /^[a-z][a-z0-9-]*-schema\.[jt]sx?$/,
+    folderPattern: /\/schemas\/([^/]+)\/$/,
+    folderType: "schemas",
+  },
+];
+
+/**
+ * Semantic type prefixes for components.
+ */
+const COMPONENT_SEMANTIC_TYPES = [
+  "alert",
+  "avatar",
+  "badge",
+  "button",
+  "card",
+  "dialog",
+  "drawer",
+  "form",
+  "icon",
+  "input",
+  "list",
+  "menu",
+  "modal",
+  "section",
+  "table",
+  "toast",
+];
+
+const enforceFileNamingPattern = {
+  create(context) {
+    const filename = context.filename ?? context.getFilename();
+    const basename = filename.split("/").pop();
+
+    // Skip support files
+    if (SUPPORT_FILES.has(basename)) return {};
+
+    // Skip test/story files
+    if (ALLOWED_PATTERNS.some((pattern) => pattern.test(basename))) return {};
+
+    // Normalize path for matching
+    const normalizedPath = filename.replace(/\\/g, "/");
+
+    // Check each folder naming rule
+    for (const rule of FOLDER_NAMING_RULES) {
+      if (rule.folderPattern.test(normalizedPath + "/")) {
+        if (!rule.filePattern.test(basename)) {
+          return {
+            Program(node) {
+              context.report({
+                data: {
+                  basename,
+                  example: rule.example,
+                  folderType: rule.folderType,
+                },
+                messageId: "invalidFileName",
+                node,
+              });
+            },
+          };
+        }
+        return {};
+      }
+    }
+
+    // Check components folder for semantic type prefix
+    if (/\/components\/([^/]+)\/$/.test(normalizedPath + "/")) {
+      const hasSemanticPrefix = COMPONENT_SEMANTIC_TYPES.some((type) =>
+        basename.startsWith(`${type}-`)
+      );
+
+      if (!hasSemanticPrefix && basename.endsWith(".tsx")) {
+        return {
+          Program(node) {
+            context.report({
+              data: {
+                basename,
+                types: COMPONENT_SEMANTIC_TYPES.slice(0, 5).join(", ") + ", ...",
+              },
+              messageId: "missingSemanticPrefix",
+              node,
+            });
+          },
+        };
+      }
+    }
+
+    return {};
+  },
+  meta: {
+    docs: {
+      description:
+        "Enforce naming patterns for files in containers, screens, hooks, actions, services, repositories, jobs, policies, schemas, and components folders",
+    },
+    messages: {
+      invalidFileName:
+        'File "{{basename}}" in {{folderType}}/ must follow naming pattern. Example: "{{example}}".',
+      missingSemanticPrefix:
+        'Component "{{basename}}" should start with a semantic type prefix ({{types}}). Example: "form-login.tsx", "card-user.tsx".',
+    },
+    schema: [],
+    type: "problem",
+  },
+};
+
+// -------------------------------------------------------------------
 // no-upward-layer-import
 // -------------------------------------------------------------------
 
@@ -514,6 +705,7 @@ const noUpwardLayerImport = {
 export default {
   rules: {
     "enforce-event-prop-naming": enforceEventPropNaming,
+    "enforce-file-naming-pattern": enforceFileNamingPattern,
     "enforce-handler-naming": enforceHandlerNaming,
     "no-cross-module-import": noCrossModuleImport,
     "no-hook-spread": noHookSpread,

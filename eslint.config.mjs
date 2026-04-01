@@ -133,6 +133,9 @@ const eslintConfig = defineConfig([
       // Forbid inline style attribute in JSX (Styles)
       "project/no-inline-style": "error",
 
+      // Enforce naming patterns for files in specific folders (Architecture)
+      "project/enforce-file-naming-pattern": "error",
+
       // ------------------------------------------------
       // File and directory naming (Common Style Guide §2)
       // ------------------------------------------------
