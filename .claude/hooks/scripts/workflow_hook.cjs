@@ -43,40 +43,40 @@ const READ_ONLY_COMMAND_PATTERNS = [
 ];
 
 const DEFAULT_STATE = {
-  version: SCHEMA_VERSION,
+  delivery: {
+    notes: '',
+    status: 'blocked',
+    userApproved: false,
+  },
+  implementation: {
+    blockedItems: [],
+    filesTouched: [],
+    retryCount: 0,
+    status: 'not-started',
+  },
+  lastUpdated: '',
   phase: 'discovery',
-  taskId: '',
-  taskSummary: '',
+  plan: {
+    filesInScope: [],
+    status: 'not-started',
+    summary: '',
+  },
+  qualityGates: {
+    lastRunSummary: '',
+    lint: 'pending',
+    tests: 'pending',
+    typecheck: 'pending',
+    verification: 'pending',
+  },
   requirements: {
-    status: 'needs-clarification',
     acceptanceCriteria: [],
     constraints: [],
     openQuestions: [],
+    status: 'needs-clarification',
   },
-  plan: {
-    status: 'not-started',
-    summary: '',
-    filesInScope: [],
-  },
-  implementation: {
-    status: 'not-started',
-    filesTouched: [],
-    retryCount: 0,
-    blockedItems: [],
-  },
-  qualityGates: {
-    typecheck: 'pending',
-    lint: 'pending',
-    tests: 'pending',
-    verification: 'pending',
-    lastRunSummary: '',
-  },
-  delivery: {
-    status: 'blocked',
-    userApproved: false,
-    notes: '',
-  },
-  lastUpdated: '',
+  taskId: '',
+  taskSummary: '',
+  version: SCHEMA_VERSION,
 };
 
 function isPlainObject(value) {
@@ -211,14 +211,14 @@ function normalizeEvent(mode, rawEvent) {
     {};
 
   return {
+    cwd: rawEvent?.cwd ?? '.',
     host,
     mode,
     rawEvent,
-    cwd: rawEvent?.cwd ?? '.',
-    toolName: lower(rawEvent?.tool_name ?? rawEvent?.toolName),
-    toolInput,
-    toolUseId: rawEvent?.tool_use_id ?? rawEvent?.toolUseId ?? '',
     stopHookActive: Boolean(rawEvent?.stop_hook_active ?? rawEvent?.stopHookActive),
+    toolInput,
+    toolName: lower(rawEvent?.tool_name ?? rawEvent?.toolName),
+    toolUseId: rawEvent?.tool_use_id ?? rawEvent?.toolUseId ?? '',
   };
 }
 
@@ -263,7 +263,7 @@ function logEvent(cwd, level, message, extra = {}) {
   try {
     const filePath = logPath(cwd);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    const record = sortKeys({ timestamp: utcTimestamp(), level, message, ...extra });
+    const record = sortKeys({ level, message, timestamp: utcTimestamp(), ...extra });
     fs.appendFileSync(filePath, `${JSON.stringify(record)}\n`, 'utf8');
   } catch {
     // Ignore log-write failures.
@@ -544,8 +544,8 @@ function persistStateBaseline(cwd, toolUseId, state) {
     fs.writeFileSync(filePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
   } catch (error) {
     logEvent(cwd, 'warning', 'Failed to persist workflow baseline', {
-      tool_use_id: toolUseId,
       error: error.message,
+      tool_use_id: toolUseId,
     });
   }
 }
@@ -582,11 +582,19 @@ function emit(payload) {
 function emitHookPayload(hookEventName, response = {}) {
   const payload = {};
 
+  // Stop hooks use "approve"/"block", other hooks use "allow"/"deny"
+  const isStopEvent = hookEventName === 'Stop';
+
   if ('continue' in response) {
     payload.continue = response.continue;
   }
   if ('decision' in response) {
-    payload.decision = response.decision;
+    // Map decision values for Stop events: allow->approve, deny/block->block
+    if (isStopEvent) {
+      payload.decision = response.decision === 'allow' ? 'approve' : 'block';
+    } else {
+      payload.decision = response.decision;
+    }
   }
   if ('reason' in response) {
     payload.reason = response.reason;
@@ -597,11 +605,15 @@ function emitHookPayload(hookEventName, response = {}) {
   if ('permissionDecisionReason' in response) {
     payload.permissionDecisionReason = response.permissionDecisionReason;
   }
-  if ('additionalContext' in response && response.additionalContext) {
+  // additionalContext at root level is only valid for non-Stop events
+  if ('additionalContext' in response && response.additionalContext && !isStopEvent) {
     payload.additionalContext = response.additionalContext;
   }
 
-  if (hookEventName) {
+  // Only add hookSpecificOutput for supported event types per Claude Code schema
+  // Stop and SessionStart events do not support hookSpecificOutput
+  const supportsHookSpecificOutput = ['PreToolUse', 'UserPromptSubmit', 'PostToolUse'].includes(hookEventName);
+  if (hookEventName && supportsHookSpecificOutput) {
     payload.hookSpecificOutput = { hookEventName };
     if ('permissionDecision' in response) {
       payload.hookSpecificOutput.permissionDecision = response.permissionDecision;
@@ -619,15 +631,15 @@ function emitHookPayload(hookEventName, response = {}) {
 
 function emitContinue(hookEventName, additionalContext = '') {
   return emitHookPayload(hookEventName, {
-    continue: true,
     additionalContext,
+    continue: true,
   });
 }
 
 function emitPreToolDecision(decision, permissionDecisionReason = '', additionalContext = '') {
   const response = {
-    permissionDecision: decision,
     additionalContext,
+    permissionDecision: decision,
   };
   if (permissionDecisionReason) {
     response.permissionDecisionReason = permissionDecisionReason;
@@ -640,9 +652,9 @@ function emitPreToolDecision(decision, permissionDecisionReason = '', additional
 
 function emitPostToolBlock(reason, additionalContext = '') {
   return emitHookPayload('PostToolUse', {
+    additionalContext,
     decision: 'block',
     reason,
-    additionalContext,
   });
 }
 
@@ -858,17 +870,17 @@ function deriveStateAfterImplementationEdit(state, filePaths) {
   nextState.implementation.status = 'in-progress';
   nextState.qualityGates = {
     ...nextState.qualityGates,
-    typecheck: invalidateGateStatus(nextState.qualityGates.typecheck),
+    lastRunSummary: 'Implementation changed after prior validation. Rerun quality gates and verification.',
     lint: invalidateGateStatus(nextState.qualityGates.lint),
     tests: invalidateGateStatus(nextState.qualityGates.tests),
+    typecheck: invalidateGateStatus(nextState.qualityGates.typecheck),
     verification: invalidateGateStatus(nextState.qualityGates.verification),
-    lastRunSummary: 'Implementation changed after prior validation. Rerun quality gates and verification.',
   };
   nextState.delivery = {
     ...nextState.delivery,
+    notes: 'Implementation changed after prior validation. Rerun quality gates and verification before delivery.',
     status: 'blocked',
     userApproved: false,
-    notes: 'Implementation changed after prior validation. Rerun quality gates and verification before delivery.',
   };
 
   return nextState;
@@ -878,17 +890,17 @@ function syncStateAfterImplementationEdit(cwd, state, filePaths) {
   const proposedState = deriveStateAfterImplementationEdit(state, filePaths);
 
   if (statesEqual(state, proposedState)) {
-    return { state, changed: false, message: '', errors: [] };
+    return { changed: false, errors: [], message: '', state };
   }
 
   const transitionErrors = validateStateTransition(state, proposedState);
   if (transitionErrors.length > 0) {
-    return { state, changed: false, message: '', errors: transitionErrors };
+    return { changed: false, errors: transitionErrors, message: '', state };
   }
 
   const [savedState, saveErrors] = saveState(cwd, proposedState);
   if (saveErrors.length > 0) {
-    return { state, changed: false, message: '', errors: saveErrors };
+    return { changed: false, errors: saveErrors, message: '', state };
   }
 
   const downstreamChanged =
@@ -899,7 +911,7 @@ function syncStateAfterImplementationEdit(cwd, state, filePaths) {
     ? 'Workflow state was updated automatically with touched implementation files and downstream gate invalidation.'
     : 'Workflow state was updated automatically with touched implementation files.';
 
-  return { state: savedState, changed: true, message, errors: [] };
+  return { changed: true, errors: [], message, state: savedState };
 }
 
 function stateEditContext(cwd, toolUseId, state) {
@@ -959,8 +971,8 @@ function workflowGuard(event) {
 
   if (stateErrors.length > 0 && !stateTargeted && !readOnlyCommand && !stateApiCommand) {
     logEvent(cwd, 'warning', 'Blocked risky tool use because workflow state is invalid', {
-      tool: toolName,
       errors: stateErrors,
+      tool: toolName,
     });
     return emitPreToolDecision(
       'ask',
@@ -972,8 +984,8 @@ function workflowGuard(event) {
   if (stateTargeted && isEditTool(toolName)) {
     if (phaseIndex(currentPhase) >= phaseIndex('implementation')) {
       logEvent(cwd, 'info', 'Denied direct state edit after planning', {
-        tool: toolName,
         phase: currentPhase,
+        tool: toolName,
       });
       return emitPreToolDecision(
         'deny',
@@ -996,9 +1008,9 @@ function workflowGuard(event) {
 
   if (shellStateWriteAttempt) {
     logEvent(cwd, 'info', 'Denied shell-based workflow state write', {
-      tool: toolName,
-      phase: currentPhase,
       command: commandText,
+      phase: currentPhase,
+      tool: toolName,
     });
     return emitPreToolDecision(
       'deny',
@@ -1013,8 +1025,8 @@ function workflowGuard(event) {
 
   if (retryCount >= MAX_RETRY_COUNT && (isEditTool(toolName) || riskyCommand) && !governanceOnly) {
     logEvent(cwd, 'warning', 'Denied edit because retry budget is exhausted', {
-      tool: toolName,
       retryCount,
+      tool: toolName,
     });
     return emitPreToolDecision(
       'deny',
@@ -1025,9 +1037,9 @@ function workflowGuard(event) {
 
   if (deliveryActionCommand && (!allGatesGreen(activeState) || activeState.delivery?.userApproved !== true)) {
     logEvent(cwd, 'warning', 'Denied delivery action because delivery is not user-approved', {
-      tool: toolName,
-      gates: formatGateSummary(activeState),
       deliveryStatus: activeState.delivery?.status,
+      gates: formatGateSummary(activeState),
+      tool: toolName,
       userApproved: activeState.delivery?.userApproved,
     });
     return emitPreToolDecision(
@@ -1039,8 +1051,8 @@ function workflowGuard(event) {
 
   if (!governanceOnly && !['clarified', 'approved'].includes(requirementsStatus) && (isEditTool(toolName) || riskyCommand)) {
     logEvent(cwd, 'info', 'Asked for Discovery completion before risky edit', {
-      tool: toolName,
       requirements: requirementsStatus,
+      tool: toolName,
     });
     return emitPreToolDecision(
       'ask',
@@ -1051,8 +1063,8 @@ function workflowGuard(event) {
 
   if ((isEditTool(toolName) || riskyCommand) && !governanceOnly && planStatus !== 'approved') {
     logEvent(cwd, 'info', 'Asked for Planning completion before implementation edit', {
-      tool: toolName,
       plan: planStatus,
+      tool: toolName,
     });
     return emitPreToolDecision(
       'ask',
@@ -1084,8 +1096,8 @@ function postEditChecks(event) {
       }
       removeStateBaseline(cwd, toolUseId);
       logEvent(cwd, 'error', 'Blocked invalid workflow state edit', {
-        tool: toolName,
         errors,
+        tool: toolName,
       });
       return emitPostToolBlock(
         'workflow-state.json became invalid and was restored to the last valid baseline.',
@@ -1104,8 +1116,8 @@ function postEditChecks(event) {
       }
       removeStateBaseline(cwd, toolUseId);
       logEvent(cwd, 'error', 'Blocked invalid workflow state transition', {
-        tool: toolName,
         errors: transitionErrors,
+        tool: toolName,
       });
       return emitPostToolBlock(
         'workflow-state.json violated the workflow schema or transition rules and was restored.',
@@ -1115,8 +1127,8 @@ function postEditChecks(event) {
 
     removeStateBaseline(cwd, toolUseId);
     logEvent(cwd, 'info', 'Validated workflow state edit', {
-      tool: toolName,
       phase: currentState.phase,
+      tool: toolName,
     });
     return emitPostToolMessage('workflow-state.json passed schema and transition validation.');
   }
@@ -1130,16 +1142,16 @@ function postEditChecks(event) {
     if (syncResult.errors.length > 0) {
       automaticStateMessage = `Automatic workflow state sync needs manual repair: ${syncResult.errors.join('; ')}.`;
       logEvent(cwd, 'warning', 'Automatic workflow state sync after edit failed', {
-        tool: toolName,
         errors: syncResult.errors,
+        tool: toolName,
       });
     } else if (syncResult.changed) {
       state = syncResult.state;
       automaticStateMessage = syncResult.message;
       logEvent(cwd, 'info', 'Automatic workflow state sync after edit succeeded', {
-        tool: toolName,
-        phase: state.phase,
         files: implementationPaths,
+        phase: state.phase,
+        tool: toolName,
       });
     }
   }
@@ -1152,7 +1164,7 @@ function postEditChecks(event) {
   ]
     .filter(Boolean)
     .join(' ');
-  logEvent(cwd, 'info', 'Post-edit reminder issued', { tool: toolName, phase });
+  logEvent(cwd, 'info', 'Post-edit reminder issued', { phase, tool: toolName });
   return emitPostToolMessage(message);
 }
 
@@ -1175,7 +1187,7 @@ function stopGate(event) {
   if (retryCount >= MAX_RETRY_COUNT && blockedItems.length === 0) {
     const reason = 'Warning: Retry budget is exhausted, but no blocked item was recorded in workflow state. Consider recording the blocker before ending.';
     logEvent(cwd, 'warning', 'Stop advisory: retry exhaustion not recorded', { retryCount });
-    return emitHookPayload('Stop', { continue: true, decision: 'allow', reason, additionalContext: reason });
+    return emitHookPayload('Stop', { additionalContext: reason, continue: true, decision: 'allow', reason });
   }
 
   if (['implementation', 'quality-gates', 'verification'].includes(phase) || touched.length > 0) {
@@ -1187,7 +1199,7 @@ function stopGate(event) {
       logEvent(cwd, 'info', 'Stop advisory: gates incomplete', {
         gates: formatGateSummary(state),
       });
-      return emitHookPayload('Stop', { continue: true, decision: 'allow', reason, additionalContext: reason });
+      return emitHookPayload('Stop', { additionalContext: reason, continue: true, decision: 'allow', reason });
     }
   }
 
@@ -1214,13 +1226,13 @@ function updateStateMode(cwd, patch) {
   const transitionErrors = validateStateTransition(currentState, proposedState);
   if (transitionErrors.length > 0) {
     logEvent(cwd, 'error', 'Rejected workflow state update', { errors: transitionErrors });
-    return emit({ saved: false, errors: transitionErrors });
+    return emit({ errors: transitionErrors, saved: false });
   }
 
   const [savedState, saveErrors] = saveState(cwd, proposedState);
   if (saveErrors.length > 0) {
     logEvent(cwd, 'error', 'Failed to save workflow state update', { errors: saveErrors });
-    return emit({ saved: false, errors: saveErrors });
+    return emit({ errors: saveErrors, saved: false });
   }
 
   return emit({ saved: true, state: savedState });
@@ -1231,7 +1243,7 @@ function validateStateMode(cwd) {
   const validationErrors = state !== null ? validateState(state) : [];
   const errors = [...readErrors, ...validationErrors];
   logEvent(cwd, 'info', 'Validated workflow state', { valid: errors.length === 0 });
-  return emit({ valid: errors.length === 0, errors, state });
+  return emit({ errors, state, valid: errors.length === 0 });
 }
 
 function main() {
@@ -1260,7 +1272,7 @@ function main() {
   if (mode === 'update-state') {
     const [patch, parseErrors] = buildUpdateStatePatch(rawEvent, cliArgs);
     if (parseErrors.length > 0) {
-      return emit({ saved: false, errors: parseErrors });
+      return emit({ errors: parseErrors, saved: false });
     }
     return updateStateMode(cwd, patch);
   }
@@ -1272,16 +1284,16 @@ function main() {
 }
 
 module.exports = {
-  DEFAULT_STATE,
-  SCHEMA_VERSION,
   deepCopyDefaultState,
   deepMerge,
+  DEFAULT_STATE,
   formatGateSummary,
   loadState,
   main,
   mergeKnownSections,
   readStateStrict,
   saveState,
+  SCHEMA_VERSION,
   updateStateMode,
   validateState,
   validateStateMode,

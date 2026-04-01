@@ -31,6 +31,11 @@
             "type": "command",
             "command": "node .claude/hooks/scripts/workflow_hook.cjs post-edit-checks",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/nextjs_policy.cjs",
+            "timeout": 10
           }
         ]
       }

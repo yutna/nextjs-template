@@ -1,6 +1,7 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import checkFile from "eslint-plugin-check-file";
+import importPlugin from "eslint-plugin-import";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import storybook from "eslint-plugin-storybook";
@@ -27,6 +28,7 @@ const eslintConfig = defineConfig([
     files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
       "check-file": checkFile,
+      import: importPlugin,
       perfectionist,
       "project": localPlugin,
     },
@@ -337,6 +339,17 @@ const eslintConfig = defineConfig([
     rules: {
       "no-console": "off",
       "no-restricted-syntax": "off",
+    },
+  },
+  // --------------------------------------------------
+  // Claude hooks — CommonJS scripts allow require and console
+  // --------------------------------------------------
+  {
+    files: [".claude/hooks/scripts/**/*.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "no-console": "off",
     },
   },
   // --------------------------------------------------

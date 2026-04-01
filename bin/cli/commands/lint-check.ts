@@ -807,6 +807,192 @@ const checkClientContainerHooks = Effect.sync((): CheckResult => {
 });
 
 // -------------------------------------------------------------------
+// Check: i18n-variables
+// -------------------------------------------------------------------
+
+/**
+ * Validates that translation strings with ICU message format variables
+ * are called with the required variables in useTranslations/getTranslations.
+ *
+ * Catches errors like:
+ *   t("description") // where description = "Delete {name}?" - missing { name }
+ */
+
+function extractIcuVariables(str: string): string[] {
+  const matches = str.match(/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g);
+  if (!matches) return [];
+  return matches.map((m) => m.slice(1, -1));
+}
+
+function collectTranslationVariables(
+  obj: Record<string, unknown>,
+  prefix = ""
+): Map<string, string[]> {
+  const result = new Map<string, string[]>();
+
+  for (const [key, value] of Object.entries(obj)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+
+    if (typeof value === "string") {
+      const variables = extractIcuVariables(value);
+      if (variables.length > 0) {
+        result.set(fullKey, variables);
+      }
+    } else if (typeof value === "object" && value !== null) {
+      const nested = collectTranslationVariables(
+        value as Record<string, unknown>,
+        fullKey
+      );
+      for (const [k, v] of nested) {
+        result.set(k, v);
+      }
+    }
+  }
+
+  return result;
+}
+
+function loadTranslationVariables(messagesDir: string): Map<string, string[]> {
+  const allVariables = new Map<string, string[]>();
+
+  function walkMessagesDir(dir: string, namespace: string) {
+    try {
+      const entries = readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          // Convert directory name to camelCase for namespace
+          const dirNamespace = entry.name.replace(/-([a-z])/g, (_, c: string) =>
+            c.toUpperCase()
+          );
+          walkMessagesDir(
+            fullPath,
+            namespace ? `${namespace}.${dirNamespace}` : dirNamespace
+          );
+        } else if (entry.name.endsWith(".json")) {
+          const content = JSON.parse(readFile(fullPath));
+          // Convert filename to camelCase (e.g., user-card.json -> userCard)
+          const fileNamespace = entry.name
+            .replace(/\.json$/, "")
+            .replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+          const fullNamespace = namespace
+            ? `${namespace}.${fileNamespace}`
+            : fileNamespace;
+          const variables = collectTranslationVariables(content, fullNamespace);
+          for (const [k, v] of variables) {
+            allVariables.set(k, v);
+          }
+        }
+      }
+    } catch {
+      // Directory doesn't exist
+    }
+  }
+
+  walkMessagesDir(join(messagesDir, "en"), "");
+  return allVariables;
+}
+
+function checkI18nSourceFile(
+  filePath: string,
+  content: string,
+  translationVariables: Map<string, string[]>
+): Violation[] {
+  const errors: Violation[] = [];
+
+  // Find the namespace used in useTranslations or getTranslations
+  const namespaceMatch = content.match(
+    /(?:useTranslations|getTranslations)\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/
+  );
+  if (!namespaceMatch) return errors;
+
+  const namespace = namespaceMatch[1];
+
+  // Find all t("key") or t('key') calls - need to check each occurrence
+  const lines = content.split("\n");
+
+  for (let lineNum = 0; lineNum < lines.length; lineNum++) {
+    const line = lines[lineNum];
+
+    // Match t("key") or t("key", { ... })
+    const tCallMatches = [
+      ...line.matchAll(/\bt\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g),
+      ...line.matchAll(/\bt\s*\(\s*["'`]([^"'`]+)["'`]\s*,\s*\{([^}]*)\}\s*\)/g),
+    ];
+
+    for (const match of tCallMatches) {
+      const key = match[1];
+      const variablesArg = match[2];
+      const fullKey = `${namespace}.${key}`;
+
+      const requiredVariables = translationVariables.get(fullKey);
+      if (!requiredVariables || requiredVariables.length === 0) continue;
+
+      // Check if variables are provided
+      if (!variablesArg) {
+        errors.push({
+          file: rel(filePath),
+          message: `Line ${lineNum + 1}: t("${key}") requires variables: { ${requiredVariables.join(", ")} }`,
+          rule: "i18n-variables",
+        });
+        continue;
+      }
+
+      // Check if all required variables are provided
+      const providedVariables = variablesArg.match(
+        /([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g
+      );
+      const providedSet = new Set(
+        providedVariables?.map((v) => v.replace(/\s*:$/, "")) || []
+      );
+
+      const missing = requiredVariables.filter((v) => !providedSet.has(v));
+      if (missing.length > 0) {
+        errors.push({
+          file: rel(filePath),
+          message: `Line ${lineNum + 1}: t("${key}", {...}) is missing variables: { ${missing.join(", ")} }`,
+          rule: "i18n-variables",
+        });
+      }
+    }
+  }
+
+  return errors;
+}
+
+const checkI18nVariables = Effect.sync((): CheckResult => {
+  const messagesDir = join(PROJECT_ROOT, "src/messages");
+  const translationVariables = loadTranslationVariables(messagesDir);
+  const errors: Violation[] = [];
+
+  function checkDir(dir: string) {
+    const files = walkFiles(dir, [".ts", ".tsx"]);
+
+    for (const file of files) {
+      const filename = basename(file);
+      // Skip test files
+      if (filename.includes(".test.")) continue;
+
+      const content = readFile(file);
+      // Only check files that use translations
+      if (
+        content.includes("useTranslations") ||
+        content.includes("getTranslations")
+      ) {
+        const fileErrors = checkI18nSourceFile(file, content, translationVariables);
+        errors.push(...fileErrors);
+      }
+    }
+  }
+
+  checkDir(join(PROJECT_ROOT, "src/modules"));
+  checkDir(join(PROJECT_ROOT, "src/shared"));
+
+  return { errors, name: "i18n-variables", warnings: [] };
+});
+
+// -------------------------------------------------------------------
 // Check: action-schema
 // -------------------------------------------------------------------
 
@@ -852,6 +1038,7 @@ const ALL_CHECKS = {
   "client-container-hooks": checkClientContainerHooks,
   "css-variables": checkCssVariables,
   "forbidden-deps": checkForbiddenDeps,
+  "i18n-variables": checkI18nVariables,
   "missing-tests": checkMissingTests,
   "screen-server-only": checkScreenServerOnly,
   "section-order": checkSectionOrder,
@@ -980,6 +1167,7 @@ export function help(): void {
     --forbidden-deps         Check for banned packages and lockfiles
     --stories-placement      Check story files are only in components/
     --client-container-hooks Check client containers for direct hook usage
+    --i18n-variables         Check translation calls provide required ICU variables
     --section-order          Check component section structure (soft warning)
     --css-variables          Check CSS modules for hardcoded values (soft warning)
 

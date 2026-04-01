@@ -1,88 +1,90 @@
 {
   "version": 1,
-  "profileId": "core-workflow",
+  "profileId": "nextjs-enterprise-claude",
   "repository": {
-    "name": "claude-workflow",
-    "role": "workflow-template",
+    "name": "vibe-next-template",
+    "role": "application",
     "packageManager": "npm",
     "generatedIgnorePatterns": [
       ".claude/hooks/*.log",
       "coverage/",
       "dist/",
-      "node_modules/"
+      "node_modules/",
+      ".next/"
     ]
+  },
+  "stack": {
+    "framework": "next@16",
+    "react": "19",
+    "ui": ["chakra-ui@3", "ark-ui"],
+    "state": ["xstate", "zag-js", "nuqs", "immer"],
+    "i18n": "next-intl",
+    "serverActions": "next-safe-action",
+    "validation": "zod",
+    "logging": "pino",
+    "testing": ["vitest", "testing-library"],
+    "env": "@t3-oss/env-nextjs"
+  },
+  "locales": {
+    "supported": ["en", "th"],
+    "default": "en",
+    "prefix": "always"
   },
   "commands": {
     "validateState": "node .claude/hooks/scripts/workflow_hook.cjs validate-state",
-    "typecheck": null,
-    "lint": null,
-    "tests": null,
-    "builds": []
+    "typecheck": "npm run check-types",
+    "lint": "npm run lint",
+    "tests": "npm run test",
+    "coverage": "npm run test:coverage"
   },
   "adoption": {
-    "supportedModes": [
-      "from-scratch",
-      "adopt-existing-project"
-    ],
+    "supportedModes": ["from-scratch", "adopt-existing-project"],
     "defaultTaskId": "bootstrap-workflow-adoption",
     "defaultTaskSummary": "Bootstrap workflow adoption and discovery for this repository.",
-    "recommendedSourceRoots": [
-      "src",
-      "apps/*/src"
-    ],
-    "recommendedModuleRoots": [
-      "src/features",
-      "src/modules",
-      "apps/web/src/features"
-    ],
-    "recommendedTestRoots": [
-      "test",
-      "tests",
-      "src/__tests__",
-      "apps/*/test",
-      "apps/*/tests"
-    ]
+    "recommendedAppRoot": "src/app",
+    "recommendedModuleRoot": "src/modules",
+    "recommendedSharedRoot": "src/shared",
+    "recommendedSourceRoots": ["src"],
+    "recommendedModuleRoots": ["src/modules"],
+    "recommendedTestRoots": ["src/__tests__", "tests"]
   },
   "roots": {
-    "sourceRoots": [],
-    "moduleRoots": [],
-    "testRoots": []
+    "sourceRoots": ["src"],
+    "moduleRoots": ["src/modules"],
+    "testRoots": ["src/__tests__"]
   },
   "conventions": {
     "model": "contract-driven",
     "principle": "convention-over-deliberation",
-    "hardConventions": [
+    "hard": [
       "Respect the six-phase workflow and state contract.",
-      "Preserve repository naming, route, and boundary grammar declared by the active profile.",
-      "Use the repository quality-gate sequence before delivery."
+      "Preserve src/modules/<feature>/{actions,components,containers,screens,hooks} structure.",
+      "Preserve src/shared/{lib,config,components,providers} structure.",
+      "Use quality-gate sequence before delivery.",
+      "Preserve repository naming, route, and boundary grammar declared by the active profile."
     ],
-    "strongDefaults": [
+    "strong": [
+      "Server-first components (RSC by default).",
+      "Chakra UI v3 for UI components.",
+      "XState for complex state machines, Zag.js for UI primitives.",
+      "next-safe-action + Zod for server actions.",
+      "Pino for structured logging.",
+      "@t3-oss/env-nextjs for environment validation.",
       "Reuse the repository module shapes, adoption defaults, and approved libraries before inventing new patterns.",
       "Prefer the smallest boundary change and the narrowest side-effect surface that solves the task.",
       "Prefer extending the existing repository grammar over reorganizing it."
     ],
-    "localFreedom": [
+    "local": [
+      "Helper extraction within modules.",
+      "Internal function decomposition.",
+      "Component file organization within containers/components.",
       "Private helper extraction inside an approved boundary.",
-      "Internal function decomposition and local component factoring that do not change public grammar.",
       "Implementation detail that stays inside the approved plan and validation path."
     ]
   },
   "structure": {
-    "forbiddenLegacyDirectories": [
-      "containers",
-      "screens"
-    ],
-    "forbiddenLegacyRoots": [
-      "legacy",
-      "deprecated"
-    ],
-    "forbiddenGenericFileNames": [
-      "utils.ts",
-      "utils.tsx",
-      "helpers.ts",
-      "helpers.tsx",
-      "common.ts",
-      "common.tsx"
-    ]
+    "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
+    "moduleSubdirs": ["actions", "components", "containers", "screens", "hooks", "contexts", "lib", "styles", "constants"],
+    "sharedSubdirs": ["lib", "config", "components", "providers", "hooks", "routes", "schemas", "types", "utils", "vendor"]
   }
 }

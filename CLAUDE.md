@@ -327,3 +327,74 @@ During **Quality Gates / Verification**: run gates in canonical order, verify ac
 During **Delivery**: summarize changes honestly. Do not claim completion before gates and verification pass. Do not continue into commit, push, release, or PR actions unless the user explicitly asks.
 
 When in doubt, move one phase earlier, make state explicit, and choose the smaller safe step.
+
+## Next.js Architecture (Always-On)
+
+This section defines the Next.js-specific architecture contract for this repository.
+
+### Directory Contract
+
+- `src/app/[locale]/` - App Router routes (thin composition shells)
+- `src/modules/<feature>/` - Feature modules (domain-driven)
+- `src/shared/` - Cross-cutting code
+
+### Module Structure
+
+Each module in `src/modules/` follows:
+
+```
+<module>/
+├── actions/       # Server actions (next-safe-action + Zod)
+├── components/    # Pure UI components (mostly server)
+├── containers/    # Logic binding layer (client when needed)
+├── screens/       # Page-level composition (server)
+├── hooks/         # Custom hooks (client)
+├── contexts/      # React contexts
+├── lib/           # Module-specific utilities
+├── styles/        # Module CSS
+└── constants/     # Module constants
+```
+
+### Shared Structure
+
+The `src/shared/` directory follows:
+
+```
+shared/
+├── lib/           # Shared utilities
+├── config/        # Configuration
+├── components/    # Shared UI components
+├── providers/     # React providers
+├── hooks/         # Shared hooks
+├── routes/        # Route definitions
+├── schemas/       # Zod schemas
+├── types/         # TypeScript types
+├── utils/         # Named utilities (not generic)
+└── vendor/        # Third-party integrations
+```
+
+### Server-First Rules
+
+1. Default to Server Components
+2. Use "use client" only at leaf components (containers/, interactive components)
+3. Keep screens/ and components/ as server components
+4. Move client logic to containers/ or hooks/
+
+### Stack Conventions
+
+| Category | Technology | Notes |
+|----------|------------|-------|
+| UI | Chakra UI v3 + Ark UI | Headless primitives from Ark UI |
+| State | XState, Zag.js, nuqs, immer | XState for machines, Zag for UI primitives, nuqs for URL state |
+| Server Actions | next-safe-action + Zod | Type-safe server mutations |
+| i18n | next-intl | en/th locales, always prefix |
+| Logging | Pino | Structured logging |
+| Env | @t3-oss/env-nextjs | Environment validation |
+| Testing | Vitest + Testing Library | 80% coverage target |
+
+### Forbidden Patterns
+
+- Generic files: `utils.ts`, `helpers.ts`, `common.ts` — use specific named modules
+- "use client" in screens/ — screens should be server components
+- Direct DOM manipulation — use React patterns
+- Untyped server actions — always use Zod validation
