@@ -674,15 +674,6 @@ function emitStopDecision(decision, reason = '') {
   });
 }
 
-function implementationStopSatisfied(state) {
-  const phase = lower(state.phase || 'discovery');
-  const implementationStatus = lower(state.implementation?.status || '');
-  if (phase !== 'implementation') {
-    return false;
-  }
-  return implementationStatus === 'completed' || implementationStatus === 'blocked';
-}
-
 function isEditTool(toolName) {
   return ['edit', 'create', 'write', 'rename', 'move', 'delete'].some((token) => toolName.includes(token));
 }

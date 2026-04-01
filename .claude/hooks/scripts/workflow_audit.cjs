@@ -13,8 +13,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const PROFILE_FILE = '.claude/workflow-profile.json';
-
 const DEFAULT_MODULE_SUBDIRS = [
   'actions', 'components', 'containers', 'screens', 'hooks',
   'contexts', 'lib', 'styles', 'constants',
@@ -24,27 +22,11 @@ const REQUIRED_MODULE_SUBDIRS = [
   'actions', 'components', 'containers', 'screens', 'hooks',
 ];
 
-const DEFAULT_SHARED_SUBDIRS = [
-  'lib', 'config', 'components', 'providers', 'hooks',
-  'routes', 'schemas', 'types', 'utils', 'vendor',
-];
-
 const FORBIDDEN_FILES = [
   'utils.ts', 'utils.tsx',
   'helpers.ts', 'helpers.tsx',
   'common.ts', 'common.tsx',
 ];
-
-function loadProfile() {
-  try {
-    if (fs.existsSync(PROFILE_FILE)) {
-      return JSON.parse(fs.readFileSync(PROFILE_FILE, 'utf8'));
-    }
-  } catch {
-    // Fall back to defaults
-  }
-  return null;
-}
 
 function getDirectories(dirPath) {
   if (!fs.existsSync(dirPath)) {
@@ -338,8 +320,6 @@ function main() {
   const targetPath = args[0] || 'all';
 
   console.log('🔍 Workflow Structure Audit');
-
-  const profile = loadProfile();
 
   if (targetPath === 'all' || targetPath === '') {
     // Audit everything

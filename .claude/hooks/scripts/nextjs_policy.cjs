@@ -57,14 +57,6 @@ function isScreenPath(filePath) {
   return filePath.includes('/screens/') || filePath.includes('\\screens\\');
 }
 
-function isContainerPath(filePath) {
-  return filePath.includes('/containers/') || filePath.includes('\\containers\\');
-}
-
-function isComponentPath(filePath) {
-  return filePath.includes('/components/') || filePath.includes('\\components\\');
-}
-
 function getFileName(filePath) {
   return path.basename(filePath);
 }

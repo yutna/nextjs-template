@@ -22,13 +22,6 @@ const REQUIRED_DIRS = [
   '.claude/hooks/scripts',
 ];
 
-const REQUIRED_FILES = [
-  'CLAUDE.md',
-  STATE_FILE,
-  PROFILE_FILE,
-  SETTINGS_FILE,
-];
-
 function checkFileExists(filePath) {
   return fs.existsSync(filePath);
 }
