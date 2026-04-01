@@ -90,6 +90,26 @@
   "structure": {
     "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
     "moduleSubdirs": ["actions", "components", "constants", "containers", "contexts", "hooks", "layouts", "lib", "providers", "schemas", "screens", "types", "utils"],
-    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "hooks", "images", "layouts", "lib", "providers", "routes", "schemas", "styles", "types", "utils", "vendor"]
+    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "hooks", "images", "layouts", "lib", "providers", "routes", "schemas", "styles", "types", "utils", "vendor"],
+    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "hooks", "layouts", "lib", "providers", "schemas", "utils"],
+    "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
+    "specialFolders": ["routes"],
+    "namingPatterns": {
+      "components": "<semantic-type>-<name>",
+      "containers": "container-<name>",
+      "screens": "screen-<name>",
+      "hooks": "use-<name>",
+      "actions": "<name>-action"
+    },
+    "componentSemanticTypes": ["form", "modal", "alert", "section", "menu", "card", "table", "list", "button", "input", "dialog", "drawer", "toast", "badge", "avatar", "icon"],
+    "requiredFiles": {
+      "inFolders": ["index.ts", "*.test.ts(x)"],
+      "componentsOnly": ["*.stories.tsx"],
+      "conditionalFiles": {
+        "types.ts": "if types or props exist",
+        "constants.ts": "if constants exist",
+        "helpers.ts": "if helper functions exist (internal only, not exported)"
+      }
+    }
   }
 }

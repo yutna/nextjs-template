@@ -411,6 +411,79 @@ shared/
 | `lib/` | Domain implementations, wrappers, integrations | `lib/stripe/`, `lib/analytics/` |
 | `utils/` | Pure, stateless utility functions | `format-thai-currency.ts`, `transform-date.ts` |
 
+### File Structure Conventions
+
+#### Naming Patterns
+
+| Folder Type | Pattern | Examples |
+|-------------|---------|----------|
+| Components | `<semantic-type>-<name>/` | `form-contact/`, `modal-confirmation/`, `alert-warning/`, `section-hero/`, `menu-sidebar/` |
+| Containers | `container-<name>/` | `container-user-list/`, `container-checkout/` |
+| Screens | `screen-<name>/` | `screen-welcome/`, `screen-user-detail/` |
+| Hooks | `use-<name>/` | `use-vibe-background/`, `use-user-form/` |
+| Actions | `<name>-action/` | `create-user-action/`, `report-error-action/` |
+
+Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `card-`, `table-`, `list-`, `button-`, `input-`, `dialog-`, `drawer-`, `toast-`, `badge-`, `avatar-`, `icon-`
+
+#### Folder vs Flat Files
+
+| Structure | Subdirs | Notes |
+|-----------|---------|-------|
+| **Always folders** | actions, api, components, containers, contexts, hooks, layouts, lib, providers, schemas, utils | Each item is a folder with `index.ts` barrel export |
+| **Always flat files** | config, constants, images, styles, types | Can have nested folders for grouping, but NO `index.ts` re-export |
+| **Special** | routes | Mirrors app router path structure |
+
+#### Required Files in Folders
+
+| File | Required? | Notes |
+|------|-----------|-------|
+| `index.ts` | **Always** | Barrel export |
+| `types.ts` | If types/props exist | No inline type declarations |
+| `constants.ts` | If constants exist | No inline constants |
+| `helpers.ts` | If helper functions exist | **Internal only**, NOT exported via `index.ts` |
+| `*.test.ts(x)` | **Always** | Tests required for all code |
+| `*.stories.tsx` | **Components only** | Required for components; NOT for containers, screens, providers, layouts |
+
+#### Code Organization Rules
+
+- **No inline functions** outside main declaration — helpers go in `helpers.ts`
+- **No inline constants** — constants go in `constants.ts`
+- **No inline types** — types/interfaces go in `types.ts`
+- **helpers.ts is internal** — specific to that folder, NOT exported, NOT used outside
+
+#### Folder Structure Examples
+
+**Component (always has stories):**
+```
+form-create-user/
+├── index.ts                      # Export: FormCreateUser
+├── types.ts                      # FormCreateUserProps
+├── constants.ts                  # (optional) FORM_FIELDS
+├── helpers.ts                    # (optional, internal) validateEmail()
+├── form-create-user.tsx
+├── form-create-user.test.tsx
+└── form-create-user.stories.tsx  # Required for components
+```
+
+**Container (no stories):**
+```
+container-user-list/
+├── index.ts
+├── types.ts
+├── container-user-list.tsx
+└── container-user-list.test.tsx
+```
+
+**Flat files (config, constants, types):**
+```
+constants/
+├── api-endpoints.ts              # No index.ts
+├── error-codes.ts
+└── ui/                           # Grouping folder allowed
+    ├── colors.ts
+    └── breakpoints.ts            # No index.ts for re-export
+```
+
 ### Forbidden Patterns
 
 - Generic files: `utils.ts`, `helpers.ts`, `common.ts` — use specific named modules
