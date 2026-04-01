@@ -542,6 +542,18 @@ const FOLDER_NAMING_RULES = [
     folderPattern: /\/schemas\/([^/]+)\/$/,
     folderType: "schemas",
   },
+  {
+    example: "user-registration-form.ts",
+    filePattern: /^[a-z][a-z0-9-]*-form\.[jt]sx?$/,
+    folderPattern: /\/forms\/([^/]+)\/$/,
+    folderType: "forms",
+  },
+  {
+    example: "user-presenter.ts",
+    filePattern: /^[a-z][a-z0-9-]*-presenter\.[jt]sx?$/,
+    folderPattern: /\/presenters\/([^/]+)\/$/,
+    folderType: "presenters",
+  },
 ];
 
 /**
@@ -642,7 +654,7 @@ const enforceFileNamingPattern = {
   meta: {
     docs: {
       description:
-        "Enforce naming patterns for files in containers, screens, hooks, actions, services, repositories, jobs, policies, schemas, and components folders",
+        "Enforce naming patterns for files in containers, screens, hooks, actions, services, repositories, jobs, policies, schemas, forms, presenters, and components folders",
     },
     messages: {
       invalidFileName:

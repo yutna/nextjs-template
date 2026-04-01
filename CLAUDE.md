@@ -351,6 +351,8 @@ Each module in `src/modules/` follows:
 ├── jobs/          # Background jobs (Trigger.dev)
 ├── policies/      # Authorization logic
 ├── schemas/       # Zod schemas (validation)
+├── forms/         # Complex form handling (multi-step, validation)
+├── presenters/    # Entity-to-JSON transformers (API responses)
 ├── components/    # Pure UI components (mostly server)
 ├── constants/     # Module constants
 ├── containers/    # Logic binding layer (client when needed)
@@ -374,11 +376,12 @@ shared/
 │   └── seeds/     # Database seed scripts
 ├── entities/      # ALL Drizzle schemas (always here, never in modules)
 ├── factories/     # Test data factories (@faker-js/faker)
-├── services/      # Shared services (auth, email)
+├── services/      # Shared services (auth, email, realtime)
 ├── middleware/    # Request middleware
 ├── jobs/          # Job infrastructure (Trigger.dev client)
 ├── queue/         # Queue utilities
 ├── policies/      # Shared authorization helpers
+├── presenters/    # Shared presenters (pagination, errors, API responses)
 ├── actions/       # Shared server actions
 ├── api/           # API clients
 ├── components/    # Shared UI components
@@ -443,6 +446,8 @@ shared/
 | Repositories | `<name>-repository/` | `user-repository/`, `order-repository/` |
 | Jobs | `<name>-job/` | `send-welcome-email-job/`, `sync-inventory-job/` |
 | Policies | `<name>-policy/` | `user-policy/`, `post-policy/` |
+| Forms | `<name>-form/` | `user-registration-form/`, `checkout-form/` |
+| Presenters | `<name>-presenter/` | `user-presenter/`, `order-presenter/` |
 | Entities | `<name>/` | `user/`, `post/`, `order/` |
 
 Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `card-`, `table-`, `list-`, `button-`, `input-`, `dialog-`, `drawer-`, `toast-`, `badge-`, `avatar-`, `icon-`
@@ -451,7 +456,7 @@ Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `car
 
 | Structure | Subdirs | Notes |
 |-----------|---------|-------|
-| **Always folders** | actions, api, components, containers, contexts, entities, hooks, jobs, layouts, lib, middleware, policies, providers, repositories, schemas, services, utils | Each item is a folder with `index.ts` barrel export |
+| **Always folders** | actions, api, components, containers, contexts, entities, forms, hooks, jobs, layouts, lib, middleware, policies, presenters, providers, repositories, schemas, services, utils | Each item is a folder with `index.ts` barrel export |
 | **Always flat files** | config, constants, images, styles, types | Can have nested folders for grouping, but NO `index.ts` re-export |
 | **Special** | routes, db | routes mirrors app router; db has client and migrations |
 
@@ -737,3 +742,103 @@ These folders exist **only in `shared/`**, never in modules:
 - Cross-module imports — move shared code to `shared/`
 - Entities in modules — always in `shared/entities/`
 - Backend code without Effect — services, repositories, jobs, api handlers must use Effect
+
+## Pattern Selection Rules (Always-On)
+
+Before implementing, check which patterns apply:
+
+### Data Layer
+
+| If you need to... | Use |
+|-------------------|-----|
+| Define database table | Entity (`shared/entities/`) |
+| Validate API/form input | Zod Schema (`schemas/`) |
+| CRUD operations | Repository |
+| Always run on create/update/delete | Entity Hooks (`hooks.ts`) |
+| Reusable query filters | Query Scopes (`scopes.ts`) |
+
+### Business Logic
+
+| If you need to... | Use |
+|-------------------|-----|
+| Orchestrate business logic | Service |
+| Handle UI mutation | Server Action |
+| Expose external endpoint | API Route Handler |
+| Long-running task (>10s) | Trigger.dev Job |
+| Resource authorization | Policy |
+
+### Data Transformation
+
+| If you need to... | Use |
+|-------------------|-----|
+| Format entity for API response | Presenter |
+| Hide sensitive fields | Presenter |
+| Multi-step form validation | Form Object |
+| Cross-field validation | Form Object |
+| Simple field validation | Zod Schema only |
+
+### State Management
+
+| If you need to... | Use |
+|-------------------|-----|
+| Boolean toggle | `useState` |
+| 2-3 related values | `useReducer` |
+| 4+ states with transitions | XState |
+| Standard UI primitive (menu, dialog) | Zag.js |
+| URL-persisted state (filters, pagination) | nuqs |
+
+### Communication
+
+| If you need to... | Use |
+|-------------------|-----|
+| Send transactional email | Email Service + Job |
+| Server → client updates only | SSE |
+| Bi-directional / presence / private channels | Pusher |
+
+### UI Components
+
+| If you need to... | Use |
+|-------------------|-----|
+| Page-level composition | Screen (server) |
+| Data fetching + client binding | Container (client) |
+| Pure UI rendering | Component (server) |
+| Used by 2+ modules | `shared/components/` |
+| Used by 1 module | `modules/<name>/components/` |
+
+### Quick Decision Shortcuts
+
+- **Returning entity from API?** → Use Presenter
+- **Form with steps or complex validation?** → Use Form Object
+- **More than 3 states?** → Consider XState
+- **Same filter in 2+ places?** → Extract to Query Scope
+- **Side effect on every save?** → Use Entity Hook
+- **Task takes >10 seconds?** → Use Background Job
+
+## Rails to Next.js Pattern Mapping
+
+| Rails Pattern | Next.js Equivalent | Location |
+|---------------|-------------------|----------|
+| Model | Entity (Drizzle) | `shared/entities/<name>/` |
+| Model callbacks | Entity Hooks | `shared/entities/<name>/hooks.ts` |
+| Model scopes | Query Scopes | `shared/entities/<name>/scopes.ts` |
+| Validations | Zod Schema | `modules/<name>/schemas/` |
+| Controller | Server Action | `modules/<name>/actions/` |
+| Service Object | Service (Effect) | `modules/<name>/services/` |
+| Repository | Repository (Effect + Drizzle) | `modules/<name>/repositories/` |
+| Serializer | Presenter | `modules/<name>/presenters/` |
+| Form Object | Form | `modules/<name>/forms/` |
+| Policy (Pundit) | Policy (Effect) | `modules/<name>/policies/` |
+| Mailer (ActionMailer) | Email Service | `shared/services/email/` |
+| Channel (ActionCable) | Realtime Service | `shared/services/realtime/` |
+| Background Job | Trigger.dev Job | `modules/<name>/jobs/` |
+| Migration | Drizzle Migration | `shared/db/migrations/` |
+| Seeds | Seeds | `shared/db/seeds/` |
+| Factory (FactoryBot) | Factory (@faker-js/faker) | `shared/factories/` |
+
+### Pattern Details
+
+- **Entity Hooks**: Lifecycle callbacks (`beforeCreate`, `afterCreate`, `beforeUpdate`, `afterUpdate`, `beforeDelete`, `afterDelete`)
+- **Query Scopes**: Composable WHERE conditions (`active()`, `withRole(role)`, `createdAfter(date)`)
+- **Presenters**: Transform entities to JSON for API responses (`toJSON()`, `toList()`, `toOption()`)
+- **Forms**: Multi-step form validation and entity transformation (`schema`, `validateStep()`, `toCreateData()`)
+- **Realtime**: SSE for simple cases, Pusher/Ably for WebSocket support

@@ -102,9 +102,9 @@
   },
   "structure": {
     "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
-    "moduleSubdirs": ["actions", "api", "components", "constants", "containers", "contexts", "hooks", "jobs", "layouts", "lib", "policies", "providers", "repositories", "schemas", "screens", "services", "types", "utils"],
-    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "factories", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "providers", "queue", "routes", "schemas", "seeds", "services", "styles", "types", "utils", "vendor"],
-    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "providers", "repositories", "schemas", "services", "utils"],
+    "moduleSubdirs": ["actions", "api", "components", "constants", "containers", "contexts", "forms", "hooks", "jobs", "layouts", "lib", "policies", "presenters", "providers", "repositories", "schemas", "screens", "services", "types", "utils"],
+    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "factories", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "presenters", "providers", "queue", "routes", "schemas", "seeds", "services", "styles", "types", "utils", "vendor"],
+    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "forms", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "presenters", "providers", "repositories", "schemas", "services", "utils"],
     "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
     "infrastructureFolders": ["db", "queue"],
     "sharedOnlyFolders": ["db", "entities", "middleware", "queue", "seeds", "factories"],
@@ -120,7 +120,9 @@
       "repositories": "<name>-repository",
       "jobs": "<name>-job",
       "policies": "<name>-policy",
-      "entities": "<name>"
+      "entities": "<name>",
+      "forms": "<name>-form",
+      "presenters": "<name>-presenter"
     },
     "componentSemanticTypes": ["form", "modal", "alert", "section", "menu", "card", "table", "list", "button", "input", "dialog", "drawer", "toast", "badge", "avatar", "icon"],
     "requiredFiles": {
