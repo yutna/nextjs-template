@@ -743,6 +743,44 @@ These folders exist **only in `shared/`**, never in modules:
 - Entities in modules — always in `shared/entities/`
 - Backend code without Effect — services, repositories, jobs, api handlers must use Effect
 
+## Knowledge Graph (A + D)
+
+Before implementing, check existing patterns and relationships:
+
+### A. Pattern Graph (Static)
+
+The pattern dependency graph is defined in `.claude/workflow-profile.json` under `patternGraph`. It defines:
+- **Nodes**: All available patterns and their locations
+- **Edges**: How patterns relate (calls, uses, transforms, triggers)
+- **Workflows**: Common pattern combinations for typical features
+
+### D. Codebase Index (Dynamic)
+
+Generate the current codebase index:
+```bash
+node .claude/hooks/scripts/codebase_indexer.cjs
+```
+
+Output: `.claude/generated/codebase-index.json`
+
+The index shows:
+- **Existing entities** and their features (hooks, scopes, relations)
+- **Existing modules** and their patterns
+- **Analysis** of what exists per entity
+- **Suggestions** for missing patterns
+
+### Usage
+
+1. **Before implementing a new feature:**
+   - Run the indexer to see what exists
+   - Check if entity/repository/service already exists
+   - Reuse existing patterns instead of creating duplicates
+
+2. **When adding patterns:**
+   - Check `patternGraph.edges` for dependencies
+   - Check `patternGraph.workflows` for common combinations
+   - Ensure required dependencies exist first
+
 ## Pattern Selection Rules (Always-On)
 
 Before implementing, check which patterns apply:

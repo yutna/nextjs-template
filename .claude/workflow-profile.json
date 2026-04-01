@@ -41,7 +41,8 @@
     "coverage": "npm run test:coverage",
     "dbGenerate": "npm run db:generate",
     "dbMigrate": "npm run db:migrate",
-    "dbSeed": "npm run db:seed"
+    "dbSeed": "npm run db:seed",
+    "indexCodebase": "node .claude/hooks/scripts/codebase_indexer.cjs"
   },
   "adoption": {
     "supportedModes": ["from-scratch", "adopt-existing-project"],
@@ -141,6 +142,164 @@
       "crossFolderAlias": "@/",
       "forbiddenPatterns": ["../", "../../"],
       "noBarrelReexports": "grouping folders (e.g., components/) must not have index.ts that re-exports all"
+    }
+  },
+  "patternGraph": {
+    "nodes": {
+      "entity": {
+        "location": "shared/entities/<name>/",
+        "files": ["<name>.ts", "types.ts", "relations.ts", "hooks.ts", "scopes.ts"],
+        "depends": [],
+        "description": "Drizzle schema definition"
+      },
+      "entity-hooks": {
+        "location": "shared/entities/<name>/hooks.ts",
+        "depends": ["entity"],
+        "description": "Lifecycle callbacks (beforeCreate, afterCreate, etc.)"
+      },
+      "query-scopes": {
+        "location": "shared/entities/<name>/scopes.ts",
+        "depends": ["entity"],
+        "description": "Reusable WHERE conditions"
+      },
+      "repository": {
+        "location": "modules/<module>/repositories/<name>-repository/",
+        "depends": ["entity"],
+        "mayUse": ["entity-hooks", "query-scopes"],
+        "description": "Data access layer (CRUD operations)"
+      },
+      "service": {
+        "location": "modules/<module>/services/<name>-service/",
+        "depends": ["repository"],
+        "mayUse": ["policy", "entity-hooks"],
+        "mayTrigger": ["job", "email-service", "realtime-service"],
+        "description": "Business logic and orchestration"
+      },
+      "policy": {
+        "location": "modules/<module>/policies/<name>-policy/",
+        "depends": ["entity"],
+        "description": "Authorization rules"
+      },
+      "action": {
+        "location": "modules/<module>/actions/<name>-action/",
+        "depends": ["service"],
+        "mayUse": ["zod-schema"],
+        "description": "Server action for UI mutations"
+      },
+      "api-handler": {
+        "location": "modules/<module>/api/<name>-handler/",
+        "depends": ["service"],
+        "mayUse": ["presenter"],
+        "description": "API route for external consumers"
+      },
+      "presenter": {
+        "location": "modules/<module>/presenters/<name>-presenter/",
+        "depends": ["entity"],
+        "description": "Entity to JSON transformation"
+      },
+      "form-object": {
+        "location": "modules/<module>/forms/<name>-form/",
+        "depends": ["zod-schema"],
+        "produces": ["entity"],
+        "description": "Complex form validation and transformation"
+      },
+      "zod-schema": {
+        "location": "modules/<module>/schemas/<name>-schema/",
+        "depends": [],
+        "description": "Input validation schema"
+      },
+      "job": {
+        "location": "modules/<module>/jobs/<name>-job/",
+        "depends": ["service"],
+        "description": "Background task (Trigger.dev)"
+      },
+      "email-service": {
+        "location": "shared/services/email/",
+        "depends": [],
+        "description": "Transactional email sending"
+      },
+      "realtime-service": {
+        "location": "shared/services/realtime/",
+        "depends": [],
+        "description": "Real-time communication (SSE/Pusher)"
+      },
+      "screen": {
+        "location": "modules/<module>/screens/screen-<name>/",
+        "depends": ["service"],
+        "mayUse": ["container", "component"],
+        "description": "Page-level composition (server)"
+      },
+      "container": {
+        "location": "modules/<module>/containers/container-<name>/",
+        "depends": ["action", "hook"],
+        "mayUse": ["component"],
+        "description": "Client-side data binding"
+      },
+      "component": {
+        "location": "modules/<module>/components/<type>-<name>/",
+        "depends": [],
+        "description": "Pure UI component (server)"
+      },
+      "hook": {
+        "location": "modules/<module>/hooks/use-<name>/",
+        "depends": [],
+        "description": "Custom React hook (client)"
+      },
+      "factory": {
+        "location": "shared/factories/<name>-factory/",
+        "depends": ["entity"],
+        "description": "Test data factory"
+      }
+    },
+    "edges": [
+      { "from": "action", "to": "service", "type": "calls" },
+      { "from": "api-handler", "to": "service", "type": "calls" },
+      { "from": "api-handler", "to": "presenter", "type": "uses" },
+      { "from": "service", "to": "repository", "type": "calls" },
+      { "from": "service", "to": "policy", "type": "checks" },
+      { "from": "service", "to": "job", "type": "triggers" },
+      { "from": "service", "to": "email-service", "type": "triggers" },
+      { "from": "service", "to": "realtime-service", "type": "triggers" },
+      { "from": "repository", "to": "entity", "type": "queries" },
+      { "from": "repository", "to": "entity-hooks", "type": "invokes" },
+      { "from": "repository", "to": "query-scopes", "type": "uses" },
+      { "from": "presenter", "to": "entity", "type": "transforms" },
+      { "from": "form-object", "to": "zod-schema", "type": "uses" },
+      { "from": "form-object", "to": "entity", "type": "produces" },
+      { "from": "policy", "to": "entity", "type": "authorizes" },
+      { "from": "screen", "to": "service", "type": "fetches" },
+      { "from": "screen", "to": "container", "type": "renders" },
+      { "from": "container", "to": "action", "type": "calls" },
+      { "from": "container", "to": "hook", "type": "uses" },
+      { "from": "container", "to": "component", "type": "renders" },
+      { "from": "factory", "to": "entity", "type": "creates" }
+    ],
+    "workflows": {
+      "crud-feature": {
+        "description": "Basic CRUD operations for an entity",
+        "patterns": ["entity", "repository", "service", "action", "presenter", "screen"],
+        "optional": ["policy", "query-scopes", "entity-hooks"]
+      },
+      "user-registration": {
+        "description": "User signup with email verification",
+        "patterns": ["entity", "form-object", "service", "repository", "action"],
+        "optional": ["entity-hooks", "email-service", "job"]
+      },
+      "api-endpoint": {
+        "description": "External API for third-party consumers",
+        "patterns": ["api-handler", "service", "repository", "presenter"],
+        "optional": ["policy"]
+      },
+      "background-task": {
+        "description": "Long-running or scheduled task",
+        "patterns": ["job", "service", "repository"],
+        "optional": ["email-service", "realtime-service"]
+      },
+      "real-time-feature": {
+        "description": "Live updates to clients",
+        "patterns": ["realtime-service", "service"],
+        "optional": ["job"]
+      }
     }
   }
 }

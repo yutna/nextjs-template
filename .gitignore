@@ -48,3 +48,4 @@ next-env.d.ts
 # claude workflow (session-specific)
 .claude/hooks/*.log
 .claude/workflow-state.json
+.claude/generated/
