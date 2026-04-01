@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "profileId": "core-workflow",
+  "repository": {
+    "name": "claude-workflow",
+    "role": "workflow-template",
+    "packageManager": "npm",
+    "generatedIgnorePatterns": [
+      ".claude/hooks/*.log",
+      "coverage/",
+      "dist/",
+      "node_modules/"
+    ]
+  },
+  "commands": {
+    "validateState": "node .claude/hooks/scripts/workflow_hook.cjs validate-state",
+    "typecheck": null,
+    "lint": null,
+    "tests": null,
+    "builds": []
+  },
+  "adoption": {
+    "supportedModes": [
+      "from-scratch",
+      "adopt-existing-project"
+    ],
+    "defaultTaskId": "bootstrap-workflow-adoption",
+    "defaultTaskSummary": "Bootstrap workflow adoption and discovery for this repository.",
+    "recommendedSourceRoots": [
+      "src",
+      "apps/*/src"
+    ],
+    "recommendedModuleRoots": [
+      "src/features",
+      "src/modules",
+      "apps/web/src/features"
+    ],
+    "recommendedTestRoots": [
+      "test",
+      "tests",
+      "src/__tests__",
+      "apps/*/test",
+      "apps/*/tests"
+    ]
+  },
+  "roots": {
+    "sourceRoots": [],
+    "moduleRoots": [],
+    "testRoots": []
+  },
+  "conventions": {
+    "model": "contract-driven",
+    "principle": "convention-over-deliberation",
+    "hardConventions": [
+      "Respect the six-phase workflow and state contract.",
+      "Preserve repository naming, route, and boundary grammar declared by the active profile.",
+      "Use the repository quality-gate sequence before delivery."
+    ],
+    "strongDefaults": [
+      "Reuse the repository module shapes, adoption defaults, and approved libraries before inventing new patterns.",
+      "Prefer the smallest boundary change and the narrowest side-effect surface that solves the task.",
+      "Prefer extending the existing repository grammar over reorganizing it."
+    ],
+    "localFreedom": [
+      "Private helper extraction inside an approved boundary.",
+      "Internal function decomposition and local component factoring that do not change public grammar.",
+      "Implementation detail that stays inside the approved plan and validation path."
+    ]
+  },
+  "structure": {
+    "forbiddenLegacyDirectories": [
+      "containers",
+      "screens"
+    ],
+    "forbiddenLegacyRoots": [
+      "legacy",
+      "deprecated"
+    ],
+    "forbiddenGenericFileNames": [
+      "utils.ts",
+      "utils.tsx",
+      "helpers.ts",
+      "helpers.tsx",
+      "common.ts",
+      "common.tsx"
+    ]
+  }
+}

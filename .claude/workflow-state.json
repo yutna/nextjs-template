@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "phase": "delivery",
+  "taskId": "production-audit-readme",
+  "taskSummary": "Final production audit and README",
+  "requirements": {
+    "status": "approved",
+    "acceptanceCriteria": [
+      "Full state machine audit passes",
+      "No regression from issue fixes",
+      "README.md covers usage and extension"
+    ],
+    "constraints": [
+      "Do not break existing hook functionality",
+      "Keep the workflow contract and skills intact"
+    ],
+    "openQuestions": []
+  },
+  "plan": {
+    "status": "approved",
+    "summary": "Fix CI glob issue in package.json, write comprehensive README.md covering usage and extension",
+    "filesInScope": [
+      "package.json",
+      "README.md"
+    ]
+  },
+  "implementation": {
+    "status": "completed",
+    "filesTouched": [
+      ".github/workflows/ci.yml",
+      ".gitignore",
+      "README.md",
+      "package.json",
+      "test/workflow_hook.test.cjs"
+    ],
+    "retryCount": 0,
+    "blockedItems": []
+  },
+  "qualityGates": {
+    "typecheck": "not-applicable",
+    "lint": "not-applicable",
+    "tests": "passed",
+    "verification": "passed",
+    "lastRunSummary": "39/39 tests pass, state schema valid, full audit green"
+  },
+  "delivery": {
+    "status": "ready-for-review",
+    "userApproved": false,
+    "notes": ""
+  },
+  "lastUpdated": "2026-03-31T06:49:57+00:00"
+}
