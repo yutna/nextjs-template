@@ -44,3 +44,7 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# claude workflow (session-specific)
+.claude/hooks/*.log
+.claude/workflow-state.json
