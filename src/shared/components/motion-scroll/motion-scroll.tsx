@@ -41,7 +41,9 @@ export function MotionScroll({
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     offset,
-    target: target ?? containerRef,
+    ...(prefersReducedMotion || disabled
+      ? {}
+      : { target: target ?? containerRef }),
   });
   const opacity = useTransform(
     scrollYProgress,

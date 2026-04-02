@@ -38,7 +38,7 @@ export function MotionParallax({
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     offset: DEFAULT_OFFSET,
-    target: containerRef,
+    ...(prefersReducedMotion || disabled ? {} : { target: containerRef }),
   });
   const y = useTransform(
     scrollYProgress,
