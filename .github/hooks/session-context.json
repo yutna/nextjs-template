@@ -1,0 +1,16 @@
+{
+  "description": "Session context hook - provides workflow context at session start",
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "command": "node .claude/hooks/scripts/workflow_hook.cjs session-context",
+        "cwd": ".",
+        "timeout": 5000,
+        "description": "Loads current workflow state and provides context"
+      }
+    ]
+  },
+  "notes": "This hook uses the same script as Claude Code to maintain consistency"
+}

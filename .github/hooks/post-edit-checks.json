@@ -1,0 +1,17 @@
+{
+  "description": "Post-edit checks hook - validates edits and updates state",
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "command": "node .claude/hooks/scripts/workflow_hook.cjs post-edit",
+        "cwd": ".",
+        "timeout": 10000,
+        "description": "Tracks file changes and updates workflow state",
+        "tools": ["edit", "write"]
+      }
+    ]
+  },
+  "notes": "This hook uses the same script as Claude Code to maintain consistency"
+}
