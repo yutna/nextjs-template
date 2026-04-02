@@ -33,6 +33,21 @@ This skill provides comprehensive code structure conventions to ensure correct c
 | Entities | `<name>/` | `user/`, `post/`, `order/` |
 | Middleware | `<name>-middleware/` | `auth-middleware/`, `logging-middleware/` |
 
+## Function and Typing Defaults (MUST FOLLOW)
+
+1. Prefer named `function` declarations for named functions
+2. Use arrow functions only for contextual cases (callbacks, anonymous inline functions, lexical `this`, intentional hoisting trade-off)
+3. Never write inline param type literals in signatures
+4. Always define param/props types in `types.ts` first, then import and use them
+5. Prefer direct React type imports, e.g. `import type { ChangeEvent } from "react"`
+6. Avoid deprecated APIs (especially Zod deprecations); replace immediately
+
+## Component State Rule (MUST FOLLOW)
+
+- No `useState`
+- If local state is needed, use one object-based `useImmer({ ... })`
+- Do not split component state across multiple local stores
+
 ### Component Semantic Types
 Use these prefixes for components: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `card-`, `table-`, `list-`, `button-`, `input-`, `dialog-`, `drawer-`, `toast-`, `badge-`, `avatar-`, `icon-`
 
@@ -43,7 +58,7 @@ Use these prefixes for components: `form-`, `modal-`, `alert-`, `section-`, `men
 **Component:**
 ```
 form-create-user/
-├── index.ts                      # Export: FormCreateUser
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts                      # FormCreateUserProps
 ├── constants.ts                  # (optional) FORM_FIELDS
 ├── helpers.ts                    # (optional, internal) validateEmail()
@@ -55,7 +70,7 @@ form-create-user/
 **Container:**
 ```
 container-user-list/
-├── index.ts
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts
 ├── helpers.ts                    # (optional, internal)
 ├── container-user-list.tsx
@@ -65,7 +80,7 @@ container-user-list/
 **Screen:**
 ```
 screen-user-detail/
-├── index.ts
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts
 ├── screen-user-detail.tsx
 └── screen-user-detail.test.tsx
@@ -74,7 +89,7 @@ screen-user-detail/
 **Hook:**
 ```
 use-user-form/
-├── index.ts
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts
 ├── helpers.ts                    # (optional, internal)
 ├── use-user-form.ts
@@ -86,7 +101,7 @@ use-user-form/
 **Service:**
 ```
 create-user-service/
-├── index.ts
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts                      # Input/output types
 ├── helpers.ts                    # (optional, internal)
 ├── create-user-service.ts        # Effect-based logic
@@ -96,7 +111,7 @@ create-user-service/
 **Repository:**
 ```
 user-repository/
-├── index.ts
+├── index.ts                      # Optional (if required by lint/consumption)
 ├── types.ts                      # Query result types
 ├── user-repository.ts            # Drizzle + Effect
 └── user-repository.test.ts
@@ -220,18 +235,21 @@ import { something } from "@/modules/other-module/services/some-service";
 
 | Folder Type | index.ts | types.ts | *.test.ts(x) | *.stories.tsx |
 |-------------|----------|----------|--------------|---------------|
-| Components | ✅ | If props | ✅ | ✅ |
-| Containers | ✅ | If props | ✅ | ❌ |
-| Screens | ✅ | If props | ✅ | ❌ |
-| Hooks | ✅ | If types | ✅ | ❌ |
-| Actions | ✅ | If types | ✅ | ❌ |
-| Services | ✅ | ✅ | ✅ | ❌ |
-| Repositories | ✅ | ✅ | ✅ | ❌ |
-| Jobs | ✅ | ✅ | ✅ | ❌ |
-| Policies | ✅ | ✅ | ✅ | ❌ |
-| API Handlers | ✅ | ✅ | ✅ | ❌ |
-| Entities | ✅ | ✅ | ❌ | ❌ |
-| Middleware | ✅ | ✅ | ✅ | ❌ |
+| Components | Optional* | If props | ✅ | ✅ |
+| Containers | Optional* | If props | ✅ | ❌ |
+| Screens | Optional* | If props | ✅ | ❌ |
+| Hooks | Optional* | If types | ✅ | ❌ |
+| Actions | Optional* | If types | ✅ | ❌ |
+| Services | Optional* | ✅ | ✅ | ❌ |
+| Repositories | Optional* | ✅ | ✅ | ❌ |
+| Jobs | Optional* | ✅ | ✅ | ❌ |
+| Policies | Optional* | ✅ | ✅ | ❌ |
+| API Handlers | Optional* | ✅ | ✅ | ❌ |
+| Entities | Optional* | ✅ | ❌ | ❌ |
+| Middleware | Optional* | ✅ | ✅ | ❌ |
+
+\* Optional means: add only when required by lint rules or explicit import ergonomics.
+Do not create grouping-folder barrels like `actions/index.ts`, `services/index.ts`, or `repositories/index.ts`.
 
 ## Code Organization Rules
 
@@ -239,6 +257,8 @@ import { something } from "@/modules/other-module/services/some-service";
 2. **No inline constants** → put in `constants.ts`
 3. **No inline types** → put in `types.ts`
 4. **helpers.ts is internal** → NOT exported via index.ts
+5. **No inline param type literals** → extract param/props types to `types.ts`
+6. **No React namespace event types** → use direct imported event types
 
 ## Folder Placement Decision Tree
 

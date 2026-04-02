@@ -15,6 +15,19 @@ triggers:
 
 Effect is REQUIRED for all backend layers: services, repositories, jobs, api handlers, policies.
 
+## Source of Truth
+
+Use the local reference file for version-accurate examples before applying patterns in this skill:
+
+- `.github/skills/effect-patterns/references/effect-llms-full.txt`
+- Synced from `https://effect.website/llms-full.txt`
+
+Sync command:
+
+```bash
+curl -fsSL https://effect.website/llms-full.txt -o .github/skills/effect-patterns/references/effect-llms-full.txt
+```
+
 ## Core Imports
 
 ```typescript

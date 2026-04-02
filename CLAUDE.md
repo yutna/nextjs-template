@@ -84,6 +84,11 @@ NO exceptions:
 - No `any` type (use proper typing or `unknown` + type guards)
 - No eslint-disable as first resort (fix root cause or update config)
 - No type assertions that break lint rules
+- Prefer named `function` declarations (use arrow only when contextually required)
+- No inline param type literals (extract to `types.ts`, create it if missing)
+- Prefer direct React type imports (e.g. `import type { ChangeEvent } from "react"`)
+- Single object local state only (`useImmer({ ... })`, no `useState`)
+- No deprecated APIs (especially Zod deprecations)
 
 See [AGENTS.md § Zero Tolerance Policy](./AGENTS.md#zero-tolerance-policy) for details and examples.
 

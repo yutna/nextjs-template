@@ -104,5 +104,10 @@ HARD rules (no exceptions):
 - **No `any` type** — import types from libraries, use `unknown` + type guards
 - **No eslint-disable as first resort** — fix root cause or add config exception
 - **No type assertions that break lint** — use proper TypeScript patterns
+- **Prefer named `function` declarations** — use arrow only when contextually required
+- **No inline param type literals** — extract to `types.ts` (create it if missing)
+- **Prefer direct React type imports** — e.g. `import type { ChangeEvent } from "react"`
+- **Single object local state only** — use one `useImmer({ ... })` store, no `useState`
+- **No deprecated APIs** — especially Zod deprecations
 
 See [AGENTS.md](../AGENTS.md) for full Zero Tolerance Policy.

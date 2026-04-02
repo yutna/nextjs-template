@@ -229,6 +229,50 @@ const ref = useRef(null) as React.RefObject<HTMLElement>;
 const ref = useRef<HTMLElement | null>(null);
 ```
 
+#### Function Syntax Default
+
+Default to `function` declarations for named functions.
+
+Use arrow functions only when contextually appropriate:
+
+- anonymous inline callbacks
+- lexical `this` behavior is required
+- specific hoisting trade-off is intentional
+
+Do not use arrow functions as the default style for named functions.
+
+#### No Inline Param Types
+
+Inline parameter type literals are forbidden.
+
+| Wrong | Right |
+|-------|-------|
+| `function x({ a }: { a: string }) {}` | Define the param type in `types.ts`, then import and use it |
+
+Rule: if `types.ts` does not exist, create it first.
+
+#### React Event Type Import Style
+
+Prefer direct type imports from React.
+
+| Wrong | Right |
+|-------|-------|
+| `React.ChangeEvent<HTMLInputElement>` | `import type { ChangeEvent } from "react"` then `ChangeEvent<HTMLInputElement>` |
+
+#### Component State Shape Rule
+
+If local state is required in a component, keep it as a single object state source using `useImmer({ ... })`.
+
+- no `useState`
+- no multiple separate state stores in one component
+
+#### No Deprecated APIs
+
+Using deprecated APIs is forbidden (especially Zod deprecations).
+
+- when deprecation warnings/errors appear, fix immediately
+- do not ship code that relies on deprecated APIs
+
 ### ESLint Config Over Inline Disables
 
 For legitimate technical requirements, add exceptions in `eslint.config.mjs`:
@@ -499,8 +543,7 @@ Before implementing, check which patterns apply:
 
 | If you need to... | Use |
 |-------------------|-----|
-| Boolean toggle | `useState` |
-| 2-3 related values | `useReducer` |
+| Local component state | Single object `useImmer({ ... })` store |
 | 4+ states with transitions | State Machine (XState) |
 | Standard UI primitive (menu, dialog) | UI State Library (Zag.js) |
 | URL-persisted state (filters, pagination) | URL State Library (nuqs) |

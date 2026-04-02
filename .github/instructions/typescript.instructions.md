@@ -6,6 +6,7 @@ applyTo: "**/*.ts,**/*.tsx"
 ## Type Organization
 
 - Types go in `types.ts` files, not inline
+- Never use inline param type literals; always extract to `types.ts` (create `types.ts` if missing)
 - Export types from the folder's `index.ts`
 - Use `type` for object shapes, `interface` for extendable contracts
 
@@ -21,9 +22,11 @@ type UserListResponse = { ... };
 const MAX_RETRY_COUNT = 3;
 const API_BASE_URL = '/api/v1';
 
-// Functions: camelCase
+// Functions: camelCase, prefer function declaration
 function createUser() { ... }
-const handleSubmit = () => { ... };
+
+// Arrow function only for callback/anonymous contexts
+items.map((item) => item.id);
 ```
 
 ## Imports
@@ -36,10 +39,16 @@ import { db } from '@/shared/db';
 // Correct: ./ for same folder
 import { UserFormProps } from './types';
 import { validateEmail } from './helpers';
+import type { ChangeEvent } from 'react';
 
 // Wrong: ../ relative
 import { User } from '../../../shared/entities/user';
 ```
+
+## React Event Types
+
+- Prefer `import type { ChangeEvent } from "react"`
+- Avoid `React.ChangeEvent<...>` namespace form
 
 ## Zod Schemas
 
@@ -74,6 +83,14 @@ export const createUser = (
 - Type assertions without validation
 - Inline type definitions in function params
 - Generic `utils.ts` or `helpers.ts` files
+- Named arrow function as default style when `function` syntax is suitable
+- Deprecated APIs (including deprecated Zod APIs)
+
+## State Rule
+
+- Do not use `useState`
+- If local component state is needed, use a single object-based `useImmer({ ... })` store
+- Avoid multiple local state stores within one component
 
 ## Zero Tolerance Policy (HARD Rules)
 

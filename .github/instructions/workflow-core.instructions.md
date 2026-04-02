@@ -43,6 +43,11 @@ HARD rules:
 - No eslint-disable as first resort (fix root cause or use config)
 - No type assertions that break lint rules
 - Fix lint rules if they don't support valid TypeScript
+- Prefer named `function` declarations for named functions
+- No inline param type literals; extract to `types.ts`
+- Prefer direct React type imports (no `React.ChangeEvent` namespace style)
+- Use one object-based `useImmer({ ... })` state store when local state is required
+- No deprecated APIs (especially Zod deprecations)
 
 ## Workflow Best Practices
 
