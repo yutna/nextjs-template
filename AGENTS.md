@@ -301,6 +301,28 @@ Before taking action:
 
 When completing a phase, update the workflow state so the next step can continue without guessing.
 
+## Artifact Model (Critical)
+
+The repository uses different artifact classes. Do not mix them:
+
+- `docs/tasks/*.md`: Human-readable decomposition/spec artifacts.
+  - Produced by decomposition flows (e.g., `/decompose-requirements`).
+  - Intended for human review and later AI reference.
+  - Not runtime state.
+- Session `plan.md`: AI runtime planning artifact for the current task/session.
+  - Tracks implementation sequencing during active execution.
+  - Not a replacement for `docs/tasks/*.md` feature specs.
+- `.claude/workflow-state.json`: AI runtime state machine.
+  - Tracks current phase/status/gates.
+  - Not a requirements document and not an E2E spec.
+
+Rules:
+
+1. Do not treat `docs/tasks/*.md` as mutable runtime state.
+2. Do not write runtime execution status into `docs/tasks/*.md`.
+3. When a command says output is `docs/tasks/*`, create those files explicitly.
+4. If file creation is unavailable in the runtime, report it as a blocked parity issue.
+
 ## Recovery contract
 
 When something fails:
@@ -335,6 +357,7 @@ When implementing any change, automatically execute this loop before presenting 
 4. Run tests → if failures, fix and goto 1
 5. Verify all acceptance criteria → if incomplete, fix and goto 1
 6. Only when ALL pass → present to user
+**This loop is MANDATORY for Implementation phase.** Never skip to Delivery when gates are incomplete or failing.
 ```
 
 ### Self-Healing Rules
@@ -418,13 +441,23 @@ During **Discovery**: ask questions, do not plan or implement, do not create imp
 
 During **Planning**: explore and plan, do not implement. Classify convention decisions. Make the plan specific enough that implementation does not guess. Use only `plan.status` values: `not-started`, `proposed`, `approved`, or `blocked`. Stop after delivering the plan.
 
-During **Implementation**: stay inside the approved scope. Preserve hard conventions and follow strong-default decisions from the approved plan. Update tests for changed behavior. Keep workflow state current. You may run a narrow smoke test, but do not mark quality gates complete. Use only `implementation.status` values: `not-started`, `in-progress`, `completed`, or `blocked`. Do not run commit, push, release, or PR commands unless the user explicitly asks.
+During **Implementation**: stay inside the approved scope. Preserve hard conventions and follow strong-default decisions from the approved plan. Update tests for changed behavior. Keep workflow state current. Upon completion:
+
+  1. Run type check → lint → tests in canonical order
+  2. Verify all acceptance criteria
+  3. If any gate fails, fix root cause and rerun from step 1
+  4. When all pass, automatically proceed to Quality Gates and Verification
+  5. Present results only when fully ready (never intermediate states)
+
+Use only `implementation.status` values: `not-started`, `in-progress`, `completed`, or `blocked`. Do not run commit, push, release, or PR commands unless the user explicitly asks.
+
+**Note**: This is the autonomous happy-path. For strict phase-by-phase workflow (user approval between phases), that must be invoked explicitly as a different mode.
 
 During **Review**: findings only. Do not edit implementation files. Classify findings by convention tier. Route material findings back to Implementation or Planning. Stop after returning findings.
 
-During **Quality Gates / Verification**: run gates in canonical order, verify acceptance criteria, report honestly. Route failures to the earliest valid recovery phase. Use delivery status values: `blocked`, `ready-for-review`, or `approved`. Do not hide failures or partial validation.
+During **Quality Gates / Verification**: run gates in canonical order (type → lint → tests), verify acceptance criteria, report honestly. Route failures to the earliest valid recovery phase. Use delivery status values: `blocked`, `ready-for-review`, or `approved`. Do not hide failures or partial validation.
 
-During **Delivery**: summarize changes honestly. Do not claim completion before gates and verification pass. Do not continue into commit, push, release, or PR actions unless the user explicitly asks.
+During **Delivery**: summarize changes honestly. Report exact gate results. State any remaining follow-up items explicitly. Do not claim completion before gates and verification pass. Do not continue into commit, push, release, or PR actions unless the user explicitly asks.
 
 When in doubt, move one phase earlier, make state explicit, and choose the smaller safe step.
 
@@ -501,6 +534,14 @@ Before implementing, check which patterns apply:
 
 ### Folder Placement Decision Tree
 
+### Clarification: Generic Files & helpers.ts Rule
+
+**FORBIDDEN**: Root-level `helpers.ts`, `utils.ts`, `common.ts` at module/shared root (grab-bags).
+**ALLOWED**: Scoped `helpers.ts` inside domain folders, NOT exported.
+
+- ✅ `src/modules/users/services/create-user-service/helpers.ts` (internal)
+- ❌ `src/modules/users/helpers.ts` (root level, forbidden)
+
 When creating new code, ask in order:
 
 | Question | If Yes → |
@@ -520,6 +561,31 @@ When creating new code, ask in order:
 - `utils/` = Pure functions, stateless, generic, could be in any project
 - `constants/` = Just values, no functions, flat files only
 - `components/` = Must return JSX
+
+**Backend vs Frontend `lib/` (Critical)*:
+
+| lib/ Type | Technology | Used By | Pattern |
+|-----------|-----------|---------|---------|
+| **Backend integrations** | Effect (REQUIRED) | services, repositories, jobs | `Effect.Effect<A, E, R>` |
+| **Frontend utilities** | Promise or sync | components, hooks, SWR | `Promise<T>` or sync function |
+| **Infrastructure** | Native/no framework | all | Plain exports (logger, config) |
+
+**backend lib/ (Effect)**:
+
+```typescript
+// shared/lib/stripe/stripe-client.ts
+export class StripeClient extends Context.Tag("StripeClient")<...>() {}
+export const StripeClientLive = Layer.succeed(StripeClient, { ... });
+```
+
+**Frontend lib/ (Promise or sync)**:
+
+```typescript
+// shared/lib/fetcher/fetch-client.ts - for SWR integration
+export async function fetchClient<T>(options): Promise<T> { ... }
+```
+
+**RULE**: If `lib/` is consumed by services/repositories/jobs → Effect (MANDATORY). If consumed by React components/hooks → Promise or sync.
 
 ## Rails to Next.js Pattern Mapping
 

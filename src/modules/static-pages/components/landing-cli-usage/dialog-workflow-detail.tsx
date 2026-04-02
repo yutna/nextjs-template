@@ -26,11 +26,17 @@ export function WorkflowDetailDialog() {
   const t = useTranslations("modules.staticPages.components.landingCliUsage");
 
   return (
-    <Dialog.Root placement="center" scrollBehavior="inside" size="xl">
+    <Dialog.Root
+      data-testid="static-pages-workflow-detail-dialog-root"
+      placement="center"
+      scrollBehavior="inside"
+      size="xl"
+    >
       <Dialog.Trigger asChild>
         <Button
           _hover={{ textDecoration: "underline" }}
           color={{ _dark: "blue.400", base: "blue.600" }}
+          data-testid="static-pages-workflow-detail-dialog-trigger"
           fontSize={{ base: "xs", md: "sm" }}
           fontWeight="medium"
           variant="plain"

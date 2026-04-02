@@ -54,6 +54,7 @@ export async function LandingCta({ locale }: Readonly<LandingCtaProps>) {
             size="md"
           >
             <a
+              data-testid="static-pages-landing-cta-github-link"
               href="https://github.com/yutna/nextjs-template"
               rel="noopener noreferrer"
               target="_blank"

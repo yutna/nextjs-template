@@ -1,22 +1,55 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
-const crypto = require('node:crypto');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
-const SCHEMA_VERSION = '1.0';
+const SCHEMA_VERSION = "1.0";
 const MAX_RETRY_COUNT = 3;
-const PHASE_ORDER = ['discovery', 'planning', 'implementation', 'quality-gates', 'verification', 'delivery'];
-const REQUIREMENTS_STATUSES = new Set(['needs-clarification', 'clarified', 'approved']);
-const PLAN_STATUSES = new Set(['not-started', 'proposed', 'approved', 'blocked']);
-const IMPLEMENTATION_STATUSES = new Set(['not-started', 'in-progress', 'completed', 'blocked']);
-const GATE_STATUSES = new Set(['pending', 'passed', 'failed', 'not-applicable']);
-const DELIVERY_STATUSES = new Set(['blocked', 'ready-for-review', 'approved']);
-const GREEN_GATE_VALUES = new Set(['passed', 'not-applicable']);
-const STATE_FILE = '.claude/workflow-state.json';
-const DELIVERY_ACTION_PATTERNS = [/\bgit\s+commit\b/, /\bgit\s+push\b/, /\bgh\s+pr\b/, /\brelease\b/];
+const PHASE_ORDER = [
+  "discovery",
+  "planning",
+  "implementation",
+  "quality-gates",
+  "verification",
+  "delivery",
+];
+const REQUIREMENTS_STATUSES = new Set([
+  "needs-clarification",
+  "clarified",
+  "approved",
+]);
+const PLAN_STATUSES = new Set([
+  "not-started",
+  "proposed",
+  "approved",
+  "blocked",
+]);
+const IMPLEMENTATION_STATUSES = new Set([
+  "not-started",
+  "in-progress",
+  "completed",
+  "blocked",
+]);
+const GATE_STATUSES = new Set([
+  "pending",
+  "passed",
+  "failed",
+  "not-applicable",
+]);
+const DELIVERY_STATUSES = new Set(["blocked", "ready-for-review", "approved"]);
+const GREEN_GATE_VALUES = new Set(["passed", "not-applicable"]);
+const STATE_FILE = ".claude/workflow-state.json";
+const STATE_BACKUP_FILE = ".claude/workflow-state.last-good.json";
+const STATE_JOURNAL_FILE = ".claude/workflow-state.journal.jsonl";
+const DELIVERY_ACTION_PATTERNS = [
+  /\bgit\s+commit\b/,
+  /\bgit\s+push\b/,
+  /\bgh\s+pr\b/,
+  /\brelease\b/,
+];
 const STATE_API_COMMAND_PATTERNS = [
   /workflow_hook\.(?:js|cjs)\s+update-state\b/,
   /workflow_hook\.(?:js|cjs)\s+validate-state\b/,
@@ -44,43 +77,104 @@ const READ_ONLY_COMMAND_PATTERNS = [
 
 const DEFAULT_STATE = {
   delivery: {
-    notes: '',
-    status: 'blocked',
+    notes: "",
+    status: "blocked",
     userApproved: false,
   },
   implementation: {
     blockedItems: [],
     filesTouched: [],
     retryCount: 0,
-    status: 'not-started',
+    status: "not-started",
   },
-  lastUpdated: '',
-  phase: 'discovery',
+  lastUpdated: "",
+  phase: "discovery",
   plan: {
     filesInScope: [],
-    status: 'not-started',
-    summary: '',
+    status: "not-started",
+    summary: "",
   },
   qualityGates: {
-    lastRunSummary: '',
-    lint: 'pending',
-    tests: 'pending',
-    typecheck: 'pending',
-    verification: 'pending',
+    lastRunSummary: "",
+    lint: "pending",
+    tests: "pending",
+    typecheck: "pending",
+    verification: "pending",
   },
   requirements: {
     acceptanceCriteria: [],
     constraints: [],
     openQuestions: [],
-    status: 'needs-clarification',
+    status: "needs-clarification",
   },
-  taskId: '',
-  taskSummary: '',
+  revision: 0,
+  taskId: "",
+  taskSummary: "",
   version: SCHEMA_VERSION,
 };
 
+function stateBackupPath(cwd) {
+  return path.join(cwd, STATE_BACKUP_FILE);
+}
+
+function stateJournalPath(cwd) {
+  return path.join(cwd, STATE_JOURNAL_FILE);
+}
+
+function appendStateJournal(cwd, entry) {
+  try {
+    const filePath = stateJournalPath(cwd);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.appendFileSync(filePath, `${JSON.stringify(sortKeys(entry))}\n`, "utf8");
+  } catch {
+    // Ignore journal failures.
+  }
+}
+
+function persistStateBackup(cwd, state) {
+  try {
+    const filePath = stateBackupPath(cwd);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+  } catch {
+    // Ignore backup-write failures.
+  }
+}
+
+function readBackupState(cwd) {
+  const filePath = stateBackupPath(cwd);
+  if (!fs.existsSync(filePath)) {
+    return [null, ["backup state file does not exist"]];
+  }
+
+  let rawState;
+  try {
+    rawState = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return [null, [`backup state is not valid JSON: ${error.message}`]];
+    }
+    return [null, [`backup state could not be read: ${error.message}`]];
+  }
+
+  if (!isPlainObject(rawState)) {
+    return [null, ["backup state must be a JSON object"]];
+  }
+
+  const merged = mergeKnownSections({}, rawState);
+  const validationErrors = validateState(merged);
+  if (validationErrors.length > 0) {
+    return [
+      null,
+      validationErrors.map((error) => `backup state invalid: ${error}`),
+    ];
+  }
+
+  return [merged, []];
+}
+
 function isPlainObject(value) {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function deepCopyDefaultState() {
@@ -88,14 +182,14 @@ function deepCopyDefaultState() {
 }
 
 function utcTimestamp() {
-  return new Date().toISOString().replace(/\.\d{3}Z$/, '+00:00');
+  return new Date().toISOString().replace(/\.\d{3}Z$/, "+00:00");
 }
 
 function loadEvent() {
   if (process.stdin.isTTY) {
     return {};
   }
-  const raw = fs.readFileSync(0, 'utf8').trim();
+  const raw = fs.readFileSync(0, "utf8").trim();
   if (!raw) {
     return {};
   }
@@ -107,7 +201,7 @@ function loadEvent() {
 }
 
 function parseStructuredValue(value) {
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return value;
   }
   const trimmed = value.trim();
@@ -122,11 +216,11 @@ function parseStructuredValue(value) {
 }
 
 function isHelpFlag(value) {
-  return value === '--help' || value === '-h';
+  return value === "--help" || value === "-h";
 }
 
 function assignNestedValue(target, dottedPath, value) {
-  const parts = dottedPath.split('.').filter(Boolean);
+  const parts = dottedPath.split(".").filter(Boolean);
   if (parts.length === 0) {
     return;
   }
@@ -149,16 +243,20 @@ function parseCliPatchArgs(args) {
     if (!arg) {
       continue;
     }
-    const separatorIndex = arg.indexOf('=');
+    const separatorIndex = arg.indexOf("=");
     if (separatorIndex <= 0) {
-      errors.push(`Invalid update-state argument "${arg}". Expected key=value.`);
+      errors.push(
+        `Invalid update-state argument "${arg}". Expected key=value.`,
+      );
       continue;
     }
 
     const keyPath = arg.slice(0, separatorIndex).trim();
     const rawValue = arg.slice(separatorIndex + 1);
     if (!keyPath) {
-      errors.push(`Invalid update-state argument "${arg}". Key path cannot be empty.`);
+      errors.push(
+        `Invalid update-state argument "${arg}". Key path cannot be empty.`,
+      );
       continue;
     }
 
@@ -180,27 +278,37 @@ function buildUpdateStatePatch(rawEvent, cliArgs) {
 
 function updateStateUsageText() {
   return [
-    'Usage:',
-    "  printf '%s' '{\"phase\":\"planning\",\"requirements\":{\"status\":\"approved\"}}' | node .claude/hooks/scripts/workflow_hook.cjs update-state",
-    '  node .claude/hooks/scripts/workflow_hook.cjs update-state phase=implementation implementation.status=in-progress',
-    '',
-    'Notes:',
-    '- Use dotted paths for nested fields such as requirements.status or qualityGates.tests.',
-    '- Values are parsed as JSON when possible, so true, false, numbers, arrays, and objects are supported.',
-  ].join('\n');
+    "Usage:",
+    '  printf \'%s\' \'{"phase":"planning","requirements":{"status":"approved"}}\' | node .claude/hooks/scripts/workflow_hook.cjs update-state',
+    "  node .claude/hooks/scripts/workflow_hook.cjs update-state phase=implementation implementation.status=in-progress",
+    "",
+    "Notes:",
+    "- Use dotted paths for nested fields such as requirements.status or qualityGates.tests.",
+    "- Values are parsed as JSON when possible, so true, false, numbers, arrays, and objects are supported.",
+  ].join("\n");
 }
 
 function detectHookHost(event) {
   if (!isPlainObject(event)) {
-    return 'generic';
+    return "generic";
   }
-  if ('tool_name' in event || 'tool_input' in event || 'tool_use_id' in event || 'stop_hook_active' in event) {
-    return 'vscode';
+  if (
+    "tool_name" in event ||
+    "tool_input" in event ||
+    "tool_use_id" in event ||
+    "stop_hook_active" in event
+  ) {
+    return "vscode";
   }
-  if ('toolName' in event || 'toolArgs' in event || 'toolUseId' in event || 'stopHookActive' in event) {
-    return 'cli';
+  if (
+    "toolName" in event ||
+    "toolArgs" in event ||
+    "toolUseId" in event ||
+    "stopHookActive" in event
+  ) {
+    return "cli";
   }
-  return 'generic';
+  return "generic";
 }
 
 function normalizeEvent(mode, rawEvent) {
@@ -211,24 +319,34 @@ function normalizeEvent(mode, rawEvent) {
     {};
 
   return {
-    cwd: rawEvent?.cwd ?? '.',
+    cwd: rawEvent?.cwd ?? ".",
     host,
     mode,
     rawEvent,
-    stopHookActive: Boolean(rawEvent?.stop_hook_active ?? rawEvent?.stopHookActive),
+    stopHookActive: Boolean(
+      rawEvent?.stop_hook_active ?? rawEvent?.stopHookActive,
+    ),
     toolInput,
     toolName: lower(rawEvent?.tool_name ?? rawEvent?.toolName),
-    toolUseId: rawEvent?.tool_use_id ?? rawEvent?.toolUseId ?? '',
+    toolUseId: rawEvent?.tool_use_id ?? rawEvent?.toolUseId ?? "",
   };
 }
 
 function workflowStatePath(cwd) {
-  return path.join(cwd, '.claude', 'workflow-state.json');
+  return path.join(cwd, ".claude", "workflow-state.json");
 }
 
 function runtimeDir(cwd) {
-  const workspaceHash = crypto.createHash('sha1').update(path.resolve(cwd)).digest('hex').slice(0, 12);
-  const dirPath = path.join(os.tmpdir(), 'claude-workflow-hooks', workspaceHash);
+  const workspaceHash = crypto
+    .createHash("sha1")
+    .update(path.resolve(cwd))
+    .digest("hex")
+    .slice(0, 12);
+  const dirPath = path.join(
+    os.tmpdir(),
+    "claude-workflow-hooks",
+    workspaceHash,
+  );
   fs.mkdirSync(dirPath, { recursive: true });
   return dirPath;
 }
@@ -238,11 +356,11 @@ function baselinePath(cwd, toolUseId) {
 }
 
 function baselineKey(toolUseId) {
-  return toolUseId || 'anonymous';
+  return toolUseId || "anonymous";
 }
 
 function logPath(cwd) {
-  return path.join(cwd, '.claude', 'hooks', 'workflow-hook.log');
+  return path.join(cwd, ".claude", "hooks", "workflow-hook.log");
 }
 
 function sortKeys(value) {
@@ -263,15 +381,20 @@ function logEvent(cwd, level, message, extra = {}) {
   try {
     const filePath = logPath(cwd);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    const record = sortKeys({ level, message, timestamp: utcTimestamp(), ...extra });
-    fs.appendFileSync(filePath, `${JSON.stringify(record)}\n`, 'utf8');
+    const record = sortKeys({
+      level,
+      message,
+      timestamp: utcTimestamp(),
+      ...extra,
+    });
+    fs.appendFileSync(filePath, `${JSON.stringify(record)}\n`, "utf8");
   } catch {
     // Ignore log-write failures.
   }
 }
 
 function lower(value) {
-  return String(value || '').toLowerCase();
+  return String(value || "").toLowerCase();
 }
 
 function phaseIndex(phase) {
@@ -293,13 +416,22 @@ function mergeKnownSections(base, incoming) {
   const merged = deepCopyDefaultState();
   Object.assign(merged, base, incoming);
   const defaults = deepCopyDefaultState();
-  for (const key of ['requirements', 'plan', 'implementation', 'qualityGates', 'delivery']) {
+  for (const key of [
+    "requirements",
+    "plan",
+    "implementation",
+    "qualityGates",
+    "delivery",
+  ]) {
     merged[key] = {
       ...defaults[key],
       ...(base[key] || {}),
       ...(incoming[key] || {}),
     };
   }
+  const revision = Number(merged.revision ?? defaults.revision);
+  merged.revision =
+    Number.isInteger(revision) && revision >= 0 ? revision : defaults.revision;
   return merged;
 }
 
@@ -311,7 +443,7 @@ function readStateStrict(cwd) {
 
   let rawState;
   try {
-    rawState = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    rawState = JSON.parse(fs.readFileSync(filePath, "utf8"));
   } catch (error) {
     if (error instanceof SyntaxError) {
       return [null, [`workflow state is not valid JSON: ${error.message}`]];
@@ -320,7 +452,7 @@ function readStateStrict(cwd) {
   }
 
   if (!isPlainObject(rawState)) {
-    return [null, ['workflow state must be a JSON object']];
+    return [null, ["workflow state must be a JSON object"]];
   }
 
   return [mergeKnownSections({}, rawState), []];
@@ -329,7 +461,49 @@ function readStateStrict(cwd) {
 function loadState(cwd) {
   const [state, errors] = readStateStrict(cwd);
   if (errors.length > 0) {
-    logEvent(cwd, 'warning', 'Loaded fallback state after read error', { errors });
+    const [backupState, backupErrors] = readBackupState(cwd);
+    if (backupErrors.length === 0 && backupState) {
+      const [repairedState, saveErrors] = saveState(cwd, backupState, {
+        expectedRevision: null,
+        forceWrite: true,
+      });
+      if (saveErrors.length === 0) {
+        logEvent(
+          cwd,
+          "warning",
+          "Recovered workflow state from last-known-good backup",
+          { errors },
+        );
+        appendStateJournal(cwd, {
+          action: "state-recovered-from-backup",
+          errors,
+          phase: repairedState.phase,
+          revision: repairedState.revision,
+          timestamp: utcTimestamp(),
+        });
+        return repairedState;
+      }
+
+      logEvent(
+        cwd,
+        "warning",
+        "State recovery attempted but failed to persist",
+        {
+          backupErrors: saveErrors,
+          errors,
+        },
+      );
+    }
+
+    logEvent(cwd, "warning", "Loaded fallback default state after read error", {
+      backupErrors,
+      errors,
+    });
+    appendStateJournal(cwd, {
+      action: "state-fallback-default",
+      errors,
+      timestamp: utcTimestamp(),
+    });
     return deepCopyDefaultState();
   }
   return state || deepCopyDefaultState();
@@ -347,7 +521,7 @@ function deepMerge(base, patch) {
 }
 
 function validateStringList(value, fieldName) {
-  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
     return [`${fieldName} must be a list of strings`];
   }
   return [];
@@ -362,87 +536,116 @@ function validateState(state) {
 
   const phase = lower(state.phase);
   if (!PHASE_ORDER.includes(phase)) {
-    errors.push(`phase must be one of ${PHASE_ORDER.join(', ')}`);
+    errors.push(`phase must be one of ${PHASE_ORDER.join(", ")}`);
   }
 
-  if (typeof state.taskId !== 'string') {
-    errors.push('taskId must be a string');
+  if (typeof state.taskId !== "string") {
+    errors.push("taskId must be a string");
   }
-  if (typeof state.taskSummary !== 'string') {
-    errors.push('taskSummary must be a string');
+  if (typeof state.taskSummary !== "string") {
+    errors.push("taskSummary must be a string");
   }
 
   const requirements = state.requirements;
   if (!isPlainObject(requirements)) {
-    errors.push('requirements must be an object');
+    errors.push("requirements must be an object");
   } else {
     if (!REQUIREMENTS_STATUSES.has(lower(requirements.status))) {
-      errors.push('requirements.status is invalid');
+      errors.push("requirements.status is invalid");
     }
-    errors.push(...validateStringList(requirements.acceptanceCriteria, 'requirements.acceptanceCriteria'));
-    errors.push(...validateStringList(requirements.constraints, 'requirements.constraints'));
-    errors.push(...validateStringList(requirements.openQuestions, 'requirements.openQuestions'));
+    errors.push(
+      ...validateStringList(
+        requirements.acceptanceCriteria,
+        "requirements.acceptanceCriteria",
+      ),
+    );
+    errors.push(
+      ...validateStringList(
+        requirements.constraints,
+        "requirements.constraints",
+      ),
+    );
+    errors.push(
+      ...validateStringList(
+        requirements.openQuestions,
+        "requirements.openQuestions",
+      ),
+    );
   }
 
   const plan = state.plan;
   if (!isPlainObject(plan)) {
-    errors.push('plan must be an object');
+    errors.push("plan must be an object");
   } else {
     if (!PLAN_STATUSES.has(lower(plan.status))) {
-      errors.push('plan.status is invalid');
+      errors.push("plan.status is invalid");
     }
-    if (typeof plan.summary !== 'string') {
-      errors.push('plan.summary must be a string');
+    if (typeof plan.summary !== "string") {
+      errors.push("plan.summary must be a string");
     }
-    errors.push(...validateStringList(plan.filesInScope, 'plan.filesInScope'));
+    errors.push(...validateStringList(plan.filesInScope, "plan.filesInScope"));
   }
 
   const implementation = state.implementation;
   if (!isPlainObject(implementation)) {
-    errors.push('implementation must be an object');
+    errors.push("implementation must be an object");
   } else {
     if (!IMPLEMENTATION_STATUSES.has(lower(implementation.status))) {
-      errors.push('implementation.status is invalid');
+      errors.push("implementation.status is invalid");
     }
-    errors.push(...validateStringList(implementation.filesTouched, 'implementation.filesTouched'));
-    errors.push(...validateStringList(implementation.blockedItems, 'implementation.blockedItems'));
+    errors.push(
+      ...validateStringList(
+        implementation.filesTouched,
+        "implementation.filesTouched",
+      ),
+    );
+    errors.push(
+      ...validateStringList(
+        implementation.blockedItems,
+        "implementation.blockedItems",
+      ),
+    );
     const retryCount = implementation.retryCount;
     if (!Number.isInteger(retryCount) || retryCount < 0) {
-      errors.push('implementation.retryCount must be a non-negative integer');
+      errors.push("implementation.retryCount must be a non-negative integer");
     }
   }
 
   const quality = state.qualityGates;
   if (!isPlainObject(quality)) {
-    errors.push('qualityGates must be an object');
+    errors.push("qualityGates must be an object");
   } else {
-    for (const gate of ['typecheck', 'lint', 'tests', 'verification']) {
+    for (const gate of ["typecheck", "lint", "tests", "verification"]) {
       if (!GATE_STATUSES.has(lower(quality[gate]))) {
         errors.push(`qualityGates.${gate} is invalid`);
       }
     }
-    if (typeof quality.lastRunSummary !== 'string') {
-      errors.push('qualityGates.lastRunSummary must be a string');
+    if (typeof quality.lastRunSummary !== "string") {
+      errors.push("qualityGates.lastRunSummary must be a string");
     }
   }
 
   const delivery = state.delivery;
   if (!isPlainObject(delivery)) {
-    errors.push('delivery must be an object');
+    errors.push("delivery must be an object");
   } else {
     if (!DELIVERY_STATUSES.has(lower(delivery.status))) {
-      errors.push('delivery.status is invalid');
+      errors.push("delivery.status is invalid");
     }
-    if (typeof delivery.userApproved !== 'boolean') {
-      errors.push('delivery.userApproved must be a boolean');
+    if (typeof delivery.userApproved !== "boolean") {
+      errors.push("delivery.userApproved must be a boolean");
     }
-    if (typeof delivery.notes !== 'string') {
-      errors.push('delivery.notes must be a string');
+    if (typeof delivery.notes !== "string") {
+      errors.push("delivery.notes must be a string");
     }
   }
 
-  if (typeof state.lastUpdated !== 'string') {
-    errors.push('lastUpdated must be a string');
+  if (typeof state.lastUpdated !== "string") {
+    errors.push("lastUpdated must be a string");
+  }
+
+  if (!Number.isInteger(state.revision) || state.revision < 0) {
+    errors.push("revision must be a non-negative integer");
   }
 
   return errors;
@@ -450,14 +653,16 @@ function validateState(state) {
 
 function allGatesGreen(state) {
   const quality = state.qualityGates || {};
-  return ['typecheck', 'lint', 'tests', 'verification'].every((gate) => GREEN_GATE_VALUES.has(lower(quality[gate])));
+  return ["typecheck", "lint", "tests", "verification"].every((gate) =>
+    GREEN_GATE_VALUES.has(lower(quality[gate])),
+  );
 }
 
 function formatGateSummary(state) {
   const quality = state.qualityGates || {};
-  return ['typecheck', 'lint', 'tests', 'verification']
-    .map((gate) => `${gate}=${quality[gate] || 'pending'}`)
-    .join(', ');
+  return ["typecheck", "lint", "tests", "verification"]
+    .map((gate) => `${gate}=${quality[gate] || "pending"}`)
+    .join(", ");
 }
 
 function validateStateTransition(oldState, newState) {
@@ -473,48 +678,59 @@ function validateStateTransition(oldState, newState) {
   // allowed — the CLAUDE.md recovery model requires "roll back to the earliest
   // required phase" (e.g. delivery → discovery) without intermediate stops.
   if (oldIndex >= 0 && newIndex >= 0 && newIndex - oldIndex > 1) {
-    errors.push(`phase transition cannot skip forward from ${oldPhase} to ${newPhase}`);
+    errors.push(
+      `phase transition cannot skip forward from ${oldPhase} to ${newPhase}`,
+    );
   }
 
-  if (newIndex >= phaseIndex('planning')) {
+  if (newIndex >= phaseIndex("planning")) {
     const requirementsStatus = lower(newState.requirements?.status);
-    if (!['clarified', 'approved'].includes(requirementsStatus)) {
-      errors.push('planning or later requires clarified requirements');
+    if (!["clarified", "approved"].includes(requirementsStatus)) {
+      errors.push("planning or later requires clarified requirements");
     }
   }
 
-  if (newIndex >= phaseIndex('implementation')) {
+  if (newIndex >= phaseIndex("implementation")) {
     const planStatus = lower(newState.plan?.status);
-    if (planStatus !== 'approved') {
-      errors.push('implementation or later requires plan.status = approved');
+    if (planStatus !== "approved") {
+      errors.push("implementation or later requires plan.status = approved");
     }
   }
 
-  if (newIndex >= phaseIndex('delivery') && !allGatesGreen(newState)) {
-    errors.push('delivery requires all quality gates and verification to be green');
+  if (newIndex >= phaseIndex("delivery") && !allGatesGreen(newState)) {
+    errors.push(
+      "delivery requires all quality gates and verification to be green",
+    );
   }
 
   const deliveryStatus = lower(newState.delivery?.status);
-  if (deliveryStatus === 'approved' && !newState.delivery?.userApproved) {
-    errors.push('delivery.status = approved requires delivery.userApproved = true');
+  if (deliveryStatus === "approved" && !newState.delivery?.userApproved) {
+    errors.push(
+      "delivery.status = approved requires delivery.userApproved = true",
+    );
   }
 
   const retryCount = newState.implementation?.retryCount ?? 0;
   const blockedItems = newState.implementation?.blockedItems ?? [];
   const implementationStatus = lower(newState.implementation?.status);
   if (retryCount >= MAX_RETRY_COUNT && !allGatesGreen(newState)) {
-    if (implementationStatus !== 'blocked') {
-      errors.push('retry budget exhaustion requires implementation.status = blocked until the item is resolved');
+    if (implementationStatus !== "blocked") {
+      errors.push(
+        "retry budget exhaustion requires implementation.status = blocked until the item is resolved",
+      );
     }
     if (!blockedItems.length) {
-      errors.push('retry budget exhaustion requires implementation.blockedItems to record the blocker');
+      errors.push(
+        "retry budget exhaustion requires implementation.blockedItems to record the blocker",
+      );
     }
   }
 
   return errors;
 }
 
-function saveState(cwd, state) {
+function saveState(cwd, state, options = {}) {
+  const { expectedRevision = null, forceWrite = false } = options;
   const mergedState = mergeKnownSections(deepCopyDefaultState(), state);
   mergedState.lastUpdated = utcTimestamp();
 
@@ -525,25 +741,72 @@ function saveState(cwd, state) {
 
   const filePath = workflowStatePath(cwd);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tempPath = filePath.replace(/\.json$/, '.json.tmp');
+  const tempPath = filePath.replace(/\.json$/, ".json.tmp");
+
+  let currentRevision = -1;
+  if (fs.existsSync(filePath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      const normalized = mergeKnownSections({}, parsed);
+      const revision = Number(normalized.revision ?? 0);
+      currentRevision =
+        Number.isInteger(revision) && revision >= 0 ? revision : 0;
+    } catch (error) {
+      if (!forceWrite) {
+        return [
+          null,
+          [
+            `failed to read current workflow state before write: ${error.message}`,
+          ],
+        ];
+      }
+      currentRevision = Number.isInteger(mergedState.revision)
+        ? mergedState.revision - 1
+        : 0;
+    }
+  } else {
+    currentRevision = 0;
+  }
+
+  if (expectedRevision !== null && currentRevision !== expectedRevision) {
+    return [
+      null,
+      [
+        `stale workflow state write: expected revision ${expectedRevision}, found ${currentRevision}`,
+      ],
+    ];
+  }
+
+  mergedState.revision = currentRevision + 1;
 
   try {
-    fs.writeFileSync(tempPath, `${JSON.stringify(mergedState, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(
+      tempPath,
+      `${JSON.stringify(mergedState, null, 2)}\n`,
+      "utf8",
+    );
     fs.renameSync(tempPath, filePath);
   } catch (error) {
     return [null, [`failed to write workflow state: ${error.message}`]];
   }
 
-  logEvent(cwd, 'info', 'Workflow state saved', { phase: mergedState.phase });
+  persistStateBackup(cwd, mergedState);
+  appendStateJournal(cwd, {
+    action: "state-saved",
+    phase: mergedState.phase,
+    revision: mergedState.revision,
+    timestamp: utcTimestamp(),
+  });
+  logEvent(cwd, "info", "Workflow state saved", { phase: mergedState.phase });
   return [mergedState, []];
 }
 
 function persistStateBaseline(cwd, toolUseId, state) {
   const filePath = baselinePath(cwd, toolUseId);
   try {
-    fs.writeFileSync(filePath, `${JSON.stringify(state, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(filePath, `${JSON.stringify(state, null, 2)}\n`, "utf8");
   } catch (error) {
-    logEvent(cwd, 'warning', 'Failed to persist workflow baseline', {
+    logEvent(cwd, "warning", "Failed to persist workflow baseline", {
       error: error.message,
       tool_use_id: toolUseId,
     });
@@ -556,7 +819,7 @@ function loadStateBaseline(cwd, toolUseId) {
     return null;
   }
   try {
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
     if (isPlainObject(data)) {
       return mergeKnownSections({}, data);
     }
@@ -583,45 +846,58 @@ function emitHookPayload(hookEventName, response = {}) {
   const payload = {};
 
   // Stop hooks use "approve"/"block", other hooks use "allow"/"deny"
-  const isStopEvent = hookEventName === 'Stop';
+  const isStopEvent = hookEventName === "Stop";
 
-  if ('continue' in response) {
+  if ("continue" in response) {
     payload.continue = response.continue;
   }
-  if ('decision' in response) {
+  if ("decision" in response) {
     // Map decision values for Stop events: allow->approve, deny/block->block
     if (isStopEvent) {
-      payload.decision = response.decision === 'allow' ? 'approve' : 'block';
+      payload.decision = response.decision === "allow" ? "approve" : "block";
     } else {
       payload.decision = response.decision;
     }
   }
-  if ('reason' in response) {
+  if ("reason" in response) {
     payload.reason = response.reason;
   }
-  if ('permissionDecision' in response) {
+  if ("permissionDecision" in response) {
     payload.permissionDecision = response.permissionDecision;
   }
-  if ('permissionDecisionReason' in response) {
+  if ("permissionDecisionReason" in response) {
     payload.permissionDecisionReason = response.permissionDecisionReason;
   }
   // additionalContext at root level is only valid for non-Stop events
-  if ('additionalContext' in response && response.additionalContext && !isStopEvent) {
+  if (
+    "additionalContext" in response &&
+    response.additionalContext &&
+    !isStopEvent
+  ) {
     payload.additionalContext = response.additionalContext;
   }
 
   // Only add hookSpecificOutput for supported event types per Claude Code schema
   // Stop and SessionStart events do not support hookSpecificOutput
-  const supportsHookSpecificOutput = ['PreToolUse', 'UserPromptSubmit', 'PostToolUse'].includes(hookEventName);
+  const supportsHookSpecificOutput = [
+    "PreToolUse",
+    "UserPromptSubmit",
+    "PostToolUse",
+  ].includes(hookEventName);
   if (hookEventName && supportsHookSpecificOutput) {
     payload.hookSpecificOutput = { hookEventName };
-    if ('permissionDecision' in response) {
-      payload.hookSpecificOutput.permissionDecision = response.permissionDecision;
+    if ("permissionDecision" in response) {
+      payload.hookSpecificOutput.permissionDecision =
+        response.permissionDecision;
     }
-    if ('permissionDecisionReason' in response && response.permissionDecisionReason) {
-      payload.hookSpecificOutput.permissionDecisionReason = response.permissionDecisionReason;
+    if (
+      "permissionDecisionReason" in response &&
+      response.permissionDecisionReason
+    ) {
+      payload.hookSpecificOutput.permissionDecisionReason =
+        response.permissionDecisionReason;
     }
-    if ('additionalContext' in response && response.additionalContext) {
+    if ("additionalContext" in response && response.additionalContext) {
       payload.hookSpecificOutput.additionalContext = response.additionalContext;
     }
   }
@@ -629,14 +905,18 @@ function emitHookPayload(hookEventName, response = {}) {
   return emit(payload);
 }
 
-function emitContinue(hookEventName, additionalContext = '') {
+function emitContinue(hookEventName, additionalContext = "") {
   return emitHookPayload(hookEventName, {
     additionalContext,
     continue: true,
   });
 }
 
-function emitPreToolDecision(decision, permissionDecisionReason = '', additionalContext = '') {
+function emitPreToolDecision(
+  decision,
+  permissionDecisionReason = "",
+  additionalContext = "",
+) {
   const response = {
     additionalContext,
     permissionDecision: decision,
@@ -644,38 +924,40 @@ function emitPreToolDecision(decision, permissionDecisionReason = '', additional
   if (permissionDecisionReason) {
     response.permissionDecisionReason = permissionDecisionReason;
   }
-  if (decision === 'allow') {
+  if (decision === "allow") {
     response.continue = true;
   }
-  return emitHookPayload('PreToolUse', response);
+  return emitHookPayload("PreToolUse", response);
 }
 
-function emitPostToolBlock(reason, additionalContext = '') {
-  return emitHookPayload('PostToolUse', {
+function emitPostToolBlock(reason, additionalContext = "") {
+  return emitHookPayload("PostToolUse", {
     additionalContext,
-    decision: 'block',
+    decision: "block",
     reason,
   });
 }
 
-function emitPostToolMessage(additionalContext = '') {
-  return emitHookPayload('PostToolUse', { additionalContext });
+function emitPostToolMessage(additionalContext = "") {
+  return emitHookPayload("PostToolUse", { additionalContext });
 }
 
-function emitSessionContext(additionalContext = '') {
-  return emitHookPayload('SessionStart', { additionalContext });
+function emitSessionContext(additionalContext = "") {
+  return emitHookPayload("SessionStart", { additionalContext });
 }
 
-function emitStopDecision(decision, reason = '') {
-  return emitHookPayload('Stop', {
-    continue: decision === 'allow',
+function emitStopDecision(decision, reason = "") {
+  return emitHookPayload("Stop", {
+    continue: decision === "allow",
     decision,
     reason,
   });
 }
 
 function isEditTool(toolName) {
-  return ['edit', 'create', 'write', 'rename', 'move', 'delete'].some((token) => toolName.includes(token));
+  return ["edit", "create", "write", "rename", "move", "delete"].some((token) =>
+    toolName.includes(token),
+  );
 }
 
 // NOTE: 'agent' is included so the Agent/subagent tool is subject to the
@@ -686,39 +968,55 @@ function isEditTool(toolName) {
 // at the hook level. Mitigation: re-run quality gates after any agent-assisted
 // implementation phase to catch untracked changes.
 function isCommandTool(toolName) {
-  return ['terminal', 'command', 'bash', 'powershell', 'shell', 'run', 'task', 'agent', 'execute', 'exec'].some((token) =>
+  return [
+    "terminal",
+    "command",
+    "bash",
+    "powershell",
+    "shell",
+    "run",
+    "task",
+    "agent",
+    "execute",
+    "exec",
+  ].some((token) => toolName.includes(token));
+}
+
+function isPassiveTerminalTool(toolName) {
+  return ["await", "output", "lastcommand", "selection"].some((token) =>
     toolName.includes(token),
   );
 }
 
-function isPassiveTerminalTool(toolName) {
-  return ['await', 'output', 'lastcommand', 'selection'].some((token) => toolName.includes(token));
-}
-
 function extractCommandText(toolInput) {
-  if (typeof toolInput === 'string') {
+  if (typeof toolInput === "string") {
     return toolInput.toLowerCase();
   }
   if (Array.isArray(toolInput)) {
-    return toolInput.flatMap((entry) => collectStrings(entry)).join(' ').toLowerCase();
+    return toolInput
+      .flatMap((entry) => collectStrings(entry))
+      .join(" ")
+      .toLowerCase();
   }
   if (isPlainObject(toolInput)) {
     const items = [];
-    for (const key of ['command', 'commands', 'args', 'arguments']) {
+    for (const key of ["command", "commands", "args", "arguments"]) {
       if (key in toolInput) {
         items.push(...collectStrings(toolInput[key]));
       }
     }
-    return items.join(' ').toLowerCase();
+    return items.join(" ").toLowerCase();
   }
-  return '';
+  return "";
 }
 
 function commandReferencesStateFile(commandText) {
-  if (typeof commandText !== 'string') {
+  if (typeof commandText !== "string") {
     return false;
   }
-  return /(^|[\s"'`])(?:\.\/)?\.claude\/workflow-state\.json\b/.test(commandText);
+  return /(^|[\s"'`])(?:\.\/)?\.claude\/workflow-state\.json\b/.test(
+    commandText,
+  );
 }
 
 function matchesAnyPattern(value, patterns) {
@@ -734,21 +1032,26 @@ function isStateApiCommand(commandText) {
 }
 
 function hasShellWriteOperator(commandText) {
-  if (typeof commandText !== 'string') {
+  if (typeof commandText !== "string") {
     return false;
   }
-  return /\s>>?\s|\btee\b|\bsed\s+-i\b|\bperl\s+-i\b|<<\s*['"]?[a-z0-9_-]+/i.test(commandText);
+  return /\s>>?\s|\btee\b|\bsed\s+-i\b|\bperl\s+-i\b|<<\s*['"]?[a-z0-9_-]+/i.test(
+    commandText,
+  );
 }
 
 function isReadOnlyCommand(commandText) {
   if (hasShellWriteOperator(commandText)) {
     return false;
   }
-  return matchesAnyPattern(commandText, READ_ONLY_COMMAND_PATTERNS) || isStateApiCommand(commandText);
+  return (
+    matchesAnyPattern(commandText, READ_ONLY_COMMAND_PATTERNS) ||
+    isStateApiCommand(commandText)
+  );
 }
 
 function collectStrings(value) {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return [value];
   }
   if (Array.isArray(value)) {
@@ -756,7 +1059,19 @@ function collectStrings(value) {
   }
   if (isPlainObject(value)) {
     const items = [];
-    for (const key of ['path', 'file', 'filePath', 'file_path', 'source', 'destination', 'target', 'files', 'paths', 'command', 'commands']) {
+    for (const key of [
+      "path",
+      "file",
+      "filePath",
+      "file_path",
+      "source",
+      "destination",
+      "target",
+      "files",
+      "paths",
+      "command",
+      "commands",
+    ]) {
       if (key in value) {
         items.push(...collectStrings(value[key]));
       }
@@ -767,7 +1082,7 @@ function collectStrings(value) {
 }
 
 function collectPathStrings(value) {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return [value];
   }
   if (Array.isArray(value)) {
@@ -775,7 +1090,17 @@ function collectPathStrings(value) {
   }
   if (isPlainObject(value)) {
     const items = [];
-    for (const key of ['path', 'file', 'filePath', 'file_path', 'source', 'destination', 'target', 'files', 'paths']) {
+    for (const key of [
+      "path",
+      "file",
+      "filePath",
+      "file_path",
+      "source",
+      "destination",
+      "target",
+      "files",
+      "paths",
+    ]) {
       if (key in value) {
         items.push(...collectPathStrings(value[key]));
       }
@@ -786,15 +1111,15 @@ function collectPathStrings(value) {
 }
 
 function normalizePath(value) {
-  const normalized = path.posix.normalize(value.replace(/\\/g, '/'));
-  if (normalized.startsWith('./')) {
+  const normalized = path.posix.normalize(value.replace(/\\/g, "/"));
+  if (normalized.startsWith("./")) {
     return normalized.slice(2);
   }
   return normalized;
 }
 
 function toRepoRelativePath(cwd, value) {
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return null;
   }
   const trimmed = value.trim();
@@ -804,9 +1129,16 @@ function toRepoRelativePath(cwd, value) {
 
   const repoRoot = path.resolve(cwd);
   const absolutePath = path.resolve(repoRoot, trimmed);
-  const relativePath = path.relative(repoRoot, absolutePath).replace(/\\/g, '/');
+  const relativePath = path
+    .relative(repoRoot, absolutePath)
+    .replace(/\\/g, "/");
 
-  if (!relativePath || relativePath === '.' || relativePath.startsWith('../') || relativePath === '..') {
+  if (
+    !relativePath ||
+    relativePath === "." ||
+    relativePath.startsWith("../") ||
+    relativePath === ".."
+  ) {
     return null;
   }
 
@@ -822,7 +1154,7 @@ function extractPaths(cwd, toolInput) {
 }
 
 function isGovernancePath(filePath) {
-  return filePath === 'CLAUDE.md' || filePath.startsWith('.claude/');
+  return filePath === "CLAUDE.md" || filePath.startsWith(".claude/");
 }
 
 function isStatePath(filePath) {
@@ -830,7 +1162,9 @@ function isStatePath(filePath) {
 }
 
 function onlyGovernancePaths(paths) {
-  return paths.length > 0 && paths.every((filePath) => isGovernancePath(filePath));
+  return (
+    paths.length > 0 && paths.every((filePath) => isGovernancePath(filePath))
+  );
 }
 
 function uniqueStrings(values) {
@@ -842,26 +1176,31 @@ function statesEqual(left, right) {
 }
 
 function invalidateGateStatus(status) {
-  return lower(status) === 'not-applicable' ? 'not-applicable' : 'pending';
+  return lower(status) === "not-applicable" ? "not-applicable" : "pending";
 }
 
 function deriveStateAfterImplementationEdit(state, filePaths) {
   const nextState = mergeKnownSections({}, state);
-  nextState.implementation.filesTouched = uniqueStrings([...(state.implementation?.filesTouched || []), ...filePaths]);
+  nextState.implementation.filesTouched = uniqueStrings([
+    ...(state.implementation?.filesTouched || []),
+    ...filePaths,
+  ]);
 
   const currentPhase = lower(state.phase);
-  const planApproved = lower(state.plan?.status) === 'approved';
-  const shouldInvalidateDownstream = planApproved && phaseIndex(currentPhase) >= phaseIndex('planning');
+  const planApproved = lower(state.plan?.status) === "approved";
+  const shouldInvalidateDownstream =
+    planApproved && phaseIndex(currentPhase) >= phaseIndex("planning");
 
   if (!shouldInvalidateDownstream) {
     return nextState;
   }
 
-  nextState.phase = 'implementation';
-  nextState.implementation.status = 'in-progress';
+  nextState.phase = "implementation";
+  nextState.implementation.status = "in-progress";
   nextState.qualityGates = {
     ...nextState.qualityGates,
-    lastRunSummary: 'Implementation changed after prior validation. Rerun quality gates and verification.',
+    lastRunSummary:
+      "Implementation changed after prior validation. Rerun quality gates and verification.",
     lint: invalidateGateStatus(nextState.qualityGates.lint),
     tests: invalidateGateStatus(nextState.qualityGates.tests),
     typecheck: invalidateGateStatus(nextState.qualityGates.typecheck),
@@ -869,8 +1208,9 @@ function deriveStateAfterImplementationEdit(state, filePaths) {
   };
   nextState.delivery = {
     ...nextState.delivery,
-    notes: 'Implementation changed after prior validation. Rerun quality gates and verification before delivery.',
-    status: 'blocked',
+    notes:
+      "Implementation changed after prior validation. Rerun quality gates and verification before delivery.",
+    status: "blocked",
     userApproved: false,
   };
 
@@ -881,17 +1221,17 @@ function syncStateAfterImplementationEdit(cwd, state, filePaths) {
   const proposedState = deriveStateAfterImplementationEdit(state, filePaths);
 
   if (statesEqual(state, proposedState)) {
-    return { changed: false, errors: [], message: '', state };
+    return { changed: false, errors: [], message: "", state };
   }
 
   const transitionErrors = validateStateTransition(state, proposedState);
   if (transitionErrors.length > 0) {
-    return { changed: false, errors: transitionErrors, message: '', state };
+    return { changed: false, errors: transitionErrors, message: "", state };
   }
 
   const [savedState, saveErrors] = saveState(cwd, proposedState);
   if (saveErrors.length > 0) {
-    return { changed: false, errors: saveErrors, message: '', state };
+    return { changed: false, errors: saveErrors, message: "", state };
   }
 
   const downstreamChanged =
@@ -899,8 +1239,8 @@ function syncStateAfterImplementationEdit(cwd, state, filePaths) {
     lower(savedState.phase) !== lower(state.phase) ||
     lower(savedState.delivery?.status) !== lower(state.delivery?.status);
   const message = downstreamChanged
-    ? 'Workflow state was updated automatically with touched implementation files and downstream gate invalidation.'
-    : 'Workflow state was updated automatically with touched implementation files.';
+    ? "Workflow state was updated automatically with touched implementation files and downstream gate invalidation."
+    : "Workflow state was updated automatically with touched implementation files.";
 
   return { changed: true, errors: [], message, state: savedState };
 }
@@ -914,25 +1254,31 @@ function sessionContext(event) {
   const stateFileExists = fs.existsSync(workflowStatePath(cwd));
   const [state, errors] = readStateStrict(cwd);
   const activeState = state || deepCopyDefaultState();
-  const phase = activeState.phase || 'discovery';
-  const requirementsStatus = activeState.requirements?.status || 'needs-clarification';
-  const planStatus = activeState.plan?.status || 'not-started';
+  const phase = activeState.phase || "discovery";
+  const requirementsStatus =
+    activeState.requirements?.status || "needs-clarification";
+  const planStatus = activeState.plan?.status || "not-started";
   let message =
-    'Workflow state loaded: ' +
+    "Workflow state loaded: " +
     `phase=${phase}, requirements=${requirementsStatus}, plan=${planStatus}, ` +
     `gates=(${formatGateSummary(activeState)}). ` +
-    'Follow Discovery -> Planning -> Implementation -> Quality Gates -> Verification -> Delivery. ' +
-    'Use exact enums: requirements.status=needs-clarification|clarified|approved; ' +
-    'plan.status=not-started|proposed|approved|blocked.';
+    "Follow Discovery -> Planning -> Implementation -> Quality Gates -> Verification -> Delivery. " +
+    "Use exact enums: requirements.status=needs-clarification|clarified|approved; " +
+    "plan.status=not-started|proposed|approved|blocked.";
 
-  if (!stateFileExists || (phase === 'discovery' && !activeState.taskId && !activeState.taskSummary)) {
+  if (
+    !stateFileExists ||
+    (phase === "discovery" && !activeState.taskId && !activeState.taskSummary)
+  ) {
     message +=
-      ' Fresh bootstrap state detected. Start with the /discover command, then persist task details through the workflow state API.';
+      " Fresh bootstrap state detected. Start with the /discover command, then persist task details through the workflow state API.";
   }
 
   if (errors.length > 0) {
-    message += ` State file needs repair before risky actions: ${errors.join('; ')}.`;
-    logEvent(cwd, 'warning', 'Session started with invalid workflow state', { errors });
+    message += ` State file needs repair before risky actions: ${errors.join("; ")}.`;
+    logEvent(cwd, "warning", "Session started with invalid workflow state", {
+      errors,
+    });
   }
 
   return emitSessionContext(message);
@@ -942,7 +1288,7 @@ function workflowGuard(event) {
   const cwd = event.cwd;
   const toolName = event.toolName;
   if (!(isEditTool(toolName) || isCommandTool(toolName))) {
-    return emitContinue('PreToolUse');
+    return emitContinue("PreToolUse");
   }
 
   const toolInput = event.toolInput ?? {};
@@ -950,62 +1296,87 @@ function workflowGuard(event) {
   const governanceOnly = onlyGovernancePaths(paths);
   const stateTargeted = paths.some((filePath) => isStatePath(filePath));
   const commandText = extractCommandText(toolInput);
-  const passiveCommandTool = isCommandTool(toolName) && isPassiveTerminalTool(toolName);
-  const readOnlyCommand = passiveCommandTool || (isCommandTool(toolName) && isReadOnlyCommand(commandText));
-  const stateApiCommand = isCommandTool(toolName) && isStateApiCommand(commandText);
-  const shellStateWriteAttempt = isCommandTool(toolName) && commandReferencesStateFile(commandText) && !readOnlyCommand && !stateApiCommand;
-  const riskyCommand = isCommandTool(toolName) && !readOnlyCommand && !stateApiCommand;
-  const deliveryActionCommand = isCommandTool(toolName) && isDeliveryActionCommand(commandText);
+  const passiveCommandTool =
+    isCommandTool(toolName) && isPassiveTerminalTool(toolName);
+  const readOnlyCommand =
+    passiveCommandTool ||
+    (isCommandTool(toolName) && isReadOnlyCommand(commandText));
+  const stateApiCommand =
+    isCommandTool(toolName) && isStateApiCommand(commandText);
+  const shellStateWriteAttempt =
+    isCommandTool(toolName) &&
+    commandReferencesStateFile(commandText) &&
+    !readOnlyCommand &&
+    !stateApiCommand;
+  const riskyCommand =
+    isCommandTool(toolName) && !readOnlyCommand && !stateApiCommand;
+  const deliveryActionCommand =
+    isCommandTool(toolName) && isDeliveryActionCommand(commandText);
   const [state, stateErrors] = readStateStrict(cwd);
-  const activeState = state || deepCopyDefaultState();
+  const recoveredState = stateErrors.length > 0 ? loadState(cwd) : state;
+  const activeState = recoveredState || deepCopyDefaultState();
   const currentPhase = lower(activeState.phase);
 
-  if (stateErrors.length > 0 && !stateTargeted && !readOnlyCommand && !stateApiCommand) {
-    logEvent(cwd, 'warning', 'Blocked risky tool use because workflow state is invalid', {
-      errors: stateErrors,
-      tool: toolName,
-    });
-    return emitPreToolDecision(
-      'ask',
-      'Workflow state is invalid. Repair .claude/workflow-state.json before risky actions.',
-      stateErrors.join('; '),
+  if (
+    stateErrors.length > 0 &&
+    !stateTargeted &&
+    !readOnlyCommand &&
+    !stateApiCommand
+  ) {
+    logEvent(
+      cwd,
+      "warning",
+      "Workflow state was invalid; attempted graceful recovery",
+      {
+        errors: stateErrors,
+        recovered: Boolean(recoveredState),
+        tool: toolName,
+      },
     );
+
+    if (!recoveredState) {
+      return emitPreToolDecision(
+        "ask",
+        "Workflow state is invalid and could not be recovered automatically. Repair .claude/workflow-state.json before risky actions.",
+        stateErrors.join("; "),
+      );
+    }
   }
 
   if (stateTargeted && isEditTool(toolName)) {
-    if (phaseIndex(currentPhase) >= phaseIndex('implementation')) {
-      logEvent(cwd, 'info', 'Denied direct state edit after planning', {
+    if (phaseIndex(currentPhase) >= phaseIndex("implementation")) {
+      logEvent(cwd, "info", "Denied direct state edit after planning", {
         phase: currentPhase,
         tool: toolName,
       });
       return emitPreToolDecision(
-        'deny',
-        'After Planning, update workflow-state.json through the workflow state API instead of direct file edits.',
+        "deny",
+        "After Planning, update workflow-state.json through the workflow state API instead of direct file edits.",
         "Use `printf '%s' '{...}' | node .claude/hooks/scripts/workflow_hook.cjs update-state` or `node .claude/hooks/scripts/workflow_hook.cjs update-state phase=implementation implementation.status=in-progress` so validation and transition rules stay consistent.",
       );
     }
 
-    stateEditContext(cwd, event.toolUseId || '', activeState);
-    logEvent(cwd, 'info', 'State file edit allowed with baseline capture', {
+    stateEditContext(cwd, event.toolUseId || "", activeState);
+    logEvent(cwd, "info", "State file edit allowed with baseline capture", {
       tool: toolName,
       tool_use_id: event.toolUseId,
     });
     return emitPreToolDecision(
-      'allow',
-      '',
-      'State file edits are allowed, but the result will be validated against the schema and transition rules after the write completes.',
+      "allow",
+      "",
+      "State file edits are allowed, but the result will be validated against the schema and transition rules after the write completes.",
     );
   }
 
   if (shellStateWriteAttempt) {
-    logEvent(cwd, 'info', 'Denied shell-based workflow state write', {
+    logEvent(cwd, "info", "Denied shell-based workflow state write", {
       command: commandText,
       phase: currentPhase,
       tool: toolName,
     });
     return emitPreToolDecision(
-      'deny',
-      'Direct shell writes to .claude/workflow-state.json are blocked. Use the workflow state API instead.',
+      "deny",
+      "Direct shell writes to .claude/workflow-state.json are blocked. Use the workflow state API instead.",
       "Use `printf '%s' '{...}' | node .claude/hooks/scripts/workflow_hook.cjs update-state` or `node .claude/hooks/scripts/workflow_hook.cjs update-state phase=implementation implementation.status=in-progress`.",
     );
   }
@@ -1014,69 +1385,94 @@ function workflowGuard(event) {
   const planStatus = lower(activeState.plan?.status);
   const retryCount = activeState.implementation?.retryCount ?? 0;
 
-  if (retryCount >= MAX_RETRY_COUNT && (isEditTool(toolName) || riskyCommand) && !governanceOnly) {
-    logEvent(cwd, 'warning', 'Denied edit because retry budget is exhausted', {
+  if (
+    retryCount >= MAX_RETRY_COUNT &&
+    (isEditTool(toolName) || riskyCommand) &&
+    !governanceOnly
+  ) {
+    logEvent(cwd, "warning", "Denied edit because retry budget is exhausted", {
       retryCount,
       tool: toolName,
     });
     return emitPreToolDecision(
-      'deny',
+      "deny",
       `Retry budget exhausted (${retryCount}/${MAX_RETRY_COUNT}). Mark the work item as blocked instead of continuing to edit.`,
-      'Record the blocker in implementation.blockedItems and route the task back through recovery or user escalation.',
+      "Record the blocker in implementation.blockedItems and route the task back through recovery or user escalation.",
     );
   }
 
-  if (deliveryActionCommand && (!allGatesGreen(activeState) || activeState.delivery?.userApproved !== true)) {
-    logEvent(cwd, 'warning', 'Denied delivery action because delivery is not user-approved', {
-      deliveryStatus: activeState.delivery?.status,
-      gates: formatGateSummary(activeState),
-      tool: toolName,
-      userApproved: activeState.delivery?.userApproved,
-    });
+  if (
+    deliveryActionCommand &&
+    (!allGatesGreen(activeState) || activeState.delivery?.userApproved !== true)
+  ) {
+    logEvent(
+      cwd,
+      "warning",
+      "Denied delivery action because delivery is not user-approved",
+      {
+        deliveryStatus: activeState.delivery?.status,
+        gates: formatGateSummary(activeState),
+        tool: toolName,
+        userApproved: activeState.delivery?.userApproved,
+      },
+    );
     return emitPreToolDecision(
-      'deny',
-      'Delivery actions are blocked until quality gates are green and the user has approved delivery.',
-      `Current gate state: ${formatGateSummary(activeState)}; delivery.status=${activeState.delivery?.status || 'blocked'}; userApproved=${activeState.delivery?.userApproved === true}`,
+      "deny",
+      "Delivery actions are blocked until quality gates are green and the user has approved delivery.",
+      `Current gate state: ${formatGateSummary(activeState)}; delivery.status=${activeState.delivery?.status || "blocked"}; userApproved=${activeState.delivery?.userApproved === true}`,
     );
   }
 
-  if (!governanceOnly && !['clarified', 'approved'].includes(requirementsStatus) && (isEditTool(toolName) || riskyCommand)) {
-    logEvent(cwd, 'info', 'Asked for Discovery completion before risky edit', {
+  if (
+    !governanceOnly &&
+    !["clarified", "approved"].includes(requirementsStatus) &&
+    (isEditTool(toolName) || riskyCommand)
+  ) {
+    logEvent(cwd, "info", "Asked for Discovery completion before risky edit", {
       requirements: requirementsStatus,
       tool: toolName,
     });
     return emitPreToolDecision(
-      'ask',
-      'Requirements are not clarified yet. Finish Discovery before editing implementation surfaces.',
-      'Use the discovery workflow and update .claude/workflow-state.json before implementation work.',
+      "ask",
+      "Requirements are not clarified yet. Finish Discovery before editing implementation surfaces.",
+      "Use the discovery workflow and update .claude/workflow-state.json before implementation work.",
     );
   }
 
-  if ((isEditTool(toolName) || riskyCommand) && !governanceOnly && planStatus !== 'approved') {
-    logEvent(cwd, 'info', 'Asked for Planning completion before implementation edit', {
-      plan: planStatus,
-      tool: toolName,
-    });
+  if (
+    (isEditTool(toolName) || riskyCommand) &&
+    !governanceOnly &&
+    planStatus !== "approved"
+  ) {
+    logEvent(
+      cwd,
+      "info",
+      "Asked for Planning completion before implementation edit",
+      {
+        plan: planStatus,
+        tool: toolName,
+      },
+    );
     return emitPreToolDecision(
-      'ask',
-      'Plan approval is required before non-trivial implementation changes.',
-      'Move through Planning first or limit edits to workflow/governance files only.',
+      "ask",
+      "Plan approval is required before non-trivial implementation changes.",
+      "Move through Planning first or limit edits to workflow/governance files only.",
     );
   }
 
-  return emitContinue('PreToolUse');
+  return emitContinue("PreToolUse");
 }
 
 function postEditChecks(event) {
   const cwd = event.cwd;
   const toolName = event.toolName;
   if (!isEditTool(toolName)) {
-    return emitContinue('PostToolUse');
+    return emitContinue("PostToolUse");
   }
 
   const paths = extractPaths(cwd, event.toolInput ?? {});
   const stateTargeted = paths.some((filePath) => isStatePath(filePath));
-  const toolUseId = event.toolUseId || '';
+  const toolUseId = event.toolUseId || "";
 
   if (stateTargeted) {
     const previousState = loadStateBaseline(cwd, toolUseId);
@@ -1086,19 +1482,23 @@ function postEditChecks(event) {
         saveState(cwd, previousState);
       }
       removeStateBaseline(cwd, toolUseId);
-      logEvent(cwd, 'error', 'Blocked invalid workflow state edit', {
+      logEvent(cwd, "error", "Blocked invalid workflow state edit", {
         errors,
         tool: toolName,
       });
       return emitPostToolBlock(
-        'workflow-state.json became invalid and was restored to the last valid baseline.',
-        errors.join('; '),
+        "workflow-state.json became invalid and was restored to the last valid baseline.",
+        errors.join("; "),
       );
     }
 
-    const transitionErrors = currentState ? validateState(currentState) : ['workflow state is missing'];
+    const transitionErrors = currentState
+      ? validateState(currentState)
+      : ["workflow state is missing"];
     if (previousState !== null && currentState !== null) {
-      transitionErrors.push(...validateStateTransition(previousState, currentState));
+      transitionErrors.push(
+        ...validateStateTransition(previousState, currentState),
+      );
     }
 
     if (transitionErrors.length > 0) {
@@ -1106,67 +1506,85 @@ function postEditChecks(event) {
         saveState(cwd, previousState);
       }
       removeStateBaseline(cwd, toolUseId);
-      logEvent(cwd, 'error', 'Blocked invalid workflow state transition', {
+      logEvent(cwd, "error", "Blocked invalid workflow state transition", {
         errors: transitionErrors,
         tool: toolName,
       });
       return emitPostToolBlock(
-        'workflow-state.json violated the workflow schema or transition rules and was restored.',
-        transitionErrors.join('; '),
+        "workflow-state.json violated the workflow schema or transition rules and was restored.",
+        transitionErrors.join("; "),
       );
     }
 
     removeStateBaseline(cwd, toolUseId);
-    logEvent(cwd, 'info', 'Validated workflow state edit', {
+    logEvent(cwd, "info", "Validated workflow state edit", {
       phase: currentState.phase,
       tool: toolName,
     });
-    return emitPostToolMessage('workflow-state.json passed schema and transition validation.');
+    return emitPostToolMessage(
+      "workflow-state.json passed schema and transition validation.",
+    );
   }
 
   let state = loadState(cwd);
-  const implementationPaths = uniqueStrings(paths.filter((filePath) => !isGovernancePath(filePath)));
-  let automaticStateMessage = '';
+  const implementationPaths = uniqueStrings(
+    paths.filter((filePath) => !isGovernancePath(filePath)),
+  );
+  let automaticStateMessage = "";
 
   if (implementationPaths.length > 0) {
-    const syncResult = syncStateAfterImplementationEdit(cwd, state, implementationPaths);
+    const syncResult = syncStateAfterImplementationEdit(
+      cwd,
+      state,
+      implementationPaths,
+    );
     if (syncResult.errors.length > 0) {
-      automaticStateMessage = `Automatic workflow state sync needs manual repair: ${syncResult.errors.join('; ')}.`;
-      logEvent(cwd, 'warning', 'Automatic workflow state sync after edit failed', {
-        errors: syncResult.errors,
-        tool: toolName,
-      });
+      automaticStateMessage = `Automatic workflow state sync needs manual repair: ${syncResult.errors.join("; ")}.`;
+      logEvent(
+        cwd,
+        "warning",
+        "Automatic workflow state sync after edit failed",
+        {
+          errors: syncResult.errors,
+          tool: toolName,
+        },
+      );
     } else if (syncResult.changed) {
       state = syncResult.state;
       automaticStateMessage = syncResult.message;
-      logEvent(cwd, 'info', 'Automatic workflow state sync after edit succeeded', {
-        files: implementationPaths,
-        phase: state.phase,
-        tool: toolName,
-      });
+      logEvent(
+        cwd,
+        "info",
+        "Automatic workflow state sync after edit succeeded",
+        {
+          files: implementationPaths,
+          phase: state.phase,
+          tool: toolName,
+        },
+      );
     }
   }
 
-  const phase = state.phase || 'discovery';
+  const phase = state.phase || "discovery";
   const message = [
     automaticStateMessage,
-    'Files changed. Update .claude/workflow-state.json with any remaining phase or blocker changes.',
+    "Files changed. Update .claude/workflow-state.json with any remaining phase or blocker changes.",
     `Current phase is ${phase}. Before delivery, run the applicable gates and complete verification.`,
   ]
     .filter(Boolean)
-    .join(' ');
-  logEvent(cwd, 'info', 'Post-edit reminder issued', { phase, tool: toolName });
+    .join(" ");
+  logEvent(cwd, "info", "Post-edit reminder issued", { phase, tool: toolName });
   return emitPostToolMessage(message);
 }
 
 function stopGate(event) {
   const cwd = event.cwd;
   if (event.stopHookActive) {
-    return emitStopDecision('allow');
+    return emitStopDecision("allow");
   }
 
   const state = loadState(cwd);
-  const phase = lower(state.phase || 'discovery');
+  const phase = lower(state.phase || "discovery");
   const implementation = state.implementation || {};
   const touched = implementation.filesTouched || [];
   const retryCount = implementation.retryCount ?? 0;
@@ -1176,71 +1594,129 @@ function stopGate(event) {
   // Claude Code is user-controlled — the user decides when to stop.
 
   if (retryCount >= MAX_RETRY_COUNT && blockedItems.length === 0) {
-    const reason = 'Warning: Retry budget is exhausted, but no blocked item was recorded in workflow state. Consider recording the blocker before ending.';
-    logEvent(cwd, 'warning', 'Stop advisory: retry exhaustion not recorded', { retryCount });
-    return emitHookPayload('Stop', { additionalContext: reason, continue: true, decision: 'allow', reason });
+    const reason =
+      "Warning: Retry budget is exhausted, but no blocked item was recorded in workflow state. Consider recording the blocker before ending.";
+    logEvent(cwd, "warning", "Stop advisory: retry exhaustion not recorded", {
+      retryCount,
+    });
+    return emitHookPayload("Stop", {
+      additionalContext: reason,
+      continue: true,
+      decision: "allow",
+      reason,
+    });
   }
 
-  if (['implementation', 'quality-gates', 'verification'].includes(phase) || touched.length > 0) {
+  if (
+    ["implementation", "quality-gates", "verification"].includes(phase) ||
+    touched.length > 0
+  ) {
     if (!allGatesGreen(state)) {
       const reason =
-        'Warning: Quality gates or verification are incomplete. ' +
+        "Warning: Quality gates or verification are incomplete. " +
         `Current state: ${formatGateSummary(state)}. ` +
-        'The workflow state will persist for the next session.';
-      logEvent(cwd, 'info', 'Stop advisory: gates incomplete', {
+        "The workflow state will persist for the next session.";
+      logEvent(cwd, "info", "Stop advisory: gates incomplete", {
         gates: formatGateSummary(state),
       });
-      return emitHookPayload('Stop', { additionalContext: reason, continue: true, decision: 'allow', reason });
+      return emitHookPayload("Stop", {
+        additionalContext: reason,
+        continue: true,
+        decision: "allow",
+        reason,
+      });
     }
   }
 
-  return emitStopDecision('allow');
+  return emitStopDecision("allow");
 }
 
 function updateStateMode(cwd, patch) {
-  const currentState = loadState(cwd);
-  const proposedState = mergeKnownSections({}, deepMerge(currentState, patch));
+  const retryLimit = 3;
 
-  // Clear stale delivery.notes when gates are green and delivery transitions to
-  // ready-for-review or approved, unless the caller explicitly set new notes.
-  const deliveryStatus = lower(proposedState.delivery?.status);
-  const oldDeliveryStatus = lower(currentState.delivery?.status);
-  if (
-    deliveryStatus !== oldDeliveryStatus &&
-    (deliveryStatus === 'ready-for-review' || deliveryStatus === 'approved') &&
-    allGatesGreen(proposedState) &&
-    !('notes' in (patch.delivery || {}))
-  ) {
-    proposedState.delivery.notes = '';
-  }
+  for (let attempt = 1; attempt <= retryLimit; attempt += 1) {
+    const currentState = loadState(cwd);
+    const expectedRevision = Number(currentState.revision ?? 0);
+    const proposedState = mergeKnownSections(
+      {},
+      deepMerge(currentState, patch),
+    );
 
-  const transitionErrors = validateStateTransition(currentState, proposedState);
-  if (transitionErrors.length > 0) {
-    logEvent(cwd, 'error', 'Rejected workflow state update', { errors: transitionErrors });
-    return emit({ errors: transitionErrors, saved: false });
-  }
+    // Clear stale delivery.notes when gates are green and delivery transitions to
+    // ready-for-review or approved, unless the caller explicitly set new notes.
+    const deliveryStatus = lower(proposedState.delivery?.status);
+    const oldDeliveryStatus = lower(currentState.delivery?.status);
+    if (
+      deliveryStatus !== oldDeliveryStatus &&
+      (deliveryStatus === "ready-for-review" ||
+        deliveryStatus === "approved") &&
+      allGatesGreen(proposedState) &&
+      !("notes" in (patch.delivery || {}))
+    ) {
+      proposedState.delivery.notes = "";
+    }
 
-  const [savedState, saveErrors] = saveState(cwd, proposedState);
-  if (saveErrors.length > 0) {
-    logEvent(cwd, 'error', 'Failed to save workflow state update', { errors: saveErrors });
+    const transitionErrors = validateStateTransition(
+      currentState,
+      proposedState,
+    );
+    if (transitionErrors.length > 0) {
+      logEvent(cwd, "error", "Rejected workflow state update", {
+        errors: transitionErrors,
+      });
+      return emit({ errors: transitionErrors, saved: false });
+    }
+
+    const [savedState, saveErrors] = saveState(cwd, proposedState, {
+      expectedRevision,
+    });
+    if (saveErrors.length === 0) {
+      return emit({ saved: true, state: savedState });
+    }
+
+    const staleWrite = saveErrors.some((error) =>
+      error.startsWith("stale workflow state write:"),
+    );
+    if (staleWrite && attempt < retryLimit) {
+      logEvent(
+        cwd,
+        "warning",
+        "Detected concurrent workflow state update, retrying",
+        {
+          attempt,
+          errors: saveErrors,
+        },
+      );
+      continue;
+    }
+
+    logEvent(cwd, "error", "Failed to save workflow state update", {
+      attempt,
+      errors: saveErrors,
+    });
     return emit({ errors: saveErrors, saved: false });
   }
 
-  return emit({ saved: true, state: savedState });
+  return emit({
+    errors: ["failed to update workflow state after retries"],
+    saved: false,
+  });
 }
 
 function validateStateMode(cwd) {
   const [state, readErrors] = readStateStrict(cwd);
   const validationErrors = state !== null ? validateState(state) : [];
   const errors = [...readErrors, ...validationErrors];
-  logEvent(cwd, 'info', 'Validated workflow state', { valid: errors.length === 0 });
+  logEvent(cwd, "info", "Validated workflow state", {
+    valid: errors.length === 0,
+  });
   return emit({ errors, state, valid: errors.length === 0 });
 }
 
 function main() {
-  const mode = process.argv[2] || '';
+  const mode = process.argv[2] || "";
   const cliArgs = process.argv.slice(3);
-  if (mode === 'update-state' && cliArgs.some(isHelpFlag)) {
+  if (mode === "update-state" && cliArgs.some(isHelpFlag)) {
     process.stdout.write(`${updateStateUsageText()}\n`);
     return 0;
   }
@@ -1248,30 +1724,30 @@ function main() {
   const event = normalizeEvent(mode, rawEvent);
   const cwd = event.cwd;
 
-  if (mode === 'session-context') {
+  if (mode === "session-context") {
     return sessionContext(event);
   }
-  if (mode === 'workflow-guard') {
+  if (mode === "workflow-guard") {
     return workflowGuard(event);
   }
-  if (mode === 'post-edit-checks') {
+  if (mode === "post-edit-checks") {
     return postEditChecks(event);
   }
-  if (mode === 'stop-gate') {
+  if (mode === "stop-gate") {
     return stopGate(event);
   }
-  if (mode === 'update-state') {
+  if (mode === "update-state") {
     const [patch, parseErrors] = buildUpdateStatePatch(rawEvent, cliArgs);
     if (parseErrors.length > 0) {
       return emit({ errors: parseErrors, saved: false });
     }
     return updateStateMode(cwd, patch);
   }
-  if (mode === 'validate-state') {
+  if (mode === "validate-state") {
     return validateStateMode(cwd);
   }
 
-  return emitContinue('');
+  return emitContinue("");
 }
 
 module.exports = {

@@ -102,13 +102,94 @@
     ]
   },
   "structure": {
-    "forbiddenGenericFiles": ["utils.ts", "utils.tsx", "helpers.ts", "helpers.tsx", "common.ts", "common.tsx"],
-    "moduleSubdirs": ["actions", "api", "components", "constants", "containers", "contexts", "forms", "hooks", "jobs", "layouts", "lib", "policies", "presenters", "providers", "repositories", "schemas", "screens", "services", "types", "utils"],
-    "sharedSubdirs": ["actions", "api", "components", "config", "constants", "contexts", "db", "entities", "factories", "hooks", "images", "jobs", "layouts", "lib", "middleware", "policies", "presenters", "providers", "queue", "routes", "schemas", "seeds", "services", "styles", "types", "utils", "vendor"],
-    "alwaysFolders": ["actions", "api", "components", "containers", "contexts", "entities", "forms", "hooks", "jobs", "layouts", "lib", "middleware", "policies", "presenters", "providers", "repositories", "schemas", "services", "utils"],
+    "forbiddenGenericFiles": [
+      "utils.ts",
+      "utils.tsx",
+      "common.ts",
+      "common.tsx"
+    ],
+    "moduleSubdirs": [
+      "actions",
+      "api",
+      "components",
+      "constants",
+      "containers",
+      "contexts",
+      "forms",
+      "hooks",
+      "jobs",
+      "layouts",
+      "lib",
+      "policies",
+      "presenters",
+      "providers",
+      "repositories",
+      "schemas",
+      "screens",
+      "services",
+      "types",
+      "utils"
+    ],
+    "sharedSubdirs": [
+      "actions",
+      "api",
+      "components",
+      "config",
+      "constants",
+      "contexts",
+      "db",
+      "entities",
+      "factories",
+      "hooks",
+      "images",
+      "jobs",
+      "layouts",
+      "lib",
+      "middleware",
+      "policies",
+      "presenters",
+      "providers",
+      "queue",
+      "routes",
+      "schemas",
+      "seeds",
+      "services",
+      "styles",
+      "types",
+      "utils",
+      "vendor"
+    ],
+    "alwaysFolders": [
+      "actions",
+      "api",
+      "components",
+      "containers",
+      "contexts",
+      "entities",
+      "forms",
+      "hooks",
+      "jobs",
+      "layouts",
+      "lib",
+      "middleware",
+      "policies",
+      "presenters",
+      "providers",
+      "repositories",
+      "schemas",
+      "services",
+      "utils"
+    ],
     "alwaysFlatFiles": ["config", "constants", "images", "styles", "types"],
     "infrastructureFolders": ["db", "queue"],
-    "sharedOnlyFolders": ["db", "entities", "middleware", "queue", "seeds", "factories"],
+    "sharedOnlyFolders": [
+      "db",
+      "entities",
+      "middleware",
+      "queue",
+      "seeds",
+      "factories"
+    ],
     "specialFolders": ["routes"],
     "namingPatterns": {
       "components": "<semantic-type>-<name>",
@@ -125,7 +206,24 @@
       "forms": "<name>-form",
       "presenters": "<name>-presenter"
     },
-    "componentSemanticTypes": ["form", "modal", "alert", "section", "menu", "card", "table", "list", "button", "input", "dialog", "drawer", "toast", "badge", "avatar", "icon"],
+    "componentSemanticTypes": [
+      "form",
+      "modal",
+      "alert",
+      "section",
+      "menu",
+      "card",
+      "table",
+      "list",
+      "button",
+      "input",
+      "dialog",
+      "drawer",
+      "toast",
+      "badge",
+      "avatar",
+      "icon"
+    ],
     "requiredFiles": {
       "inFolders": ["index.ts", "*.test.ts(x)"],
       "componentsOnly": ["*.stories.tsx"],
@@ -148,7 +246,13 @@
     "nodes": {
       "entity": {
         "location": "shared/entities/<name>/",
-        "files": ["<name>.ts", "types.ts", "relations.ts", "hooks.ts", "scopes.ts"],
+        "files": [
+          "<name>.ts",
+          "types.ts",
+          "relations.ts",
+          "hooks.ts",
+          "scopes.ts"
+        ],
         "depends": [],
         "description": "Drizzle schema definition"
       },
@@ -277,12 +381,25 @@
     "workflows": {
       "crud-feature": {
         "description": "Basic CRUD operations for an entity",
-        "patterns": ["entity", "repository", "service", "action", "presenter", "screen"],
+        "patterns": [
+          "entity",
+          "repository",
+          "service",
+          "action",
+          "presenter",
+          "screen"
+        ],
         "optional": ["policy", "query-scopes", "entity-hooks"]
       },
       "user-registration": {
         "description": "User signup with email verification",
-        "patterns": ["entity", "form-object", "service", "repository", "action"],
+        "patterns": [
+          "entity",
+          "form-object",
+          "service",
+          "repository",
+          "action"
+        ],
         "optional": ["entity-hooks", "email-service", "job"]
       },
       "api-endpoint": {

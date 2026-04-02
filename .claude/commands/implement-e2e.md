@@ -3,11 +3,21 @@ description: Generate Playwright E2E tests from e2e-scenarios.md specifications.
 argument-hint: "[path to e2e-scenarios.md or feature name]"
 ---
 
+# Implement E2E
+
 Generate Playwright E2E tests from the E2E scenario specifications.
 
 ## Input
 
 Read `docs/tasks/e2e-scenarios.md` (or the specified file/feature).
+
+Artifact boundary:
+
+- `docs/tasks/e2e-scenarios.md` is a human spec input.
+- Do NOT read runtime state (`.claude/workflow-state.json`) as E2E source.
+- Do NOT read session `plan.md` as E2E source unless the user explicitly asks to generate E2E from runtime plan.
+
+If `docs/tasks/e2e-scenarios.md` does not exist, stop and report missing prerequisite.
 
 ## Output
 

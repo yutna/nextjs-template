@@ -11,6 +11,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  workflow-contract:
+    name: Workflow Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Validate workflow state schema
+        run: npm run workflow:state:validate
+
+      - name: Check Claude↔Copilot sync drift
+        run: npm run sync:copilot:check
+
   check-types:
     name: Type Check
     runs-on: ubuntu-latest

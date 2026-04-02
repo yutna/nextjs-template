@@ -69,9 +69,7 @@ export function LandingHero({
         </Text>
       </MotionReveal>
 
-      <MotionReveal delay={0.3}>
-        {copyCommand}
-      </MotionReveal>
+      <MotionReveal delay={0.3}>{copyCommand}</MotionReveal>
 
       <MotionReveal delay={0.4}>
         <Button
@@ -82,6 +80,7 @@ export function LandingHero({
           variant="outline"
         >
           <a
+            data-testid="static-pages-landing-hero-github-link"
             href="https://github.com/yutna/nextjs-template"
             rel="noopener noreferrer"
             target="_blank"

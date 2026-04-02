@@ -3,11 +3,21 @@ description: Decompose large requirements into phased task files that fit AI con
 argument-hint: "[requirements description or path to requirements document]"
 ---
 
+# Decompose Requirements
+
 Decompose requirements into phased task files using Gherkin scenarios and state machines.
 
 **Output location:** `docs/tasks/`
 
 **Approach:** Gherkin-first + State Machine validation
+
+**Artifact boundary (MUST follow):**
+
+- `docs/tasks/*.md` = human-readable specification artifacts created by this command.
+- Session `plan.md` = runtime planning artifact (separate, not a substitute).
+- `.claude/workflow-state.json` = runtime phase state (separate, not a spec).
+
+**Execution requirement:** this command must create/update files under `docs/tasks/` explicitly. If file creation is unavailable, report `blocked` with reason.
 
 ---
 
@@ -35,7 +45,7 @@ For each feature, draw the state machine FIRST.
 
 ### Template
 
-```
+```txt
 Feature: [Name]
 
 States:
@@ -61,7 +71,7 @@ stateDiagram-v2
 
 ### Completeness Check
 
-```
+```txt
 [ ] Every state reachable from initial?
 [ ] Every non-final state has exit?
 [ ] Error state exists for each operation?
@@ -132,7 +142,7 @@ Feature: [Feature Name]
 
 For each feature, verify scenarios exist for:
 
-```
+```txt
 [ ] Happy path (success)
 [ ] Empty/missing input (each required field)
 [ ] Invalid format (each validated field)
@@ -170,7 +180,7 @@ Only after Steps 1-3 complete.
 
 ### Phase Structure
 
-```
+```txt
 Phase 1: Foundation
   - Entities for all states
   - Base services
@@ -190,7 +200,7 @@ Final Phase: Polish
 
 ## Output Structure
 
-```
+```txt
 docs/tasks/
 ├── 00-specifications.md       # State machines + Gherkin scenarios
 ├── 01-overview.md             # Summary, phases, priorities
@@ -201,6 +211,11 @@ docs/tasks/
 ├── phase-03-[feature].md      # @should scenarios
 └── ...
 ```
+
+Runtime artifacts (separate, do not overwrite as specs):
+
+- `.claude/workflow-state.json`
+- session `plan.md`
 
 ### 00-specifications.md Format
 
@@ -277,11 +292,13 @@ docs/tasks/
 ## Example
 
 **Input:**
-```
+
+```txt
 /decompose-requirements User authentication with email/password login
 ```
 
 **Step 2 Output (State Machine):**
+
 ```mermaid
 stateDiagram-v2
     [*] --> Anonymous
@@ -302,6 +319,7 @@ stateDiagram-v2
 ```
 
 **Step 3 Output (Gherkin):**
+
 ```gherkin
 Feature: User Authentication
   As a visitor
@@ -350,7 +368,8 @@ Feature: User Authentication
 ```
 
 **Output Files:**
-```
+
+```txt
 docs/tasks/
 ├── 00-specifications.md    # State machine + all Gherkin
 ├── 01-overview.md          # 4 phases, priority breakdown
@@ -364,7 +383,7 @@ docs/tasks/
 
 ## Quick Reference
 
-```
+```txt
 1. Pattern match → catch vague terms
 2. State machine → draw ALL states and transitions
 3. Gherkin → write scenario for EACH transition
@@ -373,6 +392,7 @@ docs/tasks/
 ```
 
 **Minimum to proceed:**
+
 - No vague terms (or clarified)
 - State machine complete (all states, all transitions)
 - Every transition has at least one scenario

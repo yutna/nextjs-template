@@ -5,7 +5,7 @@ Welcome to the team! This guide will teach you how to use GitHub Copilot (in VS 
 ## What You Need Before Starting
 
 1. **GitHub Copilot** subscription (Individual or Business)
-2. **VS Code** with Copilot Chat extension, or **Copilot CLI** (`gh copilot`)
+2. **VS Code** with Copilot Chat extension, or **GitHub Copilot CLI** (`copilot`)
 3. **Node.js 24.14+** (managed by [mise](https://mise.jdx.dev))
 4. Run `npm install` in the project root
 5. Open the project in VS Code
@@ -337,10 +337,16 @@ The project includes `.vscode/settings.json` with optimal Copilot settings. Make
 
 ### Using the Terminal
 
-You can also run Copilot prompts from the integrated terminal:
+You can also run Copilot prompts from the integrated terminal with non-interactive mode:
 
 ```bash
-gh copilot suggest "create a user repository with Effect and Drizzle"
+copilot -p "create a user repository with Effect and Drizzle" --allow-all-tools
+```
+
+For workflow prompts stored in `.github/prompts/`, pass prompt content directly:
+
+```bash
+copilot -p "$(cat .github/prompts/plan-work.prompt.md)" --allow-all-tools
 ```
 
 ## What "Done" Means on This Project

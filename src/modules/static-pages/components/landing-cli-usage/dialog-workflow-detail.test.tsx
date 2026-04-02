@@ -11,9 +11,12 @@ vi.mock("next-intl", () => ({
 }));
 
 describe("WorkflowDetailDialog", () => {
-  it("renders the dialog trigger button", () => {
+  it("renders the dialog trigger button with correct data-testid", () => {
     renderWithProviders(<WorkflowDetailDialog />);
 
+    expect(
+      screen.getByTestId("static-pages-workflow-detail-dialog-trigger"),
+    ).toBeInTheDocument();
     expect(screen.getByText("openButton →")).toBeInTheDocument();
   });
 
@@ -21,7 +24,9 @@ describe("WorkflowDetailDialog", () => {
     const user = userEvent.setup();
     renderWithProviders(<WorkflowDetailDialog />);
 
-    await user.click(screen.getByText("openButton →"));
+    await user.click(
+      screen.getByTestId("static-pages-workflow-detail-dialog-trigger"),
+    );
 
     expect(screen.getByText("dialogTitle")).toBeInTheDocument();
   });

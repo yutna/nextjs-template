@@ -1,3 +1,4 @@
+import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -11,9 +12,9 @@ vi.mock("next-intl/server", () => ({
 
 describe("LandingCta", () => {
   it("renders the CTA section", async () => {
-    const { container } = renderWithProviders(
-      await LandingCta({ locale: "en" }),
-    );
-    expect(container).toBeDefined();
+    renderWithProviders(await LandingCta({ locale: "en" }));
+    expect(
+      screen.getByTestId("static-pages-landing-cta-github-link"),
+    ).toBeInTheDocument();
   });
 });
