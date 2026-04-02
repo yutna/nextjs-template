@@ -1,0 +1,184 @@
+{
+  "pageTypes": {
+    "landing": {
+      "description": "Marketing/landing pages with hero and feature sections",
+      "sections": ["hero", "features", "testimonials", "pricing", "cta", "footer"],
+      "patterns": {
+        "hero": {
+          "layouts": ["centered", "split", "video-bg", "image-right"],
+          "motion": ["fadeInUp", "staggerContainer"],
+          "spacing": {
+            "py": "24",
+            "mdPy": "32"
+          },
+          "chakra": {
+            "minH": "100vh",
+            "display": "flex",
+            "alignItems": "center"
+          }
+        },
+        "features": {
+          "layouts": ["grid-3", "alternating", "cards", "icon-list"],
+          "motion": ["staggerContainer", "fadeInUp"],
+          "spacing": {
+            "py": "16",
+            "mdPy": "24"
+          },
+          "chakra": {
+            "grid": {
+              "templateColumns": {
+                "base": "1fr",
+                "md": "repeat(2, 1fr)",
+                "lg": "repeat(3, 1fr)"
+              },
+              "gap": 6
+            }
+          }
+        },
+        "testimonials": {
+          "layouts": ["carousel", "grid", "single-featured"],
+          "motion": ["fadeIn", "slideInLeft"],
+          "spacing": {
+            "py": "16",
+            "mdPy": "24"
+          }
+        },
+        "pricing": {
+          "layouts": ["three-tier", "comparison-table", "toggle-monthly-annual"],
+          "motion": ["staggerContainer", "scaleIn"],
+          "spacing": {
+            "py": "16",
+            "mdPy": "24"
+          }
+        },
+        "cta": {
+          "layouts": ["centered", "split-image", "gradient-bg"],
+          "motion": ["fadeInUp"],
+          "spacing": {
+            "py": "16",
+            "mdPy": "20"
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "description": "Admin/dashboard pages with data displays",
+      "sections": ["header", "sidebar", "main", "widgets"],
+      "patterns": {
+        "layout": {
+          "options": ["sidebar-left", "sidebar-right", "top-nav", "minimal"],
+          "motion": ["fadeIn"],
+          "chakra": {
+            "display": "grid",
+            "gridTemplateColumns": {
+              "base": "1fr",
+              "lg": "240px 1fr"
+            }
+          }
+        },
+        "widgets": {
+          "layouts": ["grid-2x2", "grid-3", "masonry"],
+          "motion": ["staggerContainer", "fadeInUp"],
+          "spacing": {
+            "p": "4",
+            "mdP": "6"
+          }
+        },
+        "dataTable": {
+          "motion": ["fadeIn"],
+          "chakra": {
+            "overflowX": "auto"
+          }
+        }
+      }
+    },
+    "form": {
+      "description": "Form pages for data input",
+      "patterns": {
+        "layout": {
+          "options": ["single-column", "two-column", "stepped", "wizard"],
+          "motion": ["fadeInUp", "slideInLeft"],
+          "maxWidth": "600px",
+          "chakra": {
+            "mx": "auto"
+          }
+        },
+        "fieldSpacing": {
+          "VStack": {
+            "gap": 4
+          }
+        },
+        "stepped": {
+          "motion": ["slideInRight"],
+          "transition": "wait"
+        }
+      }
+    },
+    "list": {
+      "description": "List/collection pages",
+      "patterns": {
+        "layout": {
+          "options": ["table", "cards", "compact", "infinite-scroll"],
+          "motion": ["staggerContainer", "staggerItem"]
+        },
+        "itemSpacing": {
+          "VStack": {
+            "gap": 2
+          },
+          "Grid": {
+            "gap": 4
+          }
+        },
+        "emptyState": {
+          "motion": ["fadeIn"],
+          "chakra": {
+            "textAlign": "center",
+            "py": 12
+          }
+        }
+      }
+    },
+    "detail": {
+      "description": "Detail/single item pages",
+      "patterns": {
+        "layout": {
+          "options": ["single-column", "sidebar", "tabbed"],
+          "motion": ["fadeInUp"]
+        },
+        "sections": {
+          "motion": ["staggerContainer"],
+          "spacing": {
+            "VStack": {
+              "gap": 8
+            }
+          }
+        }
+      }
+    },
+    "auth": {
+      "description": "Authentication pages (login, register, forgot password)",
+      "patterns": {
+        "layout": {
+          "options": ["centered", "split-image", "minimal"],
+          "motion": ["fadeIn", "scaleIn"],
+          "maxWidth": "400px",
+          "chakra": {
+            "mx": "auto",
+            "minH": "100vh",
+            "display": "flex",
+            "alignItems": "center"
+          }
+        }
+      }
+    }
+  },
+  "decisionTree": {
+    "question": "What type of page?",
+    "landing": "Use hero + features + cta pattern",
+    "dashboard": "Use sidebar + widgets pattern",
+    "form": "Use single-column centered pattern",
+    "list": "Use staggered cards or table pattern",
+    "detail": "Use single-column with sections pattern",
+    "auth": "Use centered minimal pattern"
+  }
+}

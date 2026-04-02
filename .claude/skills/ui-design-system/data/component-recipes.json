@@ -1,0 +1,221 @@
+{
+  "interactions": {
+    "card-hover": {
+      "description": "Card with lift effect on hover",
+      "chakra": {
+        "shadow": "sm",
+        "transition": "all 0.2s",
+        "_hover": {
+          "shadow": "lg",
+          "transform": "translateY(-4px)"
+        }
+      },
+      "motion": {
+        "whileHover": {
+          "y": -4
+        },
+        "transition": {
+          "duration": 0.2
+        }
+      }
+    },
+    "button-press": {
+      "description": "Button with press feedback",
+      "motion": {
+        "whileTap": {
+          "scale": 0.95
+        }
+      }
+    },
+    "icon-rotate": {
+      "description": "Icon rotation on hover (e.g., refresh button)",
+      "motion": {
+        "whileHover": {
+          "rotate": 180
+        },
+        "transition": {
+          "duration": 0.3
+        }
+      }
+    },
+    "link-underline": {
+      "description": "Animated underline on hover",
+      "chakra": {
+        "position": "relative",
+        "_after": {
+          "content": "\"\"",
+          "position": "absolute",
+          "bottom": 0,
+          "left": 0,
+          "width": "0%",
+          "height": "2px",
+          "bg": "brand.500",
+          "transition": "width 0.2s"
+        },
+        "_hover": {
+          "_after": {
+            "width": "100%"
+          }
+        }
+      }
+    }
+  },
+  "reveals": {
+    "reveal-section": {
+      "description": "Section that reveals on scroll",
+      "component": "MotionReveal",
+      "props": {
+        "variant": "fadeInUp",
+        "delay": 0.1
+      }
+    },
+    "staggered-list": {
+      "description": "List with staggered item reveals",
+      "component": "MotionStagger",
+      "props": {
+        "itemVariant": "fadeInUp",
+        "staggerDelay": 0.1
+      }
+    },
+    "hero-text": {
+      "description": "Hero heading with word-by-word reveal",
+      "component": "MotionText",
+      "props": {
+        "as": "h1",
+        "mode": "words",
+        "variant": "fadeInUp",
+        "staggerDelay": 0.05
+      }
+    },
+    "feature-cards": {
+      "description": "Feature cards grid with stagger",
+      "component": "MotionStagger",
+      "props": {
+        "itemVariant": "scaleInUp",
+        "staggerDelay": 0.15
+      }
+    }
+  },
+  "transitions": {
+    "page-transition": {
+      "description": "Page transition with AnimatePresence",
+      "wrapper": "MotionPresence",
+      "wrapperProps": {
+        "mode": "wait"
+      },
+      "inner": "MotionReveal",
+      "innerProps": {
+        "variant": "fadeIn"
+      }
+    },
+    "tab-content": {
+      "description": "Tab content transition",
+      "wrapper": "MotionPresence",
+      "wrapperProps": {
+        "mode": "wait"
+      },
+      "inner": "MotionReveal",
+      "innerProps": {
+        "variant": "slideInRight"
+      }
+    },
+    "modal": {
+      "description": "Modal open/close animation",
+      "wrapper": "MotionPresence",
+      "wrapperProps": {},
+      "inner": "motion.div",
+      "innerProps": {
+        "variants": "scaleIn"
+      }
+    }
+  },
+  "scrollEffects": {
+    "parallax-bg": {
+      "description": "Background parallax effect",
+      "component": "MotionParallax",
+      "props": {
+        "speed": 0.5
+      }
+    },
+    "scroll-fade": {
+      "description": "Element fades based on scroll position",
+      "component": "MotionScroll",
+      "props": {
+        "style": {
+          "opacity": [0, 1],
+          "y": [50, 0]
+        }
+      }
+    },
+    "scroll-scale": {
+      "description": "Element scales based on scroll",
+      "component": "MotionScroll",
+      "props": {
+        "style": {
+          "scale": [0.8, 1],
+          "opacity": [0, 1]
+        }
+      }
+    }
+  },
+  "compositions": {
+    "hero-section": {
+      "description": "Complete hero section with animations",
+      "structure": [
+        {
+          "element": "Container",
+          "motion": "MotionReveal",
+          "motionProps": {
+            "variant": "fadeIn"
+          },
+          "children": [
+            {
+              "element": "Heading",
+              "motion": "MotionText",
+              "motionProps": {
+                "mode": "words",
+                "staggerDelay": 0.05
+              }
+            },
+            {
+              "element": "Text",
+              "motion": "MotionReveal",
+              "motionProps": {
+                "variant": "fadeInUp",
+                "delay": 0.3
+              }
+            },
+            {
+              "element": "ButtonGroup",
+              "motion": "MotionReveal",
+              "motionProps": {
+                "variant": "fadeInUp",
+                "delay": 0.5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "feature-grid": {
+      "description": "Feature cards grid with stagger",
+      "structure": [
+        {
+          "element": "Grid",
+          "motion": "MotionStagger",
+          "motionProps": {
+            "staggerDelay": 0.1
+          },
+          "chakra": {
+            "templateColumns": {
+              "base": "1fr",
+              "md": "repeat(2, 1fr)",
+              "lg": "repeat(3, 1fr)"
+            },
+            "gap": 6
+          }
+        }
+      ]
+    }
+  }
+}

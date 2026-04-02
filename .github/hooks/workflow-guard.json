@@ -1,0 +1,16 @@
+{
+  "description": "Workflow guard hook - validates workflow state before tool execution",
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "node .claude/hooks/scripts/workflow_hook.cjs workflow-guard",
+        "cwd": ".",
+        "timeout": 10000,
+        "description": "Validates that the current workflow phase allows the requested action"
+      }
+    ]
+  },
+  "notes": "This hook uses the same script as Claude Code to maintain consistency"
+}

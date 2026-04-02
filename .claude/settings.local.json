@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx eslint:*)",
+      "Bash(npm run test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(claude mcp:*)",
+      "Bash(python3 -m json.tool)",
+      "Bash(npx -y @anthropic/mcp-server-playwright --help)",
+      "Bash(npx -y @anthropic/mcp-server-fetch --help)",
+      "Bash(npm search:*)",
+      "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npm test:*)"
+    ]
+  }
+}

@@ -7,7 +7,7 @@ import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
 import { MotionStagger } from "@/modules/static-pages/components/motion-stagger";
 
 import { WORKFLOW_STEPS } from "./constants";
-import { WorkflowDetailDialog } from "./workflow-detail-dialog";
+import { WorkflowDetailDialog } from "./dialog-workflow-detail";
 
 import type { LandingCliUsageProps } from "./types";
 

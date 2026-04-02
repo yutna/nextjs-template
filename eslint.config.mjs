@@ -1,6 +1,7 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import checkFile from "eslint-plugin-check-file";
+import importPlugin from "eslint-plugin-import";
 import jsonc from "eslint-plugin-jsonc";
 import perfectionist from "eslint-plugin-perfectionist";
 import storybook from "eslint-plugin-storybook";
@@ -27,6 +28,7 @@ const eslintConfig = defineConfig([
     files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
       "check-file": checkFile,
+      import: importPlugin,
       perfectionist,
       "project": localPlugin,
     },
@@ -130,6 +132,9 @@ const eslintConfig = defineConfig([
 
       // Forbid inline style attribute in JSX (Styles)
       "project/no-inline-style": "error",
+
+      // Enforce naming patterns for files in specific folders (Architecture)
+      "project/enforce-file-naming-pattern": "error",
 
       // ------------------------------------------------
       // File and directory naming (Common Style Guide §2)
@@ -312,6 +317,19 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
+  // Motion components — require inline style for MotionValue objects
+  // (motion library design: animated values must be passed via style prop)
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/components/motion-*/**",
+      "src/shared/lib/motion/**",
+    ],
+    rules: {
+      "project/no-inline-style": "off",
+    },
+  },
+  // --------------------------------------------------
   // Infrastructure — allow process.env in bootstrap code
   // --------------------------------------------------
   {
@@ -337,6 +355,17 @@ const eslintConfig = defineConfig([
     rules: {
       "no-console": "off",
       "no-restricted-syntax": "off",
+    },
+  },
+  // --------------------------------------------------
+  // Claude hooks — CommonJS scripts allow require and console
+  // --------------------------------------------------
+  {
+    files: [".claude/hooks/scripts/**/*.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "no-console": "off",
     },
   },
   // --------------------------------------------------
@@ -406,6 +435,24 @@ const eslintConfig = defineConfig([
       "import/no-default-export": "off",
       "no-restricted-imports": "off",
       "no-restricted-syntax": "off",
+    },
+  },
+
+  // Playwright — config and E2E tests
+  // --------------------------------------------------
+  {
+    files: ["playwright.config.ts"],
+    rules: {
+      "import/no-default-export": "off",
+      "no-restricted-syntax": "off",
+    },
+  },
+  {
+    files: ["e2e/**"],
+    rules: {
+      "no-restricted-imports": "off",
+      "no-restricted-syntax": "off",
+      "react-hooks/rules-of-hooks": "off",
     },
   },
 ]);
