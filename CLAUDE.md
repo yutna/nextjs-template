@@ -39,7 +39,7 @@ This section defines the Next.js-specific architecture contract for this reposit
 
 Each module in `src/modules/` follows:
 
-```
+```txt
 <module>/
 ├── actions/       # Server actions (internal mutations, next-safe-action + Zod)
 ├── api/           # Route handlers (external endpoints, webhooks)
@@ -67,7 +67,7 @@ Each module in `src/modules/` follows:
 
 The `src/shared/` directory follows:
 
-```
+```txt
 shared/
 ├── db/            # Drizzle client, migrations, seeds
 │   └── seeds/     # Database seed scripts
@@ -136,6 +136,7 @@ shared/
 | **Infrastructure** | No | everything | Plain exports |
 
 **Backend lib/ (Effect):**
+
 ```typescript
 // shared/lib/stripe/stripe-client.ts
 export class StripeClient extends Context.Tag("StripeClient")<...>() {}
@@ -143,12 +144,14 @@ export const StripeClientLive = Layer.succeed(StripeClient, { ... });
 ```
 
 **Frontend lib/ (Promise-based):**
+
 ```typescript
 // shared/lib/fetcher/fetch-client.ts - for SWR integration
 export async function fetchClient<T>(options): Promise<T> { ... }
 ```
 
 **Infrastructure (Plain):**
+
 ```typescript
 // shared/lib/logger/logger.ts
 export const logger = pino({ ... });
@@ -207,7 +210,8 @@ Component semantic types: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `car
 #### Folder Structure Examples
 
 **Component (always has stories):**
-```
+
+```txt
 form-create-user/
 ├── index.ts                      # Export: FormCreateUser
 ├── types.ts                      # FormCreateUserProps
@@ -219,7 +223,8 @@ form-create-user/
 ```
 
 **Container (no stories):**
-```
+
+```txt
 container-user-list/
 ├── index.ts
 ├── types.ts
@@ -228,7 +233,8 @@ container-user-list/
 ```
 
 **Flat files (config, constants, types):**
-```
+
+```txt
 constants/
 ├── api-endpoints.ts              # No index.ts
 ├── error-codes.ts
@@ -238,7 +244,8 @@ constants/
 ```
 
 **Service (Effect-based):**
-```
+
+```txt
 create-user-service/
 ├── index.ts
 ├── types.ts
@@ -247,7 +254,8 @@ create-user-service/
 ```
 
 **Repository (Effect + Drizzle):**
-```
+
+```txt
 user-repository/
 ├── index.ts
 ├── types.ts
@@ -263,6 +271,7 @@ user-repository/
 | Cross folder | `@/` alias only | `import { db } from "@/shared/db"` |
 
 **Forbidden:**
+
 - `../` or `../../` relative imports - use `@/` alias instead
 - Barrel re-exports from grouping folders - no `components/index.ts` that re-exports all
 - Cross-module imports - if module A needs from module B, move to shared
@@ -285,7 +294,7 @@ import { something } from "@/modules/other-module/...";    // No cross-module
 
 **Heavy server-side approach:** Minimize client logic, maximize server-side processing.
 
-```
+```txt
 ┌─────────────────────────────────────────────────────────────┐
 │                    CLIENT (Minimal)                         │
 │               Only: UI state, interactions                  │
@@ -352,7 +361,8 @@ import { something } from "@/modules/other-module/...";    // No cross-module
 #### Backend File Structure
 
 ##### Services (folders, tests required)
-```
+
+```txt
 services/
 └── create-user-service/
     ├── index.ts
@@ -363,7 +373,8 @@ services/
 ```
 
 ##### Repositories (folders, tests required)
-```
+
+```txt
 repositories/
 └── user-repository/
     ├── index.ts
@@ -373,7 +384,8 @@ repositories/
 ```
 
 ##### Jobs (folders, tests required)
-```
+
+```txt
 jobs/
 └── send-welcome-email-job/
     ├── index.ts
@@ -383,7 +395,8 @@ jobs/
 ```
 
 ##### Policies (folders, tests required)
-```
+
+```txt
 policies/
 └── user-policy/
     ├── index.ts
@@ -393,7 +406,8 @@ policies/
 ```
 
 ##### API Handlers (folders, tests required)
-```
+
+```txt
 api/
 └── webhook-stripe-handler/
     ├── index.ts
@@ -404,7 +418,8 @@ api/
 ```
 
 ##### Middleware (shared only, folders, tests required)
-```
+
+```txt
 shared/middleware/
 └── auth-middleware/
     ├── index.ts
@@ -418,7 +433,7 @@ shared/middleware/
 Entities are declarative Drizzle schemas - no business logic to test.
 Repository tests verify schema works correctly.
 
-```
+```txt
 shared/entities/
 └── user/
     ├── index.ts
@@ -428,7 +443,8 @@ shared/entities/
 ```
 
 ##### DB (shared only, infrastructure, flat)
-```
+
+```txt
 shared/db/
 ├── client.ts                       # Drizzle client instance
 ├── schema.ts                       # Re-exports all entities
@@ -439,7 +455,8 @@ shared/db/
 ```
 
 ##### Queue (shared only, infrastructure, flat)
-```
+
+```txt
 shared/queue/
 ├── client.ts                       # Queue client (Redis, etc.)
 ├── types.ts                        # Queue types
@@ -476,6 +493,7 @@ Before implementing, check existing patterns and relationships:
 ### A. Pattern Graph (Static)
 
 The pattern dependency graph is defined in `.claude/workflow-profile.json` under `patternGraph`. It defines:
+
 - **Nodes**: All available patterns and their locations
 - **Edges**: How patterns relate (calls, uses, transforms, triggers)
 - **Workflows**: Common pattern combinations for typical features
@@ -483,6 +501,7 @@ The pattern dependency graph is defined in `.claude/workflow-profile.json` under
 ### D. Codebase Index (Dynamic)
 
 Generate the current codebase index:
+
 ```bash
 node .claude/hooks/scripts/codebase_indexer.cjs
 ```
@@ -490,6 +509,7 @@ node .claude/hooks/scripts/codebase_indexer.cjs
 Output: `.claude/generated/codebase-index.json`
 
 The index shows:
+
 - **Existing entities** and their features (hooks, scopes, relations)
 - **Existing modules** and their patterns
 - **Analysis** of what exists per entity
@@ -512,17 +532,20 @@ The index shows:
 ### One Component Per File
 
 Each component file should export only ONE component. If a file exports multiple components:
+
 - Create a separate folder for each component
 - Each component gets its own `types.ts`, `constants.ts`, tests, and stories
 
 **Bad:**
-```
+
+```txt
 motion-scroll/
 ├── motion-scroll.tsx  # exports MotionScroll AND MotionParallax ❌
 ```
 
 **Good:**
-```
+
+```txt
 motion-scroll/
 ├── motion-scroll.tsx  # exports only MotionScroll ✓
 motion-parallax/
@@ -532,18 +555,21 @@ motion-parallax/
 ### Testing Best Practices
 
 #### Read Source Before Writing Tests
+
 Always read the actual implementation before writing tests. Don't assume values.
 
 **Bad:** Assuming `scale: 0.8` without reading the source
 **Good:** Read `variants.ts` first, then write tests with actual values
 
 #### Test File Per Source File
+
 The project requires individual test files per source file, not combined test files.
 
 **Bad:** `motion.test.ts` testing timing, variants, and reduced-motion
 **Good:** `timing.test.ts`, `variants.test.ts`, `reduced-motion.test.ts`
 
 #### Motion Component Test Environment
+
 When testing motion/framer-motion components:
 
 ```typescript
@@ -580,6 +606,7 @@ When removing props from a component:
 ### ESLint Rules Apply Everywhere
 
 Lint rules apply to ALL code including:
+
 - Storybook stories (use `useImmer` instead of `useState`)
 - Test files
 - Demo/example code
@@ -637,6 +664,7 @@ Never add `eslint-disable` to bypass a rule. Fix the root cause.
 | Unused variable | `// eslint-disable no-unused-vars` | Remove the variable |
 
 **When eslint-disable IS allowed:**
+
 - Single exceptional line with clear `-- reason` comment
 - After confirming no config-level solution exists
 - Approved in code review
@@ -656,6 +684,7 @@ const ref = useRef<HTMLElement | null>(null);
 When changing function signatures:
 
 1. **Find all usages first:**
+
    ```bash
    grep -rn "functionName(" src/
    ```
@@ -663,6 +692,7 @@ When changing function signatures:
 2. **Update all callers in same commit**
 
 3. **Run full checks after:**
+
    ```bash
    npm run lint && npm run check-types && npm test
    ```
@@ -691,6 +721,7 @@ If a lint rule doesn't support valid TypeScript patterns:
 2. **Don't work around it** with type assertions or disables
 
 Example: Section-order regex updated to support generics:
+
 ```javascript
 // Before: /\buse[A-Z]\w*\(/  — didn't match useRef<T>(
 // After:  /\buse[A-Z]\w*(?:<[^>]*>)?\(/  — matches both
@@ -706,7 +737,7 @@ Claude Code must follow the **Self-Healing Contract** defined in [AGENTS.md](./A
 
 Before presenting any result to the user, automatically run this loop:
 
-```
+```txt
 implement → check-types → lint → test → verify criteria → present
      ↑                                                        |
      └──────────── if ANY failure, fix and retry ─────────────┘

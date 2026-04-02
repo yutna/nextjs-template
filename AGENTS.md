@@ -215,6 +215,7 @@ Never add `eslint-disable` to bypass a rule. Fix the root cause.
 | Unused variable | `// eslint-disable no-unused-vars` | Remove the variable |
 
 **Allowed only when:**
+
 - Single exceptional line with clear `-- reason` comment
 - After confirming no config-level solution exists
 
@@ -327,7 +328,7 @@ Never patch blindly.
 
 When implementing any change, automatically execute this loop before presenting results:
 
-```
+```txt
 1. Implement change
 2. Run type check → if errors, fix and goto 1
 3. Run lint → if errors/warnings, fix and goto 1
