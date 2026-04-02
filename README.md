@@ -36,7 +36,23 @@ Both AI assistants are supported out of the box:
 | AI Assistant | Configuration |
 | ------------ | ------------- |
 | [GitHub Copilot][copilot] | `AGENTS.md` + `.github/instructions/` |
-| [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
+| [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/`, `.claude/mcp.json` |
+
+#### MCP Servers
+
+Both AI assistants support [MCP servers][mcp] for enhanced capabilities:
+
+| MCP Server | Package | Purpose |
+| ---------- | ------- | ------- |
+| `ark-ui` | `@ark-ui/mcp` | Ark UI component documentation |
+| `chakra-ui` | `@chakra-ui/react-mcp` | Chakra UI v3 component documentation |
+| `next-devtools` | `next-devtools-mcp` | Next.js development tools |
+| `playwright` | `@playwright/mcp` | Browser automation and E2E testing |
+
+Configuration files:
+
+- GitHub Copilot: `.vscode/mcp.json`
+- Claude Code: `.mcp.json`
 
 ### Prerequisites
 
@@ -155,6 +171,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 [eslint]: https://eslint.org
 [immer]: https://immerjs.github.io/immer/
 [intl]: https://next-intl-docs.vercel.app
+[mcp]: https://modelcontextprotocol.io
 [mise]: https://mise.jdx.dev
 [motion]: https://motion.dev
 [next-themes]: https://github.com/pacocoursey/next-themes

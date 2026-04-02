@@ -1,24 +1,27 @@
 {
-  "inputs": [],
-  "servers": {
+  "mcpServers": {
     "ark-ui": {
-      "command": "npx",
       "args": ["-y", "@ark-ui/mcp"],
+      "command": "npx",
+      "env": {},
       "type": "stdio"
     },
     "chakra-ui": {
-      "command": "npx",
       "args": ["-y", "@chakra-ui/react-mcp@latest"],
+      "command": "npx",
+      "env": {},
       "type": "stdio"
     },
     "next-devtools": {
-      "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"],
+      "command": "npx",
+      "env": {},
       "type": "stdio"
     },
     "playwright": {
-      "command": "npx",
       "args": ["-y", "@playwright/mcp"],
+      "command": "npx",
+      "env": {},
       "type": "stdio"
     }
   }
