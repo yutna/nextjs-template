@@ -1,0 +1,17 @@
+{
+  "description": "Next.js policy hook - enforces architecture conventions",
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "command": "node .claude/hooks/scripts/nextjs_policy.cjs",
+        "cwd": ".",
+        "timeout": 10000,
+        "description": "Validates Next.js architecture conventions on file changes",
+        "tools": ["edit", "write"]
+      }
+    ]
+  },
+  "notes": "This hook uses the same script as Claude Code to maintain consistency"
+}

@@ -1,5 +1,7 @@
 # Vibe Next Template
 
+[![CI](https://github.com/yutna/nextjs-template/actions/workflows/ci.yml/badge.svg)](https://github.com/yutna/nextjs-template/actions/workflows/ci.yml)
+
 > AI‑Powered Code. Human‑Level Control.
 
 Built for developers and teams shipping polished apps with confidence.
@@ -14,23 +16,43 @@ architecture, strict TypeScript, and production-ready UI foundations.
 - ✅ **TypeScript** — [strict][typescript], no `any`, zero exceptions
 - ⚡ **Server Actions** — [next-safe-action][safe-action] for type-safe
   mutations
-- 🛡️ **Error Handling** — structured hierarchy, operational vs
-  non-operational
+- 🛡️ **Error Handling** — [Effect][effect] for type-safe errors, structured hierarchy
 - 🧪 **Testing** — [Vitest][vitest] + [Testing Library][testing-lib],
   80% coverage
 - 🔍 **Linting** — [ESLint][eslint] + [Stylelint][stylelint] + custom
-  [Effect][effect]-based checks
-- 🤖 **AI-ready** — [`AGENTS.md`](./AGENTS.md) with Copilot instruction
-  files and skills
+  project-specific rules
+- 🤖 **AI-ready** — Optimized for both [GitHub Copilot][copilot] and [Claude Code][claude-code]
 
 ## Quick Start
 
 ```bash
-npx create-next-app \
-  --example https://github.com/yutna/nextjs-template \
-  my-app
-cd my-app
+npx create-next-app --example https://github.com/yutna/nextjs-template my-app
 ```
+
+### AI Assistant Configuration
+
+Both AI assistants are supported out of the box. Pick your preferred tool and follow the onboarding guide:
+
+| AI Assistant | Onboarding Guide | Configuration |
+| ------------ | ---------------- | ------------- |
+| [GitHub Copilot][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB_COPILOT_WORKFLOW.md) | `AGENTS.md` + `.github/instructions/` |
+| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE_WORKFLOW.md) | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
+
+#### MCP Servers
+
+Both AI assistants support [MCP servers][mcp] for enhanced capabilities:
+
+| MCP Server | Package | Purpose |
+| ---------- | ------- | ------- |
+| `ark-ui` | `@ark-ui/mcp` | Ark UI component documentation |
+| `chakra-ui` | `@chakra-ui/react-mcp` | Chakra UI v3 component documentation |
+| `next-devtools` | `next-devtools-mcp` | Next.js development tools |
+| `playwright` | `@playwright/mcp` | Browser automation and E2E testing |
+
+Configuration files:
+
+- GitHub Copilot: `.vscode/mcp.json`
+- Claude Code: `.mcp.json`
 
 ### Prerequisites
 
@@ -79,23 +101,31 @@ src/
 │   └── [locale]/     # i18n locale segment
 ├── modules/          # Feature modules
 │   └── {module}/
-│       ├── actions/      # Server actions
-│       ├── components/   # Presenter UI
-│       ├── containers/   # Logic binding (bridge layer)
-│       ├── hooks/        # Client logic
-│       ├── screens/      # Page-level composition
-│       └── schemas/      # Validation contracts
+│       ├── actions/      # Server actions (next-safe-action + Zod)
+│       ├── services/     # Business logic (Effect)
+│       ├── repositories/ # Data access (Effect + Drizzle)
+│       ├── schemas/      # Zod validation schemas
+│       ├── components/   # Presenter UI (server-first)
+│       ├── containers/   # Logic binding (client when needed)
+│       ├── screens/      # Page-level composition (server)
+│       └── hooks/        # Client logic
 ├── shared/           # Cross-cutting code
+│   ├── db/           # Database client (Drizzle)
+│   ├── entities/     # Drizzle schemas (tables)
 │   ├── components/   # Shared UI
 │   ├── config/       # Env, fonts, i18n
-│   ├── lib/          # Integrations and services
+│   ├── lib/          # Integrations and wrappers
 │   └── ...
 ├── messages/         # i18n translations (en/th)
 └── test/             # Shared test helpers
 ```
 
-Data flows `page → screen → container → component`. Server components by
-default — `"use client"` only at the smallest leaf.
+**Data flow:** `page → screen → container → component`
+
+**Backend flow:** `action → service → repository → entity`
+
+Server components by default — `"use client"` only at the smallest leaf.
+Effect is required for all backend layers (services, repositories, jobs).
 
 ## Scripts
 
@@ -131,6 +161,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 [MIT](./LICENSE)
 
 [ark]: https://ark-ui.com
+[claude-code]: https://docs.anthropic.com/en/docs/claude-code
+[copilot]: https://github.com/features/copilot
 [chakra]: https://chakra-ui.com
 [clsx]: https://github.com/lukeed/clsx
 [dayjs]: https://day.js.org
@@ -139,6 +171,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 [eslint]: https://eslint.org
 [immer]: https://immerjs.github.io/immer/
 [intl]: https://next-intl-docs.vercel.app
+[mcp]: https://modelcontextprotocol.io
 [mise]: https://mise.jdx.dev
 [motion]: https://motion.dev
 [next-themes]: https://github.com/pacocoursey/next-themes

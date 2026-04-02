@@ -1,1362 +1,551 @@
-# AGENTS Guide
-
-## Purpose
-
-This document is the AI-facing operating guide for this
-repository.
-
-It provides project-wide rules and architecture flow that
-apply to every task. Folder-specific conventions live in
-`.github/instructions/` (auto-loaded) and `.github/skills/`
-(on-demand). See the
-[Skill and instruction index](#skill-and-instruction-index)
-for the full map.
-
-## Critical implementation mindset
-
-- default to a server-first approach and ship the smallest
-  possible client surface
-- treat client code as an explicit cost, not the default
-  starting point
-- preserve folder ownership boundaries and place code in
-  the narrowest correct location
-- prefer extending established patterns over inventing
-  parallel structure
-- when in doubt, optimize for architecture correctness
-  over convenience
-
-## Definition of Done
-
-Every delivered feature must meet all of these criteria
-before presenting to the user. If any criterion is not met,
-keep working.
-
-- feature works end-to-end exactly as requirements describe
-- zero bugs — every code path tested and verified
-- zero type errors on all touched files
-- zero lint errors on all touched files
-- zero warnings on all touched files
-- all existing tests still pass — no regressions
-- new tests cover the new feature
-- code review passed — no security or convention issues
-- QA verified in a real browser when the feature has UI
-  (visual layout, responsive, dark/light mode, locales)
-- ready for production use — not a prototype, not a draft
-- human has nothing to fix, debug, or clean up
-
-## Project overview
-
-This is a production-ready Next.js 16 starter template
-with opinionated conventions for scalable, maintainable
-web applications.
-
-The project emphasizes App Router boundaries, feature
-modules, strict folder ownership, server actions,
-structured error handling, i18n, and Chakra UI v3.
-
-## Project structure
-
-```text
-src/
-├── app/              # App Router routes only
-│   └── [locale]/     # Locale segment (next-intl)
-│       ├── (private)/
-│       └── (public)/
-├── modules/          # Feature modules
-│   └── {module}/
-│       ├── actions/
-│       ├── components/
-│       ├── containers/
-│       ├── contexts/
-│       ├── hooks/
-│       ├── layouts/
-│       ├── lib/
-│       ├── providers/
-│       ├── schemas/
-│       ├── screens/
-│       ├── types/
-│       └── utils/
-├── shared/           # Cross-cutting app code
-│   ├── actions/
-│   ├── components/
-│   ├── config/
-│   ├── constants/
-│   ├── contexts/
-│   ├── hooks/
-│   ├── images/
-│   ├── layouts/
-│   ├── lib/
-│   ├── providers/
-│   ├── routes/
-│   ├── schemas/
-│   ├── styles/
-│   ├── types/
-│   ├── utils/
-│   └── vendor/
-├── messages/         # i18n message trees
-├── test/             # Shared test helpers
-└── proxy.ts          # Locale routing middleware
-
-.storybook/           # Storybook configuration
-├── main.ts           # Framework, addons, story discovery
-├── preview.tsx       # Global decorators and toolbar
-├── preview-head.html # Font preloading
-├── mocks/            # server-only and next-intl mocks
-└── vitest.setup.ts   # Portable stories test setup
-
-.github/
-├── instructions/     # Auto-loaded conventions
-└── skills/           # On-demand deep knowledge
-```
-
-Core ownership rules:
-
-- feature-specific code belongs in
-  `modules/<module-name>/`
-- cross-cutting reusable code belongs in `shared/`
-- `src/app/**` stays minimal and should mostly select the
-  correct screen/layout/runtime boundary
-- cross-module imports are forbidden; move shared behavior
-  into `shared/` instead
-
-## Technology stack
-
-- **Framework:** Next.js 16 + React 19
-- **Language:** TypeScript strict mode
-- **UI:** Chakra UI v3
-- **Headless UI:** Ark UI
-- **State machines:** Zag.js
-- **Pattern matching:** ts-pattern
-- **API composition:** Effect
-- **i18n:** next-intl
-- **Validation:** Zod
-- **Server actions:** next-safe-action
-- **Data fetching:** SWR
-- **URL state:** nuqs
-- **State management:** useImmer (replaces useState)
-- **Animation:** motion (v12)
-- **Dates:** dayjs
-- **Color mode:** next-themes
-- **Env validation:** @t3-oss/env-nextjs
-- **Utility hooks:** usehooks-ts
-- **CSS utility:** clsx
-- **Logging:** Pino
-- **Testing:** Vitest + Testing Library
-- **Component development:** Storybook v10
-
-## How to use this guide
-
-This guide has three layers:
-
-1. **AGENTS.md** (this file) — project-wide rules and
-   architecture flow. Always loaded. Read the Common Style
-   Guide and Common Feature Implementation Flow in order.
-2. **Instruction files** (`.github/instructions/`) —
-   folder-specific conventions that load automatically
-   when you edit matching files.
-3. **Skills** (`.github/skills/`) — deep reference
-   knowledge invoked on demand when a task needs it.
-
-For autonomous feature delivery, use the `build-feature`
-prompt or load the `autonomous-workflow` skill. These
-implement the 2-touchpoint model: gather requirements from
-the user, then execute everything autonomously until
-delivery.
-
-When two rules overlap, keep the narrower ownership rule
-and the stronger server-first constraint.
-
-## Common Style Guide
-
-### Scope
-
-Apply this guide everywhere unless a framework
-requirement or a narrower instruction file says otherwise.
-Use this guide for project-wide behavior; keep
-folder-specific guidance in the matching instruction file.
-
-### TypeScript
-
-This project uses TypeScript in **strict** mode.
-
-- do **not** use `any`; use `unknown` with proper
-  narrowing
-- use generics when the relationship between values should
-  stay type-safe
-- avoid unnecessary type assertions; prefer guards and
-  narrowing over `as any`
-- use `import type` for type-only imports
-
-Prefer:
-
-```ts
-function parseValue(value: unknown) {
-  if (typeof value === "string") {
-    return value.trim();
-  }
-
-  return null;
-}
-```
-
-Avoid:
-
-```ts
-function parseValue(value: any) {
-  return value.trim();
-}
-```
-
-Naming:
-
-- functions and variables: `camelCase`
-- React components and classes: `PascalCase`
-- constants: `SCREAMING_SNAKE_CASE`
-- files and folders: `kebab-case`
-
-React component naming uses a **UI-type-first,
-domain-last** pattern:
-
-- optional layer prefix (`Screen`, `Container`) +
-  UI type chain (outermost → innermost) + domain noun
-- Examples:
-  - `FormCheckout`, `FormFiltersOrder`,
-    `HeaderProfile`, `CardProductDetail`
-  - `ContainerFormCheckout`,
-    `ContainerHeaderProfile`
-  - `ScreenCheckout`, `ScreenProfile`
-- Folder names are the kebab-case equivalent:
-  `form-checkout`, `card-product-detail`,
-  `container-form-checkout`, `screen-checkout`
-
-### Event naming
-
-Event callback props and handler functions follow a
-strict three-part naming pattern enforced by ESLint.
-
-The pattern is: **prefix** + **event verb** +
-**target** (optional).
-
-The event verb (Click, Change, Submit, Toggle, Load,
-Focus, Blur, etc.) always comes immediately after the
-prefix. The optional target describes what is being
-acted on and comes last.
-
-**Event callback props** (`on` + event verb + target):
-
-Props that accept event callbacks must start with `on`
-followed by the event verb, then an optional target.
-
-- `onClick`, `onChange`, `onSubmit`
-- `onClickBack`, `onChangeDropdownDepartment`
-- `onSubmitFormContact`, `onToggleVibe`
-
-Non-event function props (`render*`, `get*`, `format*`)
-are exempt from the `on*` rule.
-
-**Handler implementations** (`handle` + event verb +
-target):
-
-Functions that implement event handlers must start with
-`handle` followed by the event verb, then an optional
-target.
-
-- `handleClick`, `handleChange`, `handleSubmit`
-- `handleClickBack`, `handleChangeDropdownDepartment`
-- `handleSubmitFormContact`, `handleToggleVibe`
-
-**Hook return values for event binding:**
-
-Custom hooks that return functions intended for containers
-to bind to component `on*` event props must also use the
-`handle*` prefix with the same verb-first pattern.
-
-```ts
-// Hook
-function useCheckoutForm() {
-  function handleSubmitForm() { /* ... */ }
-  return { handleSubmitForm };
-}
-
-// Container
-const { handleSubmitForm } = useCheckoutForm();
-<CheckoutForm onSubmitForm={handleSubmitForm} />;
-
-// Component
-interface CheckoutFormProps {
-  onSubmitForm: () => void;
-}
-```
-
-Common event verbs: Click, Change, Submit, Toggle, Load,
-Focus, Blur, Scroll, Select, Close, Open, Press, Drag,
-Drop, Copy, Reset.
-
-This convention is enforced by:
-
-- `project/enforce-event-prop-naming` — event callbacks
-  in `*Props` interfaces must use `on*`
-- `project/enforce-handler-naming` — identifiers passed
-  to `on*` JSX attributes must use `handle*`
-
-### Imports and modules
-
-Use the repository path alias for internal imports:
-
-```ts
-import { fetchClient } from "@/shared/lib/fetcher";
-```
-
-- `@/*` for cross-folder imports from `src`
-- relative `./` imports for same leaf folder only
-- `import type` for type-only imports
-- never use `../` parent directory imports
-
-#### Import sorting
-
-Sort imports into five groups in this exact order:
-
-1. runtime boundary side-effect imports (`server-only`)
-2. external modules (including package side-effect imports)
-3. internal modules using `@/` (including internal CSS
-   side-effect imports)
-4. local same-directory imports using `./` (including
-   local side-effect imports)
-5. `import type` statements
+# AI Workflow Contract
+
+This repository defines a workflow-first operating standard for AI-assisted software engineering. This contract applies to all AI coding agents (Claude Code, GitHub Copilot, Cursor, etc.).
+
+## Optimize for
+
+1. Workflow adherence
+2. Correctness
+3. Consistency
+4. Error recovery
+5. State awareness
+6. Minimal rework
+7. User satisfaction
+8. Token efficiency
+
+## Canonical workflow
+
+Every non-trivial task follows these phases:
+
+1. Discovery
+2. Planning
+3. Implementation
+4. Quality Gates
+5. Verification
+6. Delivery
+
+The workflow is a loop, not a line. Roll back to the earliest required phase when new information invalidates later work.
+
+## Phase rules
+
+### 1. Discovery
+
+Goals:
+
+- clarify the real problem
+- define scope and out-of-scope items
+- capture constraints, assumptions, and risks
+- write acceptance criteria that can be verified later
+
+Do not:
+
+- create an implementation plan while behavior-changing ambiguity remains
+- implement code before requirements are clear
+- claim understanding without surfacing unresolved questions
+
+Exit criteria:
+
+- requirements are clarified or explicitly approved as sufficient
+- open questions are either resolved or intentionally deferred
+- acceptance criteria exist
+
+Rollback trigger:
+
+- if the user says "not what I meant" or ambiguity affects behavior, go back here
+
+### 2. Planning
+
+Goals:
+
+- explore existing patterns and reusable surfaces
+- decide where the work belongs
+- document the approach, dependencies, risks, and files in scope
+- define the validation path before implementation starts
+- choose seams and module boundaries that keep changed behavior easy to test
+
+Do not:
+
+- edit implementation files before a plan exists for non-trivial work
+- change architecture or conventions without justification
+- skip approval when the task needs a plan
+- choose a design that forces simple behavior to be verified only through the full app runtime when a smaller seam is practical
+
+Exit criteria:
+
+- plan is explicit
+- files and ownership boundaries are clear
+- dependencies are identified
+- the next implementation step is unambiguous
+
+Rollback trigger:
+
+- if the plan is rejected or a major architectural assumption changes, return here
+
+### 3. Implementation
+
+Goals:
+
+- implement only the approved scope
+- preserve established patterns, style, naming, and architecture
+- add or update tests for changed behavior
+- keep changed behavior behind seams that remain practical to exercise in automated tests
+- keep the state record current
+
+Do not:
+
+- expand scope without an explicit reason
+- rewrite unrelated areas
+- "fix forward" with random edits that are not tied to a root cause
+
+Exit criteria:
+
+- code changes are complete for the approved scope
+- impacted behavior has corresponding tests where the project supports tests
+- touched files are recorded in state
+
+Rollback trigger:
+
+- if a requirement changes materially, return to Discovery or Planning
+
+### 4. Quality Gates
+
+Run every applicable automated gate in order:
+
+1. Type check
+2. Lint
+3. Tests
 
 Rules:
 
-- one blank line between groups
-- alphabetical within each group (case-insensitive)
-- named imports inside `{}` sorted alphabetically
-- consolidate duplicates; default before named imports
-- keep `import type` separate even when the source
-  matches a value import
+- use existing project commands only
+- if a gate is not available, record `not-applicable` with a reason
+- if any gate fails, fix the root cause and rerun the full gate sequence from the start
+- never treat partial success as release-ready
+- if automation is weak because the code shape is hard to test, report that as a design issue instead of silently accepting it
+- do not present work as done while any required gate is pending, failing, or unverified
+- do not confuse green automation with correct UX; verification still matters
 
-Template:
+Exit criteria:
 
-```ts
-import "server-only";
+- all applicable automated gates are green
 
-import { Box, Heading, Text } from "@chakra-ui/react";
-import { getTranslations } from "next-intl/server";
+Rollback trigger:
 
-import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
-import { fetchClient } from "@/shared/lib/fetcher";
+- if fixes require design changes, return to Implementation or Planning
 
-import "@/shared/styles/scrollbar.css";
+### 5. Verification
 
-import { CopyCommand } from "./copy-command";
+Goals:
 
-import type { SectionHeroProps } from "./types";
+- confirm behavior matches acceptance criteria
+- confirm review findings are resolved before final delivery
+- review the UX and runtime flow
+- perform a self-review for correctness, safety, and convention compliance
+
+Do not:
+
+- deliver based on automated checks alone when runtime or UX verification is still required
+- ignore edge cases found during self-review
+
+Exit criteria:
+
+- acceptance criteria are satisfied
+- self-review is clean or findings are fixed
+- review findings are fixed or intentionally resolved
+
+Rollback trigger:
+
+- runtime bug -> Implementation
+- convention or correctness issue -> Quality Gates after the fix
+
+### 6. Delivery
+
+Goals:
+
+- summarize what changed and why
+- report gate results honestly
+- state any remaining follow-up items explicitly
+
+Do not:
+
+- claim completion before gates and verification pass
+- hide uncertainty, missing validation, or blocked items
+
+Exit criteria:
+
+- user can review a clear, honest handoff
+- if the user approves, the task is done
+
+Rollback trigger:
+
+- "close but needs tweaks" -> Implementation
+- "not what I meant" -> Discovery
+
+## Non-negotiable rules
+
+- No implementation before clarified requirements.
+- No non-trivial code changes before a plan exists.
+- No delivery before applicable gates and verification pass.
+- No silent architecture, convention, or style changes.
+
+## Zero Tolerance Policy
+
+**Target: 0 warnings, 0 errors — always.** This applies to lint, type-check, and editor warnings.
+
+### HARD Rules (No Exceptions)
+
+#### No `any` Type
+
+The `any` type is **forbidden**. No exceptions.
+
+| Situation | Wrong | Right |
+|-----------|-------|-------|
+| Unknown library type | `as any` | Import type from library |
+| Complex generic | `any` | Use `unknown` + type guards |
+| Quick fix | `// @ts-ignore` | Find the proper type |
+
+#### No eslint-disable as First Resort
+
+Never add `eslint-disable` to bypass a rule. Fix the root cause.
+
+| Problem | Wrong | Right |
+|---------|-------|-------|
+| Type mismatch | `// eslint-disable ...` | Import proper types |
+| Rule violation | Inline disable | Fix code or update config |
+| Unused variable | `// eslint-disable no-unused-vars` | Remove the variable |
+
+**Allowed only when:**
+
+- Single exceptional line with clear `-- reason` comment
+- After confirming no config-level solution exists
+
+#### No Type Assertions That Break Lint
+
+```typescript
+// WRONG - breaks section-order lint (regex can't match generic)
+const ref = useRef(null) as React.RefObject<HTMLElement>;
+
+// CORRECT - proper TypeScript
+const ref = useRef<HTMLElement | null>(null);
 ```
 
-Example:
+### ESLint Config Over Inline Disables
 
-```ts
-// Good
-import "server-only";
+For legitimate technical requirements, add exceptions in `eslint.config.mjs`:
 
-import { Box, Flex, Heading, Text, VStack } from "@chakra-ui/react";
-import { getTranslations } from "next-intl/server";
-
-import { LandingHero } from "@/modules/static-pages/components/landing-hero";
-import { MotionReveal } from "@/modules/static-pages/components/motion-reveal";
-import { ScrollIndicator } from "@/modules/static-pages/components/scroll-indicator";
-
-import { CopyCommand } from "./copy-command";
-
-import type { SectionHeroProps } from "./types";
+```javascript
+{
+  files: ["src/shared/components/motion-*/**"],
+  rules: {
+    "project/no-inline-style": "off",
+  },
+},
 ```
 
-### Exports
+### Signature Change Protocol
 
-Use **named exports** by default. Do not use default
-exports for components.
+When changing function signatures:
 
-Prefer:
+1. Find all usages: `grep -rn "functionName(" src/`
+2. Update all callers in same commit
+3. Run: `npm run lint && npm run check-types && npm test`
 
-```ts
-export function SectionHero() {
-  return null;
-}
+### Lint Rule Maintenance
+
+If a lint rule doesn't support valid TypeScript patterns, **fix the rule** — don't work around it.
+
+## Definition of done
+
+Work is done only when all applicable conditions are true:
+
+- the requested behavior works end-to-end
+- acceptance criteria are satisfied
+- existing tests still pass
+- new or changed behavior is covered appropriately
+- the code shape still supports appropriate automated testing without unnecessary framework coupling
+- type checking passes or is explicitly not applicable
+- lint passes or is explicitly not applicable
+- verification is complete
+- no unresolved correctness, security, or convention issues remain
+- the handoff is clear enough that the user does not need to reverse-engineer the work
+
+## State contract
+
+Keep task state explicit. The state file lives at `.claude/workflow-state.json`.
+
+At minimum, state must include:
+
+- current phase
+- task identifier or short title
+- requirements status
+- acceptance criteria
+- constraints
+- open questions
+- plan status
+- files in scope
+- implementation status
+- quality gate status
+- verification status
+- delivery readiness
+- retry count and blocked items
+
+If state is missing or stale, refresh it before taking risky actions.
+
+Before taking action:
+
+1. identify the current phase
+2. check `.claude/workflow-state.json`
+3. check `.claude/workflow-profile.json` when the task depends on repo-specific roots, quality gates, or adoption state
+4. identify whether the decision surface falls under a hard convention, a strong default, or local freedom
+5. confirm the preconditions for the next step
+
+When completing a phase, update the workflow state so the next step can continue without guessing.
+
+## Recovery contract
+
+When something fails:
+
+1. identify the failing phase
+2. read the actual failure signal
+3. find the root cause
+4. roll back to the earliest required phase
+5. fix deliberately
+6. rerun all required downstream gates
+
+Never patch blindly.
+
+### Retry budget
+
+- default maximum: 3 repair attempts per work item
+- after the budget is exhausted, mark the work item as blocked
+- record the blocker, current evidence, and the recommended rollback phase
+
+## Self-Healing Contract
+
+**First-Result Excellence**: Deliver production-ready code on the first attempt. Do not present work to the user until it meets all quality standards.
+
+### Autonomous Quality Loop
+
+When implementing any change, automatically execute this loop before presenting results:
+
+```txt
+1. Implement change
+2. Run type check → if errors, fix and goto 1
+3. Run lint → if errors/warnings, fix and goto 1
+4. Run tests → if failures, fix and goto 1
+5. Verify all acceptance criteria → if incomplete, fix and goto 1
+6. Only when ALL pass → present to user
 ```
 
-Avoid:
+### Self-Healing Rules
 
-```ts
-export default function SectionHero() {
-  return null;
-}
-```
+- **Never stop at first failure**: Continue fixing until all gates pass or retry budget is exhausted
+- **Never present broken code**: If any gate fails, fix it before showing results to user
+- **Never ask user to fix AI mistakes**: Type errors, lint warnings, and test failures caused by AI changes must be fixed by the AI
+- **Never skip gates**: All applicable quality gates must run and pass
+- **Never deliver partial work**: All planned items must be implemented before delivery
 
-Exceptions: only when the framework requires a default
-export (e.g., `page.tsx`, `layout.tsx`).
+### What "Done" Means
 
-### Leaf folder index.ts
+Work is NOT done if any of these are true:
 
-Every leaf folder with a public API must have an
-`index.ts` that re-exports public symbols.
+- Type check has errors
+- Lint has warnings or errors
+- Tests are failing
+- Implementation is incomplete vs. plan
+- Acceptance criteria are not met
+
+### Self-Healing Examples
+
+| Situation | Wrong | Right |
+|-----------|-------|-------|
+| Type error after edit | "There's a type error, please fix" | Fix the type error, rerun checks, then present |
+| Lint warning | Present code with warning | Fix warning, verify clean, then present |
+| Test failure | "Test is failing, might need adjustment" | Fix the code or test, verify pass, then present |
+| Missing implementation | "I've done part of it" | Complete all planned items, then present |
+| Forgot to add test | Deliver without test | Add test, verify pass, then deliver |
+
+### Escalation Criteria
+
+Only escalate to user when:
+
+- Retry budget (3 attempts) is exhausted for the same issue
+- The fix requires clarification on requirements (not technical issues)
+- The failure reveals a pre-existing issue unrelated to current work
+- External dependency or environment issue blocks progress
+
+## Consistency contract
+
+Be predictable:
+
+- reuse existing architecture and conventions
+- do not invent naming schemes or folder structure changes
+- keep prompts, skills, and commands aligned with the same phase model
+- keep always-on guidance short and stable
+- move detailed procedures into on-demand skills
+
+## Convention model
+
+The workflow is contract-driven, not reference-driven.
+
+- sample repositories, generated apps, and migrations can validate the workflow, but they are not the source of truth
+- the source of truth is the local workflow contract expressed through configuration files, skills, commands, profiles, and hooks
+- prefer convention over deliberation: remove recurring structural decisions from task-level reasoning when the workflow can decide them once
+
+Classify convention decisions into these tiers:
+
+- Hard conventions: fixed rules that should not drift without an explicit user or profile-level decision
+- Strong defaults: preferred answers that should be reused unless the plan records a justified deviation
+- Local freedom: implementation details that may vary inside a stable contract without harming consistency
+
+Examples:
+
+- Hard conventions: workflow phase order, state contract, required quality gates, required route or boundary grammar, required naming schemes declared by the active profile
+- Strong defaults: recommended repo topology, recommended module shapes, preferred library choices, preferred verification paths
+- Local freedom: helper extraction, internal function decomposition, local component factoring, small private naming choices that do not change public grammar
 
 Rules:
 
-- value exports come first, type exports come last
-  (mirrors the import sorting rule where `import type`
-  is the last group)
-- when a sibling `types.ts` exists, `index.ts` must
-  `export type` from it — never omit type re-exports
-- use `export type` for type-only re-exports
-- keep index files as pure re-exports with no logic
-
-Canonical pattern:
-
-```ts
-export { LandingHero } from "./landing-hero";
-
-export type { LandingHeroProps } from "./types";
-```
-
-Multiple exports:
-
-```ts
-export { ErrorBoundary } from "./error-boundary";
-
-export type {
-  ErrorBoundaryFallbackProps,
-  ErrorBoundaryProps,
-} from "./types";
-```
-
-### Layer boundaries
-
-The architecture enforces a strict unidirectional import
-flow. Each layer may only import from layers below it,
-never above.
+- planning must state when work follows strong defaults and when it intentionally deviates from them
+- review must treat hard-convention violations as blocking unless the requirements changed deliberately
+- review may treat unjustified strong-default drift as a finding even when the code still works
+- local-freedom variation is acceptable unless it harms correctness, testability, or future consistency
+- do not use a sample repository as the reason a design is correct; use the contract that governs the repository
 
-```text
-page.tsx  →  screens  →  containers  →  components
-                              ↓
-                           hooks
-```
+## Behavioral modes by phase
 
-Forbidden directions:
+During **Discovery**: ask questions, do not plan or implement, do not create implementation files. Use only `requirements.status` values: `needs-clarification`, `clarified`, or `approved`. Stop after delivering the discovery result.
 
-- components must **not** import from containers, screens,
-  or hooks
-- containers must **not** import from screens
-- screens must **not** import from page.tsx boundaries
+During **Planning**: explore and plan, do not implement. Classify convention decisions. Make the plan specific enough that implementation does not guess. Use only `plan.status` values: `not-started`, `proposed`, `approved`, or `blocked`. Stop after delivering the plan.
 
-Components may import other components (same module or
-shared). Containers may import components, hooks, actions,
-lib, and schemas.
+During **Implementation**: stay inside the approved scope. Preserve hard conventions and follow strong-default decisions from the approved plan. Update tests for changed behavior. Keep workflow state current. You may run a narrow smoke test, but do not mark quality gates complete. Use only `implementation.status` values: `not-started`, `in-progress`, `completed`, or `blocked`. Do not run commit, push, release, or PR commands unless the user explicitly asks.
 
-### Server-first mindset
+During **Review**: findings only. Do not edit implementation files. Classify findings by convention tier. Route material findings back to Implementation or Planning. Stop after returning findings.
 
-This is the default implementation mindset for the whole
-project:
+During **Quality Gates / Verification**: run gates in canonical order, verify acceptance criteria, report honestly. Route failures to the earliest valid recovery phase. Use delivery status values: `blocked`, `ready-for-review`, or `approved`. Do not hide failures or partial validation.
 
-- start from a server-side solution first
-- use Next.js and React 19 server capabilities as far as
-  they can reasonably go
-- ship the smallest possible client surface
-- treat client code as an explicit cost, not a default
+During **Delivery**: summarize changes honestly. Do not claim completion before gates and verification pass. Do not continue into commit, push, release, or PR actions unless the user explicitly asks.
 
-Follow these rules:
+When in doubt, move one phase earlier, make state explicit, and choose the smaller safe step.
 
-- prefer server components by default
-- add `"use client"` only when hooks, browser APIs, or
-  client-only interaction require it
-- let the React Compiler do its job; do not reach for
-  `useMemo` or `useCallback` by habit
-- add memoization only when there is a real measured need
+## Pattern Selection Rules
 
-Before implementing something, prefer asking:
-
-- can this stay on the server?
-- can data loading happen in a server component instead
-  of a client effect?
-- can this mutation use a server action instead of a
-  client-only API wrapper?
-- can interactivity be isolated to a smaller client leaf?
-
-Prefer:
-
-- server data loading over client fetching
-- server actions over client mutation plumbing
-- small client islands inside larger server-rendered trees
-- serializable props flowing from server boundaries into
-  client leaves
-- rendering-ready data prepared on the server
-
-Avoid:
-
-- marking large trees with `"use client"` too early
-- fetching in `useEffect` when the same work belongs on
-  the server
-- moving logic to the client just because it feels
-  familiar
-- shipping browser JavaScript for concerns solved during
-  server render
-
-Rule of thumb: if a feature works well on the server,
-keep it there. If only one small piece needs the client,
-isolate only that piece.
-
-Practical habits to protect server-first:
-
-- keep `"use client"` at the smallest possible leaf
-- keep data access, async composition, and request-time
-  decisions on the server when possible
-- separate interactive leaf components from
-  server-rendered layout and content
-- prefer progressive enhancement over client-heavy
-  orchestration
-- let the server prepare the view model when that reduces
-  client complexity
-
-### Naming and readability
-
-Choose names that describe ownership and intent clearly.
-
-- prefer domain names over vague names
-- specific verbs for actions, specific nouns for values
-- code should read clearly without depending on comments
-
-Prefer:
-
-- `reportErrorAction`
-- `fetchClient`
-- `ValidationError`
-- `copyright`
-
-Avoid:
-
-- `handleData`
-- `commonUtil`
-- `value`
-- `temp`
-
-### Comments
-
-Comment only when the code would otherwise be harder to
-understand: non-obvious intent, framework constraints,
-unusual tradeoffs. Avoid comments that restate the code.
-
-Prefer:
-
-```ts
-// next-intl returns the key when a translation is
-// missing, so keep the fallback explicit.
-```
-
-Avoid:
-
-```ts
-// Set the name variable.
-const name = value;
-```
-
-### Error handling
-
-Handle errors explicitly and intentionally.
-
-- do not swallow errors silently
-- do not add broad success-shaped fallbacks that hide
-  real failures
-- surface or rethrow errors matching the app's existing
-  error model
-- prefer specific, meaningful errors over generic `Error`
-  usage when the domain already has a clear error concept
-
-Good direction:
-
-- validate early
-- return or throw clear error states
-- reuse the existing app error hierarchy and helpers
-  where appropriate
-
-Avoid:
-
-- empty `catch` blocks
-- `catch { return null; }` when the failure should be
-  visible
-- broad fallback values that make debugging harder
-
-### Environment variables
-
-Do not read environment variables ad hoc throughout the
-codebase.
-
-- define environment variables through the shared
-  environment configuration
-- validate them with the existing env setup
-- use `NEXT_PUBLIC_` only for values intended for the
-  client
-- keep server-only values off the client
-- import from the shared env module instead of raw
-  `process.env` usage in app code
-
-Prefer one validated source of truth for environment
-access over scattered `process.env` reads.
-
-### Reuse before create
-
-- reuse existing helpers, components, hooks, actions,
-  schemas, or utilities
-- extract shared logic only when reuse is real, not
-  speculative
-- do not add a new dependency when the current stack
-  already solves it
-- search first, reuse second, create only when existing
-  options are not a fit
-
-### One concern per unit
-
-- one main responsibility per file
-- small helpers near the owner when they are private
-- avoid catch-all files with unrelated helpers or generic
-  "utils" without clear ownership
-
-### Package management
-
-Use **npm** only. Do not use yarn, pnpm, or bun.
-
-Install dependencies with exact versions:
-
-```bash
-npm install -E <package>
-npm install -E -D <package>
-```
-
-Rules:
-
-- use `npm install -E` for runtime dependencies
-- use `npm install -E -D` for dev dependencies
-- exact versions (`-E`) always
-- keep `package-lock.json` committed and in sync
-- use existing npm scripts from `package.json`
-
-### Formatting and tooling
-
-Do not invent local formatting or linting style by hand.
-Follow the repository tooling.
-
-Current baseline:
-
-- formatting: `npm run format`
-- linting: `npm run lint`
-- type-checking: `npm run check-types`
-- testing: `npm run test`
-- component development: `npm run dev:storybook`
-- building stories: `npm run build:storybook`
-
-Rules:
-
-- write code that passes the existing formatter and linter
-- prefer fixing the code to satisfy the tooling instead
-  of fighting the tooling
-- do not introduce alternate package managers or parallel
-  toolchains for the same concern
-
-### Dependency choices
-
-Prefer the libraries and abstractions already used by the
-repository before introducing new ones.
-
-Examples already in use:
-
-- Chakra UI
-- next-intl
-- next-safe-action
-- SWR
-- Zod
-- Vitest
-
-Rule of thumb: reuse the current stack first. Add a new
-dependency only when the existing stack clearly does not
-cover the need.
-
-### Checklist
-
-Before writing or changing code, check:
-
-- strict TypeScript without `any`?
-- naming and casing consistent?
-- event naming: `on/handle` + event verb + target?
-- handler implementations use `handle*` prefix?
-- named export (unless framework requires default)?
-- `index.ts` re-exports types from `types.ts`?
-- value exports before type exports in `index.ts`?
-- layer boundaries respected (no upward imports)?
-- server-side by default?
-- comments only where they help?
-- errors handled explicitly?
-- validated environment access?
-- existing project libraries used first?
-- existing abstraction searched before creating new?
-- npm with exact dependency versions?
-
-### Quick reference
-
-- no `any`
-- `camelCase` functions/variables
-- `PascalCase` components/classes
-- `SCREAMING_SNAKE_CASE` constants
-- `kebab-case` files/folders
-- component names: UI-type first, domain last
-- event naming: `on/handle` + verb + target (`onClickBack`, `handleSubmitForm`)
-- hooks return `handle*` for event handler bindings
-- named exports by default
-- `index.ts` always re-exports types from `types.ts`
-- value exports first, type exports last
-- layer flow: page → screen → container → component
-- components never import containers or screens
-- client containers delegate all logic to hooks
-- stories only for components, not containers or screens
-- server components by default
-- comments only when needed
-- no silent error handling
-- validated env access
-- reuse before creating new abstractions
-- npm only, exact dependency versions
-
-## Common Feature Implementation Flow
-
-### Core idea
-
-This repository uses a layered, server-first feature
-flow.
-
-UI path:
-
-```text
-page.tsx -> screen -> container -> component
-```
-
-Action/data path:
-
-```text
-action -> container -> component
-```
-
-Supporting layers:
-
-- `schemas/` — validation contracts
-- `lib/` — reusable integrations and service boundaries
-- `hooks/` — extracted client logic
-- `layouts/` — reusable framing
-- `config/` and `constants/` — app-wide setup and static
-  values
-
-### Primary layer responsibilities
-
-- **`page.tsx`** — server-only route entry. One page
-  returns one screen. Handles params and locale setup.
-- **`screens/`** — module-level page UI. 1:1 with page.
-  Composes containers only. Server-first.
-- **`containers/`** — required bridge layer. Binds hooks
-  and actions to presenters. Client containers must
-  delegate all logic to custom hooks. Server or client.
-  Self-contained.
-- **`components/`** — presenter UI. Stateless or
-  logic-light. Receives prepared props.
-- **`actions/`** — server actions. `"use server"`,
-  `actionClient` or `authActionClient`.
-- **`hooks/`** — extracted client logic. Consumed by
-  containers.
-- **`schemas/`** — Zod validation contracts. Shared or
-  module-owned.
-- **`lib/`** — integrations and services. Not action
-  definitions, not presenter UI.
-
-### End-to-end diagram
-
-```text
-app/**/layout.tsx
-  -> route / segment boundary
-  -> locale boundary setup when needed
-
-app/**/page.tsx
-  -> server-only route entry
-  -> returns one Screen*
-
-modules/<module>/screens/screen-*/
-  -> Screen*
-  -> assembles one or more Container*
-
-modules/<module>/containers/container-*/
-  -> Container*
-  -> binds logic to presenter components
-  -> may use hooks
-  -> may call actions
-
-modules/<module>/components/*
-  -> presenter UI
-
-shared/actions or modules/<module>/actions
-  -> *Action
-  -> inputSchema(...)
-  -> server command boundary
-    -> schemas/
-    -> lib/
-```
-
-1. `page.tsx` enters the route
-2. the page returns one screen
-3. the screen assembles one or more containers
-4. each container binds logic to presenter components
-5. containers may use hooks and actions
-6. actions validate input with schemas and call into lib
-
-### Supporting layers and where they fit
-
-- **`schemas/`** — action input, search param, route
-  param, and form payload validation. Usually sits behind
-  `action -> schema` or `page/screen -> schema`.
-- **`lib/`** — reusable integrations, service boundaries,
-  framework wrappers, infrastructure-aware logic. Usually
-  sits behind `action -> lib`.
-- **`hooks/`** — extracted client logic, browser-aware
-  interaction, reusable UI state. Usually sits beneath
-  `container -> hook`.
-- **`layouts/`** — reusable structural framing, shared
-  page chrome, route-family shells. Sits around page
-  flows, not inside the action chain.
-- **`config/`** and **`constants/`** — app-wide
-  configuration and static shared values. Support other
-  layers but are not normally the center of feature flow.
-
-### Server-first flow
-
-Use when the feature is mostly server-driven:
-
-```text
-page.tsx
-  -> screen
-    -> server container
-      -> component
-    -> action -> schema -> lib
-```
-
-- `page.tsx` stays thin and server-only
-- the container may remain a server component
-- reusable service behavior lives in `lib/`
-- do not introduce client code unless the interaction
-  truly needs it
-
-Example shape:
-
-```text
-src/app/[locale]/profile/page.tsx
-  -> modules/profile/screens/screen-profile/
-    -> containers/container-form-profile/
-      -> components/form-profile/
-    -> actions/update-profile-action/
-    -> schemas/update-profile-input/
-    -> lib/update-profile/
-```
-
-### Client-interactive flow
-
-Use when the feature needs client coordination:
-
-```text
-page.tsx
-  -> screen
-    -> client container
-      -> hook + action + component
-```
-
-- `page.tsx` still stays server-only
-- the container becomes `"use client"` only when needed
-- the hook owns extracted client logic
-- the component remains presenter-only
-
-Example shape:
-
-```text
-src/app/[locale]/checkout/page.tsx
-  -> modules/checkout/screens/screen-checkout/
-    -> containers/container-form-checkout/
-      -> hooks/use-form-checkout/
-      -> actions/submit-checkout-action/
-      -> components/form-checkout/
-```
-
-### App Router boundary rules
-
-- **`page.tsx`** — route entry, server-only, returns one
-  screen
-- **`layout.tsx`** — route/segment boundary; reusable
-  structure moves to `shared/layouts` or
-  `modules/<module>/layouts`
-- **`loading.tsx`**, **`error.tsx`**, **`template.tsx`** —
-  stay in `app/`; do not replace with screen or container
-  patterns
-
-### App Router error boundary exception
-
-`error.tsx` and `global-error.tsx` sit **above** the
-container layer. There is no module container that can
-wrap them, so they and the shared components they delegate
-to (`error-global`, `error-app-boundary`) are granted a
-documented exception:
-
-- **What is permitted**: importing from `actions/` and
-  using React hooks directly in the component (instead of
-  delegating to a container)
-- **Qualifying condition**: the file is an App Router error
-  boundary or a `shared/components/` delegate that only
-  `error.tsx` / `global-error.tsx` relies on
-- **How it is enforced**: `eslint.config.mjs` disables
-  `project/no-upward-layer-import` for
-  `src/shared/components/error-global/**` and
-  `src/shared/components/error-app-boundary/**` with a
-  comment explaining why
-
-Do **not** use this exception as a general escape hatch.
-If you need shared interactive UI outside error boundaries,
-use a module-owned container backed by a shared hook or
-provider.
-
-### Practical diagrams
-
-Minimal page rendering flow:
-
-```text
-page.tsx
-  -> Screen*
-    -> Container*
-      -> Component*
-```
-
-Action-backed interactive flow:
-
-```text
-Screen*
-  -> Container*
-    -> useSomething()
-    -> someAction()
-    -> Component*
-
-someAction()
-  -> input schema
-  -> lib function
-```
-
-Locale-aware route flow:
-
-```text
-app/[locale]/layout.tsx
-  -> locale boundary setup
-app/[locale]/page.tsx
-  -> Screen*
-    -> Container*
-      -> Component*
-```
-
-### Recommended build order
-
-1. define the route entry in `page.tsx`
-2. define the screen for that page
-3. define the containers the screen needs
-4. define presenter components beneath the containers
-5. define actions for mutations
-6. define schemas for validation
-7. extract reusable service logic into `lib/`
-8. extract client logic into hooks — client containers
-   must not own logic directly
-
-### Common mistakes to avoid
-
-- `page.tsx` assembling containers directly
-- screens rendering presenter components directly as the
-  main pattern
-- containers owning business logic inline — extract to
-  hooks (client) or lib (server)
-- containers using hooks, state, or effects directly
-  instead of delegating to a custom hook
-- components importing containers or screens (violates
-  unidirectional flow)
-- components becoming mini controllers
-- actions embedding reusable service logic that belongs
-  in `lib/`
-- hooks becoming the home of server-side behavior
-- route-boundary App Router responsibilities leaking into
-  screens or containers
-- `index.ts` missing `export type` when a `types.ts`
-  sibling exists
-
-### Quick placement reference
-
-```text
-Route entry?           -> page.tsx
-Module-level page UI?  -> screens/
-Logic binding?         -> containers/
-Presenter UI?          -> components/
-Server action?         -> actions/
-Client interaction?    -> hooks/
-Validation contract?   -> schemas/
-Reusable service?      -> lib/
-Structural frame?      -> layouts/
-App setup/statics?     -> config/ or constants/
-```
-
-## Skill and instruction index
-
-Detailed conventions live in targeted layers that load
-automatically or on demand. This section maps every
-concern to its home so you never need to search.
-
-### Automatic instruction files
-
-These load when editing matching files.
-
-- **`page-entry`** —
-  applies to `src/app/**/page.tsx`.
-  Server-only entry, one-screen-per-page, locale setup.
-- **`layout-entry`** —
-  applies to `src/app/**/layout.tsx`.
-  Thin route-boundary adapters, Layout naming.
-- **`app-router-specials`** —
-  applies to `src/app/**/loading.*`, `error.*`,
-  `not-found.*`, `template.*`, `forbidden.*`,
-  `unauthorized.*`, `default.*`, `global-error.*`,
-  `instrumentation.*`, and metadata files.
-  Rules for every App Router boundary file beyond
-  `page.tsx` and `layout.tsx`. Covers server/client
-  requirements, exception conditions, and which files
-  need `<html>`/`<body>`.
-- **`screens`** —
-  applies to `src/modules/**/screens/**`.
-  1:1 page relationship, compose containers only.
-- **`containers`** —
-  applies to `src/modules/**/containers/**`.
-  Required bridge layer, self-contained logic binding.
-- **`components`** —
-  applies to `src/modules/**/components/**` and
-  `src/shared/components/**`.
-  Presenter UI, stateless, prepared props.
-- **`server-actions`** —
-  applies to `src/**/actions/**`.
-  `"use server"`, `actionClient`, `inputSchema`.
-- **`lib-code`** —
-  applies to `src/**/lib/**`.
-  Integrations, service boundaries.
-- **`schemas-types`** —
-  applies to `src/**/schemas/**` and
-  `src/**/types/**`.
-  Zod contracts, TypeScript definitions.
-- **`messages`** —
-  applies to `src/messages/**`.
-  i18n structure, owning-layer paths.
-- **`routes`** —
-  applies to `src/shared/routes/**`.
-  Path builders, locale-neutral.
-- **`hooks-contexts`** —
-  applies to `src/**/hooks/**` and
-  `src/**/contexts/**`.
-  Extracted logic, context objects.
-- **`providers`** —
-  applies to `src/**/providers/**`.
-  Provider components.
-- **`config-constants`** —
-  applies to `src/shared/config/**` and
-  `src/**/constants/**`.
-  Validated env, standalone files.
-- **`styles`** —
-  applies to `src/shared/styles/**` and
-  `**/*.module.css`.
-  Global CSS, CSS Modules.
-- **`layouts`** —
-  applies to `src/shared/layouts/**` and
-  `src/modules/**/layouts/**`.
-  Reusable structural framing.
-- **`utils`** —
-  applies to `src/**/utils/**`.
-  Pure transforms, formatters, guards.
-- **`test-files`** —
-  applies to `**/*.test.ts` and `**/*.test.tsx`.
-  Vitest, Testing Library patterns.
-- **`storybook-stories`** —
-  applies to `**/*.stories.ts` and `**/*.stories.tsx`.
-  Story file patterns, meta structure, server component
-  stories, locale and color mode handling. Stories are
-  only for components (`shared/components/` and
-  `modules/<module>/components/`).
-
-### On-demand skills
-
-These provide deep knowledge when the task needs it.
-
-- **`project-feature-flow`** —
-  building a complete feature end-to-end.
-- **`project-ui-layers`** —
-  working with page/screen/container/component layers.
-- **`project-server-patterns`** —
-  creating or modifying actions or lib code.
-- **`project-data-contracts`** —
-  working with schemas or type definitions.
-- **`project-i18n`** —
-  adding or modifying translations.
-- **`project-structure`** —
-  working with layouts or route helpers.
-- **`project-infrastructure`** —
-  working with config, constants, providers, hooks,
-  contexts, or utils.
-- **`project-styling`** —
-  styling with Chakra UI, CSS, or managing images.
-- **`project-testing`** —
-  writing or fixing tests.
-- **`project-storybook`** —
-  writing component stories, preview setup, mocking
-  server components and next-intl, configuration files,
-  locale and color mode toolbar integration. Stories
-  are only for components — not screens or containers.
-- **`effect`** —
-  Effect TypeScript library for typed error handling.
-  Mandatory in `shared/api/`. Free to use in `shared/lib/`,
-  `modules/*/lib/`, and `utils/` for custom libraries.
-  React rendering layers never import Effect.
-- **`ts-pattern`** —
-  exhaustive pattern matching for complex control flow.
-  Mandatory for 3+ branches and discriminated unions.
-  Replaces switch-case. Works in all layers.
-- **`zag-js`** —
-  Zag.js UI component state machines for React when Ark UI
-  or Chakra UI do not cover the use case. Covers the
-  service-based API pattern (v1.35.3+).
-- **`nuqs`** —
-  type-safe URL search params state management. Covers
-  useQueryState, useQueryStates, createLoader for server-side
-  parsing, typed parsers, and NuqsAdapter setup.
-- **`autonomous-workflow`** —
-  autonomous multi-agent execution protocol. Use when
-  entering autopilot mode or building a complete feature
-  with zero human interaction after plan approval. Defines
-  the 2-touchpoint model, role-to-tool mapping, self-healing
-  loops, retry budgets, and Definition of Done.
-- **`qa-verification`** —
-  E2E browser verification protocol using `agent-browser`.
-  Use after implementing a UI feature to verify it works
-  in a real browser. Covers visual checks, responsive
-  viewports (desktop, tablet, mobile), color schemes,
-  locale switching, console errors, interaction testing,
-  and annotated screenshots.
-
-### Installed skills
-
-External skills in `.agents/skills/` provide additional
-capabilities beyond project conventions.
-
-- **`agent-browser`** —
-  browser automation for navigating pages, filling forms,
-  clicking buttons, taking screenshots, and scraping data.
-- **`find-skills`** —
-  discover and install new agent skills.
-- **`next-best-practices`** —
-  Next.js file conventions, RSC boundaries, data patterns,
-  async APIs, metadata, error handling, and optimization.
-- **`next-cache-components`** —
-  Next.js 16 cache components, PPR, `use cache` directive,
-  `cacheLife`, `cacheTag`, and `updateTag`.
-- **`next-upgrade`** —
-  upgrade Next.js to the latest version following official
-  migration guides and codemods.
-- **`skill-creator`** —
-  guide for creating new skills that extend AI capabilities.
-- **`vercel-composition-patterns`** —
-  Vercel composition patterns for React and Next.js.
-- **`vercel-react-best-practices`** —
-  React and Next.js performance optimization guidelines
-  from Vercel Engineering.
-- **`vitest`** —
-  Vitest testing framework with Jest-compatible API,
-  mocking, coverage, and fixtures.
-
-## Concrete module walkthrough
-
-The `static-pages` module demonstrates the standard
-feature architecture with the required container bridge
-layer.
-
-### File tree
-
-```text
-src/modules/static-pages/
-├── components/
-│   ├── copy-command/
-│   │   ├── constants.ts
-│   │   ├── copy-command.tsx
-│   │   ├── copy-command.test.tsx
-│   │   ├── copy-command.stories.tsx
-│   │   └── index.ts
-│   ├── landing-ai-workflow/
-│   │   ├── constants.ts
-│   │   ├── landing-ai-workflow.tsx
-│   │   ├── landing-ai-workflow.test.tsx
-│   │   ├── landing-ai-workflow.stories.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── landing-copilot/
-│   ├── landing-cli-usage/
-│   ├── landing-cta/
-│   ├── landing-footer/
-│   ├── landing-hero/
-│   ├── landing-strengths/
-│   ├── landing-tech-stack/
-│   ├── marquee-row/
-│   │   ├── marquee-row.tsx
-│   │   ├── marquee-row.module.css
-│   │   ├── marquee-row.test.tsx
-│   │   ├── marquee-row.stories.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── motion-reveal/
-│   ├── motion-stagger/
-│   ├── page-chrome/
-│   └── scroll-indicator/
-├── containers/
-│   ├── container-copy-command/
-│   │   ├── container-copy-command.tsx
-│   │   ├── container-copy-command.test.tsx
-│   │   └── index.ts
-│   ├── container-landing-hero/
-│   │   ├── container-landing-hero.tsx
-│   │   ├── container-landing-hero.test.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── container-page-chrome/
-│   │   ├── container-page-chrome.tsx
-│   │   ├── container-page-chrome.test.tsx
-│   │   ├── index.ts
-│   │   └── types.ts
-│   ├── container-vibe-background/
-│   │   ├── container-vibe-background.tsx
-│   │   ├── container-vibe-background.test.tsx
-│   │   └── index.ts
-│   ├── container-vibe-controls/
-│   │   ├── container-vibe-controls.tsx
-│   │   ├── container-vibe-controls.test.tsx
-│   │   └── index.ts
-│   └── container-welcome-page/
-│       ├── container-welcome-page.tsx
-│       ├── container-welcome-page.test.tsx
-│       ├── index.ts
-│       └── types.ts
-└── screens/
-    └── screen-welcome/
-        ├── screen-welcome.tsx
-        ├── screen-welcome.test.tsx
-        ├── index.ts
-        └── types.ts
-```
-
-### How the layers connect
-
-The route entry is thin — it reads the locale and
-delegates to the screen:
-
-```tsx
-// src/app/[locale]/page.tsx
-import "server-only";
-
-import { setRequestLocale } from "next-intl/server";
-import { use } from "react";
-
-import { ScreenWelcome } from "@/modules/static-pages/screens/screen-welcome";
-
-interface PageProps {
-  params: Promise<{ locale: string }>;
-}
-
-export default function Page({ params }: Readonly<PageProps>) {
-  const { locale } = use(params);
-  setRequestLocale(locale);
-
-  return <ScreenWelcome locale={locale} />;
-}
-```
-
-The screen composes exactly one container:
-
-```tsx
-// screen-welcome/screen-welcome.tsx
-import "server-only";
-
-import { ContainerWelcomePage } from "@/modules/static-pages/containers/container-welcome-page";
-
-import type { ScreenWelcomeProps } from "./types";
-
-export async function ScreenWelcome({ locale }: Readonly<ScreenWelcomeProps>) {
-  return <ContainerWelcomePage locale={locale} />;
-}
-```
-
-The container is the required bridge layer — it binds
-presenter components together and composes sub-containers:
-
-```tsx
-// container-welcome-page/container-welcome-page.tsx
-import "server-only";
-
-import { Box } from "@chakra-ui/react";
-
-import { LandingAiWorkflow } from "@/modules/static-pages/components/landing-ai-workflow";
-import { LandingCliUsage } from "@/modules/static-pages/components/landing-cli-usage";
-import { LandingCopilot } from "@/modules/static-pages/components/landing-copilot";
-import { LandingCta } from "@/modules/static-pages/components/landing-cta";
-import { LandingFooter } from "@/modules/static-pages/components/landing-footer";
-import { LandingStrengths } from "@/modules/static-pages/components/landing-strengths";
-import { LandingTechStack } from "@/modules/static-pages/components/landing-tech-stack";
-import { ContainerLandingHero } from "@/modules/static-pages/containers/container-landing-hero";
-import { ContainerPageChrome } from "@/modules/static-pages/containers/container-page-chrome";
-import { VibeProvider } from "@/modules/static-pages/providers/vibe-provider";
-
-import type { ContainerWelcomePageProps } from "./types";
-
-export async function ContainerWelcomePage({
-  locale,
-}: Readonly<ContainerWelcomePageProps>) {
-  return (
-    <VibeProvider>
-      <Box as="main" position="relative">
-        <ContainerPageChrome locale={locale} />
-        <ContainerLandingHero locale={locale} />
-        <LandingStrengths locale={locale} />
-        <LandingAiWorkflow locale={locale} />
-        <LandingCopilot locale={locale} />
-        <LandingCliUsage locale={locale} />
-        <LandingTechStack locale={locale} />
-        <LandingCta locale={locale} />
-        <LandingFooter locale={locale} />
-      </Box>
-    </VibeProvider>
-  );
-}
-```
-
-Key patterns demonstrated:
-
-- **1:1 page-to-screen** — `page.tsx` returns exactly one
-  `ScreenWelcome`
-- **screen → container → component** — the screen
-  composes a container, the container binds presenter
-  components and sub-containers
-- **server-only throughout** — `page.tsx`, screen, and
-  container all use `import "server-only"`
-- **container as required bridge** — even for a static
-  page, the container layer is present
-- **containers compose containers** — `ContainerWelcomePage`
-  mounts `ContainerPageChrome` and `ContainerLandingHero`;
-  each sub-container owns its own concern independently
-- **leaf folder convention** — each component has its own
-  folder with implementation, types, index re-export, and
-  colocated tests
-- **named exports** — every component uses named exports;
-  only `page.tsx` uses `export default` as required by
-  Next.js
-- **`@/` imports** — cross-folder imports use the path
-  alias
-- **Readonly props** — props are wrapped with
-  `Readonly<...>` at the boundary
+Before implementing, check which patterns apply:
+
+### Data Layer
+
+| If you need to... | Use |
+|-------------------|-----|
+| Define database table | Entity (`shared/entities/`) |
+| Validate API/form input | Zod Schema (`schemas/`) |
+| CRUD operations | Repository |
+| Always run on create/update/delete | Entity Hooks (`hooks.ts`) |
+| Reusable query filters | Query Scopes (`scopes.ts`) |
+
+### Business Logic
+
+| If you need to... | Use |
+|-------------------|-----|
+| Orchestrate business logic | Service |
+| Handle UI mutation | Server Action |
+| Expose external endpoint | API Route Handler |
+| Long-running task (>10s) | Background Job |
+| Resource authorization | Policy |
+
+### Data Transformation
+
+| If you need to... | Use |
+|-------------------|-----|
+| Format entity for API response | Presenter |
+| Hide sensitive fields | Presenter |
+| Multi-step form validation | Form Object |
+| Cross-field validation | Form Object |
+| Simple field validation | Zod Schema only |
+
+### State Management
+
+| If you need to... | Use |
+|-------------------|-----|
+| Boolean toggle | `useState` |
+| 2-3 related values | `useReducer` |
+| 4+ states with transitions | State Machine (XState) |
+| Standard UI primitive (menu, dialog) | UI State Library (Zag.js) |
+| URL-persisted state (filters, pagination) | URL State Library (nuqs) |
+
+### Communication
+
+| If you need to... | Use |
+|-------------------|-----|
+| Send transactional email | Email Service + Job |
+| Server -> client updates only | SSE |
+| Bi-directional / presence / private channels | WebSocket Service |
+
+### UI Components
+
+| If you need to... | Use |
+|-------------------|-----|
+| Page-level composition | Screen (server) |
+| Data fetching + client binding | Container (client) |
+| Pure UI rendering | Component (server) |
+| Used by 2+ modules | `shared/components/` |
+| Used by 1 module | `modules/<name>/components/` |
+
+### Quick Decision Shortcuts
+
+- **Returning entity from API?** → Use Presenter
+- **Form with steps or complex validation?** → Use Form Object
+- **More than 3 states?** → Consider State Machine
+- **Same filter in 2+ places?** → Extract to Query Scope
+- **Side effect on every save?** → Use Entity Hook
+- **Task takes >10 seconds?** → Use Background Job
+
+### Folder Placement Decision Tree
+
+When creating new code, ask in order:
+
+| Question | If Yes → |
+|----------|----------|
+| Does it render UI (JSX)? | `components/` |
+| Is it a React hook? | `hooks/` |
+| Is it a React context/provider? | `contexts/` or `providers/` |
+| Does it wrap an external service/API? | `lib/` |
+| Is it domain configuration (variants, presets, mappings)? | `lib/` |
+| Is it a pure stateless utility function? | `utils/` |
+| Is it a constant value (no logic)? | `constants/` (flat file) |
+| Is it a TypeScript type/interface? | `types/` (flat file) |
+
+**Key distinctions:**
+
+- `lib/` = Has structure, may have state, wraps complexity, domain-specific
+- `utils/` = Pure functions, stateless, generic, could be in any project
+- `constants/` = Just values, no functions, flat files only
+- `components/` = Must return JSX
+
+## Rails to Next.js Pattern Mapping
+
+| Rails Pattern | Next.js Equivalent | Location |
+|---------------|-------------------|----------|
+| Model | Entity (Drizzle) | `shared/entities/<name>/` |
+| Model callbacks | Entity Hooks | `shared/entities/<name>/hooks.ts` |
+| Model scopes | Query Scopes | `shared/entities/<name>/scopes.ts` |
+| Validations | Zod Schema | `modules/<name>/schemas/` |
+| Controller | Server Action | `modules/<name>/actions/` |
+| Service Object | Service (Effect) | `modules/<name>/services/` |
+| Repository | Repository (Effect + Drizzle) | `modules/<name>/repositories/` |
+| Serializer | Presenter | `modules/<name>/presenters/` |
+| Form Object | Form | `modules/<name>/forms/` |
+| Policy (Pundit) | Policy (Effect) | `modules/<name>/policies/` |
+| Mailer (ActionMailer) | Email Service | `shared/services/email/` |
+| Channel (ActionCable) | Realtime Service | `shared/services/realtime/` |
+| Background Job | Background Job | `modules/<name>/jobs/` |
+| Migration | Database Migration | `shared/db/migrations/` |
+| Seeds | Seeds | `shared/db/seeds/` |
+| Factory (FactoryBot) | Factory | `shared/factories/` |
+
+### Pattern Details
+
+- **Entity Hooks**: Lifecycle callbacks (`beforeCreate`, `afterCreate`, `beforeUpdate`, `afterUpdate`, `beforeDelete`, `afterDelete`)
+- **Query Scopes**: Composable WHERE conditions (`active()`, `withRole(role)`, `createdAfter(date)`)
+- **Presenters**: Transform entities to JSON for API responses (`toJSON()`, `toList()`, `toOption()`)
+- **Forms**: Multi-step form validation and entity transformation (`schema`, `validateStep()`, `toCreateData()`)
+- **Realtime**: SSE for simple cases, WebSocket for bi-directional communication
