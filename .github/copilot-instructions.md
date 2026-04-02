@@ -92,3 +92,14 @@ src/
 3. **No cross-module imports**: Move shared code to `shared/`
 4. **Entities in shared only**: Never in modules
 5. **Tests required**: For all code except entities
+
+## Zero Tolerance Policy
+
+**Target: 0 warnings, 0 errors — always.**
+
+HARD rules (no exceptions):
+- **No `any` type** — import types from libraries, use `unknown` + type guards
+- **No eslint-disable as first resort** — fix root cause or add config exception
+- **No type assertions that break lint** — use proper TypeScript patterns
+
+See [AGENTS.md](../AGENTS.md) for full Zero Tolerance Policy.

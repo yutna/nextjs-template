@@ -74,3 +74,44 @@ export const createUser = (
 - Type assertions without validation
 - Inline type definitions in function params
 - Generic `utils.ts` or `helpers.ts` files
+
+## Zero Tolerance Policy (HARD Rules)
+
+See [AGENTS.md](../../AGENTS.md) for full policy. Summary:
+
+### No `any` Type — No Exceptions
+
+```typescript
+// FORBIDDEN
+const offset = value as any;
+function process(data: any) { ... }
+
+// CORRECT - import from library
+import type { UseScrollOptions } from "motion/react";
+type ScrollOffset = UseScrollOptions["offset"];
+
+// CORRECT - use unknown + type guard
+function process(data: unknown) {
+  if (isValidData(data)) { ... }
+}
+```
+
+### No eslint-disable as First Resort
+
+Fix the root cause. If truly needed, add file pattern to `eslint.config.mjs`.
+
+### No Type Assertions That Break Lint
+
+```typescript
+// WRONG - breaks section-order lint
+const ref = useRef(null) as React.RefObject<HTMLElement>;
+
+// CORRECT
+const ref = useRef<HTMLElement | null>(null);
+```
+
+### Signature Change Protocol
+
+1. `grep -rn "functionName(" src/` — find all usages
+2. Update all callers in same commit
+3. Run: `npm run lint && npm run check-types && npm test`
