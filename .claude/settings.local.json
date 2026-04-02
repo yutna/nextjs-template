@@ -11,7 +11,8 @@
       "Bash(npx -y @anthropic/mcp-server-playwright --help)",
       "Bash(npx -y @anthropic/mcp-server-fetch --help)",
       "Bash(npm search:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node:*)"
     ]
   }
 }

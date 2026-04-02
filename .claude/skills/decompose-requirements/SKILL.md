@@ -1,3 +1,8 @@
+---
+name: decompose-requirements
+description: Decompose large requirements into phased task files that fit AI context windows using Gherkin + State Machine approach.
+---
+
 # Skill: Decompose Requirements
 
 Decompose requirements into phased task files using Gherkin + State Machine approach.
@@ -12,12 +17,13 @@ Decompose requirements into phased task files using Gherkin + State Machine appr
 
 ## Approach: Gherkin-First + State Machine
 
-| Tool | Purpose |
-|------|---------|
+| Tool              | Purpose                                           |
+| ----------------- | ------------------------------------------------- |
 | **State Machine** | See ALL possible states (catches what you forgot) |
-| **Gherkin** | Describe behavior for each state/transition |
+| **Gherkin**       | Describe behavior for each state/transition       |
 
 They complement each other:
+
 - Gherkin might miss states you didn't write scenarios for
 - State machine forces you to see ALL states visually
 
@@ -27,15 +33,15 @@ They complement each other:
 
 Scan for vague terms before proceeding:
 
-| Vague | Fix |
-|-------|-----|
-| fast, slow | Define in ms |
-| secure | Specify standard |
-| easy, simple | Define criteria |
-| some, many | Exact number |
-| etc | List all |
-| handle, process | Specific action |
-| automatically | Define logic |
+| Vague           | Fix              |
+| --------------- | ---------------- |
+| fast, slow      | Define in ms     |
+| secure          | Specify standard |
+| easy, simple    | Define criteria  |
+| some, many      | Exact number     |
+| etc             | List all         |
+| handle, process | Specific action  |
+| automatically   | Define logic     |
 
 **If found:** Ask user to clarify.
 
@@ -67,12 +73,12 @@ stateDiagram-v2
 
 ### Common Missing States
 
-| Feature | Often Forgotten |
-|---------|-----------------|
-| Auth | locked, suspended, pending |
-| Payment | pending, failed, refunded |
-| Order | cancelled, partial, on_hold |
-| Content | draft, scheduled, archived |
+| Feature | Often Forgotten             |
+| ------- | --------------------------- |
+| Auth    | locked, suspended, pending  |
+| Payment | pending, failed, refunded   |
+| Order   | cancelled, partial, on_hold |
+| Content | draft, scheduled, archived  |
 
 ---
 
@@ -114,12 +120,12 @@ Feature: [Name]
 
 ### Priority Tags
 
-| Tag | Meaning |
-|-----|---------|
-| `@must` | Cannot launch without |
-| `@should` | Important, expected |
-| `@could` | Nice to have |
-| `@wont` | Explicitly excluded |
+| Tag       | Meaning               |
+| --------- | --------------------- |
+| `@must`   | Cannot launch without |
+| `@should` | Important, expected   |
+| `@could`  | Nice to have          |
+| `@wont`   | Explicitly excluded   |
 
 ### Coverage Checklist
 
@@ -136,9 +142,9 @@ Feature: [Name]
 
 ### State Machine → Gherkin
 
-| Transition | Scenario |
-|------------|----------|
-| `A --> B: trigger` | "Successful [trigger]" |
+| Transition          | Scenario                  |
+| ------------------- | ------------------------- |
+| `A --> B: trigger`  | "Successful [trigger]"    |
 | `A --> Error: fail` | "[trigger] fails when..." |
 
 ---
@@ -180,6 +186,7 @@ docs/tasks/
 **Input:** "User authentication"
 
 **State Machine:**
+
 ```
 Anonymous → Pending (register)
 Pending → Active (verify)
@@ -190,6 +197,7 @@ Active → Anonymous (logout)
 ```
 
 **Gherkin:**
+
 ```gherkin
 @must Scenario: Successful registration
 @must Scenario: Successful login
@@ -199,6 +207,7 @@ Active → Anonymous (logout)
 ```
 
 **Output:**
+
 ```
 phase-01-foundation.md  # User, Session entities
 phase-02-registration.md # Register + verify
