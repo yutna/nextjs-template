@@ -430,6 +430,35 @@ shared/
 | `lib/` | Domain implementations, wrappers, integrations | `lib/stripe/`, `lib/analytics/` |
 | `utils/` | Pure, stateless utility functions | `format-thai-currency.ts`, `transform-date.ts` |
 
+### lib/ Effect Usage
+
+| lib/ Type | Use Effect? | Used By | Pattern |
+|-----------|-------------|---------|---------|
+| **Backend integrations** | Yes | services, repositories, jobs | `Effect.Effect<A, E, R>` |
+| **Frontend utilities** | No | components, hooks, SWR | `Promise<T>` / sync |
+| **Infrastructure** | No | everything | Plain exports |
+
+**Backend lib/ (Effect):**
+```typescript
+// shared/lib/stripe/stripe-client.ts
+export class StripeClient extends Context.Tag("StripeClient")<...>() {}
+export const StripeClientLive = Layer.succeed(StripeClient, { ... });
+```
+
+**Frontend lib/ (Promise-based):**
+```typescript
+// shared/lib/fetcher/fetch-client.ts - for SWR integration
+export async function fetchClient<T>(options): Promise<T> { ... }
+```
+
+**Infrastructure (Plain):**
+```typescript
+// shared/lib/logger/logger.ts
+export const logger = pino({ ... });
+```
+
+**Rule:** If lib/ is consumed by services/repositories/jobs → Effect. If consumed by React components/hooks → Promise.
+
 ### File Structure Conventions
 
 #### Naming Patterns
