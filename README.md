@@ -1,5 +1,7 @@
 # Vibe Next Template
 
+[![CI](https://github.com/yutna/nextjs-template/actions/workflows/ci.yml/badge.svg)](https://github.com/yutna/nextjs-template/actions/workflows/ci.yml)
+
 > AI‑Powered Code. Human‑Level Control.
 
 Built for developers and teams shipping polished apps with confidence.
@@ -19,24 +21,22 @@ architecture, strict TypeScript, and production-ready UI foundations.
   80% coverage
 - 🔍 **Linting** — [ESLint][eslint] + [Stylelint][stylelint] + custom
   project-specific rules
-- 🤖 **AI-ready** — Optimized for both GitHub Copilot and Claude Code
+- 🤖 **AI-ready** — Optimized for both [GitHub Copilot][copilot] and [Claude Code][claude-code]
 
 ## Quick Start
 
-Choose your preferred AI coding assistant:
-
 ```bash
-# For GitHub Copilot (main branch)
 npx create-next-app --example https://github.com/yutna/nextjs-template my-app
-
-# For Claude Code (claude-workflow branch)
-npx create-next-app --example https://github.com/yutna/nextjs-template/tree/claude-workflow my-app
 ```
 
-| Branch | AI Assistant | Configuration |
-| ------ | ------------ | ------------- |
-| `main` | [GitHub Copilot][copilot] | `AGENTS.md` + `.github/instructions/` |
-| `claude-workflow` | [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
+### AI Assistant Configuration
+
+Both AI assistants are supported out of the box:
+
+| AI Assistant | Configuration |
+| ------------ | ------------- |
+| [GitHub Copilot][copilot] | `AGENTS.md` + `.github/instructions/` |
+| [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
 
 ### Prerequisites
 
