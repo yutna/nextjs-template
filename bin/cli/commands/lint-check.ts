@@ -373,7 +373,7 @@ function classifyLine(line: string): null | number {
     return SectionKind.AsyncHooks;
   }
 
-  if (/\buse[A-Z]\w*\(/.test(trimmed)) {
+  if (/\buse[A-Z]\w*(?:<[^>]*>)?\(/.test(trimmed)) {
     return SectionKind.Hooks;
   }
 

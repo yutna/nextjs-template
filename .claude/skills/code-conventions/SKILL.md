@@ -240,6 +240,28 @@ import { something } from "@/modules/other-module/services/some-service";
 3. **No inline types** → put in `types.ts`
 4. **helpers.ts is internal** → NOT exported via index.ts
 
+## Folder Placement Decision Tree
+
+When creating new code, ask in order:
+
+| Question | If Yes → |
+|----------|----------|
+| Does it render UI (JSX)? | `components/` |
+| Is it a React hook? | `hooks/` |
+| Is it a React context/provider? | `contexts/` or `providers/` |
+| Does it wrap an external service/API? | `lib/` |
+| Is it domain configuration (variants, presets, mappings)? | `lib/` |
+| Is it a pure stateless utility function? | `utils/` |
+| Is it a constant value (no logic)? | `constants/` (flat file) |
+| Is it a TypeScript type/interface? | `types/` (flat file) |
+
+**Key distinctions:**
+
+- `lib/` = Has structure, may have state, wraps complexity, domain-specific
+- `utils/` = Pure functions, stateless, generic, could be in any project
+- `constants/` = Just values, no functions, flat files only
+- `components/` = Must return JSX
+
 ## Common Mistakes to Avoid
 
 1. ❌ Creating `utils.ts` or `helpers.ts` at module root
@@ -250,3 +272,5 @@ import { something } from "@/modules/other-module/services/some-service";
 6. ❌ Writing backend code without Effect
 7. ❌ Creating barrel exports in grouping folders
 8. ❌ Cross-module imports
+9. ❌ Putting presets/variants/mappings in `components/` instead of `lib/`
+10. ❌ Putting domain wrappers in `utils/` instead of `lib/`

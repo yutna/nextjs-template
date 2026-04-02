@@ -317,6 +317,19 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
+  // Motion components — require inline style for MotionValue objects
+  // (motion library design: animated values must be passed via style prop)
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/components/motion-*/**",
+      "src/shared/lib/motion/**",
+    ],
+    rules: {
+      "project/no-inline-style": "off",
+    },
+  },
+  // --------------------------------------------------
   // Infrastructure — allow process.env in bootstrap code
   // --------------------------------------------------
   {

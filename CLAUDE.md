@@ -506,3 +506,192 @@ The index shows:
    - Check `patternGraph.edges` for dependencies
    - Check `patternGraph.workflows` for common combinations
    - Ensure required dependencies exist first
+
+## Workflow Best Practices
+
+### One Component Per File
+
+Each component file should export only ONE component. If a file exports multiple components:
+- Create a separate folder for each component
+- Each component gets its own `types.ts`, `constants.ts`, tests, and stories
+
+**Bad:**
+```
+motion-scroll/
+├── motion-scroll.tsx  # exports MotionScroll AND MotionParallax ❌
+```
+
+**Good:**
+```
+motion-scroll/
+├── motion-scroll.tsx  # exports only MotionScroll ✓
+motion-parallax/
+├── motion-parallax.tsx  # exports only MotionParallax ✓
+```
+
+### Testing Best Practices
+
+#### Read Source Before Writing Tests
+Always read the actual implementation before writing tests. Don't assume values.
+
+**Bad:** Assuming `scale: 0.8` without reading the source
+**Good:** Read `variants.ts` first, then write tests with actual values
+
+#### Test File Per Source File
+The project requires individual test files per source file, not combined test files.
+
+**Bad:** `motion.test.ts` testing timing, variants, and reduced-motion
+**Good:** `timing.test.ts`, `variants.test.ts`, `reduced-motion.test.ts`
+
+#### Motion Component Test Environment
+When testing motion/framer-motion components:
+
+```typescript
+beforeEach(() => {
+  // Suppress framer-motion warnings in test environment
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+```
+
+Don't override the global `IntersectionObserver` stub - the test setup already provides one.
+
+### Hook Migration Checklist
+
+When replacing a React hook (e.g., `useState` → `useSyncExternalStore`):
+
+1. Update the import statement
+2. **Rewrite the hook implementation** (don't just change the import)
+3. Update any dependent code that uses the old hook pattern
+
+### Prop Removal Checklist
+
+When removing props from a component:
+
+1. Remove from component file (`.tsx`)
+2. Remove from `types.ts`
+3. Remove from `constants.ts` (if default values exist)
+4. Update tests to not use removed props
+5. Update stories to not use removed props
+
+### ESLint Rules Apply Everywhere
+
+Lint rules apply to ALL code including:
+- Storybook stories (use `useImmer` instead of `useState`)
+- Test files
+- Demo/example code
+
+The only exceptions are explicit `eslint-disable` comments with justification.
+
+### SSR-Safe Hooks
+
+When creating hooks that use browser APIs:
+
+```typescript
+function getSnapshot(): boolean {
+  // Guard against SSR and test environments
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+  return window.matchMedia(QUERY).matches;
+}
+```
+
+## Zero Tolerance Policy
+
+**Target: 0 warnings, 0 errors — always.** This applies to lint, type-check, and editor warnings.
+
+### HARD Rules (No Exceptions)
+
+#### No `any` Type
+
+The `any` type is **forbidden** in this project. No exceptions.
+
+| Situation | Wrong | Right |
+|-----------|-------|-------|
+| Unknown library type | `as any` | Import type from library: `UseScrollOptions["offset"]` |
+| Complex generic | `any` | Use `unknown` + type guards |
+| Quick fix | `// @ts-ignore` | Find and use the proper type |
+
+```typescript
+// FORBIDDEN - will fail lint
+const offset = value as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+// CORRECT - import from library
+import type { UseScrollOptions } from "motion/react";
+type ScrollOffset = UseScrollOptions["offset"];
+```
+
+#### No eslint-disable as First Resort
+
+Never add `eslint-disable` to bypass a rule. Fix the root cause.
+
+| Problem | Wrong | Right |
+|---------|-------|-------|
+| Type mismatch | `// eslint-disable @typescript-eslint/...` | Import proper types from library |
+| Inline style needed | `// eslint-disable project/no-inline-style` | Add file pattern to `eslint.config.mjs` |
+| Unused variable | `// eslint-disable no-unused-vars` | Remove the variable |
+
+**When eslint-disable IS allowed:**
+- Single exceptional line with clear `-- reason` comment
+- After confirming no config-level solution exists
+- Approved in code review
+
+#### No Type Assertions That Break Other Rules
+
+```typescript
+// WRONG - breaks section-order lint rule (regex can't match generic)
+const ref = useRef(null) as React.RefObject<HTMLElement>;
+
+// CORRECT - proper TypeScript that lint rules understand
+const ref = useRef<HTMLElement | null>(null);
+```
+
+### Signature Change Protocol
+
+When changing function signatures:
+
+1. **Find all usages first:**
+   ```bash
+   grep -rn "functionName(" src/
+   ```
+
+2. **Update all callers in same commit**
+
+3. **Run full checks after:**
+   ```bash
+   npm run lint && npm run check-types && npm test
+   ```
+
+### ESLint Config Over Inline Disables
+
+For legitimate technical requirements (not hacks), add exceptions in `eslint.config.mjs`:
+
+```javascript
+// eslint.config.mjs
+{
+  files: ["src/shared/components/motion-*/**"],
+  rules: {
+    "project/no-inline-style": "off", // Motion requires style prop for MotionValue
+  },
+},
+```
+
+This is transparent, documented, and applies consistently to all files matching the pattern.
+
+### Lint Rule Maintenance
+
+If a lint rule doesn't support valid TypeScript patterns:
+
+1. **Fix the rule** (in `bin/cli/commands/lint-check.ts` or `eslint/`)
+2. **Don't work around it** with type assertions or disables
+
+Example: Section-order regex updated to support generics:
+```javascript
+// Before: /\buse[A-Z]\w*\(/  — didn't match useRef<T>(
+// After:  /\buse[A-Z]\w*(?:<[^>]*>)?\(/  — matches both
+```

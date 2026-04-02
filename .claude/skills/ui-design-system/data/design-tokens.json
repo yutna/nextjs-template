@@ -1,0 +1,197 @@
+{
+  "spacing": {
+    "section": {
+      "sm": {
+        "chakra": { "py": 12 },
+        "use": "Compact sections, mobile"
+      },
+      "md": {
+        "chakra": { "py": 16 },
+        "use": "Standard sections"
+      },
+      "lg": {
+        "chakra": { "py": 24 },
+        "use": "Hero sections, emphasis"
+      }
+    },
+    "container": {
+      "sm": {
+        "chakra": { "px": 4 },
+        "use": "Mobile padding"
+      },
+      "md": {
+        "chakra": { "px": 6 },
+        "use": "Tablet padding"
+      },
+      "lg": {
+        "chakra": { "px": 8 },
+        "use": "Desktop padding"
+      }
+    },
+    "stack": {
+      "tight": {
+        "chakra": { "gap": 2 },
+        "use": "Related items, form fields"
+      },
+      "normal": {
+        "chakra": { "gap": 4 },
+        "use": "Standard spacing"
+      },
+      "loose": {
+        "chakra": { "gap": 8 },
+        "use": "Section separation"
+      }
+    },
+    "grid": {
+      "tight": {
+        "chakra": { "gap": 4 },
+        "use": "Compact grids"
+      },
+      "normal": {
+        "chakra": { "gap": 6 },
+        "use": "Standard grids"
+      },
+      "loose": {
+        "chakra": { "gap": 8 },
+        "use": "Feature grids, emphasis"
+      }
+    }
+  },
+  "typography": {
+    "hero": {
+      "chakra": {
+        "fontSize": { "base": "4xl", "md": "5xl", "lg": "6xl" },
+        "fontWeight": "bold",
+        "lineHeight": "tight"
+      },
+      "use": "Hero headlines, landing page main text"
+    },
+    "pageTitle": {
+      "chakra": {
+        "fontSize": { "base": "3xl", "md": "4xl" },
+        "fontWeight": "bold",
+        "lineHeight": "tight"
+      },
+      "use": "Page titles, section headers"
+    },
+    "sectionTitle": {
+      "chakra": {
+        "fontSize": { "base": "2xl", "md": "3xl" },
+        "fontWeight": "semibold"
+      },
+      "use": "Section titles"
+    },
+    "cardTitle": {
+      "chakra": {
+        "fontSize": { "base": "lg", "md": "xl" },
+        "fontWeight": "semibold"
+      },
+      "use": "Card titles, list item titles"
+    },
+    "body": {
+      "chakra": {
+        "fontSize": { "base": "md", "md": "lg" },
+        "lineHeight": "relaxed"
+      },
+      "use": "Body text, descriptions"
+    },
+    "small": {
+      "chakra": {
+        "fontSize": "sm",
+        "color": "fg.muted"
+      },
+      "use": "Helper text, captions, metadata"
+    }
+  },
+  "elevation": {
+    "flat": {
+      "chakra": { "shadow": "none" },
+      "use": "No elevation, inline elements"
+    },
+    "raised": {
+      "chakra": { "shadow": "sm" },
+      "use": "Cards, slight lift"
+    },
+    "floating": {
+      "chakra": { "shadow": "lg" },
+      "use": "Dropdowns, popovers, hover states"
+    },
+    "overlay": {
+      "chakra": { "shadow": "2xl" },
+      "use": "Modals, dialogs, overlays"
+    }
+  },
+  "borders": {
+    "subtle": {
+      "chakra": {
+        "borderWidth": "1px",
+        "borderColor": "border.muted"
+      },
+      "use": "Subtle separation"
+    },
+    "default": {
+      "chakra": {
+        "borderWidth": "1px",
+        "borderColor": "border"
+      },
+      "use": "Standard borders"
+    },
+    "emphasis": {
+      "chakra": {
+        "borderWidth": "2px",
+        "borderColor": "brand.500"
+      },
+      "use": "Selected states, emphasis"
+    }
+  },
+  "radius": {
+    "none": {
+      "chakra": { "borderRadius": "none" },
+      "use": "Sharp corners"
+    },
+    "sm": {
+      "chakra": { "borderRadius": "sm" },
+      "use": "Subtle rounding, buttons"
+    },
+    "md": {
+      "chakra": { "borderRadius": "md" },
+      "use": "Cards, inputs"
+    },
+    "lg": {
+      "chakra": { "borderRadius": "lg" },
+      "use": "Large cards, images"
+    },
+    "full": {
+      "chakra": { "borderRadius": "full" },
+      "use": "Pills, avatars, badges"
+    }
+  },
+  "containerWidths": {
+    "prose": {
+      "chakra": { "maxW": "65ch" },
+      "use": "Long-form text content"
+    },
+    "form": {
+      "chakra": { "maxW": "lg" },
+      "use": "Forms, auth pages"
+    },
+    "content": {
+      "chakra": { "maxW": "container.md" },
+      "use": "Standard content pages"
+    },
+    "wide": {
+      "chakra": { "maxW": "container.xl" },
+      "use": "Wide layouts, dashboards"
+    },
+    "full": {
+      "chakra": { "maxW": "full" },
+      "use": "Full-width sections"
+    }
+  },
+  "breakpoints": {
+    "mobile": "< 768px (base)",
+    "tablet": ">= 768px (md)",
+    "desktop": ">= 1024px (lg)",
+    "wide": ">= 1280px (xl)"
+  }
+}

@@ -188,6 +188,71 @@ Rollback trigger:
 - No delivery before applicable gates and verification pass.
 - No silent architecture, convention, or style changes.
 
+## Zero Tolerance Policy
+
+**Target: 0 warnings, 0 errors — always.** This applies to lint, type-check, and editor warnings.
+
+### HARD Rules (No Exceptions)
+
+#### No `any` Type
+
+The `any` type is **forbidden**. No exceptions.
+
+| Situation | Wrong | Right |
+|-----------|-------|-------|
+| Unknown library type | `as any` | Import type from library |
+| Complex generic | `any` | Use `unknown` + type guards |
+| Quick fix | `// @ts-ignore` | Find the proper type |
+
+#### No eslint-disable as First Resort
+
+Never add `eslint-disable` to bypass a rule. Fix the root cause.
+
+| Problem | Wrong | Right |
+|---------|-------|-------|
+| Type mismatch | `// eslint-disable ...` | Import proper types |
+| Rule violation | Inline disable | Fix code or update config |
+| Unused variable | `// eslint-disable no-unused-vars` | Remove the variable |
+
+**Allowed only when:**
+- Single exceptional line with clear `-- reason` comment
+- After confirming no config-level solution exists
+
+#### No Type Assertions That Break Lint
+
+```typescript
+// WRONG - breaks section-order lint (regex can't match generic)
+const ref = useRef(null) as React.RefObject<HTMLElement>;
+
+// CORRECT - proper TypeScript
+const ref = useRef<HTMLElement | null>(null);
+```
+
+### ESLint Config Over Inline Disables
+
+For legitimate technical requirements, add exceptions in `eslint.config.mjs`:
+
+```javascript
+{
+  files: ["src/shared/components/motion-*/**"],
+  rules: {
+    "project/no-inline-style": "off",
+  },
+},
+```
+
+### Signature Change Protocol
+
+When changing function signatures:
+
+1. Find all usages: `grep -rn "functionName(" src/`
+2. Update all callers in same commit
+3. Run: `npm run lint && npm run check-types && npm test`
+
+### Lint Rule Maintenance
+
+If a lint rule doesn't support valid TypeScript patterns, **fix the rule** — don't work around it.
+
 ## Definition of done
 
 Work is done only when all applicable conditions are true:
@@ -378,6 +443,28 @@ Before implementing, check which patterns apply:
 - **Same filter in 2+ places?** → Extract to Query Scope
 - **Side effect on every save?** → Use Entity Hook
 - **Task takes >10 seconds?** → Use Background Job
+
+### Folder Placement Decision Tree
+
+When creating new code, ask in order:
+
+| Question | If Yes → |
+|----------|----------|
+| Does it render UI (JSX)? | `components/` |
+| Is it a React hook? | `hooks/` |
+| Is it a React context/provider? | `contexts/` or `providers/` |
+| Does it wrap an external service/API? | `lib/` |
+| Is it domain configuration (variants, presets, mappings)? | `lib/` |
+| Is it a pure stateless utility function? | `utils/` |
+| Is it a constant value (no logic)? | `constants/` (flat file) |
+| Is it a TypeScript type/interface? | `types/` (flat file) |
+
+**Key distinctions:**
+
+- `lib/` = Has structure, may have state, wraps complexity, domain-specific
+- `utils/` = Pure functions, stateless, generic, could be in any project
+- `constants/` = Just values, no functions, flat files only
+- `components/` = Must return JSX
 
 ## Rails to Next.js Pattern Mapping
 

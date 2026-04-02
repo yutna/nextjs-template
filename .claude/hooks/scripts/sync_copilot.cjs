@@ -52,14 +52,14 @@ function syncSkillSymlinks() {
 
   if (!fs.existsSync(claudeSkillsDir)) {
     verbose("No .claude/skills/ directory found");
-    return { ok: true, created: 0, missing: 0 };
+    return { created: 0, missing: 0, ok: true };
   }
 
   // Ensure .github/skills exists
   if (!fs.existsSync(githubSkillsDir)) {
     if (CHECK_ONLY) {
       error(".github/skills/ directory missing");
-      return { ok: false, created: 0, missing: 1 };
+      return { created: 0, missing: 1, ok: false };
     }
     fs.mkdirSync(githubSkillsDir, { recursive: true });
     verbose("Created .github/skills/");
@@ -113,7 +113,7 @@ function syncSkillSymlinks() {
 
   if (CHECK_ONLY && missing > 0) {
     error(`${missing} skill symlinks missing or invalid`);
-    return { ok: false, created, missing };
+    return { created, missing, ok: false };
   }
 
   if (created > 0) {
@@ -122,7 +122,7 @@ function syncSkillSymlinks() {
     log(`  All ${skills.length} symlinks valid`);
   }
 
-  return { ok: true, created, missing };
+  return { created, missing, ok: true };
 }
 
 // ============================================================================
@@ -180,14 +180,14 @@ function syncCommandsToPrompts() {
 
   if (!fs.existsSync(claudeCommandsDir)) {
     verbose("No .claude/commands/ directory found");
-    return { ok: true, updated: 0, missing: 0 };
+    return { missing: 0, ok: true, updated: 0 };
   }
 
   // Ensure .github/prompts exists
   if (!fs.existsSync(githubPromptsDir)) {
     if (CHECK_ONLY) {
       error(".github/prompts/ directory missing");
-      return { ok: false, updated: 0, missing: 1 };
+      return { missing: 1, ok: false, updated: 0 };
     }
     fs.mkdirSync(githubPromptsDir, { recursive: true });
     verbose("Created .github/prompts/");
@@ -235,7 +235,7 @@ function syncCommandsToPrompts() {
 
   if (CHECK_ONLY && missing > 0) {
     error(`${missing} prompts missing or outdated`);
-    return { ok: false, updated, missing };
+    return { missing, ok: false, updated };
   }
 
   if (updated > 0) {
@@ -244,7 +244,7 @@ function syncCommandsToPrompts() {
     log(`  All ${commands.length} prompts up to date`);
   }
 
-  return { ok: true, updated, missing };
+  return { missing, ok: true, updated };
 }
 
 // ============================================================================
@@ -258,7 +258,7 @@ function validateHookConfigs() {
 
   if (!fs.existsSync(githubHooksDir)) {
     verbose("No .github/hooks/ directory found");
-    return { ok: true, issues: [] };
+    return { issues: [], ok: true };
   }
 
   const configs = fs
@@ -313,11 +313,11 @@ function validateHookConfigs() {
     for (const issue of issues) {
       error(`${issue.file}: ${issue.message}`);
     }
-    return { ok: false, issues };
+    return { issues, ok: false };
   }
 
   log(`  All ${configs.length} hook configs valid`);
-  return { ok: true, issues };
+  return { issues, ok: true };
 }
 
 // ============================================================================
@@ -332,9 +332,9 @@ function main() {
   }
 
   const results = {
-    skills: syncSkillSymlinks(),
-    prompts: syncCommandsToPrompts(),
     hooks: validateHookConfigs(),
+    prompts: syncCommandsToPrompts(),
+    skills: syncSkillSymlinks(),
   };
 
   log("\n=== Summary ===");

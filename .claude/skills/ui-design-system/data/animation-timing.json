@@ -1,0 +1,115 @@
+{
+  "durations": {
+    "micro": {
+      "ms": 150,
+      "seconds": 0.15,
+      "use": "Instant feedback (button press, toggle, checkbox)",
+      "examples": ["Button tap", "Toggle switch", "Checkbox check"]
+    },
+    "fast": {
+      "ms": 200,
+      "seconds": 0.2,
+      "use": "Quick transitions (tooltips, dropdowns, small elements)",
+      "examples": ["Tooltip appear", "Dropdown open", "Badge animation"]
+    },
+    "normal": {
+      "ms": 300,
+      "seconds": 0.3,
+      "use": "Standard animations (modals, cards, page sections)",
+      "examples": ["Modal open", "Card reveal", "Tab switch"]
+    },
+    "slow": {
+      "ms": 500,
+      "seconds": 0.5,
+      "use": "Emphasis animations (hero reveals, important content)",
+      "examples": ["Hero section", "Feature highlight", "Success state"]
+    },
+    "slower": {
+      "ms": 800,
+      "seconds": 0.8,
+      "use": "Complex sequences (page transitions, multi-step animations)",
+      "examples": ["Page transition", "Onboarding steps", "Loading sequence"]
+    }
+  },
+  "easings": {
+    "easeOut": {
+      "curve": [0, 0, 0.2, 1],
+      "use": "Elements entering view - starts fast, ends slow",
+      "when": "Content appearing, modals opening, reveals"
+    },
+    "easeIn": {
+      "curve": [0.4, 0, 1, 1],
+      "use": "Elements leaving view - starts slow, ends fast",
+      "when": "Content disappearing, modals closing, exits"
+    },
+    "easeInOut": {
+      "curve": [0.4, 0, 0.2, 1],
+      "use": "Continuous motion - symmetric acceleration",
+      "when": "Position changes, hover states, loops"
+    },
+    "spring": {
+      "type": "spring",
+      "stiffness": 400,
+      "damping": 30,
+      "use": "Playful, energetic interactions",
+      "when": "Buttons, toggles, playful UI elements"
+    },
+    "bounce": {
+      "type": "spring",
+      "stiffness": 300,
+      "damping": 10,
+      "use": "Attention-grabbing, fun animations",
+      "when": "Notifications, achievements, celebrations"
+    }
+  },
+  "stagger": {
+    "fast": {
+      "ms": 50,
+      "seconds": 0.05,
+      "use": "Quick list reveals (many items)",
+      "maxItems": 20
+    },
+    "normal": {
+      "ms": 100,
+      "seconds": 0.1,
+      "use": "Standard list reveals (moderate items)",
+      "maxItems": 10
+    },
+    "slow": {
+      "ms": 150,
+      "seconds": 0.15,
+      "use": "Dramatic sequences (few important items)",
+      "maxItems": 5
+    }
+  },
+  "decisionTree": {
+    "question": "What type of element?",
+    "options": {
+      "micro-interaction": {
+        "duration": "micro",
+        "easing": "spring",
+        "examples": "buttons, toggles, checkboxes"
+      },
+      "tooltip-dropdown": {
+        "duration": "fast",
+        "easing": "easeOut",
+        "examples": "tooltips, dropdowns, popovers"
+      },
+      "modal-card": {
+        "duration": "normal",
+        "easing": "easeOut",
+        "examples": "modals, cards, panels"
+      },
+      "hero-section": {
+        "duration": "slow",
+        "easing": "easeOut",
+        "examples": "hero, feature sections, important reveals"
+      },
+      "page-transition": {
+        "duration": "slower",
+        "easing": "easeInOut",
+        "examples": "page transitions, complex sequences"
+      }
+    }
+  }
+}
