@@ -319,6 +319,60 @@ Never patch blindly.
 - after the budget is exhausted, mark the work item as blocked
 - record the blocker, current evidence, and the recommended rollback phase
 
+## Self-Healing Contract
+
+**First-Result Excellence**: Deliver production-ready code on the first attempt. Do not present work to the user until it meets all quality standards.
+
+### Autonomous Quality Loop
+
+When implementing any change, automatically execute this loop before presenting results:
+
+```
+1. Implement change
+2. Run type check → if errors, fix and goto 1
+3. Run lint → if errors/warnings, fix and goto 1
+4. Run tests → if failures, fix and goto 1
+5. Verify all acceptance criteria → if incomplete, fix and goto 1
+6. Only when ALL pass → present to user
+```
+
+### Self-Healing Rules
+
+- **Never stop at first failure**: Continue fixing until all gates pass or retry budget is exhausted
+- **Never present broken code**: If any gate fails, fix it before showing results to user
+- **Never ask user to fix AI mistakes**: Type errors, lint warnings, and test failures caused by AI changes must be fixed by the AI
+- **Never skip gates**: All applicable quality gates must run and pass
+- **Never deliver partial work**: All planned items must be implemented before delivery
+
+### What "Done" Means
+
+Work is NOT done if any of these are true:
+
+- Type check has errors
+- Lint has warnings or errors
+- Tests are failing
+- Implementation is incomplete vs. plan
+- Acceptance criteria are not met
+
+### Self-Healing Examples
+
+| Situation | Wrong | Right |
+|-----------|-------|-------|
+| Type error after edit | "There's a type error, please fix" | Fix the type error, rerun checks, then present |
+| Lint warning | Present code with warning | Fix warning, verify clean, then present |
+| Test failure | "Test is failing, might need adjustment" | Fix the code or test, verify pass, then present |
+| Missing implementation | "I've done part of it" | Complete all planned items, then present |
+| Forgot to add test | Deliver without test | Add test, verify pass, then deliver |
+
+### Escalation Criteria
+
+Only escalate to user when:
+
+- Retry budget (3 attempts) is exhausted for the same issue
+- The fix requires clarification on requirements (not technical issues)
+- The failure reveals a pre-existing issue unrelated to current work
+- External dependency or environment issue blocks progress
+
 ## Consistency contract
 
 Be predictable:

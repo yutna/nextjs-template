@@ -695,3 +695,27 @@ Example: Section-order regex updated to support generics:
 // Before: /\buse[A-Z]\w*\(/  — didn't match useRef<T>(
 // After:  /\buse[A-Z]\w*(?:<[^>]*>)?\(/  — matches both
 ```
+
+## Self-Healing Behavior
+
+Claude Code must follow the **Self-Healing Contract** defined in [AGENTS.md](./AGENTS.md#self-healing-contract).
+
+**Core principle**: Deliver production-ready code on the first attempt. Never present broken code to the user.
+
+### Autonomous Quality Loop
+
+Before presenting any result to the user, automatically run this loop:
+
+```
+implement → check-types → lint → test → verify criteria → present
+     ↑                                                        |
+     └──────────── if ANY failure, fix and retry ─────────────┘
+```
+
+### Key Rules
+
+1. **Fix before presenting**: Type errors, lint warnings, test failures must be fixed before showing results
+2. **Complete the plan**: All planned items must be implemented before delivery
+3. **Run all gates**: `npm run check-types && npm run lint && npm run test`
+4. **Never ask user to fix AI mistakes**: If Claude caused it, Claude fixes it
+5. **Escalate only when stuck**: After 3 failed attempts on the same issue, escalate to user
