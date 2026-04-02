@@ -372,12 +372,12 @@ Before implementing, check which patterns apply:
 
 ### Quick Decision Shortcuts
 
-- **Returning entity from API?** -> Use Presenter
-- **Form with steps or complex validation?** -> Use Form Object
-- **More than 3 states?** -> Consider State Machine
-- **Same filter in 2+ places?** -> Extract to Query Scope
-- **Side effect on every save?** -> Use Entity Hook
-- **Task takes >10 seconds?** -> Use Background Job
+- **Returning entity from API?** → Use Presenter
+- **Form with steps or complex validation?** → Use Form Object
+- **More than 3 states?** → Consider State Machine
+- **Same filter in 2+ places?** → Extract to Query Scope
+- **Side effect on every save?** → Use Entity Hook
+- **Task takes >10 seconds?** → Use Background Job
 
 ## Rails to Next.js Pattern Mapping
 
