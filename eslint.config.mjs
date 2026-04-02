@@ -437,6 +437,24 @@ const eslintConfig = defineConfig([
       "no-restricted-syntax": "off",
     },
   },
+
+  // Playwright — config and E2E tests
+  // --------------------------------------------------
+  {
+    files: ["playwright.config.ts"],
+    rules: {
+      "import/no-default-export": "off",
+      "no-restricted-syntax": "off",
+    },
+  },
+  {
+    files: ["e2e/**"],
+    rules: {
+      "no-restricted-imports": "off",
+      "no-restricted-syntax": "off",
+      "react-hooks/rules-of-hooks": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

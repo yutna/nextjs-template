@@ -119,6 +119,7 @@ Only after Steps 1-3 complete.
 docs/tasks/
 ├── 00-specifications.md       # State machines + Gherkin scenarios
 ├── 01-overview.md             # Summary, phases, priorities
+├── e2e-scenarios.md           # E2E test specifications (from Gherkin)
 │
 ├── phase-01-foundation.md     # Entities, base setup
 ├── phase-02-[feature].md      # @must scenarios
@@ -134,7 +135,8 @@ docs/tasks/
 1. Pattern match -> catch vague terms
 2. State machine -> draw ALL states and transitions
 3. Gherkin -> write scenario for EACH transition
-4. Decompose -> tasks grouped by priority (@must first)
+4. E2E mapping -> map scenarios to E2E test specs
+5. Decompose -> tasks grouped by priority (@must first)
 ```
 
 **Minimum to proceed:**

@@ -262,6 +262,60 @@ When creating new code, ask in order:
 - `constants/` = Just values, no functions, flat files only
 - `components/` = Must return JSX
 
+## data-testid Convention (MUST FOLLOW)
+
+All interactive UI elements MUST have a `data-testid` attribute for E2E test targeting.
+
+### Naming Pattern
+
+`<module>-<component>-<element>` using kebab-case.
+
+```typescript
+// Examples
+<Button data-testid="auth-login-submit">Login</Button>
+<Input data-testid="auth-login-email" />
+<Dialog data-testid="users-delete-confirmation" />
+```
+
+### Which Elements Require data-testid
+
+| Element Type | Required | Example |
+|-------------|----------|---------|
+| Buttons, links | ✅ | `auth-login-submit` |
+| Form inputs | ✅ | `auth-login-email` |
+| Form elements | ✅ | `auth-login-form` |
+| Modals, dialogs, drawers | ✅ | `users-delete-modal` |
+| Lists with dynamic items | ✅ | `users-list`, `users-list-item-{id}` |
+| Purely decorative elements | ❌ | - |
+| Layout wrappers | ❌ | - |
+
+### Component Props
+
+Interactive components SHOULD accept an optional `data-testid` prop:
+
+```typescript
+// types.ts
+interface FormLoginProps {
+  "data-testid"?: string;
+}
+
+// form-login.tsx
+export function FormLogin({ "data-testid": testId = "auth-login-form" }: FormLoginProps) {
+  return (
+    <form data-testid={testId}>
+      <Input data-testid={`${testId}-email`} />
+      <Button data-testid={`${testId}-submit`}>Login</Button>
+    </form>
+  );
+}
+```
+
+### Rules
+
+- `data-testid` does NOT replace `aria-label`, `role`, etc. — both must coexist
+- Use semantic defaults so E2E tests work without custom props
+- For dynamic lists, append the item ID: `users-list-item-{id}`
+
 ## Common Mistakes to Avoid
 
 1. ❌ Creating `utils.ts` or `helpers.ts` at module root
@@ -274,3 +328,4 @@ When creating new code, ask in order:
 8. ❌ Cross-module imports
 9. ❌ Putting presets/variants/mappings in `components/` instead of `lib/`
 10. ❌ Putting domain wrappers in `utils/` instead of `lib/`
+11. ❌ Missing data-testid on interactive elements

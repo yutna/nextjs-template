@@ -149,7 +149,50 @@ Feature: [Name]
 
 ---
 
-## Step 4: Decomposition
+## Step 4: E2E Scenario Mapping (REQUIRED)
+
+Map Gherkin scenarios to E2E test specifications. Output: `docs/tasks/e2e-scenarios.md`
+
+### Mapping Rules
+
+| Gherkin Tag | E2E Requirement |
+|-------------|-----------------|
+| `@must` | Full locale coverage (en + th) |
+| `@should` | At least one locale |
+| `@could` | Listed as optional (skipped) |
+| `@wont` | Excluded |
+
+### Output Format
+
+```markdown
+# E2E Test Scenarios
+
+Source: `docs/tasks/00-specifications.md`
+
+## Feature: [Feature Name]
+
+### Scenario: [Gherkin Scenario Title]
+- **Priority:** @must
+- **Route:** /[locale]/[path]
+- **Preconditions:** [Setup needed]
+- **Steps:**
+  1. Navigate to [route]
+  2. Click `[data-testid="module-component-element"]`
+  3. Fill `[data-testid="module-form-field"]` with "value"
+- **Assertions:**
+  - [ ] [Expected outcome using data-testid selectors]
+- **Locale coverage:** en, th
+```
+
+### Rules
+
+- Every step MUST reference `data-testid` selectors or accessible roles
+- Include the expected `data-testid` values following the convention: `<module>-<component>-<element>`
+- Group scenarios by feature, matching the Gherkin structure
+
+---
+
+## Step 5: Decomposition
 
 ### Rules
 
@@ -178,7 +221,8 @@ docs/tasks/
 1. Pattern match → catch vague terms
 2. State machine → ALL states and transitions
 3. Gherkin → scenario for EACH transition
-4. Decompose → @must first, vertical slices
+4. E2E mapping → map scenarios to E2E test specs
+5. Decompose → @must first, vertical slices
 ```
 
 ## Example

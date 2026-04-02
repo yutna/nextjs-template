@@ -12,7 +12,9 @@
       "Bash(npx -y @anthropic/mcp-server-fetch --help)",
       "Bash(npm search:*)",
       "Bash(npm run:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npm test:*)"
     ]
   }
 }
