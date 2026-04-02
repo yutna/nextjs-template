@@ -31,12 +31,12 @@ npx create-next-app --example https://github.com/yutna/nextjs-template my-app
 
 ### AI Assistant Configuration
 
-Both AI assistants are supported out of the box:
+Both AI assistants are supported out of the box. Pick your preferred tool and follow the onboarding guide:
 
-| AI Assistant | Configuration |
-| ------------ | ------------- |
-| [GitHub Copilot][copilot] | `AGENTS.md` + `.github/instructions/` |
-| [Claude Code][claude-code] | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/`, `.claude/mcp.json` |
+| AI Assistant | Onboarding Guide | Configuration |
+| ------------ | ---------------- | ------------- |
+| [GitHub Copilot][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB_COPILOT_WORKFLOW.md) | `AGENTS.md` + `.github/instructions/` |
+| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE_WORKFLOW.md) | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
 
 #### MCP Servers
 
