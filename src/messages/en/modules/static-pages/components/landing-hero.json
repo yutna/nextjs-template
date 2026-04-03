@@ -1,6 +1,6 @@
 {
   "getStarted": "View on GitHub",
-  "installCommand": "npx create-next-app --example https://github.com/yutna/nextjs-template my-app",
+  "installCommand": "git clone --depth 1 https://github.com/yutna/nextjs-template my-app && cd my-app && npm install && npm run dev",
   "subtitle": "A production-ready Next.js 16 template built for the vibe coding era. Turn your prompts into products — server-first, type-safe, and GitHub Copilot-ready.",
   "title": "Vibe Coding\nFrom Prompt to IPO"
 }

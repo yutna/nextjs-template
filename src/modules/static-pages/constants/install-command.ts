@@ -1,2 +1,2 @@
 export const HERO_INSTALL_COMMAND =
-  "npx create-next-app --example https://github.com/yutna/nextjs-template my-app";
+  "git clone --depth 1 https://github.com/yutna/nextjs-template my-app && cd my-app && npm install && npm run dev";

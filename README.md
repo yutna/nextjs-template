@@ -26,7 +26,21 @@ architecture, strict TypeScript, and production-ready UI foundations.
 ## Quick Start
 
 ```bash
-npx create-next-app --example https://github.com/yutna/nextjs-template my-app
+git clone --depth 1 https://github.com/yutna/nextjs-template my-app
+cd my-app
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+Or use [degit](https://github.com/Rich-Harris/degit) for a faster clone (without git history):
+
+```bash
+npx degit yutna/nextjs-template my-app
+cd my-app
+npm install
+npm run dev
 ```
 
 ### AI Assistant Configuration
