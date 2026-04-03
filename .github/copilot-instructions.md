@@ -5,6 +5,8 @@ applyTo: "**"
 
 Follow [AGENTS.md](../AGENTS.md) as the canonical workflow contract.
 
+Operational quick reference: [Workflow SOP (One Page)](../docs/general/WORKFLOW-SOP.md)
+
 ## Quick Reference
 
 ### Workflow Phases

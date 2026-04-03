@@ -2,6 +2,8 @@
 
 This project runs all scripts through a single CLI entrypoint (`./bin/vibe`) and mirrors slash commands between Claude Code and GitHub Copilot. The workflow is automated by default — these commands are here when you want to drive a step explicitly, run something in isolation, or just understand what's available.
 
+Operational quick reference: [Workflow SOP (One Page)](./WORKFLOW-SOP.md)
+
 ## Project CLI: `./bin/vibe task`
 
 All project tasks run through this entrypoint:

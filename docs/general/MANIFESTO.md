@@ -6,6 +6,8 @@ Last Updated: 2026-04-03
 
 This template exists so users can ship features fast with Claude and GitHub Copilot without repetitive setup.
 
+Execution standard: [Workflow SOP (One Page)](./WORKFLOW-SOP.md)
+
 ## Product Intent
 
 The template is battery-included and production-grade by default.

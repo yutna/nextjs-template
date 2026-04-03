@@ -2,6 +2,8 @@
 
 This repository defines a workflow-first operating standard for AI-assisted software engineering. This contract applies to all AI coding agents (Claude Code, GitHub Copilot, Cursor, etc.).
 
+Operational quick reference: [Workflow SOP (One Page)](./docs/general/WORKFLOW-SOP.md)
+
 ## Optimize for
 
 1. Workflow adherence
