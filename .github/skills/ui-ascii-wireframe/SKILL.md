@@ -1,0 +1,305 @@
+---
+name: ui-ascii-wireframe
+description: >
+  Use this skill when generating ASCII text wireframes for enterprise web UI.
+  Activates on: "wireframe", "ASCII UI", "text prototype", "design UI", "UI layout",
+  "design enterprise screen", "prototype from requirements", "visualize states",
+  or any request to turn a feature spec or state machine into a visual text mockup.
+  Provides the ASCII component vocabulary, state visualization patterns, app shell grammar,
+  and rendering rules for producing production-quality text wireframes.
+---
+
+# UI ASCII Wireframe
+
+Produce enterprise web UI wireframes as ASCII text. These serve as AI-readable prototypes
+that map directly to component structure and state machine states.
+
+---
+
+## 1. App Shell Grammar
+
+Every wireframe must fit inside this shell or a deliberate subset of it:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ SIDEBAR (240px)          │  TOP BAR                                      │
+│                          │  ┌─────────────────────────────────────────┐  │
+│  ● Module Group          │  │ 🔍 Search...    [+ Create] 🔔 👤 Admin  │  │
+│    ▸ Sub-item            │  └─────────────────────────────────────────┘  │
+│    ▸ Sub-item [active]   │                                               │
+│                          │  MAIN CANVAS                                  │
+│  ● Module Group 2        │  ┌─────────────────────────────────────────┐  │
+│    ▸ Sub-item            │  │ PAGE CONTENT                             │  │
+│                          │  │                                          │  │
+│ ─────────────────────── │  │                                          │  │
+│  [DEV] Environment badge │  └─────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. ASCII Component Vocabulary
+
+### Box / Container
+```
+┌─────────────────────┐    ╔═════════════════════╗    ┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+│ Regular box         │    ║ Emphasized / modal  ║     Dashed = loading
+└─────────────────────┘    ╚═════════════════════╝    └ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+```
+
+### Page Header
+```
+┌─────────────────────────────────────────────────────────┐
+│ ← Breadcrumb / Module Name                               │
+│  H1 Page Title                    [Secondary] [Primary+] │
+│  Subtitle or description text                            │
+└─────────────────────────────────────────────────────────┘
+```
+
+### KPI Strip (3–4 metrics)
+```
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Label        │ │ Label        │ │ Label        │ │ Label        │
+│ 1,234        │ │ 98.2%        │ │ 56           │ │ ▲ 12%        │
+│ ▲ +8% mo/mo │ │ ▼ -2%        │ │ ─ steady     │ │ vs last week │
+└──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
+```
+
+### Filter Toolbar
+```
+┌────────────────────────────────────────────────────────────────────┐
+│ 🔍 [Search placeholder...      ] [Status ▼] [Date range ▼] [Owner ▼] [Reset] │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Data Table
+```
+┌────────────────────────────────────────────────────────────────────┐
+│ ☐ │ Column A        │ Column B    │ Column C     │ Status  │ Acts  │
+├───┼─────────────────┼─────────────┼──────────────┼─────────┼───────┤
+│ ☐ │ Row value       │ Value       │ Value        │ ● Active│ ⋯     │
+│ ☑ │ Row value       │ Value       │ Value        │ ○ Draft │ ⋯     │
+│ ☐ │ Row value       │ Value       │ Value        │ ✕ Error │ ⋯     │
+├───┴─────────────────┴─────────────┴──────────────┴─────────┴───────┤
+│ ← Prev  Page 1 of 12  Next →                       Items: 10 ▼  │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Bulk Action Bar (appears when rows selected)
+```
+╔════════════════════════════════════════════════════════════════════╗
+║ ☑ 3 items selected   [Export] [Change Status ▼] [Delete]  [✕ Clear] ║
+╚════════════════════════════════════════════════════════════════════╝
+```
+
+### Context / Detail Panel (right side)
+```
+                              ┌────────────────────────┐
+                              │ Entity Name       [✕]   │
+                              │ ─────────────────────── │
+                              │ Field    Value           │
+                              │ Field    Value           │
+                              │ Field    Long value that  │
+                              │          wraps here      │
+                              │                          │
+                              │ [Open Full Page →]       │
+                              └────────────────────────┘
+```
+
+### Modal / Dialog
+```
+              ╔══════════════════════════════════╗
+              ║ Modal Title                  [✕] ║
+              ╠══════════════════════════════════╣
+              ║                                  ║
+              ║  Content area                    ║
+              ║  or form fields here             ║
+              ║                                  ║
+              ╠══════════════════════════════════╣
+              ║ [Cancel]              [Confirm+] ║
+              ╚══════════════════════════════════╝
+```
+
+### Form Fields
+```
+Label *
+┌─────────────────────────────────┐
+│ Input value                     │
+└─────────────────────────────────┘
+
+Label               Dropdown ▼
+┌───────────────┐   ┌────────────────┐
+│ Text input    │   │ Option A    ▼  │
+└───────────────┘   └────────────────┘
+
+● Option A   ○ Option B   ○ Option C     ☑ Checkbox label
+```
+
+### Stepper (Wizard)
+```
+──●───────────────────────○───────────────────────○──
+  1. Step Name           2. Step Name           3. Step Name
+  [current]              [pending]              [pending]
+```
+
+### Tabs
+```
+┌──────────┬──────────┬──────────┬──────────┐
+│ Tab A    │ [Tab B]  │ Tab C    │ Tab D    │
+│          └──────────┘          │          │
+└──────────────────────────────────────────┘
+  (underline = active tab)
+```
+
+### Alert / Banner
+```
+┌─────────────────────────────────────────────────────┐
+│ ⚠  Warning message text here              [Action]  │
+└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ ✓  Success: entity saved successfully               │
+└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│ ✕  Error: could not complete action.   [Retry]      │
+└─────────────────────────────────────────────────────┘
+```
+
+### Empty State
+```
+┌──────────────────────────────────────────────────────┐
+│                                                       │
+│                   📭  (icon)                          │
+│             No [entities] found                       │
+│      Adjust your filters or create a new one.         │
+│                  [+ Create First X]                   │
+│                                                       │
+└──────────────────────────────────────────────────────┘
+```
+
+### Skeleton / Loading Row
+```
+│ ░░░░░░░ │ ░░░░░░░░░░░░░ │ ░░░░░░░ │ ░░░░░░│
+│ ░░░░░░░ │ ░░░░░░░░░░░░░ │ ░░░░░░░ │ ░░░░░░│
+│ ░░░░░░░ │ ░░░░░░░░░░░░░ │ ░░░░░░░ │ ░░░░░░│
+```
+
+### Badge / Status Chip
+```
+● Active    ○ Draft    ✕ Error    ⏸ Paused    🔒 Locked    ⚑ Flagged
+```
+
+### Notification Toast (top-right corner)
+```
+                              ┌──────────────────────┐
+                              │ ✓ Saved successfully  │
+                              └──────────────────────┘
+```
+
+---
+
+## 3. State Rendering Rules
+
+For each feature screen, render ALL states from the state machine as separate wireframes.
+
+Use this header format per state:
+
+```
+═══════════════════════════════════════════════════
+ STATE: [State Name]   TRIGGER: [What caused this]
+═══════════════════════════════════════════════════
+```
+
+### Mandatory states per data screen (mirror §4 of enterprise-ui-recipes):
+
+| State | Visual cue |
+|-------|-----------|
+| `loading` | Skeleton rows (`░░░`), no data rendered |
+| `empty` | EmptyState box with CTA |
+| `error` | Error alert banner + retry, table hidden |
+| `populated` | Full table/content (happy path) |
+| `permission-denied` | EmptyState variant with lock icon, no actions |
+
+### Additional states from state machine:
+
+For each non-trivial transition in the feature's state machine, add a wireframe showing what the UI looks like during/after that transition (e.g. `submitting`, `bulk-selected`, `filter-active`, `detail-open`).
+
+---
+
+## 4. Annotation Conventions
+
+Add annotations inline using `→` or below the wireframe:
+
+```
+[+ Create]  → opens modal-create-entity (R03 wizard pattern)
+Row click   → opens drawer-context-panel (right panel)
+[Open →]    → navigates to /entities/[id] (canonical URL)
+
+URL:    /[locale]/(private)/entities
+Route:  screen-entity-list  (R01 pattern)
+Recipe: R01 — Operations List + Bulk Actions
+Density: compact
+```
+
+---
+
+## 5. Output Format per Feature
+
+Produce in this order:
+
+```
+# UI Wireframe: [Feature Name]
+
+Recipe: R0X — [recipe name]
+Density: compact | cozy
+Route: /[locale]/...
+
+---
+
+## App Shell
+[full shell wireframe showing which nav item is active]
+
+---
+
+## States
+
+### STATE: loading
+[wireframe]
+
+### STATE: empty
+[wireframe]
+
+### STATE: error
+[wireframe]
+
+### STATE: populated (happy path)
+[wireframe + annotations]
+
+### STATE: [custom state from state machine]
+[wireframe]
+
+---
+
+## Flow Diagram (ASCII)
+
+[user action] → [state transition] → [resulting state]
+[user action] → [state transition] → [resulting state]
+
+---
+
+## Route Map
+/[locale]/...     → screen-xxx (this screen)
+/[locale]/.../[id] → screen-xxx-detail (canonical)
+@modal/(.)...      → modal-xxx (if applicable)
+```
+
+---
+
+## 6. Wireframe Quality Rules
+
+- Every wireframe must show the **full page** in context (header + nav + content) — never just a component in isolation
+- Use real-looking (but fake) data — not "Lorem ipsum"
+- Widths must be consistent: sidebar ≈ 24 chars, main canvas ≈ 60 chars, total ≈ 90 chars
+- Mark the active nav item with `[active]` or `▸`
+- Show `[+ Primary Action]` buttons as `[+ Label]`, secondary as `[Label]`
+- Align columns in tables
+- Never omit states — if a state exists in the state machine, it must have a wireframe
