@@ -90,12 +90,6 @@ The Orchestrator routes this to the Requirements Analyst, who will:
 
 In orchestration mode, planning is routed automatically.
 
-Optional manual override only when debugging agent behavior:
-
-```txt
-@workspace /plan-work
-```
-
 The Planner will:
 
 - Check existing patterns in the codebase
@@ -107,15 +101,7 @@ The Planner will:
 
 ### Step 3: Approve and Build
 
-```txt
-Looks good, implement the plan
-```
-
-Or use the prompt directly as an override:
-
-```txt
-@workspace /implement
-```
+After the plan is accepted, orchestration routes implementation automatically.
 
 The Implementer writes code following all project conventions:
 
@@ -128,12 +114,6 @@ The Implementer writes code following all project conventions:
 ### Step 4: Quality Gates
 
 In orchestration mode, quality gates should be invoked automatically before delivery.
-
-Manual fallback only when troubleshooting:
-
-```txt
-@workspace /gates
-```
 
 This runs:
 
@@ -151,17 +131,18 @@ Fix the failing type check errors
 
 ### Step 5: Review and Ship
 
-```txt
-@workspace /deliver
-```
+When quality gates and verification are green, orchestration prepares the delivery handoff.
 
 Copilot gives you a summary of everything that changed and why.
 
 ## Prompt Reference
 
-These are your primary tools. Use them in Copilot Chat. Add `@workspace` when you want broader workspace context in VS Code.
+These prompts exist and remain available, but in this template they are orchestrated automatically by default. Add `@workspace` when you want broader workspace context in VS Code.
 
 ### Workflow Prompts
+
+Default usage: orchestrator manages these phases for you.
+Direct prompt invocation is an advanced fallback for debugging orchestration behavior.
 
 | Prompt | When to Use | What It Does |
 |--------|-------------|--------------|
@@ -247,7 +228,7 @@ This project has a zero-tolerance policy. Code is not done if ANY of these exist
   Present to you (production-ready)
 ```
 
-Orchestration mode should run this loop automatically. Use manual retries only when recovering from tool/runtime failures.
+Orchestration mode should run this loop automatically.
 
 **Tip:** If you ever suspect drift, run `npm run check-types && npm run lint && npm run test`.
 
@@ -380,12 +361,9 @@ npm run check-types && npm run lint && npm run test
 ```txt
 Open chat:           Open Copilot Chat in VS Code
 New feature:         Describe feature in plain English (orchestration routes phases)
-Ship it:             Review orchestration handoff
-Something broke:     @workspace /recover
+Flow execution:      Discovery → Planning → Implementation → Gates → Delivery (automatic)
 Big feature:         @workspace /decompose-requirements [description]
-Manual override:     @workspace /plan-work, /implement, /gates, /deliver
-E2E tests:           @workspace /implement-e2e
-New module:          @workspace /create-module [name]
+Agent mode:          Switch Copilot to orchestration agent mode
 ```
 
 ## Need Help?

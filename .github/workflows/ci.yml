@@ -33,6 +33,9 @@ jobs:
       - name: Validate workflow structure baseline
         run: node --experimental-strip-types --no-warnings bin/vibe task workflow:audit
 
+      - name: Guard docs automation mindset
+        run: node --experimental-strip-types --no-warnings bin/vibe task docs:automation:guard
+
   check-types:
     name: Type Check
     runs-on: ubuntu-latest

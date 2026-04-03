@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { runCodebaseIndex } from "./codebase-index.ts";
+import { runDocsAutomationGuard } from "./docs-automation-guard.ts";
 import { runHooksBuilder } from "./hooks-builder.ts";
 import { runNextjsPolicy } from "./nextjs-policy.ts";
 import { runSyncCopilot } from "./sync-copilot.ts";
@@ -81,6 +82,12 @@ const TASKS: Record<string, TaskDefinition> = {
   "dev:storybook": {
     command: "storybook dev -p 6006 --no-open",
     description: "Start Storybook dev server",
+  },
+  "docs:automation:guard": {
+    description: "Fail when docs regress to manual-driven workflow guidance",
+    fn: async () => {
+      runDocsAutomationGuard();
+    },
   },
   "format": {
     command: "prettier --write .",
