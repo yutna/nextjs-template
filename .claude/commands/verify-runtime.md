@@ -118,13 +118,13 @@ Document results:
 
 If verification passes:
 ```bash
-node .claude/hooks/scripts/workflow_hook.cjs update-state \
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=passed
 ```
 
 If verification fails:
 ```bash
-node .claude/hooks/scripts/workflow_hook.cjs update-state \
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=failed \
   'qualityGates.lastRunSummary="[Summary of failures]"'
 ```

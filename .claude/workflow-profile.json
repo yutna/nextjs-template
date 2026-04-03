@@ -34,7 +34,7 @@
     "prefix": "always"
   },
   "commands": {
-    "validateState": "node .claude/hooks/scripts/workflow_hook.cjs validate-state",
+    "validateState": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- validate-state",
     "typecheck": "npm run check-types",
     "lint": "npm run lint",
     "tests": "npm run test",
@@ -42,7 +42,7 @@
     "dbGenerate": "npm run db:generate",
     "dbMigrate": "npm run db:migrate",
     "dbSeed": "npm run db:seed",
-    "indexCodebase": "node .claude/hooks/scripts/codebase_indexer.cjs"
+    "indexCodebase": "node --experimental-strip-types --no-warnings bin/vibe task codebase:index"
   },
   "adoption": {
     "supportedModes": ["from-scratch", "adopt-existing-project"],

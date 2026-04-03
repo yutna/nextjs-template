@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/workflow_hook.cjs session-context",
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- session-context",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/workflow_hook.cjs workflow-guard",
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- workflow-guard",
             "timeout": 10
           }
         ]
@@ -29,12 +29,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/workflow_hook.cjs post-edit-checks",
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- post-edit-checks",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/nextjs_policy.cjs",
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task nextjs:policy",
             "timeout": 10
           }
         ]
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/workflow_hook.cjs stop-gate",
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- stop-gate",
             "timeout": 10
           }
         ]

@@ -65,13 +65,13 @@ When a terminal is available, prefer the built-in state API over ad hoc manual e
 
 ```bash
 printf '%s' '{"phase":"planning","requirements":{"status":"approved"}}' | \
-  node .claude/hooks/scripts/workflow_hook.cjs update-state
+  node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state
 ```
 
 Or use shorthand CLI arguments when that is easier in the current host:
 
 ```bash
-node .claude/hooks/scripts/workflow_hook.cjs update-state \
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   phase=implementation \
   implementation.status=in-progress
 ```

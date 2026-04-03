@@ -22,7 +22,7 @@ If sources conflict, follow the highest-priority source.
 When command execution is available, use the workflow state API:
 
 ```bash
-node .claude/hooks/scripts/workflow_hook.cjs update-state phase=planning plan.status=proposed
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state phase=planning plan.status=proposed
 ```
 
 Fallback: Direct file edits to `.claude/workflow-state.json` (only if API unavailable).

@@ -30,18 +30,21 @@ Browser verification is required when:
 ## Feature: [Feature Name]
 
 ### Happy Path
+
 - [ ] Primary action works as expected
 - [ ] Data is displayed correctly
 - [ ] Navigation works properly
 - [ ] Form submission succeeds
 
 ### Edge Cases
+
 - [ ] Empty states display correctly
 - [ ] Loading states are shown
 - [ ] Error states are handled
 - [ ] Boundary conditions work (min/max values)
 
 ### User Feedback
+
 - [ ] Success messages appear
 - [ ] Error messages are clear
 - [ ] Loading indicators show
@@ -54,16 +57,19 @@ Browser verification is required when:
 ## Visual Checks
 
 ### Layout
+
 - [ ] Components are properly aligned
 - [ ] Spacing is consistent
 - [ ] No layout shifts on load
 
 ### Responsive
+
 - [ ] Mobile (< 768px)
 - [ ] Tablet (768px - 1024px)
 - [ ] Desktop (> 1024px)
 
 ### Theme
+
 - [ ] Light mode looks correct
 - [ ] Dark mode looks correct
 - [ ] Colors match design system
@@ -75,18 +81,21 @@ Browser verification is required when:
 ## Accessibility Checks
 
 ### Keyboard
+
 - [ ] All interactive elements are focusable
 - [ ] Focus order is logical
 - [ ] Focus indicators are visible
 - [ ] Escape closes modals
 
 ### Screen Reader
+
 - [ ] Images have alt text
 - [ ] Form inputs have labels
 - [ ] Error messages are announced
 - [ ] Dynamic content is announced
 
 ### ARIA
+
 - [ ] Roles are appropriate
 - [ ] States are communicated
 - [ ] Live regions work
@@ -114,6 +123,7 @@ http://localhost:3000/th/[route]
 ### Test Responsive Views
 
 Use browser DevTools:
+
 - Chrome: F12 → Toggle Device Toolbar (Ctrl+Shift+M)
 - Firefox: F12 → Responsive Design Mode (Ctrl+Shift+M)
 
@@ -165,6 +175,7 @@ Use browser DevTools:
 **Device:** [Desktop/Mobile, OS]
 
 **Steps to Reproduce:**
+
 1. Navigate to...
 2. Click on...
 3. Enter...
@@ -179,12 +190,12 @@ Use browser DevTools:
 
 ### Severity Guidelines
 
-| Level | Definition | Example |
-|-------|------------|---------|
-| Critical | App unusable | Crash, data loss, auth bypass |
-| High | Feature broken | Form doesn't submit, navigation fails |
-| Medium | Feature impaired | Styling issues, minor UX problems |
-| Low | Minor issue | Typo, alignment off by few pixels |
+| Level    | Definition       | Example                               |
+| -------- | ---------------- | ------------------------------------- |
+| Critical | App unusable     | Crash, data loss, auth bypass         |
+| High     | Feature broken   | Form doesn't submit, navigation fails |
+| Medium   | Feature impaired | Styling issues, minor UX problems     |
+| Low      | Minor issue      | Typo, alignment off by few pixels     |
 
 ## Integration with Workflow
 
@@ -201,7 +212,7 @@ npm run test
 
 ```bash
 # After successful verification
-node .claude/hooks/scripts/workflow_hook.cjs update-state \
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=passed
 ```
 
@@ -209,7 +220,7 @@ node .claude/hooks/scripts/workflow_hook.cjs update-state \
 
 ```bash
 # Update state with failure
-node .claude/hooks/scripts/workflow_hook.cjs update-state \
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=failed \
   'qualityGates.lastRunSummary="Button click does not trigger action"'
 ```
@@ -220,16 +231,16 @@ node .claude/hooks/scripts/workflow_hook.cjs update-state \
 
 ```typescript
 // playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
   },
   webServer: {
-    command: 'npm run dev',
+    command: "npm run dev",
     port: 3000,
   },
 });
@@ -239,17 +250,17 @@ export default defineConfig({
 
 ```typescript
 // e2e/user-flow.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('user can create account', async ({ page }) => {
-  await page.goto('/en/register');
+test("user can create account", async ({ page }) => {
+  await page.goto("/en/register");
 
-  await page.fill('[name="email"]', 'test@example.com');
-  await page.fill('[name="password"]', 'password123');
+  await page.fill('[name="email"]', "test@example.com");
+  await page.fill('[name="password"]', "password123");
   await page.click('button[type="submit"]');
 
-  await expect(page).toHaveURL('/en/dashboard');
-  await expect(page.getByText('Welcome')).toBeVisible();
+  await expect(page).toHaveURL("/en/dashboard");
+  await expect(page.getByText("Welcome")).toBeVisible();
 });
 ```
 

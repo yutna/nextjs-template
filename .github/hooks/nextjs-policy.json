@@ -5,7 +5,7 @@
     "postToolUse": [
       {
         "type": "command",
-        "command": "node .claude/hooks/scripts/nextjs_policy.cjs",
+        "command": "node --experimental-strip-types --no-warnings bin/vibe task nextjs:policy",
         "cwd": ".",
         "timeout": 10000,
         "description": "Validates Next.js architecture conventions on file changes",

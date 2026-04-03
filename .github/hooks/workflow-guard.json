@@ -5,7 +5,7 @@
     "preToolUse": [
       {
         "type": "command",
-        "command": "node .claude/hooks/scripts/workflow_hook.cjs workflow-guard",
+        "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- workflow-guard",
         "cwd": ".",
         "timeout": 10000,
         "description": "Validates that the current workflow phase allows the requested action"

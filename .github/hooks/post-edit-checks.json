@@ -5,7 +5,7 @@
     "postToolUse": [
       {
         "type": "command",
-        "command": "node .claude/hooks/scripts/workflow_hook.cjs post-edit",
+        "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- post-edit",
         "cwd": ".",
         "timeout": 10000,
         "description": "Tracks file changes and updates workflow state",

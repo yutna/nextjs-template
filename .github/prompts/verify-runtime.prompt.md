@@ -92,7 +92,7 @@ For each checklist item:
 
 If verification passes:
 ```bash
-node .claude/hooks/scripts/workflow_hook.cjs update-state qualityGates.verification=passed
+node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state qualityGates.verification=passed
 ```
 
 ## Common Issues to Check

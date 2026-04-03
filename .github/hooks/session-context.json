@@ -5,7 +5,7 @@
     "sessionStart": [
       {
         "type": "command",
-        "command": "node .claude/hooks/scripts/workflow_hook.cjs session-context",
+        "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- session-context",
         "cwd": ".",
         "timeout": 5000,
         "description": "Loads current workflow state and provides context"

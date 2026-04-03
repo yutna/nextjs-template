@@ -35,10 +35,13 @@ const hasLintScript = Effect.try(() => {
 const runLint = Effect.try({
   catch: (error) => new LintFailedError(error),
   try: () =>
-    execSync("npm run lint -- --quiet 2>&1", {
-      encoding: "utf8",
-      timeout: 55_000,
-    }),
+    execSync(
+      "node --experimental-strip-types --no-warnings bin/vibe task lint 2>&1",
+      {
+        encoding: "utf8",
+        timeout: 55_000,
+      },
+    ),
 }).pipe(
   Effect.map((output) => ({ failed: false, output })),
   Effect.catchTag("LintFailedError", (err) =>
@@ -82,7 +85,7 @@ export const command = {
 export function help(): void {
   console.log(`  Copilot Stop hook that runs lint before the session ends.
 
-  Executes \`npm run lint -- --quiet\` and reports issues as a
+  Executes \`./bin/vibe task lint\` and reports issues as a
   systemMessage warning. Never blocks the session.
 
   Output format:
