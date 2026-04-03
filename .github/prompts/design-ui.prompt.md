@@ -67,21 +67,43 @@ Show the complete user journey as ASCII flow:
                                   ↘ [Error path] → [Error state]
 ```
 
-### Step 6: Output Summary
+### Step 6: Write Markdown Artifacts
 
-End with a summary block:
+Persist results to markdown files under `docs/ui/<feature-slug>/`.
+Use deterministic, file-safe kebab-case slugs.
+
+Required files:
+- `docs/ui/<feature-slug>/README.md`
+  - Feature summary (recipe, density, route map, state inventory)
+  - Links to all flow/state markdown files
+- `docs/ui/<feature-slug>/flow-<nn>-<flow-slug>.md`
+  - One file per flow in the user journey
+  - Include flow-specific ASCII wireframes and transition notes
+- `docs/ui/<feature-slug>/state-<nn>-<state-slug>.md`
+  - One file per UI state
+  - Include full-page wireframe + annotations + trigger/transition context
+
+Where `nn` is a zero-padded sequence (`01`, `02`, ...).
+
+### Step 7: Output Summary
+
+In chat, return only a concise summary block and created file list:
 ```
 Recipe:   R0X — name
 Density:  compact | cozy
 Route:    /[locale]/...
 States:   loading, empty, error, permission-denied, populated, [custom...]
 Regions:  section-page-header, toolbar-filter, table-data-region, ...
+Files:    docs/ui/<feature-slug>/README.md
+          docs/ui/<feature-slug>/flow-01-<flow-slug>.md
+          docs/ui/<feature-slug>/state-01-<state-slug>.md
 ```
 
 ## Output Location
 
-Print wireframes directly in chat for review.
-If user approves, save to `docs/tasks/[feature-name]-ui-wireframe.md`.
+Always write output artifacts directly to `docs/ui/<feature-slug>/`.
+Do not keep wireframes chat-only.
+Chat output should be a brief summary + artifact paths.
 
 ## Rules
 
@@ -91,3 +113,4 @@ If user approves, save to `docs/tasks/[feature-name]-ui-wireframe.md`.
 - Each wireframe shows the full page (nav + header + content) — not isolated components
 - Do not write React code — wireframes only
 - If the feature spans multiple screens (list + detail), wireframe each screen separately
+- Persist every flow and state as markdown artifacts under `docs/ui/<feature-slug>/`
