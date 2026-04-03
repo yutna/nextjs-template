@@ -186,7 +186,7 @@ This template uses a **dual-toolchain workflow** supporting both Claude and GitH
 
 **Parity Testing:**
 
-Run the full parity regression test:
+Parity is checked automatically in CI. To verify locally after editing a Claude command or Copilot prompt:
 
 ```bash
 ./bin/vibe parity-check
@@ -219,6 +219,8 @@ Copilot and Claude both automatically load community-contributed skills from [`.
 | `npm run db:migrate:test` | Apply migrations to the test DB        |
 | `npm run db:prepare:test` | Reset and migrate the test DB          |
 | `npm run db:seed`         | Seed the current DB with deterministic starter data |
+
+For AI toolchain and workflow commands, see [docs/general/COMMANDS.md](./docs/general/COMMANDS.md).
 
 ## Environment Variables
 

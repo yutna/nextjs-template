@@ -137,12 +137,9 @@ Copilot gives you a summary of everything that changed and why.
 
 ## Prompt Reference
 
-These prompts exist and remain available, but in this template they are orchestrated automatically by default. Add `@workspace` when you want broader workspace context in VS Code.
+These prompts are mirrored from Claude commands and available in VS Code Copilot Chat. In orchestration mode they run automatically — you can also invoke any prompt directly when you want to drive a specific phase. Add `@workspace` for broader file context. See [Commands Reference](../general/COMMANDS.md) for the complete list.
 
 ### Workflow Prompts
-
-Default usage: orchestrator manages these phases for you.
-Direct prompt invocation is an advanced fallback for debugging orchestration behavior.
 
 | Prompt | When to Use | What It Does |
 |--------|-------------|--------------|

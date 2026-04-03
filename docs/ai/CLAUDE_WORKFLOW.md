@@ -103,7 +103,7 @@ Claude gives you a summary of everything that changed and why.
 
 ## Slash Commands Reference
 
-These commands are available when you need explicit control, but the default workflow remains orchestration-first and automatic.
+These commands are available for any phase you want to drive directly. The default workflow is orchestration-first and automatic. See [Commands Reference](../general/COMMANDS.md) for the complete list.
 
 ### Workflow Commands
 

@@ -1,4 +1,4 @@
-# Template Mindset: Automation-First Vibe Coding
+# Manifesto: Automation-First Vibe Coding
 
 Status: Active
 Scope: Whole repository
@@ -89,12 +89,11 @@ If a change makes routine usage more manual, it is considered a regression.
 
 ## Implementation Direction
 
-Short-term:
+All short-term automation gaps have been closed. Ongoing direction:
 
-- Update Copilot workflow docs to orchestration-first framing
-- Make template baseline pass workflow structure audit
-- Decide whether parity and structure checks should be mandatory in CI
+- Keep scaffolding batteries-included so users spend time shipping features, not bootstrapping tools
+- Extend `workflow:audit` rules as new patterns are adopted
+- Keep Claude↔Copilot parity automatic — avoid manual sync steps
+- Platform limitation: GitHub Copilot agent mode cannot be switched programmatically; the one remaining manual step is intentional
 
-Long-term:
-
-- Keep adding battery-included scaffolding so users spend time shipping features, not bootstrapping tools
+See [Commands Reference](./COMMANDS.md) for all available CLI and AI toolchain commands.

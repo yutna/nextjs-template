@@ -12,7 +12,7 @@ interface GuardRule {
 }
 
 const DOCS_ROOT = "docs";
-const EXTRA_FILES = ["CONTRIBUTING.md"];
+const EXTRA_FILES = ["CONTRIBUTING.md", "README.md"];
 
 const PROHIBITED_RULES: GuardRule[] = [
   {
