@@ -43,7 +43,8 @@ Workflow commands in `.github/prompts/`:
 
 **Note**: These prompts are designed for **GitHub Copilot Chat** (VS Code extension or web interface). Invoke them via the Copilot Chat interface in your IDE or on github.com. GitHub Copilot does not provide automated phase orchestration via CLI; the workflow is chat-driven.
 
-**Parity Note**: GitHub Copilot does not have automatic stop-time workflow gates like Claude Code does. Follow [AGENTS.md § Workflow Guard Rules](../AGENTS.md) for manual gate discipline.
+**Parity Note**: GitHub Copilot does not have automatic stop-time workflow gates like Claude Code does. Follow [AGENTS.md](../AGENTS.md) phase rules, non-negotiable rules, and quality gates for manual gate discipline.
+
 ### Skills
 Deep pattern documentation in `.github/skills/` (symlinked from `.claude/skills/`).
 

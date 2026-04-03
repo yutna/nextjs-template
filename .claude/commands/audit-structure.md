@@ -14,14 +14,16 @@ You are in **Review** phase. Analyze and report findings without making changes.
 ## Prerequisites
 
 - Check `.claude/workflow-profile.json` for structure conventions
-- Reference `CLAUDE.md` for module structure rules
+- Reference `AGENTS.md` and `.github/instructions/nextjs-modules.instructions.md` for module structure rules
 
 ## Audit Scope
 
-### If argument is a path:
+### If argument is a path
+
 Audit only that path and its subdirectories.
 
-### If argument is 'all' or empty:
+### If argument is 'all' or empty
+
 Audit entire codebase structure.
 
 ## Audit Checks
@@ -33,13 +35,10 @@ For each directory in `src/modules/`:
 ```markdown
 ## Module: <module-name>
 
-### Required Directories
-- [ ] actions/ exists
-- [ ] components/ exists
-- [ ] containers/ exists
-- [ ] screens/ exists
-- [ ] hooks/ exists
-- [ ] index.ts barrel export exists
+### Present Directories Follow Conventions
+- [ ] folder names follow approved patterns
+- [ ] no grouping-folder barrels such as actions/index.ts or services/index.ts
+- [ ] module index.ts is optional and narrow if present
 
 ### Optional Directories (if present, should follow conventions)
 - [ ] contexts/ (React contexts)
@@ -48,7 +47,8 @@ For each directory in `src/modules/`:
 - [ ] constants/ (module constants)
 
 ### File Conventions
-- [ ] No generic files (utils.ts, helpers.ts, common.ts)
+- [ ] No generic root-level files (utils.ts, common.ts)
+- [ ] scoped helpers.ts files are internal and not exported broadly
 - [ ] Components use PascalCase
 - [ ] Actions use camelCase
 - [ ] Hooks use useX naming
@@ -132,10 +132,10 @@ Check for and report:
 | Pattern | Location | Issue |
 |---------|----------|-------|
 | `utils.ts` | Any | Use named specific files |
-| `helpers.ts` | Any | Use named specific files |
+| root-level `helpers.ts` | Any module/shared root | Use a scoped helper file inside a concrete folder |
 | `common.ts` | Any | Use named specific files |
 | `"use client"` | screens/ | Screens should be Server Components |
-| Missing barrel | modules/*/ | Every module needs index.ts |
+| grouping-folder barrel | modules/*/actions, services, repositories | Import concrete folders directly |
 
 ## Output Format
 
@@ -160,9 +160,9 @@ All conventions followed.
 - utils.ts found (forbidden pattern)
 
 ### ❌ dashboard (non-compliant)
-- Missing required directories: actions/, containers/
+- root-level utils.ts found
 - "use client" in screens/DashboardScreen.tsx
-- No index.ts barrel export
+- actions/index.ts grouping barrel present
 
 ## Shared
 [Findings for src/shared/]

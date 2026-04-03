@@ -30,9 +30,11 @@ Audit entire codebase structure.
 
 For each directory in `src/modules/`:
 
-- Required directories: actions/, components/, containers/, screens/, hooks/
-- Barrel exports (index.ts) present
-- No generic files (utils.ts, helpers.ts, common.ts)
+- Present directories follow approved naming patterns
+- No grouping-folder barrels such as actions/index.ts or services/index.ts
+- Module index.ts is optional and narrow if present
+- No generic root-level files (utils.ts, common.ts)
+- Scoped helpers.ts files are allowed when kept internal to a concrete folder
 - Server/client boundaries respected
 
 ### 2. Shared Structure
@@ -63,9 +65,9 @@ For `src/messages/`:
 | Pattern | Issue |
 |---------|-------|
 | `utils.ts` | Use named specific files |
-| `helpers.ts` | Use named specific files |
+| root-level `helpers.ts` | Use a scoped helper file inside a concrete folder |
 | `"use client"` in screens/ | Screens should be Server Components |
-| Missing barrel exports | Every module needs index.ts |
+| grouping-folder barrels | Import concrete folders directly |
 
 ## Output Format
 

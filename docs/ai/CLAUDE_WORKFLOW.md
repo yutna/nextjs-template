@@ -9,11 +9,11 @@ Welcome to the team! This guide will teach you how to use Claude Code effectivel
 3. Run `npm install` in the project root
 4. Run `claude` in your terminal to start a session
 
-That's it. Claude Code reads `CLAUDE.md` and `AGENTS.md` automatically when you start a session. All skills, commands, and hooks are pre-configured.
+That's it. Claude Code reads `CLAUDE.md` and `AGENTS.md` automatically when you start a session. The workflow contract, commands, skills, and hooks are already configured in the repo.
 
 ## How the Workflow Works
 
-Every feature follows 6 phases. Claude tracks where you are automatically.
+Every non-trivial feature follows 6 phases. Claude tracks where you are through the repo workflow state and hooks.
 
 ```txt
   You describe           Claude clarifies       Claude plans          Claude builds
@@ -90,7 +90,7 @@ Claude writes the code following all project conventions automatically:
 - Server-first components
 - Proper folder structure and naming
 - Effect for backend, Zod for validation
-- Tests for every file
+- Tests for changed code where required by the contract (entities are the main exception)
 - `data-testid` on interactive elements
 
 ### Step 4: Quality Gates Run Automatically
@@ -226,6 +226,16 @@ If a feature feels large (more than ~10 files), use decomposition:
 
 This produces phased task files with Gherkin scenarios and E2E test specs, making the feature manageable in smaller chunks.
 
+### Use The DB Scaffold As-Is
+
+For database work, start from the committed template scaffold instead of inventing a new layout.
+See `docs/db/database-workflow.md` for:
+
+- local sqlite defaults
+- migration and seed commands
+- test DB preparation flow
+- how to replace the starter `app-setting` entity
+
 ### Let Claude Handle Convention Details
 
 You don't need to memorize:
@@ -268,7 +278,7 @@ A feature is done when ALL of these are true:
 - [ ] Type check passes (0 errors)
 - [ ] Lint passes (0 warnings, 0 errors)
 - [ ] All tests pass
-- [ ] New code has tests
+- [ ] New code has tests where the contract requires them
 - [ ] Components have `data-testid` attributes
 - [ ] i18n messages exist for en and th
 - [ ] No `any` types, no `eslint-disable`

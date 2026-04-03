@@ -20,153 +20,80 @@ You are in **Implementation** phase for adding server functionality.
 
 Argument format: `<module-name>/<action-name>`
 
-Examples:
-- `users/createUser`
-- `orders/processPayment`
-- `auth/resetPassword`
+Examples
+
+- `users/create-user`
+- `orders/process-payment`
+- `auth/reset-password`
 
 ## Required Output
 
-### 1. Action File
+### 1. Action Folder
 
-Create `src/modules/<module>/actions/<actionName>.ts`:
+Create `src/modules/<module>/actions/<action-name>-action/` with:
 
-```typescript
-'use server';
+- `<action-name>-action.ts`
+- `types.ts` when result or payload types are non-trivial
+- `<action-name>-action.test.ts`
+- `index.ts` only if required for local folder consumption
 
-import { z } from 'zod';
-import { actionClient } from '@/shared/lib/safe-action';
-import { revalidatePath } from 'next/cache';
+Do not create `src/modules/<module>/actions/index.ts` grouping barrels.
 
-// Define input schema
-const <actionName>Schema = z.object({
-  // Add fields based on action requirements
-  // Example:
-  // name: z.string().min(1, 'Name is required'),
-  // email: z.string().email('Invalid email'),
-});
-
-// Define return type
-type <ActionName>Result = {
-  success: boolean;
-  // Add additional return fields
-};
-
-export const <actionName> = actionClient
-  .schema(<actionName>Schema)
-  .action(async ({ parsedInput }): Promise<<ActionName>Result> => {
-    // Implement action logic
-
-    // Revalidate cache if needed
-    // revalidatePath('/path');
-
-    return { success: true };
-  });
-```
-
-### 2. Update Barrel Export
-
-Add to `src/modules/<module>/actions/index.ts`:
-
-```typescript
-export { <actionName> } from './<actionName>';
-```
-
-### 3. Type Export (if needed)
-
-If the action has complex types, add to module types:
-
-```typescript
-// src/modules/<module>/types.ts
-export type { <ActionName>Input, <ActionName>Result } from './actions/<actionName>';
-```
-
-## Action Templates
-
-### Create Action
+### 2. Action Implementation Pattern
 
 ```typescript
 'use server';
 
-import { z } from 'zod';
-import { actionClient } from '@/shared/lib/safe-action';
+import { Effect } from 'effect';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/shared/lib/db';
 
-const createUserSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email'),
-  role: z.enum(['admin', 'user']).default('user'),
-});
+import { actionClient } from '@/shared/lib/safe-action';
+import { createUserSchema } from '@modules/users/schemas/create-user-schema';
+import { createUserService } from '@modules/users/services/create-user-service';
 
-export const createUser = actionClient
+import type { CreateUserActionResult } from './types';
+
+export const createUserAction = actionClient
   .schema(createUserSchema)
-  .action(async ({ parsedInput }) => {
-    const user = await db.user.create({
-      data: parsedInput,
-    });
+  .action(async ({ parsedInput }): Promise<CreateUserActionResult> => {
+    const result = await Effect.runPromise(createUserService(parsedInput));
 
-    revalidatePath('/users');
+    if (result.success) {
+      revalidatePath('/users');
+    }
 
-    return { success: true, user };
+    return result;
   });
 ```
 
-### Update Action
+### 3. Authenticated Action Pattern
 
 ```typescript
 'use server';
 
-import { z } from 'zod';
-import { authActionClient } from '@/shared/lib/safe-action';
+import { Effect } from 'effect';
 import { revalidatePath } from 'next/cache';
 
-const updateUserSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
-});
+import { authActionClient } from '@/shared/lib/safe-action';
+import { updateUserSchema } from '@modules/users/schemas/update-user-schema';
+import { updateUserService } from '@modules/users/services/update-user-service';
 
-export const updateUser = authActionClient
+export const updateUserAction = authActionClient
   .schema(updateUserSchema)
-  .action(async ({ parsedInput, ctx }) => {
-    const { id, ...data } = parsedInput;
+  .action(async ({ ctx, parsedInput }) => {
+    const result = await Effect.runPromise(
+      updateUserService({
+        actorId: ctx.session.userId,
+        input: parsedInput,
+      }),
+    );
 
-    const user = await db.user.update({
-      where: { id },
-      data,
-    });
+    if (result.success) {
+      revalidatePath(`/users/${parsedInput.id}`);
+      revalidatePath('/users');
+    }
 
-    revalidatePath(`/users/${id}`);
-    revalidatePath('/users');
-
-    return { success: true, user };
-  });
-```
-
-### Delete Action
-
-```typescript
-'use server';
-
-import { z } from 'zod';
-import { authActionClient } from '@/shared/lib/safe-action';
-import { revalidatePath } from 'next/cache';
-
-const deleteUserSchema = z.object({
-  id: z.string().uuid(),
-});
-
-export const deleteUser = authActionClient
-  .schema(deleteUserSchema)
-  .action(async ({ parsedInput }) => {
-    await db.user.delete({
-      where: { id: parsedInput.id },
-    });
-
-    revalidatePath('/users');
-
-    return { success: true };
+    return result;
   });
 ```
 
@@ -176,32 +103,21 @@ export const deleteUser = authActionClient
 'use client';
 
 import { useAction } from 'next-safe-action/hooks';
-import { createUser } from '../actions/createUser';
+import { createUserAction } from '@modules/users/actions/create-user-action';
 
 export function CreateUserContainer() {
-  const { execute, result, status } = useAction(createUser, {
+  const { execute, result, status } = useAction(createUserAction, {
+    onError: ({ error }) => {
+      toast.error(error.serverError || 'Failed');
+    },
     onSuccess: ({ data }) => {
       if (data?.success) {
         toast.success('User created!');
       }
     },
-    onError: ({ error }) => {
-      toast.error(error.serverError || 'Failed');
-    },
   });
 
-  return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      const formData = new FormData(e.currentTarget);
-      execute({
-        name: formData.get('name') as string,
-        email: formData.get('email') as string,
-      });
-    }}>
-      {/* Form fields */}
-    </form>
-  );
+  // Bind execute to your form or event handlers here.
 }
 ```
 
@@ -209,6 +125,7 @@ export function CreateUserContainer() {
 
 - Create actions without Zod validation
 - Skip the 'use server' directive
-- Forget to update barrel exports
+- Create grouping-folder barrels such as `actions/index.ts`
+- Call the database directly from the action instead of delegating to the service layer
 - Create actions for read operations (use Server Components instead)
 - Skip cache revalidation after mutations

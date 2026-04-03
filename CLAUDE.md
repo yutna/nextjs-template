@@ -58,6 +58,8 @@ Configured in `.mcp.json` (auto-loaded):
 - split DB by environment (`development.sqlite`, `test.sqlite`, `production.sqlite` local default)
 - if production uses remote libSQL/Turso, keep production URL externalized and separate from local dev/test files
 
+For the runnable template DB scaffold and command flow, see `docs/db/database-workflow.md`.
+
 ## Directory Summary
 
 - `src/app/[locale]/` → App Router routes (thin shells)

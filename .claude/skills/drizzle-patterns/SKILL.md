@@ -8,7 +8,9 @@ description: This skill should be used when working with database, Drizzle ORM, 
 Drizzle is the database ORM for this project.
 All entities live in `src/shared/entities/`.
 
-## Rails-Style Local DB Default
+For the runnable template scaffold and command flow, see `docs/db/database-workflow.md`.
+
+## Database Workflow (Local File Default)
 
 These conventions apply to every DB backend.
 The `local/*.sqlite` path defaults apply only when using file-based local DBs.
@@ -49,10 +51,15 @@ Minimum expectation:
 - test setup resets state deterministically before assertions
 
 Recommended repository helpers:
-
 - `src/shared/lib/db-isolation/db-isolation.ts`
 - `src/shared/lib/db-isolation/types.ts`
 - `src/test/setup-db.ts`
+
+## Canonical Starter Entity
+
+The template currently uses `src/shared/entities/app-setting/` as the starter entity example.
+
+Use it as a replacement seam, not as a production domain recommendation.
 
 ## Ownership Boundaries
 
@@ -76,29 +83,27 @@ src/shared/entities/
 ## Schema Example (SQLite/libSQL)
 
 ```typescript
-// src/shared/entities/user/user.ts
+// src/shared/entities/app-setting/app-setting.ts
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const users = sqliteTable("users", {
+export const appSettings = sqliteTable("app_settings", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
-  email: text("email").notNull().unique(),
-  id: text("id").primaryKey(),
-  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
-  name: text("name").notNull(),
+  description: text("description"),
+  key: text("key").primaryKey(),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  value: text("value").notNull(),
 });
 ```
 
 ## Types Example
 
 ```typescript
-// src/shared/entities/user/types.ts
+// src/shared/entities/app-setting/types.ts
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import type { users } from "./user";
+import type { appSettings } from "./app-setting";
 
-export type NewUser = InferInsertModel<typeof users>;
-export type UpdateUser = Partial<NewUser>;
-export type User = InferSelectModel<typeof users>;
+export type AppSetting = InferSelectModel<typeof appSettings>;
+export type NewAppSetting = InferInsertModel<typeof appSettings>;
 ```
 
 ## DB Client Example (libSQL)
@@ -108,15 +113,24 @@ export type User = InferSelectModel<typeof users>;
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 
-import * as schema from "@/shared/entities";
+import { resolveDatabaseUrl } from "./resolve-database-url";
+import * as schema from "./schema";
 
-function resolveDatabaseUrl(): string {
-  return (
-    process.env.DATABASE_URL ?? "file:src/shared/db/local/development.sqlite"
-  );
-}
+const nodeEnv =
+  process.env.NODE_ENV === "production"
+    ? "production"
+    : process.env.NODE_ENV === "test"
+      ? "test"
+      : "development";
 
-const client = createClient({ url: resolveDatabaseUrl() });
+const databaseUrl = resolveDatabaseUrl({
+  databaseUrl: process.env.DATABASE_URL,
+  databaseUrlProduction: process.env.DATABASE_URL_PRODUCTION,
+  databaseUrlTest: process.env.DATABASE_URL_TEST,
+  nodeEnv,
+});
+
+const client = createClient({ url: databaseUrl });
 
 export const db = drizzle(client, { schema });
 ```
@@ -127,14 +141,24 @@ export const db = drizzle(client, { schema });
 // drizzle.config.ts
 import type { Config } from "drizzle-kit";
 
-function resolveDatabaseUrl(): string {
-  return (
-    process.env.DATABASE_URL ?? "file:src/shared/db/local/development.sqlite"
-  );
-}
+import { resolveDatabaseUrl } from "./src/shared/db/resolve-database-url";
+
+const nodeEnv =
+  process.env.NODE_ENV === "production"
+    ? "production"
+    : process.env.NODE_ENV === "test"
+      ? "test"
+      : "development";
+
+const databaseUrl = resolveDatabaseUrl({
+  databaseUrl: process.env.DATABASE_URL,
+  databaseUrlProduction: process.env.DATABASE_URL_PRODUCTION,
+  databaseUrlTest: process.env.DATABASE_URL_TEST,
+  nodeEnv,
+});
 
 export default {
-  dbCredentials: { url: resolveDatabaseUrl() },
+  dbCredentials: { url: databaseUrl },
   dialect: "sqlite",
   out: "./src/shared/db/migrations",
   schema: "./src/shared/db/schema.ts",
@@ -179,11 +203,16 @@ Apply migration:
 npm run db:migrate
 ```
 
-Recommended env-specific usage:
+Apply migration to test DB:
 
 ```bash
-DATABASE_URL=file:src/shared/db/local/development.sqlite npm run db:migrate
-DATABASE_URL=file:src/shared/db/local/test.sqlite npm run db:migrate
+npm run db:migrate:test
+```
+
+Reset and migrate the test DB:
+
+```bash
+npm run db:prepare:test
 ```
 
 ## Seeds
@@ -192,10 +221,10 @@ Seeds live in `src/shared/db/seeds/` and should be deterministic.
 
 ```txt
 src/shared/db/seeds/
-├── index.ts
-├── users.seed.ts
-└── posts.seed.ts
+└── index.ts
 ```
+
+The committed template seed currently inserts the canonical `app_settings.site_name` row.
 
 ## DB Task Checklist (Required)
 
@@ -207,3 +236,4 @@ For every DB-related task:
 4. Run quality gates (`npm run check-types`, `npm run lint`, `npm test`)
 5. Verify tests point to the intended DB URL/file
 6. Verify test DB reset strategy is deterministic
+

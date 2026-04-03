@@ -1,20 +1,20 @@
 # Vibe Coding with GitHub Copilot
 
-Welcome to the team! This guide will teach you how to use GitHub Copilot (in VS Code or CLI) effectively on this project to deliver production-ready features fast.
+Welcome to the team! This guide covers the supported workflow for GitHub Copilot Chat in VS Code on this project.
 
 ## What You Need Before Starting
 
 1. **GitHub Copilot** subscription (Individual or Business)
-2. **VS Code** with Copilot Chat extension, or **GitHub Copilot CLI** (`copilot`)
+2. **VS Code** with Copilot Chat extension
 3. **Node.js 24.14+** (managed by [mise](https://mise.jdx.dev))
 4. Run `npm install` in the project root
 5. Open the project in VS Code
 
-Copilot automatically reads `AGENTS.md`, `.github/instructions/`, and `.github/agents/` when you start a chat. All prompts, skills, and agents are pre-configured.
+This repository provides Copilot-specific prompts, instructions, and agent docs. Use them through Copilot Chat in VS Code; phase progression and gate discipline are still user-driven.
 
 ## How the Workflow Works
 
-Every feature follows 6 phases. Copilot's agents specialize in each phase.
+Every non-trivial feature follows 6 phases. Copilot's workflow docs and prompts map to those phases.
 
 ```txt
   You describe           Analyst clarifies      Planner designs        Implementer builds
@@ -67,7 +67,7 @@ Copilot uses specialized agents that work together:
 
 ### Step 1: Tell Copilot What You Need
 
-Open Copilot Chat (Ctrl+Shift+I) and describe your feature:
+Open Copilot Chat in VS Code and describe your feature:
 
 ```txt
 I need a user profile page where users can update their name and avatar
@@ -113,7 +113,7 @@ The Implementer writes code following all project conventions:
 - Server-first components
 - Proper folder structure and naming
 - Effect for backend, Zod for validation
-- Tests for every file
+- Tests for changed code where required by the contract (entities are the main exception)
 - `data-testid` on interactive elements
 
 ### Step 4: Run Quality Gates
@@ -146,7 +146,7 @@ Copilot gives you a summary of everything that changed and why.
 
 ## Prompt Reference
 
-These are your primary tools. Use them in Copilot Chat with `@workspace` prefix.
+These are your primary tools. Use them in Copilot Chat. Add `@workspace` when you want broader workspace context in VS Code.
 
 ### Workflow Prompts
 
@@ -178,7 +178,7 @@ These are your primary tools. Use them in Copilot Chat with `@workspace` prefix.
 
 ## Instructions: Context-Aware Guidance
 
-Copilot loads these instruction files automatically based on what you're working on:
+Copilot Chat can use these instruction files as contextual guidance based on what you're working on:
 
 ```txt
 Editing...                  Copilot loads...
@@ -192,7 +192,7 @@ services/, repositories/ → effect-backend.instructions.md
 *.test.ts, *.test.tsx    → tests.instructions.md
 ```
 
-Plus 35 skills (symlinked from `.claude/skills/`) that provide deep pattern knowledge for specific topics like Chakra UI, state machines, Drizzle, i18n, and more.
+Plus the shared skill set (symlinked from `.claude/skills/`) provides deeper pattern knowledge for topics like Chakra UI, state machines, Drizzle, and i18n.
 
 ## The Self-Healing Principle
 
@@ -245,15 +245,15 @@ When using Copilot, you may need to drive this loop manually:
 
 ## Tips for Working Effectively
 
-### Use @workspace for Full Context
+### Use @workspace When You Need Broader Context
 
-Always prefix with `@workspace` so Copilot sees the entire project:
+In VS Code Chat, `@workspace` is useful when you want Copilot to search or reason across the repository:
 
 ```txt
 @workspace Create a new order module with CRUD operations
 ```
 
-Without `@workspace`, Copilot only sees the current file.
+Without it, Copilot may rely more heavily on the current chat context and currently open files.
 
 ### Be Specific About What You Want
 
@@ -274,6 +274,16 @@ with cart, checkout, payment, and order tracking
 
 This produces phased task files with Gherkin scenarios and E2E test specs.
 
+### Use The DB Scaffold As-Is
+
+For database work, start from the committed template scaffold instead of inventing a new layout.
+See `docs/db/database-workflow.md` for:
+
+- local sqlite defaults
+- migration and seed commands
+- test DB preparation flow
+- how to replace the starter `app-setting` entity
+
 ### Reference Files Explicitly
 
 Copilot works best when you point it to relevant code:
@@ -292,7 +302,7 @@ You don't need to memorize:
 - Import rules (`@/` alias, no `../`)
 - Backend patterns (Effect services, Drizzle repositories)
 
-Copilot reads the instructions and skills automatically. Focus on **what** you want, not **how** it should be structured.
+Use the repo instructions and prompts as your default guardrails. Focus on **what** you want, not on re-specifying the repo structure every time.
 
 ### Review the Plan, Not Just the Code
 
@@ -328,26 +338,14 @@ The project includes `.vscode/settings.json` with optimal Copilot settings. Make
 
 ### Keyboard Shortcuts
 
+Shortcuts vary by platform and keymap. Check your local VS Code bindings if these differ.
+
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl+Shift+I` | Open Copilot Chat |
 | `Ctrl+I` | Inline Copilot Chat |
 | `Ctrl+Enter` | Accept suggestion |
 | `Tab` | Accept inline completion |
-
-### Using the Terminal
-
-You can also run Copilot prompts from the integrated terminal with non-interactive mode:
-
-```bash
-copilot -p "create a user repository with Effect and Drizzle" --allow-all-tools
-```
-
-For workflow prompts stored in `.github/prompts/`, pass prompt content directly:
-
-```bash
-copilot -p "$(cat .github/prompts/plan-work.prompt.md)" --allow-all-tools
-```
 
 ## What "Done" Means on This Project
 
@@ -358,7 +356,7 @@ A feature is done when ALL of these are true:
 - [ ] Type check passes (0 errors)
 - [ ] Lint passes (0 warnings, 0 errors)
 - [ ] All tests pass
-- [ ] New code has tests
+- [ ] New code has tests where the contract requires them
 - [ ] Components have `data-testid` attributes
 - [ ] i18n messages exist for en and th
 - [ ] No `any` types, no `eslint-disable`
@@ -372,7 +370,7 @@ npm run check-types && npm run lint && npm run test
 ## Quick Reference Card
 
 ```txt
-Open chat:           Ctrl+Shift+I
+Open chat:           Open Copilot Chat in VS Code
 New feature:         @workspace [describe in plain English]
 Plan:                @workspace /plan-work
 Build:               @workspace /implement

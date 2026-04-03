@@ -1,15 +1,6 @@
 ---
 name: code-conventions
 description: This skill should be used when implementing code, creating files, or writing new features. Provides complete file structure, naming patterns, and import rules.
-triggers:
-  - implement
-  - create
-  - add component
-  - add service
-  - add repository
-  - write code
-  - new file
-  - scaffold
 ---
 
 # Code Conventions Skill
@@ -18,20 +9,27 @@ This skill provides comprehensive code structure conventions to ensure correct c
 
 ## Naming Patterns (MUST FOLLOW)
 
-| Folder Type | Pattern | Examples |
-|-------------|---------|----------|
-| Components | `<semantic-type>-<name>/` | `form-create-user/`, `modal-confirmation/`, `card-user/` |
-| Containers | `container-<name>/` | `container-user-list/`, `container-checkout/` |
-| Screens | `screen-<name>/` | `screen-welcome/`, `screen-user-detail/` |
-| Hooks | `use-<name>/` | `use-user-form/`, `use-auth/` |
-| Actions | `<name>-action/` | `create-user-action/`, `delete-post-action/` |
-| API Handlers | `<name>-handler/` | `webhook-stripe-handler/`, `get-users-handler/` |
-| Services | `<name>-service/` | `create-user-service/`, `checkout-service/` |
-| Repositories | `<name>-repository/` | `user-repository/`, `order-repository/` |
-| Jobs | `<name>-job/` | `send-welcome-email-job/`, `sync-inventory-job/` |
-| Policies | `<name>-policy/` | `user-policy/`, `post-policy/` |
-| Entities | `<name>/` | `user/`, `post/`, `order/` |
-| Middleware | `<name>-middleware/` | `auth-middleware/`, `logging-middleware/` |
+| Folder Type  | Pattern                   | Examples                                                 |
+| ------------ | ------------------------- | -------------------------------------------------------- |
+| Components   | `<semantic-type>-<name>/` | `form-create-user/`, `modal-confirmation/`, `card-user/` |
+| Containers   | `container-<name>/`       | `container-user-list/`, `container-checkout/`            |
+| Screens      | `screen-<name>/`          | `screen-welcome/`, `screen-user-detail/`                 |
+| Hooks        | `use-<name>/`             | `use-user-form/`, `use-auth/`                            |
+| Actions      | `<name>-action/`          | `create-user-action/`, `delete-post-action/`             |
+| API Handlers | `<name>-handler/`         | `webhook-stripe-handler/`, `get-users-handler/`          |
+| Services     | `<name>-service/`         | `create-user-service/`, `checkout-service/`              |
+| Repositories | `<name>-repository/`      | `user-repository/`, `order-repository/`                  |
+| Jobs         | `<name>-job/`             | `send-welcome-email-job/`, `sync-inventory-job/`         |
+| Policies     | `<name>-policy/`          | `user-policy/`, `post-policy/`                           |
+| Entities     | `<name>/`                 | `user/`, `post/`, `order/`                               |
+| Middleware   | `<name>-middleware/`      | `auth-middleware/`, `logging-middleware/`                |
+
+## Import Conventions (MUST FOLLOW)
+
+- **Alias imports only** for cross-folder imports: `@shared/entities/user`, `@modules/users/schemas`, `@modules/orders/services`
+- **Relative imports `./` only** for same-folder siblings: `./helpers`, `./constants`
+- **Never use relative upward imports** `../../...` — use alias instead
+- Path alias roots: `@shared/`, `@modules/<name>/`, `@app/` (mapped in `tsconfig.json`)
 
 ## Function and Typing Defaults (MUST FOLLOW)
 
@@ -49,6 +47,7 @@ This skill provides comprehensive code structure conventions to ensure correct c
 - Do not split component state across multiple local stores
 
 ### Component Semantic Types
+
 Use these prefixes for components: `form-`, `modal-`, `alert-`, `section-`, `menu-`, `card-`, `table-`, `list-`, `button-`, `input-`, `dialog-`, `drawer-`, `toast-`, `badge-`, `avatar-`, `icon-`
 
 ## File Structure Templates
@@ -56,6 +55,7 @@ Use these prefixes for components: `form-`, `modal-`, `alert-`, `section-`, `men
 ### Frontend Folders (with tests + stories for components)
 
 **Component:**
+
 ```
 form-create-user/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -68,6 +68,7 @@ form-create-user/
 ```
 
 **Container:**
+
 ```
 container-user-list/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -78,6 +79,7 @@ container-user-list/
 ```
 
 **Screen:**
+
 ```
 screen-user-detail/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -87,6 +89,7 @@ screen-user-detail/
 ```
 
 **Hook:**
+
 ```
 use-user-form/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -99,6 +102,7 @@ use-user-form/
 ### Backend Folders (with tests, Effect required)
 
 **Service:**
+
 ```
 create-user-service/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -109,6 +113,7 @@ create-user-service/
 ```
 
 **Repository:**
+
 ```
 user-repository/
 ├── index.ts                      # Optional (if required by lint/consumption)
@@ -118,6 +123,7 @@ user-repository/
 ```
 
 **Job:**
+
 ```
 send-welcome-email-job/
 ├── index.ts
@@ -127,6 +133,7 @@ send-welcome-email-job/
 ```
 
 **Policy:**
+
 ```
 user-policy/
 ├── index.ts
@@ -136,6 +143,7 @@ user-policy/
 ```
 
 **API Handler:**
+
 ```
 webhook-stripe-handler/
 ├── index.ts
@@ -148,6 +156,7 @@ webhook-stripe-handler/
 ### Shared-Only Folders
 
 **Entity (NO tests required):**
+
 ```
 shared/entities/user/
 ├── index.ts
@@ -157,6 +166,7 @@ shared/entities/user/
 ```
 
 **DB (flat, infrastructure):**
+
 ```
 shared/db/
 ├── client.ts                     # Drizzle client
@@ -170,7 +180,10 @@ shared/db/
 └── seeds/
 ```
 
+See `docs/db/database-workflow.md` for the runnable template DB scaffold.
+
 **Queue (flat, infrastructure):**
+
 ```
 shared/queue/
 ├── client.ts
@@ -179,6 +192,7 @@ shared/queue/
 ```
 
 **Middleware:**
+
 ```
 shared/middleware/auth-middleware/
 ├── index.ts
@@ -212,6 +226,7 @@ types/
 ## Import Rules (MUST FOLLOW)
 
 ### Allowed
+
 ```typescript
 // Same folder - use ./
 import { UserProps } from "./types";
@@ -224,6 +239,7 @@ import { users } from "@/shared/entities/user";
 ```
 
 ### Forbidden
+
 ```typescript
 // ❌ NO relative imports beyond current folder
 import { UserForm } from "../../components/user-form";
@@ -238,23 +254,25 @@ import { something } from "@/modules/other-module/services/some-service";
 
 ## Required Files Checklist
 
-| Folder Type | index.ts | types.ts | *.test.ts(x) | *.stories.tsx |
-|-------------|----------|----------|--------------|---------------|
-| Components | Optional* | If props | ✅ | ✅ |
-| Containers | Optional* | If props | ✅ | ❌ |
-| Screens | Optional* | If props | ✅ | ❌ |
-| Hooks | Optional* | If types | ✅ | ❌ |
-| Actions | Optional* | If types | ✅ | ❌ |
-| Services | Optional* | ✅ | ✅ | ❌ |
-| Repositories | Optional* | ✅ | ✅ | ❌ |
-| Jobs | Optional* | ✅ | ✅ | ❌ |
-| Policies | Optional* | ✅ | ✅ | ❌ |
-| API Handlers | Optional* | ✅ | ✅ | ❌ |
-| Entities | Optional* | ✅ | ❌ | ❌ |
-| Middleware | Optional* | ✅ | ✅ | ❌ |
+| Folder Type  | index.ts   | types.ts | \*.test.ts(x) | \*.stories.tsx |
+| ------------ | ---------- | -------- | ------------- | -------------- |
+| Components   | Optional\* | If props | ✅            | ✅             |
+| Containers   | Optional\* | If props | ✅            | ❌             |
+| Screens      | Optional\* | If props | ✅            | ❌             |
+| Hooks        | Optional\* | If types | ✅            | ❌             |
+| Actions      | Optional\* | If types | ✅            | ❌             |
+| Services     | Optional\* | ✅       | ✅            | ❌             |
+| Repositories | Optional\* | ✅       | ✅            | ❌             |
+| Jobs         | Optional\* | ✅       | ✅            | ❌             |
+| Policies     | Optional\* | ✅       | ✅            | ❌             |
+| API Handlers | Optional\* | ✅       | ✅            | ❌             |
+| Entities     | Optional\* | ✅       | ❌            | ❌             |
+| Middleware   | Optional\* | ✅       | ✅            | ❌             |
 
 \* Optional means: add only when required by lint rules or explicit import ergonomics.
 Do not create grouping-folder barrels like `actions/index.ts`, `services/index.ts`, or `repositories/index.ts`.
+
+Internal `helpers.ts` and `constants.ts` files do not require standalone tests when their behavior is fully covered by the owning folder's main test file.
 
 ## Code Organization Rules
 
@@ -269,16 +287,16 @@ Do not create grouping-folder barrels like `actions/index.ts`, `services/index.t
 
 When creating new code, ask in order:
 
-| Question | If Yes → |
-|----------|----------|
-| Does it render UI (JSX)? | `components/` |
-| Is it a React hook? | `hooks/` |
-| Is it a React context/provider? | `contexts/` or `providers/` |
-| Does it wrap an external service/API? | `lib/` |
-| Is it domain configuration (variants, presets, mappings)? | `lib/` |
-| Is it a pure stateless utility function? | `utils/` |
-| Is it a constant value (no logic)? | `constants/` (flat file) |
-| Is it a TypeScript type/interface? | `types/` (flat file) |
+| Question                                                  | If Yes →                    |
+| --------------------------------------------------------- | --------------------------- |
+| Does it render UI (JSX)?                                  | `components/`               |
+| Is it a React hook?                                       | `hooks/`                    |
+| Is it a React context/provider?                           | `contexts/` or `providers/` |
+| Does it wrap an external service/API?                     | `lib/`                      |
+| Is it domain configuration (variants, presets, mappings)? | `lib/`                      |
+| Is it a pure stateless utility function?                  | `utils/`                    |
+| Is it a constant value (no logic)?                        | `constants/` (flat file)    |
+| Is it a TypeScript type/interface?                        | `types/` (flat file)        |
 
 **Key distinctions:**
 
@@ -304,15 +322,15 @@ All interactive UI elements MUST have a `data-testid` attribute for E2E test tar
 
 ### Which Elements Require data-testid
 
-| Element Type | Required | Example |
-|-------------|----------|---------|
-| Buttons, links | ✅ | `auth-login-submit` |
-| Form inputs | ✅ | `auth-login-email` |
-| Form elements | ✅ | `auth-login-form` |
-| Modals, dialogs, drawers | ✅ | `users-delete-modal` |
-| Lists with dynamic items | ✅ | `users-list`, `users-list-item-{id}` |
-| Purely decorative elements | ❌ | - |
-| Layout wrappers | ❌ | - |
+| Element Type               | Required | Example                              |
+| -------------------------- | -------- | ------------------------------------ |
+| Buttons, links             | ✅       | `auth-login-submit`                  |
+| Form inputs                | ✅       | `auth-login-email`                   |
+| Form elements              | ✅       | `auth-login-form`                    |
+| Modals, dialogs, drawers   | ✅       | `users-delete-modal`                 |
+| Lists with dynamic items   | ✅       | `users-list`, `users-list-item-{id}` |
+| Purely decorative elements | ❌       | -                                    |
+| Layout wrappers            | ❌       | -                                    |
 
 ### Component Props
 
@@ -345,7 +363,7 @@ export function FormLogin({ "data-testid": testId = "auth-login-form" }: FormLog
 
 1. ❌ Creating `utils.ts` or `helpers.ts` at module root
 2. ❌ Using `../` imports
-3. ❌ Missing test files
+3. ❌ Missing required test files (entities excluded; internal helper files may be covered by owner tests)
 4. ❌ Missing stories for components
 5. ❌ Putting entities in modules (must be in shared/entities/)
 6. ❌ Writing backend code without Effect
