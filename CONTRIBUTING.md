@@ -43,6 +43,39 @@ Examples: `feat/user-auth`, `fix/login-redirect`, `chore/setup-eslint`
 No strict convention. Write clear, descriptive commit messages
 that explain what changed and why.
 
+## Dual-Toolchain Parity
+
+This repository maintains Claude Code and GitHub Copilot as co-equal development toolchains. Both are configured with identical conventions, workflow phases, and code generation scaffolding.
+
+### Parity file pairs
+
+The following files **must be kept in sync**:
+
+| File Pair | Purpose |
+|-----------|---------|
+| `.claude/commands/create-module.md` ↔ `.github/prompts/create-module.prompt.md` | Module scaffolding for both toolchains |
+
+Whenever you modify one file in a pair, **you must also update the other** to ensure both toolchains generate equivalent code.
+
+### Manual parity checks
+
+Run the parity verification command to detect asymmetric changes:
+
+```bash
+# Check all files for parity drift
+./bin/vibe parity-check
+
+# Check with all files (not just staged)
+./bin/vibe parity-check --all
+```
+
+The command checks for these parity rules:
+- **barrel-export-prohibition**: Both must disallow grouping-folder barrel re-exports
+- **scoped-helpers-allowed**: Both must allow `helpers.ts` only inside concrete folders
+- **concrete-slice-first**: Both must prefer concrete examples over grouping-folder templates
+
+**AI Assistance**: Claude Code and GitHub Copilot hooks will auto-detect when you modify parity-paired files and remind you to keep them in sync.
+
 ## Release flow
 
 Releases are automated via milestones:
