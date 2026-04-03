@@ -670,6 +670,7 @@ For file-based local databases (SQLite/libSQL file mode), also follow the local 
 - seeds: `src/shared/db/seeds/`
 
 For file-based local DBs only:
+
 - local DB files: `src/shared/db/local/`
 
 ### Environment Separation
@@ -677,6 +678,7 @@ For file-based local DBs only:
 Use different DB targets per environment:
 
 File-based local DB defaults (SQLite/libSQL file mode):
+
 - development: `file:src/shared/db/local/development.sqlite`
 - test: `file:src/shared/db/local/test.sqlite`
 - production local default (if needed): `file:src/shared/db/local/production.sqlite`
