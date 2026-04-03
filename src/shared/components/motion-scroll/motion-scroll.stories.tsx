@@ -139,19 +139,23 @@ export const CombinedEffects: Story = {
 export const AsDifferentElement: Story = {
   args: {
     as: "section",
-    children: (
-      <Box bg={{ _dark: "gray.800", base: "gray.100" }} borderRadius="md" p={8}>
-        <Heading mb={4} size="lg">
-          Section Element
-        </Heading>
-        <Text>This MotionScroll renders as a semantic section element.</Text>
-      </Box>
-    ),
+    children: "Section Element",
     style: { opacity: [0, 1] },
   },
   render: (args) => (
     <ScrollContainer>
-      <MotionScroll {...args} />
+      <MotionScroll {...args}>
+        <Box
+          bg={{ _dark: "gray.800", base: "gray.100" }}
+          borderRadius="md"
+          p={8}
+        >
+          <Heading mb={4} size="lg">
+            Section Element
+          </Heading>
+          <Text>This MotionScroll renders as a semantic section element.</Text>
+        </Box>
+      </MotionScroll>
     </ScrollContainer>
   ),
 };

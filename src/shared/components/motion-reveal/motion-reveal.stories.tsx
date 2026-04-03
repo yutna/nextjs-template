@@ -99,8 +99,11 @@ export const ScaleIn: Story = {
 
 export const FlipInX: Story = {
   args: {
-    children: (
-       
+    children: "Flip In X",
+    variant: "flipInX",
+  },
+  render: (args) => (
+    <MotionReveal {...args}>
       <Box style={{ perspective: "1000px" }}>
         <Card.Root>
           <Card.Body>
@@ -109,9 +112,8 @@ export const FlipInX: Story = {
           </Card.Body>
         </Card.Root>
       </Box>
-    ),
-    variant: "flipInX",
-  },
+    </MotionReveal>
+  ),
 };
 
 export const WithDelay: Story = {
@@ -135,7 +137,9 @@ export const SlowDuration: Story = {
       <Card.Root>
         <Card.Body>
           <Heading size="md">Slow Duration</Heading>
-          <Text>This animation uses a slower duration for a dramatic effect.</Text>
+          <Text>
+            This animation uses a slower duration for a dramatic effect.
+          </Text>
         </Card.Body>
       </Card.Root>
     ),
@@ -147,16 +151,19 @@ export const SlowDuration: Story = {
 export const AsSection: Story = {
   args: {
     as: "section",
-    children: (
+    children: "Section Element",
+    variant: "fadeIn",
+  },
+  render: (args) => (
+    <MotionReveal {...args}>
       <Box bg={{ _dark: "gray.800", base: "gray.100" }} borderRadius="md" p={8}>
         <Heading mb={4} size="lg">
           Section Element
         </Heading>
         <Text>This MotionReveal renders as a semantic section element.</Text>
       </Box>
-    ),
-    variant: "fadeIn",
-  },
+    </MotionReveal>
+  ),
 };
 
 export const AllVariants: Story = {

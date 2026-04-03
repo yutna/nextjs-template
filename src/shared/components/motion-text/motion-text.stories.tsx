@@ -1,4 +1,4 @@
-import { Box, Heading, VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 
 import { MotionText } from "./motion-text";
 
@@ -40,17 +40,14 @@ export const AsHeading: Story = {
     as: "h1",
     children: "Welcome to Our Site",
   },
-  render: (args) => (
-    <Heading size="2xl">
-      <MotionText {...args} />
-    </Heading>
-  ),
+  render: (args) => <MotionText {...args} />,
 };
 
 export const AsParagraph: Story = {
   args: {
     as: "p",
-    children: "This is a paragraph with animated text that reveals word by word as you scroll into view.",
+    children:
+      "This is a paragraph with animated text that reveals word by word as you scroll into view.",
   },
 };
 
@@ -115,24 +112,16 @@ export const AllHeadingLevels: Story = {
   },
   render: () => (
     <VStack align="start" gap={4}>
-      <Heading size="2xl">
-        <MotionText as="h1">Heading 1</MotionText>
-      </Heading>
-      <Heading size="xl">
-        <MotionText as="h2" delay={0.2}>
-          Heading 2
-        </MotionText>
-      </Heading>
-      <Heading size="lg">
-        <MotionText as="h3" delay={0.4}>
-          Heading 3
-        </MotionText>
-      </Heading>
-      <Heading size="md">
-        <MotionText as="h4" delay={0.6}>
-          Heading 4
-        </MotionText>
-      </Heading>
+      <MotionText as="h1">Heading 1</MotionText>
+      <MotionText as="h2" delay={0.2}>
+        Heading 2
+      </MotionText>
+      <MotionText as="h3" delay={0.4}>
+        Heading 3
+      </MotionText>
+      <MotionText as="h4" delay={0.6}>
+        Heading 4
+      </MotionText>
     </VStack>
   ),
 };
