@@ -301,13 +301,14 @@ function validateHookConfigs(opts: SyncOptions): HookValidateResult {
 
       for (const hook of allHooks) {
         if (hook.type === "command" && hook.command) {
-          const scriptMatch = hook.command.match(/node\s+([^\s]+)/);
-          if (scriptMatch && scriptMatch[1]) {
-            const scriptPath = join(ROOT, scriptMatch[1]);
+          // Extract the script path from: node [--flags...] <script> [args...]
+          const nodeMatch = hook.command.match(/node\s+((?:--\S+\s+)*)([\S]+)/);
+          if (nodeMatch && nodeMatch[2]) {
+            const scriptPath = join(ROOT, nodeMatch[2]);
             if (!existsSync(scriptPath)) {
               issues.push({
                 file: configFile,
-                message: `Script not found: ${scriptMatch[1]}`,
+                message: `Script not found: ${nodeMatch[2]}`,
               });
             }
           }
