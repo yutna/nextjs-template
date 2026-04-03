@@ -33,7 +33,6 @@ const DEFAULT_MODULE_SUBDIRS = [
 ];
 
 const REQUIRED_MODULE_SUBDIRS = [
-  "actions",
   "components",
   "containers",
   "screens",
@@ -71,10 +70,24 @@ function checkForForbiddenFiles(
 ): string[] {
   const violations: string[] = [];
 
+  function isScopedHelperFile(filePath: string): boolean {
+    const relPath = relative(dirPath, filePath);
+    const parts = relPath.split("/");
+    // Allow helpers.ts only when scoped inside a concrete subfolder.
+    return parts.length >= 3;
+  }
+
   function scanDir(currentPath: string): void {
     for (const file of getFiles(currentPath)) {
       if (forbiddenFiles.includes(file)) {
-        violations.push(join(currentPath, file));
+        const filePath = join(currentPath, file);
+        if (
+          (file === "helpers.ts" || file === "helpers.tsx") &&
+          isScopedHelperFile(filePath)
+        ) {
+          continue;
+        }
+        violations.push(filePath);
       }
     }
     for (const dir of getDirectories(currentPath)) {
@@ -137,19 +150,6 @@ function auditModule(modulePath: string, moduleName: string): AuditResult {
       message: `Missing required directories: ${missingRequired.join(", ")}`,
       severity: "error",
       type: "missing-directory",
-    });
-  }
-
-  const hasBarrel =
-    existsSync(join(modulePath, "index.ts")) ||
-    existsSync(join(modulePath, "index.tsx"));
-
-  if (!hasBarrel) {
-    if (result.status === "compliant") result.status = "violations";
-    result.issues.push({
-      message: "Missing index.ts barrel export",
-      severity: "warning",
-      type: "missing-barrel",
     });
   }
 

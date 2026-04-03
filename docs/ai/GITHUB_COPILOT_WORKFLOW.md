@@ -10,7 +10,14 @@ Welcome to the team! This guide covers the supported workflow for GitHub Copilot
 4. Run `npm install` in the project root
 5. Open the project in VS Code
 
-This repository provides Copilot-specific prompts, instructions, and agent docs. Use them through Copilot Chat in VS Code; phase progression and gate discipline are still user-driven.
+This repository provides Copilot-specific prompts, instructions, and agent docs. Use them through Copilot Chat in VS Code.
+
+The default model is orchestration-first automation: users should only manually do two things.
+
+1. Run `/decompose-requirements` for large features.
+2. Switch Copilot to orchestration agent mode.
+
+Everything else should be automated by prompts, hooks, scripts, and CI.
 
 ## How the Workflow Works
 
@@ -81,7 +88,9 @@ The Orchestrator routes this to the Requirements Analyst, who will:
 
 ### Step 2: Plan the Work
 
-Use the planning prompt:
+In orchestration mode, planning is routed automatically.
+
+Optional manual override only when debugging agent behavior:
 
 ```txt
 @workspace /plan-work
@@ -102,7 +111,7 @@ The Planner will:
 Looks good, implement the plan
 ```
 
-Or use the prompt directly:
+Or use the prompt directly as an override:
 
 ```txt
 @workspace /implement
@@ -116,7 +125,11 @@ The Implementer writes code following all project conventions:
 - Tests for changed code where required by the contract (entities are the main exception)
 - `data-testid` on interactive elements
 
-### Step 4: Run Quality Gates
+### Step 4: Quality Gates
+
+In orchestration mode, quality gates should be invoked automatically before delivery.
+
+Manual fallback only when troubleshooting:
 
 ```txt
 @workspace /gates
@@ -234,14 +247,9 @@ This project has a zero-tolerance policy. Code is not done if ANY of these exist
   Present to you (production-ready)
 ```
 
-When using Copilot, you may need to drive this loop manually:
+Orchestration mode should run this loop automatically. Use manual retries only when recovering from tool/runtime failures.
 
-1. Ask Copilot to implement
-2. Run `/gates`
-3. If failures, paste the error and ask Copilot to fix
-4. Repeat until all green
-
-**Tip:** After Copilot makes changes, always run `npm run check-types && npm run lint && npm run test` before considering the work done.
+**Tip:** If you ever suspect drift, run `npm run check-types && npm run lint && npm run test`.
 
 ## Tips for Working Effectively
 
@@ -371,13 +379,11 @@ npm run check-types && npm run lint && npm run test
 
 ```txt
 Open chat:           Open Copilot Chat in VS Code
-New feature:         @workspace [describe in plain English]
-Plan:                @workspace /plan-work
-Build:               @workspace /implement
-Check quality:       @workspace /gates
-Ship it:             @workspace /deliver
+New feature:         Describe feature in plain English (orchestration routes phases)
+Ship it:             Review orchestration handoff
 Something broke:     @workspace /recover
 Big feature:         @workspace /decompose-requirements [description]
+Manual override:     @workspace /plan-work, /implement, /gates, /deliver
 E2E tests:           @workspace /implement-e2e
 New module:          @workspace /create-module [name]
 ```

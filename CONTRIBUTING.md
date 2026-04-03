@@ -57,9 +57,9 @@ The following files **must be kept in sync**:
 
 Whenever you modify one file in a pair, **you must also update the other** to ensure both toolchains generate equivalent code.
 
-### Manual parity checks
+### Parity checks (automated by default)
 
-Run the parity verification command to detect asymmetric changes:
+Parity is enforced automatically in workflow hooks and CI. Use manual checks only as a local verification fallback:
 
 ```bash
 # Check all files for parity drift

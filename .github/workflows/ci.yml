@@ -30,6 +30,9 @@ jobs:
       - name: Check Claude↔Copilot sync drift
         run: npm run sync:copilot:check
 
+      - name: Validate workflow structure baseline
+        run: node --experimental-strip-types --no-warnings bin/vibe task workflow:audit
+
   check-types:
     name: Type Check
     runs-on: ubuntu-latest
