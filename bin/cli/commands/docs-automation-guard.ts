@@ -53,6 +53,25 @@ const REQUIRED_PATTERNS: GuardRule[] = [
   },
 ];
 
+const CLAUDE_PROHIBITED_RULES: GuardRule[] = [
+  {
+    message: "Found manual Plan command in Claude quick reference",
+    pattern: /^Plan:\s*\/plan-work\s*$/im,
+  },
+  {
+    message: "Found manual Build command in Claude quick reference",
+    pattern: /^Build:\s*\/implement\s*$/im,
+  },
+  {
+    message: "Found manual quality gate command in Claude quick reference",
+    pattern: /^Check quality:\s*\/gates\s*$/im,
+  },
+  {
+    message: "Found manual Ship command in Claude quick reference",
+    pattern: /^Ship it:\s*\/deliver\s*$/im,
+  },
+];
+
 function collectMarkdownFiles(dirPath: string): string[] {
   if (!existsSync(dirPath)) return [];
 
@@ -121,6 +140,19 @@ export function runDocsAutomationGuard(): void {
     violations.push(
       ...checkRequiredPatterns(copilotWorkflowPath, copilotWorkflowContent),
     );
+  }
+
+  const claudeWorkflowPath = "docs/ai/CLAUDE_WORKFLOW.md";
+  if (existsSync(claudeWorkflowPath)) {
+    const claudeWorkflowContent = readFileSync(claudeWorkflowPath, "utf8");
+    for (const rule of CLAUDE_PROHIBITED_RULES) {
+      if (rule.pattern.test(claudeWorkflowContent)) {
+        violations.push({
+          filePath: claudeWorkflowPath,
+          message: rule.message,
+        });
+      }
+    }
   }
 
   if (violations.length === 0) {

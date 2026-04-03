@@ -58,11 +58,7 @@ Claude enters **Discovery** phase automatically. It will:
 
 ### Step 2: Let Claude Plan
 
-Once requirements are clear, Claude moves to **Planning**:
-
-```txt
-> /plan-work
-```
+Once requirements are clear, Claude moves to **Planning** automatically.
 
 Claude will:
 
@@ -77,12 +73,6 @@ Claude will:
 
 ```txt
 > Looks good, let's implement
-```
-
-Or use the command directly:
-
-```txt
-> /implement
 ```
 
 Claude writes the code following all project conventions automatically:
@@ -107,15 +97,13 @@ npm run test           →  Vitest test suite
 
 ### Step 5: Review and Ship
 
-```txt
-> /deliver
-```
+When quality gates and verification are green, Claude prepares a delivery handoff automatically.
 
 Claude gives you a summary of everything that changed and why.
 
 ## Slash Commands Reference
 
-These are your primary tools. Type them directly in the Claude Code prompt.
+These commands are available when you need explicit control, but the default workflow remains orchestration-first and automatic.
 
 ### Workflow Commands
 
@@ -290,14 +278,8 @@ Claude enforces all of this automatically. If you see a delivery summary, it mea
 ```txt
 Start a session:     claude
 New feature:         Just describe it in plain English
-Plan:                /plan-work
-Build:               /implement
-Check quality:       /gates
-Ship it:             /deliver
-Something broke:     /recover
+Flow execution:      Discovery → Planning → Implementation → Gates → Delivery (automatic)
 Big feature:         /decompose-requirements [description]
-E2E tests:           /implement-e2e
-New module:          /create-module [name]
 ```
 
 ## Need Help?
