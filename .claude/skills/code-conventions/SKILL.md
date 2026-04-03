@@ -162,7 +162,12 @@ shared/db/
 ├── client.ts                     # Drizzle client
 ├── schema.ts                     # Re-exports all entities
 ├── types.ts
-└── migrations/
+├── local/
+│   ├── development.sqlite
+│   ├── test.sqlite
+│   └── production.sqlite         # local fallback only
+├── migrations/
+└── seeds/
 ```
 
 **Queue (flat, infrastructure):**

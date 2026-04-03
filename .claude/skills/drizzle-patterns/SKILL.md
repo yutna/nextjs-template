@@ -1,541 +1,209 @@
 ---
 name: drizzle-patterns
-description: This skill should be used when working with database, Drizzle ORM, entities, schemas, or queries. Provides Drizzle schema patterns, query patterns, and migrations.
-triggers:
-  - database
-  - drizzle
-  - entity
-  - schema
-  - migration
-  - query
-  - table
-  - model
+description: This skill should be used when working with database, Drizzle ORM, entities, schemas, migrations, and seeds. It provides Rails-style DB conventions, local sqlite/libSQL file defaults, and Effect-friendly data patterns.
 ---
 
 # Drizzle Patterns Skill
 
-Drizzle is the database ORM for this project. All entities live in `shared/entities/`.
+Drizzle is the database ORM for this project.
+All entities live in `src/shared/entities/`.
+
+## Rails-Style Local DB Default
+
+These conventions apply to every DB backend.
+The `local/*.sqlite` path defaults apply only when using file-based local DBs.
+
+Use this local-first structure:
+
+```txt
+src/shared/db/
+├── client.ts
+├── schema.ts
+├── local/
+│   ├── development.sqlite
+│   ├── test.sqlite
+│   └── production.sqlite   # local fallback only
+├── migrations/
+└── seeds/
+```
+
+Environment URL defaults:
+
+- development: `file:src/shared/db/local/development.sqlite`
+- test: `file:src/shared/db/local/test.sqlite`
+- production local fallback: `file:src/shared/db/local/production.sqlite`
+
+If production uses remote Turso/libSQL, keep production URL in env and do not reuse local dev/test files.
+
+## Test DB Isolation
+
+Use a deterministic reset strategy for tests. Choose one:
+
+1. Per-test transaction + rollback
+2. Truncate/reset all mutable tables between tests
+3. Per-run isolated DB file (recommended default for sqlite/libSQL local test)
+
+Minimum expectation:
+
+- tests run against dedicated test DB target
+- test setup resets state deterministically before assertions
+
+Recommended repository helpers:
+
+- `src/shared/lib/db-isolation/db-isolation.ts`
+- `src/shared/lib/db-isolation/types.ts`
+- `src/test/setup-db.ts`
+
+## Ownership Boundaries
+
+- DB runtime/config lives in `src/shared/db/`
+- Entity schemas live in `src/shared/entities/`
+- Modules must not own migration/seed entrypoints
+- Module repositories consume shared DB runtime and shared entities
 
 ## Entity Structure
 
-Entities MUST be in `shared/entities/<name>/` (never in modules).
-
-```
-shared/entities/
+```txt
+src/shared/entities/
 ├── user/
-│   ├── index.ts          # Barrel export
-│   ├── user.ts           # Drizzle schema
-│   ├── types.ts          # Inferred types
-│   └── relations.ts      # (optional) Relations
-├── post/
 │   ├── index.ts
-│   ├── post.ts
+│   ├── user.ts
 │   ├── types.ts
 │   └── relations.ts
-└── index.ts              # Re-export all entities
+└── ...
 ```
 
-## Schema Definition
-
-### Basic Schema
+## Schema Example (SQLite/libSQL)
 
 ```typescript
-// shared/entities/user/user.ts
-import { pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
+// src/shared/entities/user/user.ts
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
+export const users = sqliteTable("users", {
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   email: text("email").notNull().unique(),
+  id: text("id").primaryKey(),
+  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   name: text("name").notNull(),
-  avatarUrl: text("avatar_url"),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
 });
 ```
 
-### With Enums
+## Types Example
 
 ```typescript
-// shared/entities/order/order.ts
-import { pgTable, text, timestamp, uuid, pgEnum, integer } from "drizzle-orm/pg-core";
-
-export const orderStatusEnum = pgEnum("order_status", [
-  "pending",
-  "processing",
-  "shipped",
-  "delivered",
-  "cancelled",
-]);
-
-export const orders = pgTable("orders", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
-  status: orderStatusEnum("status").notNull().default("pending"),
-  totalAmount: integer("total_amount").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
-```
-
-### With JSON Column
-
-```typescript
-import { pgTable, uuid, jsonb, timestamp } from "drizzle-orm/pg-core";
-
-export const settings = pgTable("settings", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
-  preferences: jsonb("preferences").$type<UserPreferences>().notNull().default({}),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
-
-interface UserPreferences {
-  theme: "light" | "dark";
-  notifications: boolean;
-  language: string;
-}
-```
-
-## Types File
-
-```typescript
-// shared/entities/user/types.ts
-import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+// src/shared/entities/user/types.ts
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import type { users } from "./user";
 
-// Select type (for reading)
-export type User = InferSelectModel<typeof users>;
-
-// Insert type (for creating)
 export type NewUser = InferInsertModel<typeof users>;
-
-// Update type (partial, for updating)
 export type UpdateUser = Partial<NewUser>;
-
-// Custom types for specific use cases
-export type UserPublic = Pick<User, "id" | "name" | "avatarUrl">;
-export type UserWithEmail = Pick<User, "id" | "name" | "email">;
+export type User = InferSelectModel<typeof users>;
 ```
 
-## Relations
+## DB Client Example (libSQL)
 
 ```typescript
-// shared/entities/user/relations.ts
-import { relations } from "drizzle-orm";
-import { users } from "./user";
-import { posts } from "../post/post";
-import { orders } from "../order/order";
+// src/shared/db/client.ts
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 
-export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-  orders: many(orders),
-}));
-```
-
-```typescript
-// shared/entities/post/relations.ts
-import { relations } from "drizzle-orm";
-import { posts } from "./post";
-import { users } from "../user/user";
-import { comments } from "../comment/comment";
-
-export const postsRelations = relations(posts, ({ one, many }) => ({
-  author: one(users, {
-    fields: [posts.authorId],
-    references: [users.id],
-  }),
-  comments: many(comments),
-}));
-```
-
-## Index File
-
-```typescript
-// shared/entities/user/index.ts
-export { users } from "./user";
-export { usersRelations } from "./relations";
-export type { User, NewUser, UpdateUser, UserPublic } from "./types";
-```
-
-```typescript
-// shared/entities/index.ts
-export * from "./user";
-export * from "./post";
-export * from "./order";
-```
-
-## Database Client
-
-```typescript
-// shared/db/client.ts
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
 import * as schema from "@/shared/entities";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+function resolveDatabaseUrl(): string {
+  return (
+    process.env.DATABASE_URL ?? "file:src/shared/db/local/development.sqlite"
+  );
+}
 
-export const db = drizzle(pool, { schema });
+const client = createClient({ url: resolveDatabaseUrl() });
+
+export const db = drizzle(client, { schema });
 ```
 
-```typescript
-// shared/db/schema.ts
-// Re-export all entities for migrations
-export * from "@/shared/entities";
-```
-
-```typescript
-// shared/db/index.ts
-export { db } from "./client";
-export * from "./schema";
-```
-
-## Query Patterns (with Effect)
-
-### Find One
-
-```typescript
-import { Effect } from "effect";
-import { eq } from "drizzle-orm";
-import { db } from "@/shared/db";
-import { users } from "@/shared/entities/user";
-
-export const findById = (id: string): Effect.Effect<User | null, DatabaseError> =>
-  Effect.tryPromise({
-    try: () => db.query.users.findFirst({
-      where: eq(users.id, id),
-    }),
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Find with Relations
-
-```typescript
-export const findByIdWithPosts = (id: string): Effect.Effect<UserWithPosts | null, DatabaseError> =>
-  Effect.tryPromise({
-    try: () => db.query.users.findFirst({
-      where: eq(users.id, id),
-      with: {
-        posts: {
-          orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-          limit: 10,
-        },
-      },
-    }),
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Find Many with Filters
-
-```typescript
-import { and, eq, gte, like, desc } from "drizzle-orm";
-
-export const findActiveUsers = (
-  search?: string,
-  minDate?: Date
-): Effect.Effect<User[], DatabaseError> =>
-  Effect.tryPromise({
-    try: () => db.query.users.findMany({
-      where: and(
-        eq(users.isActive, true),
-        search ? like(users.name, `%${search}%`) : undefined,
-        minDate ? gte(users.createdAt, minDate) : undefined
-      ),
-      orderBy: [desc(users.createdAt)],
-    }),
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Insert
-
-```typescript
-export const create = (data: NewUser): Effect.Effect<User, DatabaseError> =>
-  Effect.tryPromise({
-    try: async () => {
-      const [user] = await db.insert(users).values(data).returning();
-      return user;
-    },
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Insert Many
-
-```typescript
-export const createMany = (data: NewUser[]): Effect.Effect<User[], DatabaseError> =>
-  Effect.tryPromise({
-    try: () => db.insert(users).values(data).returning(),
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Update
-
-```typescript
-export const update = (
-  id: string,
-  data: UpdateUser
-): Effect.Effect<User, DatabaseError> =>
-  Effect.tryPromise({
-    try: async () => {
-      const [user] = await db
-        .update(users)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(users.id, id))
-        .returning();
-      return user;
-    },
-    catch: (error) => new DatabaseError(error),
-  });
-```
-
-### Delete
-
-```typescript
-export const remove = (id: string): Effect.Effect<void, DatabaseError> =>
-  Effect.tryPromise({
-    try: () => db.delete(users).where(eq(users.id, id)),
-    catch: (error) => new DatabaseError(error),
-  }).pipe(Effect.asVoid);
-```
-
-### Transactions
-
-```typescript
-export const transferCredits = (
-  fromUserId: string,
-  toUserId: string,
-  amount: number
-): Effect.Effect<void, DatabaseError | InsufficientCreditsError> =>
-  Effect.tryPromise({
-    try: () => db.transaction(async (tx) => {
-      // Deduct from sender
-      const [sender] = await tx
-        .update(users)
-        .set({ credits: sql`credits - ${amount}` })
-        .where(and(
-          eq(users.id, fromUserId),
-          gte(users.credits, amount)
-        ))
-        .returning();
-
-      if (!sender) {
-        throw new InsufficientCreditsError();
-      }
-
-      // Add to receiver
-      await tx
-        .update(users)
-        .set({ credits: sql`credits + ${amount}` })
-        .where(eq(users.id, toUserId));
-    }),
-    catch: (error) => {
-      if (error instanceof InsufficientCreditsError) {
-        return error;
-      }
-      return new DatabaseError(error);
-    },
-  });
-```
-
-## Migrations
-
-### Generate Migration
-
-```bash
-npm run db:generate
-```
-
-### Run Migrations
-
-```bash
-npm run db:migrate
-```
-
-### Migration File Example
-
-```sql
--- 0000_initial.sql
-CREATE TABLE IF NOT EXISTS "users" (
-  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-  "email" text NOT NULL UNIQUE,
-  "name" text NOT NULL,
-  "avatar_url" text,
-  "is_active" boolean DEFAULT true NOT NULL,
-  "created_at" timestamp with time zone DEFAULT now() NOT NULL,
-  "updated_at" timestamp with time zone DEFAULT now() NOT NULL
-);
-```
-
-## Drizzle Config
+## Drizzle Config Example
 
 ```typescript
 // drizzle.config.ts
 import type { Config } from "drizzle-kit";
 
+function resolveDatabaseUrl(): string {
+  return (
+    process.env.DATABASE_URL ?? "file:src/shared/db/local/development.sqlite"
+  );
+}
+
 export default {
-  schema: "./src/shared/db/schema.ts",
+  dbCredentials: { url: resolveDatabaseUrl() },
+  dialect: "sqlite",
   out: "./src/shared/db/migrations",
-  driver: "pg",
-  dbCredentials: {
-    connectionString: process.env.DATABASE_URL!,
-  },
+  schema: "./src/shared/db/schema.ts",
 } satisfies Config;
 ```
 
-## Common Patterns
-
-### Soft Delete
+## Repository Query Pattern (Effect)
 
 ```typescript
-export const users = pgTable("users", {
-  // ... other fields
-  deletedAt: timestamp("deleted_at", { withTimezone: true }),
-});
+import { and, desc, eq, like } from "drizzle-orm";
+import { Effect } from "effect";
 
-// Query only active users
-export const findActiveUsers = () =>
-  db.query.users.findMany({
-    where: isNull(users.deletedAt),
+import { db } from "@/shared/db";
+import { users } from "@/shared/entities/user";
+
+export function findActiveUsers(search?: string) {
+  return Effect.tryPromise({
+    catch: (error) => new DatabaseError(error),
+    try: () =>
+      db.query.users.findMany({
+        orderBy: [desc(users.createdAt)],
+        where: and(
+          eq(users.isActive, true),
+          search ? like(users.name, `%${search}%`) : undefined,
+        ),
+      }),
   });
-
-// Soft delete
-export const softDelete = (id: string) =>
-  db.update(users)
-    .set({ deletedAt: new Date() })
-    .where(eq(users.id, id));
+}
 ```
 
-### Pagination
+## Migration Workflow
 
-```typescript
-export const findPaginated = (
-  page: number,
-  pageSize: number
-): Effect.Effect<{ data: User[]; total: number }, DatabaseError> =>
-  Effect.tryPromise({
-    try: async () => {
-      const [data, countResult] = await Promise.all([
-        db.query.users.findMany({
-          limit: pageSize,
-          offset: (page - 1) * pageSize,
-          orderBy: [desc(users.createdAt)],
-        }),
-        db.select({ count: sql<number>`count(*)` }).from(users),
-      ]);
+Generate migration:
 
-      return {
-        data,
-        total: countResult[0].count,
-      };
-    },
-    catch: (error) => new DatabaseError(error),
-  });
+```bash
+npm run db:generate
 ```
 
-### Upsert
+Apply migration:
 
-```typescript
-export const upsert = (data: NewUser): Effect.Effect<User, DatabaseError> =>
-  Effect.tryPromise({
-    try: async () => {
-      const [user] = await db
-        .insert(users)
-        .values(data)
-        .onConflictDoUpdate({
-          target: users.email,
-          set: { name: data.name, updatedAt: new Date() },
-        })
-        .returning();
-      return user;
-    },
-    catch: (error) => new DatabaseError(error),
-  });
+```bash
+npm run db:migrate
+```
+
+Recommended env-specific usage:
+
+```bash
+DATABASE_URL=file:src/shared/db/local/development.sqlite npm run db:migrate
+DATABASE_URL=file:src/shared/db/local/test.sqlite npm run db:migrate
 ```
 
 ## Seeds
 
-Seeds live in `shared/db/seeds/` and provide initial/sample data.
+Seeds live in `src/shared/db/seeds/` and should be deterministic.
 
-### Seed Structure
-
-```
-shared/db/seeds/
-├── index.ts           # Main seed runner
-├── users.seed.ts      # User seed data
-├── posts.seed.ts      # Post seed data
-└── _order.ts          # Seed execution order
+```txt
+src/shared/db/seeds/
+├── index.ts
+├── users.seed.ts
+└── posts.seed.ts
 ```
 
-### Seed File Example
+## DB Task Checklist (Required)
 
-```typescript
-// shared/db/seeds/users.seed.ts
-import { db } from "@/shared/db";
-import { users } from "@/shared/entities/user";
-import { UserFactory } from "@/shared/factories/user-factory";
+For every DB-related task:
 
-export async function seedUsers() {
-  console.log("🌱 Seeding users...");
-
-  // Clear existing data (dev only)
-  await db.delete(users);
-
-  // Create admin user
-  await db.insert(users).values({
-    email: "admin@example.com",
-    name: "Admin User",
-    role: "admin",
-  });
-
-  // Create sample users using factory
-  const sampleUsers = UserFactory.buildList(10);
-  await db.insert(users).values(sampleUsers);
-
-  console.log("✅ Users seeded");
-}
-```
-
-### Seed Runner
-
-```typescript
-// shared/db/seeds/index.ts
-import { seedUsers } from "./users.seed";
-import { seedPosts } from "./posts.seed";
-
-const seeds = [
-  seedUsers,
-  seedPosts,
-];
-
-async function main() {
-  console.log("🌱 Starting database seed...");
-
-  for (const seed of seeds) {
-    await seed();
-  }
-
-  console.log("✅ Database seeded successfully");
-  process.exit(0);
-}
-
-main().catch((error) => {
-  console.error("❌ Seed failed:", error);
-  process.exit(1);
-});
-```
-
-### Package.json Script
-
-```json
-{
-  "scripts": {
-    "db:seed": "npx tsx shared/db/seeds/index.ts"
-  }
-}
-```
+1. Identify target env (`dev`/`test`/`prod`)
+2. Document migration impact + rollback strategy
+3. Document seed impact + determinism expectations
+4. Run quality gates (`npm run check-types`, `npm run lint`, `npm test`)
+5. Verify tests point to the intended DB URL/file
+6. Verify test DB reset strategy is deterministic

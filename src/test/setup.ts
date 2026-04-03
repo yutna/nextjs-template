@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom";
 import { beforeEach, vi } from "vitest";
 
+import "./setup-db";
+
 // jsdom does not implement IntersectionObserver.
 // motion/react (framer-motion) uses it for whileInView / viewport features.
 // Provide a no-op stub so component tests that render motion elements don't throw.

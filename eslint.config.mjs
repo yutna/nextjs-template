@@ -28,7 +28,7 @@ const eslintConfig = defineConfig([
     files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     plugins: {
       "check-file": checkFile,
-      import: importPlugin,
+      "import": importPlugin,
       perfectionist,
       "project": localPlugin,
     },
@@ -321,10 +321,7 @@ const eslintConfig = defineConfig([
   // (motion library design: animated values must be passed via style prop)
   // --------------------------------------------------
   {
-    files: [
-      "src/shared/components/motion-*/**",
-      "src/shared/lib/motion/**",
-    ],
+    files: ["src/shared/components/motion-*/**", "src/shared/lib/motion/**"],
     rules: {
       "project/no-inline-style": "off",
     },
@@ -334,6 +331,12 @@ const eslintConfig = defineConfig([
   // --------------------------------------------------
   {
     files: ["src/shared/lib/logger/**"],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
+  },
+  {
+    files: ["src/shared/lib/db-isolation/db-isolation.ts"],
     rules: {
       "no-restricted-syntax": "off",
     },

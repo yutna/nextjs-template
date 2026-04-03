@@ -96,6 +96,14 @@ src/
 4. **Entities in shared only**: Never in modules
 5. **Tests required**: For all code except entities
 
+## Database Workflow (Local File Default)
+
+- Use local DB files under `src/shared/db/local/`
+- Keep migrations in `src/shared/db/migrations/`
+- Keep seeds in `src/shared/db/seeds/`
+- Split DB by environment (`development.sqlite`, `test.sqlite`, `production.sqlite` local default)
+- For remote production DBs, keep production URL in env and do not reuse local dev/test files
+
 ## Zero Tolerance Policy
 
 **Target: 0 warnings, 0 errors — always.**

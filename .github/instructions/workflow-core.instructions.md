@@ -51,6 +51,14 @@ HARD rules:
 
 ## Workflow Best Practices
 
+### Database Changes
+
+For DB-related work, planning and verification must include:
+- target environment (`dev`, `test`, `prod`)
+- migration impact + rollback strategy
+- seed impact + determinism expectations
+- post-change gates including tests that depend on DB state
+
 ### One Component Per File
 
 Each component file exports ONE component. Multiple exports → separate folders.

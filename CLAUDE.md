@@ -50,6 +50,14 @@ Configured in `.mcp.json` (auto-loaded):
 | Testing | Vitest + Testing Library |
 | Logging | Pino |
 
+## Database Workflow (Local File Default)
+
+- local DB files: `src/shared/db/local/`
+- migrations: `src/shared/db/migrations/`
+- seeds: `src/shared/db/seeds/`
+- split DB by environment (`development.sqlite`, `test.sqlite`, `production.sqlite` local default)
+- if production uses remote libSQL/Turso, keep production URL externalized and separate from local dev/test files
+
 ## Directory Summary
 
 - `src/app/[locale]/` → App Router routes (thin shells)

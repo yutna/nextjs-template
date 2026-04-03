@@ -64,6 +64,13 @@ Prefer direct imports from concrete feature folders/functions.
 - Never: `../` relative
 - Never: Cross-module imports (use shared/)
 
+## DB Ownership Boundaries
+
+- Modules can define repositories/services, but must consume DB runtime from `src/shared/db/`
+- Modules must not create or own migration entrypoints
+- Modules must not create or own seed entrypoints
+- All entity schemas remain in `src/shared/entities/`
+
 ## Additional Hard Conventions
 
 - Prefer named `function` declarations for named functions; use arrows only when contextually required

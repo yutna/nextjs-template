@@ -658,3 +658,43 @@ export async function fetchClient<T>(options): Promise<T> { ... }
 - **Presenters**: Transform entities to JSON for API responses (`toJSON()`, `toList()`, `toOption()`)
 - **Forms**: Multi-step form validation and entity transformation (`schema`, `validateStep()`, `toCreateData()`)
 - **Realtime**: SSE for simple cases, WebSocket for bi-directional communication
+
+## Database Conventions
+
+Apply these conventions to all database backends.
+For file-based local databases (SQLite/libSQL file mode), also follow the local file path rules below.
+
+### DB Layout
+
+- migrations: `src/shared/db/migrations/`
+- seeds: `src/shared/db/seeds/`
+
+For file-based local DBs only:
+- local DB files: `src/shared/db/local/`
+
+### Environment Separation
+
+Use different DB targets per environment:
+
+File-based local DB defaults (SQLite/libSQL file mode):
+- development: `file:src/shared/db/local/development.sqlite`
+- test: `file:src/shared/db/local/test.sqlite`
+- production local default (if needed): `file:src/shared/db/local/production.sqlite`
+
+If production uses a remote provider (Turso/libSQL remote), keep production URL externalized in env and do not share development/test DB files.
+
+### Ownership Rules
+
+- DB runtime and schema plumbing live in `src/shared/db/`
+- feature modules never own migrations or seed entrypoints
+- entities remain in `src/shared/entities/`
+
+### Workflow Requirements
+
+For DB-related changes, planning and verification must explicitly include:
+
+1. target environment (`dev`/`test`/`prod`)
+2. migration impact and rollback strategy
+3. seed impact and determinism expectations
+4. post-change gate run including tests that depend on DB state
+5. test DB isolation strategy (transaction rollback, truncate/reset, or per-run isolated DB)

@@ -7,7 +7,7 @@ applyTo: "src/shared/**"
 
 ```
 shared/
-├── db/            # Drizzle client, migrations
+├── db/            # Drizzle client, local DB files, migrations, seeds
 ├── entities/      # ALL Drizzle schemas (never in modules)
 ├── factories/     # Test data factories
 ├── services/      # Shared services (auth, email)
@@ -31,6 +31,29 @@ These exist ONLY in shared/, never in modules:
 - `entities/` - All Drizzle schemas
 - `middleware/` - Request interceptors
 - `queue/` - Queue utilities
+
+## DB Layout (Local File Default)
+
+Use this DB layout:
+
+```
+shared/db/
+├── client.ts
+├── schema.ts
+├── local/
+│   ├── development.sqlite
+│   ├── test.sqlite
+│   └── production.sqlite   # local default only
+├── migrations/
+└── seeds/
+```
+
+Environment URL defaults:
+- development: `file:src/shared/db/local/development.sqlite`
+- test: `file:src/shared/db/local/test.sqlite`
+- production local default: `file:src/shared/db/local/production.sqlite`
+
+If production uses remote libSQL/Turso, do not reuse local dev/test DB files.
 
 ## Entities
 
