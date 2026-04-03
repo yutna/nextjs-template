@@ -14,6 +14,13 @@ yarn-error.log*
 /.pnp
 /node_modules
 
+# claude workflow (session-specific)
+.claude/hooks/*.log
+.claude/workflow-state.json
+.claude/workflow-state.last-good.json
+.claude/workflow-state.journal.jsonl
+.claude/generated/
+
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
@@ -53,8 +60,3 @@ next-env.d.ts
 
 # vercel
 .vercel
-
-# claude workflow (session-specific)
-.claude/hooks/*.log
-.claude/workflow-state.json
-.claude/generated/
