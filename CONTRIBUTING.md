@@ -70,6 +70,7 @@ Run the parity verification command to detect asymmetric changes:
 ```
 
 The command checks for these parity rules:
+
 - **barrel-export-prohibition**: Both must disallow grouping-folder barrel re-exports
 - **scoped-helpers-allowed**: Both must allow `helpers.ts` only inside concrete folders
 - **concrete-slice-first**: Both must prefer concrete examples over grouping-folder templates
