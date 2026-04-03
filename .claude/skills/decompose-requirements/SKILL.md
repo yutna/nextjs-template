@@ -151,7 +151,7 @@ Feature: [Name]
 
 ## Step 4: E2E Scenario Mapping (REQUIRED)
 
-Map Gherkin scenarios to E2E test specifications. Output: `docs/tasks/e2e-scenarios.md`
+Map Gherkin scenarios to E2E test specifications. Output: `docs/tasks/<feature>/e2e-scenarios.md`
 
 ### Mapping Rules
 
@@ -167,7 +167,7 @@ Map Gherkin scenarios to E2E test specifications. Output: `docs/tasks/e2e-scenar
 ```markdown
 # E2E Test Scenarios
 
-Source: `docs/tasks/00-specifications.md`
+Source: `docs/tasks/<feature>/00-specifications.md`
 
 ## Feature: [Feature Name]
 
@@ -205,11 +205,11 @@ Source: `docs/tasks/00-specifications.md`
 ### Output
 
 ```
-docs/tasks/
+docs/tasks/<feature>/
 ├── 00-specifications.md    # State machines + Gherkin
 ├── 01-overview.md          # Summary, phases
 ├── phase-01-foundation.md  # Entities, setup
-├── phase-02-[feature].md   # @must scenarios
+├── phase-02-[sub-feature].md # @must scenarios
 └── ...
 ```
 
