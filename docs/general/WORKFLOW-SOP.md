@@ -98,3 +98,14 @@ Escalate only when one of these is true:
 2. Execute workflow phases for each slice
 3. Fix defects directly in workflow without re-decomposition
 4. Run parity and audit checks before final delivery
+
+## Fast Operating Cadence
+
+For speed during active coding:
+
+1. Run `npm run qa:fast` before each handoff checkpoint
+
+For stable delivery readiness:
+
+1. Run `npm run qa:stable` before opening/updating PR
+2. Run `npm run qa:repo` before final merge readiness confirmation

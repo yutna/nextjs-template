@@ -40,6 +40,15 @@ All project tasks run through this entrypoint:
 | `test:e2e:headed` | Run E2E tests in headed browser |
 | `test:e2e:ui` | Run E2E tests with Playwright UI |
 
+### Speed And Stability Bundles
+
+| Task | Description |
+|------|-------------|
+| `qa:fast` | Fast local confidence check (`check-types` + `lint:eslint` + `test`) |
+| `qa:stable` | Full local stability check (`check-types` + `lint` + `test` + `sync:copilot:check`) |
+| `qa:repo` | Repository readiness check (`qa:stable` + `workflow:audit` + `docs:automation:guard` + `parity:all`) |
+| `parity:all` | Check all Claude/Copilot prompt parity pairs |
+
 ### Database
 
 | Task | Description |
