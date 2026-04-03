@@ -3,11 +3,11 @@
 
 /**
  * AI Hook: Detect parity drift between Claude commands and Copilot prompts
- * 
+ *
  * This hook runs when Claude Code detects file modifications in:
  *   - .claude/commands/
  *   - .github/prompts/
- * 
+ *
  * It checks if both files in a parity pair have been updated together,
  * and reminds the user if one was missed.
  */
@@ -81,7 +81,7 @@ function detectParity() {
 
       if (mismatchCount > 0) {
         console.log(
-          `⚠️  Parity Drift Detected in: ${path.basename(pair.claude)} ↔ ${path.basename(pair.copilot)}`
+          `⚠️  Parity Drift Detected in: ${path.basename(pair.claude)} ↔ ${path.basename(pair.copilot)}`,
         );
         console.log(`   Found ${mismatchCount} content mismatch(es)\n`);
         hasWarnings = true;
@@ -93,11 +93,9 @@ function detectParity() {
 
   if (hasWarnings) {
     console.log(
-      "💡 Reminder: Updated one toolchain file?\n   Run: ./bin/vibe parity-check\n"
+      "💡 Reminder: Updated one toolchain file?\n   Run: ./bin/vibe parity-check\n",
     );
-    console.log(
-      "   📖 See: CONTRIBUTING.md § Dual-Toolchain Parity\n"
-    );
+    console.log("   📖 See: CONTRIBUTING.md § Dual-Toolchain Parity\n");
   } else {
     console.log("✅ Parity check: OK\n");
   }
