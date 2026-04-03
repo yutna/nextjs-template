@@ -59,6 +59,14 @@ For DB-related work, planning and verification must include:
 - seed impact + determinism expectations
 - post-change gates including tests that depend on DB state
 
+### Environment Variables
+
+When adding or renaming any environment variable:
+1. Add it to **every** `.env.*` file at repo root (currently: `.env.example`, `.env.local`)
+2. `.env.example` must have a placeholder or safe default value — never real secrets
+3. `.env.local` must have the actual working value for local development
+4. Block delivery if any `.env.*` file is missing the new variable
+
 ### One Component Per File
 
 Each component file exports ONE component. Multiple exports → separate folders.
