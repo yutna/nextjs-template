@@ -166,6 +166,38 @@ src/
 Server components by default — `"use client"` only at the smallest leaf.
 Effect is required for all backend layers (services, repositories, jobs).
 
+## AI Tools & Parity
+
+This template uses a **dual-toolchain workflow** supporting both Claude and GitHub Copilot with full parity.
+
+**Setup:**
+
+- **Claude Code:** See [`CLAUDE.md`](./CLAUDE.md) for Claude-specific configuration
+- **GitHub Copilot:** See [`.github/copilot-instructions.md`](./.github/copilot-instructions.md)
+- **Universal Workflow:** See [`AGENTS.md`](./AGENTS.md) for the 6-phase workflow contract (applies to all AI tools)
+
+**Key Locations:**
+
+- `.claude/commands/` — Claude slash commands (`/create-module`, `/gates`, etc.)
+- `.claude/skills/` — Canonical domain skills (architecture, patterns, conventions)
+- `.github/prompts/` — Copilot chat prompts (mirrored from Claude commands)
+- `.github/agents/` — Specialist agents for each workflow phase
+- `.agents/skills/` — Community-contributed skills (auto-loaded by both Copilot and Claude)
+
+**Parity Testing:**
+
+Run the full parity regression test:
+
+```bash
+./bin/vibe parity-check
+```
+
+This checks that both toolchains generate identical conventions. See [`.github/instructions/dual-toolchain-parity.instructions.md`](./.github/instructions/dual-toolchain-parity.instructions.md) for details.
+
+**Shared Skills:**
+
+Copilot and Claude both automatically load community-contributed skills from [`.agents/skills/`](./.agents/skills/). See [`.agents/README.md`](./.agents/README.md) for the full list and usage guidance. Canonical skills in `.claude/skills/` and `.github/skills/` take organizational precedence for repo-specific standards.
+
 ## Scripts
 
 | Command                   | Description                            |
