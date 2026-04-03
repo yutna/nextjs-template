@@ -28,6 +28,7 @@ npm run dev
 ### 2. Identify Test Routes
 
 Based on the feature, identify all routes that need verification:
+
 - Primary feature route
 - Related routes that might be affected
 - Both locales (`/en/...` and `/th/...`)
@@ -75,6 +76,7 @@ Generate a checklist based on the feature:
 ### 4. Execute Verification
 
 For each checklist item:
+
 1. Navigate to the relevant route
 2. Perform the action
 3. Observe the result
@@ -117,12 +119,14 @@ Document results:
 ### 6. Update Workflow State
 
 If verification passes:
+
 ```bash
 node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=passed
 ```
 
 If verification fails:
+
 ```bash
 node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state \
   qualityGates.verification=failed \
@@ -156,16 +160,19 @@ Open browser DevTools → Network tab → Look for failed requests
 ## Common Issues to Check
 
 ### Performance
+
 - Page loads under 3 seconds
 - No visible layout shifts
 - Images load properly
 
 ### Security
+
 - No sensitive data in URL
 - Authentication redirects work
 - Forms have CSRF protection
 
 ### Data
+
 - Data saves correctly
 - Data displays correctly
 - Cache invalidates properly
