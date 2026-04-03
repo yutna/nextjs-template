@@ -34,12 +34,12 @@ Execute in order:
 ### Step 3: Apply Conventions
 
 #### File Structure
-Every folder needs:
-- `index.ts` (barrel export)
-- `types.ts` (if types exist)
-- `constants.ts` (if constants exist)
-- `*.test.ts` (always)
-- `*.stories.tsx` (components only)
+Create only files required by the concrete implementation:
+- No grouping-folder barrel re-exports (for example `components/index.ts` that exports many files)
+- `types.ts` when shared types are needed
+- `constants.ts` when constants are needed
+- Tests for changed behavior
+- `*.stories.tsx` for components when applicable
 
 #### Naming Patterns
 | Type | Pattern | Example |
@@ -80,7 +80,7 @@ Before marking implementation complete:
 - [ ] All planned files created/modified
 - [ ] Follows naming conventions
 - [ ] Uses Effect for backend code
-- [ ] Has barrel exports (index.ts)
+- [ ] No grouping-folder barrel re-exports
 - [ ] Types in types.ts
 - [ ] Constants in constants.ts
 - [ ] Tests written
@@ -123,7 +123,7 @@ Valid status values: `not-started`, `in-progress`, `completed`, `blocked`
 - Use `../` imports
 - Put entities in modules (always in shared/)
 - Write backend code without Effect
-- Create generic files (utils.ts, helpers.ts)
+- Create root-level generic files (`utils.ts`, `helpers.ts`, `common.ts`)
 - Mark complete if blocked
 
 ## When Blocked

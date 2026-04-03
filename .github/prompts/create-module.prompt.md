@@ -26,37 +26,34 @@ Module name should be provided as argument:
 
 Create the following structure:
 
-```
+```txt
 src/modules/<name>/
 ├── actions/
-│   └── index.ts           # Barrel export
 ├── components/
-│   └── index.ts           # Barrel export
 ├── containers/
-│   └── index.ts           # Barrel export
-├── screens/
-│   └── index.ts           # Barrel export
 ├── hooks/
-│   └── index.ts           # Barrel export
-└── index.ts               # Module barrel export
+├── screens/
+├── schemas/
+├── services/
+├── repositories/
+└── types/
 ```
 
-### Barrel Export Templates
+Create at least one concrete feature slice instead of empty barrels, for example:
 
-```typescript
-// src/modules/<name>/index.ts
-export * from './screens';
-export * from './containers';
-export * from './components';
-export * from './actions';
-export * from './hooks';
+```txt
+src/modules/<name>/screens/screen-<name>-index/index.tsx
+src/modules/<name>/containers/container-<name>-index/index.tsx
+src/modules/<name>/components/section-<name>-list/index.tsx
+src/modules/<name>/actions/get-<name>-list-action/index.ts
+src/modules/<name>/schemas/<name>-list-schema/index.ts
 ```
 
-```typescript
-// src/modules/<name>/actions/index.ts
-// Export server actions here
-// Example: export { createUser } from './createUser';
-```
+Rules:
+
+- Do not create grouping-folder barrel files such as `actions/index.ts`, `components/index.ts`, or module-level `index.ts` that re-export folders.
+- Create scoped `types.ts`, `constants.ts`, or `helpers.ts` only inside concrete folders when needed.
+- Keep `helpers.ts` internal (not broadly re-exported).
 
 ## Translation Files
 
@@ -92,6 +89,6 @@ Update `src/messages/en/index.ts` and `src/messages/th/index.ts` to include the 
 ## Do Not
 
 - Create modules with generic names like `utils` or `helpers`
-- Skip the barrel exports
+- Create grouping-folder barrels
 - Add "use client" to initial scaffolding
 - Create duplicate modules

@@ -19,6 +19,7 @@ You are in **Implementation** phase for module scaffolding.
 ## Input
 
 Module name should be provided as argument:
+
 - Use kebab-case: `user-management`, `order-processing`
 - Be specific: `auth`, `dashboard`, `settings`
 
@@ -26,67 +27,40 @@ Module name should be provided as argument:
 
 Create the following structure:
 
-```
+```txt
 src/modules/<name>/
 ├── actions/
-│   └── index.ts           # Barrel export
 ├── components/
-│   └── index.ts           # Barrel export
 ├── containers/
-│   └── index.ts           # Barrel export
-├── screens/
-│   └── index.ts           # Barrel export
 ├── hooks/
-│   └── index.ts           # Barrel export
-└── index.ts               # Module barrel export
+├── screens/
+├── schemas/
+├── services/
+├── repositories/
+└── types/
 ```
 
-### Barrel Export Templates
+Create at least one concrete feature slice instead of empty barrels, for example:
 
-```typescript
-// src/modules/<name>/index.ts
-export * from './screens';
-export * from './containers';
-export * from './components';
-export * from './actions';
-export * from './hooks';
+```txt
+src/modules/<name>/screens/screen-<name>-index/index.tsx
+src/modules/<name>/containers/container-<name>-index/index.tsx
+src/modules/<name>/components/section-<name>-list/index.tsx
+src/modules/<name>/actions/get-<name>-list-action/index.ts
+src/modules/<name>/schemas/<name>-list-schema/index.ts
 ```
 
-```typescript
-// src/modules/<name>/actions/index.ts
-// Export server actions here
-// Example: export { createUser } from './createUser';
-```
+Rules:
 
-```typescript
-// src/modules/<name>/components/index.ts
-// Export components here
-// Example: export { UserCard } from './UserCard';
-```
-
-```typescript
-// src/modules/<name>/containers/index.ts
-// Export containers here
-// Example: export { UserListContainer } from './UserListContainer';
-```
-
-```typescript
-// src/modules/<name>/screens/index.ts
-// Export screens here
-// Example: export { UserListScreen } from './UserListScreen';
-```
-
-```typescript
-// src/modules/<name>/hooks/index.ts
-// Export hooks here
-// Example: export { useUserFilters } from './useUserFilters';
-```
+- Do not create grouping-folder barrel files such as `actions/index.ts`, `components/index.ts`, or module-level `index.ts` that re-export folders.
+- Create scoped `types.ts`, `constants.ts`, or `helpers.ts` only inside concrete folders when needed.
+- Keep `helpers.ts` internal (not broadly re-exported).
 
 ## Translation Files
 
 Also create translation files:
 
-```
+```txt
 src/messages/en/modules/<name>/
 └── index.json
 
@@ -115,7 +89,7 @@ Update `src/messages/en/index.ts` and `src/messages/th/index.ts` to include the 
 
 ## Example Usage
 
-```
+```txt
 /create-module users
 /create-module order-management
 /create-module auth
@@ -124,6 +98,6 @@ Update `src/messages/en/index.ts` and `src/messages/th/index.ts` to include the 
 ## Do Not
 
 - Create modules with generic names like `utils` or `helpers`
-- Skip the barrel exports
+- Create grouping-folder barrels
 - Add "use client" to initial scaffolding
 - Create duplicate modules

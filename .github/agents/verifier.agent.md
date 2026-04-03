@@ -21,7 +21,7 @@ You handle the **Quality Gates** and **Verification** phases of the workflow def
 
 1. **Type Check**
    ```bash
-   npm run type-check
+  npm run check-types
    # or: npx tsc --noEmit
    ```
 

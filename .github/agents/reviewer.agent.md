@@ -41,7 +41,7 @@ For each file in `filesInScope`:
 
 #### Strong Defaults (finding if deviated without justification)
 - Standard folder structure
-- Barrel exports (index.ts)
+- No grouping-folder barrel re-exports
 - Types in types.ts
 - Tests present
 
