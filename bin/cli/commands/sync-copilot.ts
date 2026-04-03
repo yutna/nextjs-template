@@ -13,6 +13,8 @@ import {
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { runHooksBuilder } from "./hooks-builder.ts";
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface SyncOptions {
@@ -350,6 +352,15 @@ export async function runSyncCopilot(args: string[]): Promise<void> {
 
   const skillsResult = syncSkillSymlinks(opts);
   const promptsResult = syncCommandsToPrompts(opts);
+
+  // [3/3] Regenerate hook configurations from single source of truth
+  if (!opts.checkOnly) {
+    log("\n[3/3] Syncing hook configurations...");
+    await runHooksBuilder();
+  } else {
+    log("\n[3/3] Validating hook configurations...");
+  }
+
   const hooksResult = validateHookConfigs(opts);
 
   log("\n=== Summary ===");

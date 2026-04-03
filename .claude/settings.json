@@ -4,49 +4,54 @@
       {
         "hooks": [
           {
-            "type": "command",
             "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- session-context",
-            "timeout": 10
+            "timeout": 10,
+            "type": "command"
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|Bash",
         "hooks": [
           {
-            "type": "command",
             "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- workflow-guard",
-            "timeout": 10
+            "timeout": 10,
+            "type": "command"
           }
-        ]
+        ],
+        "matcher": "Edit|Write|Bash"
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
         "hooks": [
           {
-            "type": "command",
             "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- post-edit-checks",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "node --experimental-strip-types --no-warnings bin/vibe task nextjs:policy",
-            "timeout": 10
+            "timeout": 10,
+            "type": "command"
           }
-        ]
+        ],
+        "matcher": "Edit|Write"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node --experimental-strip-types --no-warnings bin/vibe task nextjs:policy",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
       }
     ],
     "Stop": [
       {
         "hooks": [
           {
-            "type": "command",
             "command": "node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- stop-gate",
-            "timeout": 10
+            "timeout": 10,
+            "type": "command"
           }
         ]
       }

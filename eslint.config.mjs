@@ -368,14 +368,13 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
-  // Claude hooks — CommonJS scripts allow require and console
+  // Workflow hook commands — allow process.env and console
   // --------------------------------------------------
   {
-    files: [".claude/hooks/scripts/**/*.cjs"],
+    files: ["bin/cli/commands/workflow-*.ts", "bin/cli/commands/hooks-*.ts"],
     rules: {
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
       "no-console": "off",
+      "no-restricted-syntax": "off",
     },
   },
   // --------------------------------------------------

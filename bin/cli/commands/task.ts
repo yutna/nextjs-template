@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { runCodebaseIndex } from "./codebase-index.ts";
+import { runHooksBuilder } from "./hooks-builder.ts";
 import { runNextjsPolicy } from "./nextjs-policy.ts";
 import { runSyncCopilot } from "./sync-copilot.ts";
 import { runWorkflowAudit } from "./workflow-audit.ts";
@@ -84,6 +85,12 @@ const TASKS: Record<string, TaskDefinition> = {
   "format": {
     command: "prettier --write .",
     description: "Format project files",
+  },
+  "hooks:build": {
+    description: "Generate hook configurations from single source",
+    fn: async () => {
+      await runHooksBuilder();
+    },
   },
   "lint": {
     command: "run-s lint:eslint lint:css lint:check",
