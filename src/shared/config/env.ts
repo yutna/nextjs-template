@@ -7,6 +7,7 @@ export const env = createEnv({
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL_PRODUCTION: process.env.DATABASE_URL_PRODUCTION,
     DATABASE_URL_TEST: process.env.DATABASE_URL_TEST,
     DB_TEST_ISOLATION_STRATEGY: process.env.DB_TEST_ISOLATION_STRATEGY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
@@ -14,6 +15,7 @@ export const env = createEnv({
   },
   server: {
     DATABASE_URL: z.string().optional(),
+    DATABASE_URL_PRODUCTION: z.string().optional(),
     DATABASE_URL_TEST: z.string().optional(),
     DB_TEST_ISOLATION_STRATEGY: z
       .enum(["noop", "sqlite-file-reset"])

@@ -277,6 +277,7 @@ const eslintConfig = defineConfig([
   {
     files: [
       "src/shared/config/**",
+      "drizzle.config.ts",
       "next.config.ts",
       "vitest.config.mts",
       "eslint.config.mjs",
@@ -331,6 +332,12 @@ const eslintConfig = defineConfig([
   // --------------------------------------------------
   {
     files: ["src/shared/lib/logger/**"],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
+  },
+  {
+    files: ["src/shared/db/client.ts"],
     rules: {
       "no-restricted-syntax": "off",
     },

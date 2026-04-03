@@ -18,6 +18,11 @@ yarn-error.log*
 .env*
 !.env.example
 
+# local DB files
+src/shared/db/local/*.sqlite
+src/shared/db/local/*.sqlite-shm
+src/shared/db/local/*.sqlite-wal
+
 # misc
 *.pem
 .DS_Store

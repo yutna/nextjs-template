@@ -64,10 +64,35 @@ Configuration files:
 ```bash
 npm install
 cp .env.example .env.local   # edit with your values
+npm run db:migrate           # optional: create local development DB
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Database Scaffold
+
+This template includes a minimal real Drizzle + libSQL/sqlite scaffold.
+It is intentionally small: one canonical entity example, one seed entrypoint, and
+working migration/test-prepare scripts.
+
+Current DB scaffold:
+
+- [drizzle.config.ts](./drizzle.config.ts) for migration generation and apply flow
+- `src/shared/db/` for runtime client, schema entrypoint, migrations, seeds, and local sqlite files
+- `src/shared/entities/app-setting/` as the canonical starter entity example
+- `src/shared/lib/db-isolation/` for deterministic test DB reset helpers
+
+See [docs/db/database-workflow.md](./docs/db/database-workflow.md) for the full DB scaffold workflow.
+
+Typical local workflow:
+
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+npm run db:prepare:test
+```
 
 ## Tech Stack
 
@@ -110,11 +135,11 @@ src/
 │       ├── screens/      # Page-level composition (server)
 │       └── hooks/        # Client logic
 ├── shared/           # Cross-cutting code
-│   ├── db/           # Database client (Drizzle)
+│   ├── db/           # DB client, schema entrypoint, migrations, seeds, local DB files
 │   ├── entities/     # Drizzle schemas (tables)
 │   ├── components/   # Shared UI
 │   ├── config/       # Env, fonts, i18n
-│   ├── lib/          # Integrations and wrappers
+│   ├── lib/          # Integrations, wrappers, infra helpers
 │   └── ...
 ├── messages/         # i18n translations (en/th)
 └── test/             # Shared test helpers
@@ -143,14 +168,29 @@ Effect is required for all backend layers (services, repositories, jobs).
 | `npm run test`            | Run all tests                          |
 | `npm run test:coverage`   | Run tests with coverage report         |
 | `npm run test:watch`      | Run tests in watch mode                |
+| `npm run db:generate`     | Generate Drizzle migration files       |
+| `npm run db:migrate`      | Apply migrations to the current DB     |
+| `npm run db:migrate:test` | Apply migrations to the test DB        |
+| `npm run db:prepare:test` | Reset and migrate the test DB          |
+| `npm run db:seed`         | Seed the current DB with deterministic starter data |
 
 ## Environment Variables
 
 Copy [`.env.example`](./.env.example) to `.env.local` and fill in:
 
-| Variable              | Description                          |
-| --------------------- | ------------------------------------ |
-| `NEXT_PUBLIC_API_URL` | Base URL for the backend API         |
+| Variable                      | Description                                     |
+| ----------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`         | Base URL for the backend API                    |
+| `DATABASE_URL`                | Development DB URL, defaults to local sqlite    |
+| `DATABASE_URL_TEST`           | Test DB URL, defaults to local sqlite           |
+| `DATABASE_URL_PRODUCTION`     | Optional production DB URL or local fallback    |
+| `DB_TEST_ISOLATION_STRATEGY`  | Test DB reset mode: `noop` or `sqlite-file-reset` |
+
+Local sqlite defaults:
+
+- development: `file:src/shared/db/local/development.sqlite`
+- test: `file:src/shared/db/local/test.sqlite`
+- production fallback: `file:src/shared/db/local/production.sqlite`
 
 ## Contributing
 
