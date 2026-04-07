@@ -1,19 +1,31 @@
-# Claude Code Configuration
+# Repository AI Instructions (`CLAUDE.md`)
 
-This file configures Claude Code for this repository. **For the universal AI workflow contract, see [AGENTS.md](./AGENTS.md)**—that is the single source of truth.
+Claude Code reads this file automatically, and GitHub Copilot CLI also respects
+`CLAUDE.md` as a custom instruction surface. Keep repo-wide guidance here accurate for
+both tools, and label tool-specific runtime notes clearly. **For the universal AI
+workflow contract, see [AGENTS.md](./AGENTS.md)**—that is the single source of truth.
 
 ## Instruction Precedence
 
-Apply instructions in this order:
+For repo decisions, apply instructions in this order:
 
 1. Direct user instruction
 2. [AGENTS.md](./AGENTS.md) (universal workflow contract + all patterns)
 3. Relevant path-specific `.github/instructions/*.md`
-4. Relevant `.claude/skills/`
-5. Relevant `.claude/commands/`
-6. Workflow hooks and policy checks
+4. The repo skill, prompt, or command surface for the current tool
+5. Tool runtime hooks and policy checks when that tool supports them
 
 If sources conflict, follow the highest-priority source.
+
+### Tool-Specific Surfaces
+
+- **Claude Code**: `.claude/skills/`, `.claude/commands/`, `.claude/settings.json`,
+  `.mcp.json`
+- **GitHub Copilot Chat**: `.github/prompts/`, `.github/skills/`,
+  `.github/copilot-instructions.md`, `.vscode/mcp.json`
+- **GitHub Copilot CLI**: built-in slash commands plus `AGENTS.md`, `CLAUDE.md`,
+  `.github/instructions/**/*.md`, and `.github/copilot-instructions.md`; MCP comes
+  from `/mcp`, `~/.copilot/mcp-config.json`, or `--additional-mcp-config`
 
 ## Skill Invocation Contract
 
@@ -21,11 +33,11 @@ Repo-specific skills live in `.claude/skills/` and are mirrored for Copilot via
 `.github/skills/`. Treat them as available guidance, not passive background context.
 
 When a relevant skill exists for the current task, invoke or read it before planning,
-implementation, review, recovery, or delivery work. If a Claude command names one or
-more skills, invoke them in the order stated there instead of assuming they were
-already loaded.
+implementation, review, recovery, or delivery work. If the current tool's repo
+command or prompt names one or more skills, invoke them in the order stated there
+instead of assuming they were already loaded.
 
-## Claude-Specific Tools
+## Claude Code Runtime Notes
 
 ### Workflow State API
 
@@ -39,12 +51,18 @@ Fallback: Direct file edits to `.claude/workflow-state.json` (only if API unavai
 
 ### MCP Servers
 
-Configured in `.mcp.json` (auto-loaded):
+For Claude Code sessions, repo MCP servers are configured in `.mcp.json` and
+auto-loaded by Claude Code:
 
 - **ark-ui**: Component properties and examples
 - **chakra-ui**: Theme, components, props
 - **next-devtools**: Next.js routes, errors, cache
 - **playwright**: Browser automation for QA
+
+GitHub Copilot uses different MCP surfaces:
+
+- **Copilot Chat in VS Code**: `.vscode/mcp.json`
+- **Copilot CLI**: `/mcp`, `~/.copilot/mcp-config.json`, or `--additional-mcp-config`
 
 ## Quick Reference: Next.js Stack
 
@@ -90,6 +108,9 @@ For complete file structure and naming patterns, see [AGENTS.md § Rails to Next
 | Code conventions + naming | [AGENTS.md](./AGENTS.md) or `.claude/skills/code-conventions/SKILL.md` |
 | Module structure | [AGENTS.md](./AGENTS.md) or `.github/instructions/nextjs-modules.instructions.md` |
 | Shared structure | [AGENTS.md](./AGENTS.md) or `.github/instructions/nextjs-shared.instructions.md` |
+| Copilot instructions | `.github/copilot-instructions.md` |
+| Copilot Chat prompts | `.github/prompts/` |
+| Claude commands | `.claude/commands/` |
 | Effect patterns | `.claude/skills/effect-patterns/SKILL.md` |
 | Drizzle patterns | `.claude/skills/drizzle-patterns/SKILL.md` |
 | Testing setup | `.github/instructions/tests.instructions.md` |

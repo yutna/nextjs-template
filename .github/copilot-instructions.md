@@ -33,7 +33,7 @@ Phase specialist agents in `.github/agents/`:
 - `reviewer.agent.md` - Review phase specialist
 - `verifier.agent.md` - Quality gates and verification specialist
 
-### Prompts
+### Chat Prompts
 Workflow commands in `.github/prompts/`:
 - `/discover` - Start discovery phase
 - `/plan-work` - Create implementation plan
@@ -43,11 +43,26 @@ Workflow commands in `.github/prompts/`:
 - `/deliver` - Prepare delivery summary
 - `/recover` - Recover from failures
 
-**Note**: These prompts are designed for **GitHub Copilot Chat** (VS Code extension or web interface). Invoke them via the Copilot Chat interface in your IDE or on github.com. GitHub Copilot does not provide automated phase orchestration via CLI; the workflow is chat-driven.
+**Note**: These prompts are repo-defined **GitHub Copilot Chat** surfaces (VS Code or
+github.com). They are not native GitHub Copilot CLI slash commands.
 
-When you need to advance the phase explicitly, invoke the matching prompt in chat: `/discover` -> `/plan-work` -> `/implement` -> `/gates` -> `/deliver`. In orchestration agent mode, Copilot can help route these phases inside the chat, but it still does not auto-chain CLI workflow steps for you.
+When you need to advance the phase explicitly in chat, invoke the matching prompt:
+`/discover` -> `/plan-work` -> `/implement` -> `/gates` -> `/deliver`. In
+orchestration agent mode, Copilot can help route these phases inside chat, but you
+should still treat each phase transition as explicit.
 
-**Parity Note**: GitHub Copilot does not have automatic stop-time workflow gates like Claude Code does. Follow [AGENTS.md](../AGENTS.md) phase rules, non-negotiable rules, and quality gates for manual gate discipline.
+### Copilot CLI
+GitHub Copilot CLI reads the shared repo instruction surfaces
+(`AGENTS.md`, `CLAUDE.md`, `.github/instructions/**/*.md`, and this file), but it uses
+its own built-in commands.
+
+Use Copilot CLI built-ins such as `/plan`, `/research`, `/review`, `/agent`,
+`/skills`, `/instructions`, and `/mcp`, plus plain-language requests, to follow the
+same six-phase workflow in terminal sessions.
+
+**Parity Note**: This repository enforces parity on the primary mirrored
+**Claude command ↔ Copilot Chat prompt** surfaces. That parity does not imply full
+GitHub Copilot CLI command equivalence.
 
 ### Skills
 Deep pattern documentation in `.github/skills/` (symlinked from `.claude/skills/`).

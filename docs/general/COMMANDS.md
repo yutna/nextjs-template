@@ -1,6 +1,11 @@
 # Commands Reference
 
-This project runs all scripts through a single CLI entrypoint (`./bin/vibe`) and mirrors slash commands between Claude Code and GitHub Copilot. The workflow is guardrailed by prompts, hooks, and CI by default — these commands are here when you want to drive a step explicitly, run something in isolation, or just understand what's available.
+This project runs all scripts through a single CLI entrypoint (`./bin/vibe`) and
+mirrors phase entrypoints between Claude Code slash commands and GitHub Copilot Chat
+prompts. GitHub Copilot CLI uses its own built-in commands plus the same repo
+instruction files. The workflow is guardrailed by prompts, hooks, and CI by default —
+these commands are here when you want to drive a step explicitly, run something in
+isolation, or just understand what's available.
 
 Operational quick reference: [Workflow SOP (One Page)](./WORKFLOW-SOP.md)
 
@@ -86,7 +91,8 @@ A small set of commands run directly (not through `task`):
 ./bin/vibe parity-check --all     # check all paired command files
 ```
 
-CI runs `parity-check` automatically. Use it locally after editing a Claude command or Copilot prompt to verify the configured hard parity pairs before pushing.
+CI runs `parity-check` automatically. Use it locally after editing a Claude command or
+Copilot Chat prompt to verify the configured hard parity pairs before pushing.
 
 ---
 
@@ -124,7 +130,7 @@ Available in any Claude Code session. Type `/` to see the full list, or invoke a
 
 ---
 
-## GitHub Copilot Prompts
+## GitHub Copilot Chat Prompts
 
 Mirrored from Claude commands. Use in VS Code Copilot Chat — add `@workspace` for broader file context.
 
@@ -155,6 +161,31 @@ Mirrored from Claude commands. Use in VS Code Copilot Chat — add `@workspace` 
 | Prompt | What It Does |
 |--------|--------------|
 | `/decompose-requirements` | Breaks large features into phased tasks with Gherkin scenarios, state machines, and E2E test specs |
+
+---
+
+## GitHub Copilot CLI Built-Ins
+
+GitHub Copilot CLI uses its own built-in commands together with the repo instruction
+surfaces (`AGENTS.md`, `CLAUDE.md`, `.github/instructions/**/*.md`, and
+`.github/copilot-instructions.md`).
+
+Use plain-language requests to drive Discovery, Implementation, Recovery, and
+Delivery in terminal sessions, and use these built-ins when they match the task:
+
+| Command | What It Does |
+|---------|--------------|
+| `/plan` | Create an implementation plan before coding |
+| `/research` | Run a deeper investigation using code, GitHub, and web sources |
+| `/review` | Run Copilot's code review agent |
+| `/agent` | Inspect or select available agents |
+| `/skills` | Inspect or manage available skills |
+| `/instructions` | Inspect active instruction files |
+| `/mcp` | Inspect or manage MCP server configuration |
+
+The repo-defined `/discover`, `/plan-work`, `/implement`, `/gates`, `/deliver`, and
+`/recover` surfaces remain **Copilot Chat prompts**, not native Copilot CLI slash
+commands.
 
 ---
 
