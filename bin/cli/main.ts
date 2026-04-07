@@ -1,23 +1,21 @@
 import { Effect } from "effect";
 import { readdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import {
+  MalformedCommandModuleError,
+  validateCommandModule,
+} from "./command-module.ts";
+
+import type { CliCommand } from "./command-module.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const COMMANDS_DIR = resolve(__dirname, "commands");
-
-interface Command {
-  description: string;
-  name: string;
-  run: (args?: string[]) => Promise<void>;
-}
-
-interface CommandModule {
-  command: Command;
-  help?: () => void;
-}
+const SAFE_COMMAND_NAME_PATTERN =
+  /^[a-z0-9]+(?:-[a-z0-9]+)*(?::[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
 
 class CommandNotFoundError {
   readonly _tag = "CommandNotFoundError";
@@ -27,27 +25,92 @@ class CommandNotFoundError {
   }
 }
 
+class CommandModuleImportError {
+  readonly _tag = "CommandModuleImportError";
+  readonly cause: string;
+  readonly moduleId: string;
+
+  constructor(moduleId: string, cause: string) {
+    this.cause = cause;
+    this.moduleId = moduleId;
+  }
+}
+
+function commandModuleFileName(commandName: string): string {
+  if (!SAFE_COMMAND_NAME_PATTERN.test(commandName)) {
+    throw new CommandNotFoundError(commandName);
+  }
+
+  return `${commandName.replaceAll(":", "-")}.ts`;
+}
+
+function commandModuleIdForError(commandName: string): string {
+  if (SAFE_COMMAND_NAME_PATTERN.test(commandName)) {
+    return `${commandName.replaceAll(":", "-")}.ts`;
+  }
+
+  return `${commandName}.ts`;
+}
+
+function resolveCommandModulePath(moduleId: string): string {
+  const commandPath = resolve(COMMANDS_DIR, moduleId);
+  const commandRelativePath = relative(COMMANDS_DIR, commandPath);
+
+  if (
+    isAbsolute(commandRelativePath) ||
+    commandRelativePath === ".." ||
+    commandRelativePath.startsWith(`..${sep}`)
+  ) {
+    throw new Error(`Command module path escapes commands directory: ${moduleId}`);
+  }
+
+  return commandPath;
+}
+
+function formatUnknownError(error: unknown): string {
+  if (error instanceof Error && error.message.length > 0) {
+    return error.message;
+  }
+
+  return String(error);
+}
+
+function isModuleNotFoundError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return "code" in error && error.code === "ERR_MODULE_NOT_FOUND";
+}
+
+async function importValidatedCommandModule(moduleId: string) {
+  const commandPath = resolveCommandModulePath(moduleId);
+  const importedModule: unknown = await import(commandPath);
+
+  return validateCommandModule(moduleId, importedModule);
+}
+
 const loadCommandModule = (name: string) =>
   Effect.tryPromise({
-    catch: () => new CommandNotFoundError(name),
+    catch: (error) => {
+      const moduleId = commandModuleIdForError(name);
+
+      if (error instanceof MalformedCommandModuleError) {
+        return error;
+      }
+
+      if (error instanceof CommandNotFoundError) {
+        return error;
+      }
+
+      if (isModuleNotFoundError(error)) {
+        return new CommandNotFoundError(name);
+      }
+
+      return new CommandModuleImportError(moduleId, formatUnknownError(error));
+    },
     try: async () => {
-      const normalized = name.replace(":", "-");
-      const commandPath = resolve(COMMANDS_DIR, `${normalized}.ts`);
-      const mod = await import(commandPath);
-
-      if (!mod.command) {
-        throw new Error(`No command export in ${normalized}.ts`);
-      }
-
-      const result: CommandModule = {
-        command: mod.command as Command,
-      };
-
-      if (typeof mod.help === "function") {
-        result.help = mod.help as () => void;
-      }
-
-      return result;
+      return importValidatedCommandModule(commandModuleFileName(name));
     },
   });
 
@@ -56,22 +119,27 @@ const listCommands = Effect.gen(function* () {
     readdirSync(COMMANDS_DIR).filter((f) => f.endsWith(".ts")),
   );
 
-  const commands: Command[] = [];
+  const commands: CliCommand[] = [];
 
   for (const file of files) {
-    const mod = yield* Effect.tryPromise(
-      () => import(resolve(COMMANDS_DIR, file)),
-    );
+    const commandModule = yield* Effect.tryPromise({
+      catch: (error) => {
+        if (error instanceof MalformedCommandModuleError) {
+          return error;
+        }
 
-    if (mod.command) {
-      commands.push(mod.command as Command);
-    }
+        return new CommandModuleImportError(file, formatUnknownError(error));
+      },
+      try: async () => importValidatedCommandModule(file),
+    });
+
+    commands.push(commandModule.command);
   }
 
   return commands.sort((a, b) => a.name.localeCompare(b.name));
 });
 
-function printHelp(commands: Command[]): void {
+function printHelp(commands: CliCommand[]): void {
   const bin = "bin/vibe";
 
   console.log(`
@@ -101,13 +169,15 @@ function printHelp(commands: Command[]): void {
 export async function main(args: string[]): Promise<void> {
   const commandName = args[0];
 
-  if (!commandName || commandName === "--help" || commandName === "-h") {
-    const commands = await Effect.runPromise(listCommands);
-    printHelp(commands);
-    return;
-  }
-
   const program = Effect.gen(function* () {
+    if (!commandName || commandName === "--help" || commandName === "-h") {
+      const commands = yield* listCommands;
+      yield* Effect.sync(() => {
+        printHelp(commands);
+      });
+      return;
+    }
+
     const { command, help: helpFn } = yield* loadCommandModule(commandName);
     const rest = args.slice(1);
 
@@ -130,6 +200,19 @@ export async function main(args: string[]): Promise<void> {
         Effect.sync(() => {
           console.error(`  Unknown command: ${err.commandName}\n`);
           console.error(`  Run ./bin/vibe --help to see available commands.\n`);
+          process.exitCode = 1;
+        }),
+      ),
+      Effect.catchTag("MalformedCommandModuleError", (err) =>
+        Effect.sync(() => {
+          console.error(`  ${err.message}\n`);
+          process.exitCode = 1;
+        }),
+      ),
+      Effect.catchTag("CommandModuleImportError", (err) =>
+        Effect.sync(() => {
+          console.error(`  Failed to load command module "${err.moduleId}".\n`);
+          console.error(`  ${err.cause}\n`);
           process.exitCode = 1;
         }),
       ),

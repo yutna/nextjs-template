@@ -13,7 +13,7 @@ import {
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { runHooksBuilder } from "./hooks-builder.ts";
+import { runHooksBuilder } from "./hooks-build.ts";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
