@@ -124,7 +124,7 @@ After gates:
 {
   "phase": "quality-gates",
   "qualityGates": {
-    "typeCheck": "passed",
+    "typecheck": "passed",
     "lint": "passed",
     "tests": "passed"
   }

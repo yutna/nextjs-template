@@ -34,6 +34,21 @@ interface PromptSyncResult {
   updated: number;
 }
 
+interface PromptComparisonOptions {
+  commandContent: string;
+  commandMtime?: Date;
+  commandName: string;
+  promptContent?: string;
+  promptMtime?: Date;
+}
+
+interface PromptComparisonResult {
+  driftReason?: string;
+  expectedPromptContent: string;
+  inSync: boolean;
+  missing: boolean;
+}
+
 interface HookIssue {
   file: string;
   message: string;
@@ -197,7 +212,44 @@ function transformCommand(content: string, commandName: string): string {
   return `${newFrontmatter}\n${newBody}`;
 }
 
-function syncCommandsToPrompts(opts: SyncOptions): PromptSyncResult {
+export function comparePromptContent(
+  options: PromptComparisonOptions,
+): PromptComparisonResult {
+  const expectedPromptContent = transformCommand(
+    options.commandContent,
+    options.commandName,
+  );
+
+  if (options.promptContent === undefined) {
+    return {
+      expectedPromptContent,
+      inSync: false,
+      missing: true,
+    };
+  }
+
+  if (options.promptContent === expectedPromptContent) {
+    return {
+      expectedPromptContent,
+      inSync: true,
+      missing: false,
+    };
+  }
+
+  return {
+    driftReason:
+      options.promptMtime !== undefined &&
+      options.commandMtime !== undefined &&
+      options.promptMtime >= options.commandMtime
+        ? "content drift detected"
+        : "command modified",
+    expectedPromptContent,
+    inSync: false,
+    missing: false,
+  };
+}
+
+export function syncCommandsToPrompts(opts: SyncOptions): PromptSyncResult {
   log("\n[2/3] Checking commands → prompts...");
 
   const claudeCommandsDir = join(CLAUDE_DIR, "commands");
@@ -229,18 +281,25 @@ function syncCommandsToPrompts(opts: SyncOptions): PromptSyncResult {
     const commandName = commandFile.replace(".md", "");
     const promptName = `${commandName}.prompt.md`;
     const promptPath = join(githubPromptsDir, promptName);
+    const commandContent = readFileSync(commandPath, "utf-8");
+    const promptExists = existsSync(promptPath);
+    const comparison = comparePromptContent({
+      commandContent,
+      commandMtime: promptExists ? statSync(commandPath).mtime : undefined,
+      commandName,
+      promptContent: promptExists ? readFileSync(promptPath, "utf-8") : undefined,
+      promptMtime: promptExists ? statSync(promptPath).mtime : undefined,
+    });
 
-    const commandStat = statSync(commandPath);
+    if (comparison.inSync) {
+      verbose(`✓ ${promptName} (up to date)`, opts);
+      continue;
+    }
 
-    if (existsSync(promptPath)) {
-      const promptStat = statSync(promptPath);
-      if (promptStat.mtime >= commandStat.mtime) {
-        verbose(`✓ ${promptName} (up to date)`, opts);
-        continue;
-      }
-      verbose(`~ ${promptName} (command modified)`, opts);
-    } else {
+    if (comparison.missing) {
       verbose(`✗ ${promptName} (missing)`, opts);
+    } else {
+      verbose(`~ ${promptName} (${comparison.driftReason})`, opts);
     }
 
     if (opts.checkOnly) {
@@ -248,9 +307,7 @@ function syncCommandsToPrompts(opts: SyncOptions): PromptSyncResult {
       continue;
     }
 
-    const content = readFileSync(commandPath, "utf-8");
-    const transformed = transformCommand(content, commandName);
-    writeFileSync(promptPath, transformed);
+    writeFileSync(promptPath, comparison.expectedPromptContent);
     verbose(`+ ${promptName} (updated)`, opts);
     updated++;
   }
