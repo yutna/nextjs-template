@@ -31,6 +31,11 @@ Execute in order:
 4. UI components
 5. Tests
 
+Use checkpoint-stop behavior for non-trivial work:
+- finish one major layer or batch
+- report progress
+- stop and replan if the approved slice is exceeded
+
 ### Step 3: Apply Conventions
 
 #### File Structure
@@ -40,6 +45,10 @@ Create only files required by the concrete implementation:
 - `constants.ts` when constants are needed
 - Tests for changed behavior
 - `*.stories.tsx` for components when applicable
+- Keep one file focused on one primary responsibility
+- Non-primary internal helpers and constants belong in dedicated files or scoped `helpers.ts`
+- Do not keep local type declarations in implementation files
+- Translation files are the one deliberate DRY-relaxed area, but message structure must stay clear and scalable
 
 #### Naming Patterns
 | Type | Pattern | Example |
@@ -83,6 +92,8 @@ Before marking implementation complete:
 - [ ] No grouping-folder barrel re-exports
 - [ ] Types in types.ts
 - [ ] Constants in constants.ts
+- [ ] Non-primary helpers extracted from implementation files
+- [ ] File responsibility remains clear to the next developer opening the file
 - [ ] Tests written
 - [ ] Stories for components
 - [ ] No cross-module imports
@@ -125,6 +136,7 @@ Valid status values: `not-started`, `in-progress`, `completed`, `blocked`
 - Write backend code without Effect
 - Create root-level generic files (`utils.ts`, `helpers.ts`, `common.ts`)
 - Mark complete if blocked
+- Keep growing a batch once it clearly exceeds the approved slice
 
 ## When Blocked
 

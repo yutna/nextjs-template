@@ -6,11 +6,13 @@ Create a planning deliverable only. Do not implement.
 
 Behavioral mode: Planning only. Do not edit implementation files or create code.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/convention-tiering/SKILL.md
-- .claude/skills/implementation-planning/SKILL.md
+- Invoke `.claude/skills/convention-tiering/SKILL.md` first to classify hard
+  conventions, strong defaults, and local freedom.
+- Then invoke `.claude/skills/implementation-planning/SKILL.md` to produce the
+  executable plan.
 
 Required output:
 
@@ -22,6 +24,13 @@ Required output:
 6. Convention-tier notes: hard conventions preserved, strong defaults reused, and any justified deviations
 7. Approval checkpoint for moving to Implementation
 
+Plans for non-trivial work must also include:
+
+- exact file count in scope
+- predicted implementation complexity
+- decomposition artifact path when the request is large
+- phase in scope when working from `docs/tasks/**`
+
 Rules:
 
 - explore before deciding
@@ -29,6 +38,9 @@ Rules:
 - classify convention decisions into hard conventions, strong defaults, and local freedom
 - keep the plan specific enough that implementation does not need to guess
 - do not justify structural choices only because another repository used them before
+- if the likely scope exceeds a small batch, require decomposition before approving Implementation
+- call out when code-organization rules will force helper/constants/type extraction into dedicated files
+- for DB-related plans, explicitly record target env, migration impact, rollback, seed determinism, and test isolation
 - use only `plan.status = "not-started" | "proposed" | "approved" | "blocked"`
 - update `.claude/workflow-state.json` with planning status and files in scope
 - stop after delivering the plan; do not continue into Implementation

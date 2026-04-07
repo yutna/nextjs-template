@@ -18,20 +18,25 @@ Use this skill when creating or maintaining Storybook stories for component docu
 
 ```typescript
 // .storybook/main.ts
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from "@storybook/nextjs-vite";
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
-    '@storybook/addon-a11y',
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+    "@chromatic-com/storybook",
   ],
-  framework: {
-    name: '@storybook/nextjs',
-    options: {},
+  features: {
+    experimentalRSC: true,
   },
+  framework: {
+    name: "@storybook/nextjs-vite",
+    options: {
+      nextConfigPath: "../next.config.ts",
+    },
+  },
+  staticDirs: ["../public"],
+  stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
 };
 
 export default config;
@@ -41,21 +46,45 @@ export default config;
 
 ```tsx
 // .storybook/preview.tsx
-import type { Preview } from '@storybook/react';
-import { ChakraProvider } from '@/shared/providers/ChakraProvider';
-import { NextIntlClientProvider } from 'next-intl';
-import messages from '../src/messages/en';
+import { NextIntlClientProvider } from "next-intl";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+import { messages } from "../src/messages";
+import { formats } from "../src/shared/config/i18n/formats";
+import { TIME_ZONE } from "../src/shared/constants/timezone";
+import { Provider } from "../src/shared/vendor/chakra-ui/provider";
+
+import type { Preview } from "@storybook/nextjs-vite";
 
 const preview: Preview = {
   decorators: [
-    (Story) => (
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <ChakraProvider>
-          <Story />
-        </ChakraProvider>
+    (Story, context) => (
+      <NextIntlClientProvider
+        formats={formats}
+        locale="en"
+        messages={messages.en}
+        now={new Date()}
+        timeZone={TIME_ZONE}
+      >
+        <NuqsAdapter>
+          <Provider forcedTheme={context.globals["colorMode"] as "dark" | "light"}>
+            <Story />
+          </Provider>
+        </NuqsAdapter>
       </NextIntlClientProvider>
     ),
   ],
+  globalTypes: {
+    colorMode: {
+      toolbar: {
+        items: ["light", "dark"],
+        title: "Color Mode",
+      },
+    },
+  },
+  initialGlobals: {
+    colorMode: "light",
+  },
   parameters: {
     controls: {
       matchers: {
@@ -74,23 +103,23 @@ export default preview;
 ### Basic Story
 
 ```tsx
-// src/modules/users/components/UserCard.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { UserCard } from './UserCard';
+// src/modules/users/components/card-user/card-user.stories.tsx
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { CardUser } from './card-user';
 
-const meta: Meta<typeof UserCard> = {
-  title: 'Modules/Users/UserCard',
-  component: UserCard,
+const meta = {
+  title: 'modules/users/components/user-card',
+  component: CardUser,
   tags: ['autodocs'],
   argTypes: {
     user: {
       description: 'User object to display',
     },
   },
-};
+} satisfies Meta<typeof CardUser>;
 
 export default meta;
-type Story = StoryObj<typeof UserCard>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
@@ -127,19 +156,19 @@ export const LongName: Story = {
 ### Interactive Story
 
 ```tsx
-// src/modules/users/containers/UserFormContainer.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
+// src/modules/users/containers/container-user-form/container-user-form.stories.tsx
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { within, userEvent, expect } from '@storybook/test';
-import { UserFormContainer } from './UserFormContainer';
+import { ContainerUserForm } from './container-user-form';
 
-const meta: Meta<typeof UserFormContainer> = {
-  title: 'Modules/Users/UserFormContainer',
-  component: UserFormContainer,
+const meta: Meta<typeof ContainerUserForm> = {
+  title: 'modules/users/containers/user-form-container',
+  component: ContainerUserForm,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof UserFormContainer>;
+type Story = StoryObj<typeof ContainerUserForm>;
 
 export const Default: Story = {};
 
@@ -174,12 +203,13 @@ export const WithValidationErrors: Story = {
 ### Story with Controls
 
 ```tsx
-// src/shared/components/Button.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './Button';
+// src/shared/components/button/button.stories.tsx
+import { HStack } from "@chakra-ui/react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Button } from './button';
 
 const meta: Meta<typeof Button> = {
-  title: 'Shared/Button',
+  title: 'shared/components/button',
   component: Button,
   tags: ['autodocs'],
   argTypes: {
@@ -195,10 +225,10 @@ const meta: Meta<typeof Button> = {
       control: 'select',
       options: ['sm', 'md', 'lg'],
     },
-    isLoading: {
+    loading: {
       control: 'boolean',
     },
-    isDisabled: {
+    disabled: {
       control: 'boolean',
     },
   },
@@ -215,28 +245,28 @@ export const Default: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '8px' }}>
+    <HStack gap="2">
       <Button variant="solid">Solid</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
-    </div>
+    </HStack>
   ),
 };
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+    <HStack align="center" gap="2">
       <Button size="sm">Small</Button>
       <Button size="md">Medium</Button>
       <Button size="lg">Large</Button>
-    </div>
+    </HStack>
   ),
 };
 
 export const Loading: Story = {
   args: {
     children: 'Loading',
-    isLoading: true,
+    loading: true,
   },
 };
 ```
@@ -244,23 +274,27 @@ export const Loading: Story = {
 ### Story with Mock Data
 
 ```tsx
-// src/modules/users/screens/UserListScreen.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { UserListScreen } from './UserListScreen';
-import { createMockUsers } from '@/test/factories';
+// src/modules/users/screens/screen-user-list/screen-user-list.stories.tsx
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { ScreenUserList } from './screen-user-list';
 
-const meta: Meta<typeof UserListScreen> = {
-  title: 'Modules/Users/UserListScreen',
-  component: UserListScreen,
+const sampleUsers = [
+  { email: "john@example.com", id: "user-1", name: "John Doe" },
+  { email: "jane@example.com", id: "user-2", name: "Jane Smith" },
+];
+
+const meta: Meta<typeof ScreenUserList> = {
+  title: 'modules/users/screens/user-list-screen',
+  component: ScreenUserList,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof UserListScreen>;
+type Story = StoryObj<typeof ScreenUserList>;
 
 export const Default: Story = {
   args: {
-    users: createMockUsers(5),
+    users: sampleUsers,
   },
 };
 
@@ -273,13 +307,13 @@ export const Empty: Story = {
 export const Loading: Story = {
   args: {
     users: undefined,
-    isLoading: true,
+    loading: true,
   },
 };
 
 export const ManyUsers: Story = {
   args: {
-    users: createMockUsers(50),
+    users: [...sampleUsers, ...sampleUsers, ...sampleUsers],
   },
 };
 ```
@@ -291,38 +325,41 @@ export const ManyUsers: Story = {
 ```
 src/modules/users/
 ├── components/
-│   ├── UserCard.tsx
-│   └── UserCard.stories.tsx    # Co-located with component
+│   └── user-card/
+│       ├── user-card.tsx
+│       └── user-card.stories.tsx
 ├── containers/
-│   ├── UserFormContainer.tsx
-│   └── UserFormContainer.stories.tsx
+│   └── user-form-container/
+│       ├── user-form-container.tsx
+│       └── user-form-container.stories.tsx
 └── screens/
-    ├── UserListScreen.tsx
-    └── UserListScreen.stories.tsx
+    └── user-list-screen/
+        ├── user-list-screen.tsx
+        └── user-list-screen.stories.tsx
 ```
 
 ### Naming Convention
 
 ```typescript
-// Story title follows directory structure
-const meta: Meta<typeof Component> = {
-  title: 'Modules/[ModuleName]/[ComponentName]',
+// Story title follows the repo path shape
+const meta = {
+  title: "modules/[module-name]/components/[component-name]",
   // or
-  title: 'Shared/[ComponentName]',
-};
+  title: "shared/components/[component-name]",
+} satisfies Meta<typeof Component>;
 ```
 
 ## Running Storybook
 
 ```bash
 # Start Storybook dev server
-npm run storybook
+npm run dev:storybook
 
 # Build static Storybook
-npm run build-storybook
+npm run build:storybook
 
-# Run Storybook tests
-npm run test-storybook
+# Run the Storybook smoke test project
+npm run test -- src/test/stories-smoke.test.tsx
 ```
 
 ## Best Practices

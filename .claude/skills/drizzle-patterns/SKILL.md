@@ -237,3 +237,14 @@ For every DB-related task:
 5. Verify tests point to the intended DB URL/file
 6. Verify test DB reset strategy is deterministic
 
+## Rails-Style Process Discipline
+
+This repository follows Rails-style database workflow expectations even though the stack is Next.js + Drizzle:
+
+1. Schema ownership stays centralized in shared DB and entity seams
+2. Migrations are ordered, committed artifacts, not ad hoc local patches
+3. Seeds are deterministic and environment-aware
+4. Repositories own data access; services own orchestration; migrations and seeds do not leak into feature modules
+5. Planning must include lifecycle impact, rollback, and data safety before implementation starts
+
+When a task exposes DB process confusion, fix the workflow and ownership boundaries before adding more schema surface.

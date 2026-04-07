@@ -2,7 +2,7 @@
 
 Status: Active
 Scope: Whole repository
-Last Updated: 2026-04-03
+Last Updated: 2026-04-06
 
 This template exists so users can ship features fast with Claude and GitHub Copilot without repetitive setup.
 
@@ -19,14 +19,17 @@ Primary goals:
 - Consistency: conventions are applied from first round, not after cleanup
 - Production readiness: code should be shippable without setup churn
 
-## Manual Actions Allowed (Only 2)
+## Manual Work Should Stay Small
 
-Users should manually do only:
+The template should minimize manual workflow overhead.
 
-1. Run decompose-requirements for large features
-2. Switch GitHub Copilot agent to orchestration mode
+Today that means users still:
 
-Everything else should be automated by prompts, hooks, scripts, and CI.
+1. describe the task and approve the plan when the host tool asks
+2. run `decompose-requirements` for large features
+3. switch GitHub Copilot to orchestration agent mode when they want that workflow
+
+Prompts, hooks, scripts, and CI should remove the rest of the routine coordination where the host tool allows it.
 
 ## Automation Contract
 
@@ -54,29 +57,18 @@ Users should not need manual maintenance commands for routine consistency tasks.
 - tests passing
 - no hidden manual setup needed to keep workflow healthy
 
-## Gap Status (as of 2026-04-03)
+## Enforcement Snapshot
 
-All previously logged high/medium gaps for this mindset pass have been addressed:
+The repo already automates several high-signal checks:
 
-1. Copilot workflow docs were reframed to orchestration-first and automation-first.
-2. Template structure baseline now passes workflow audit.
-3. Contributing parity section now states automation-by-default with optional local fallback checks.
-4. CI now enforces workflow structure baseline in the workflow-contract job.
+- `./bin/vibe task workflow:audit`
+- `./bin/vibe parity-check`
+- `npm run check-types`
+- `npm run lint`
+- `npm test`
+- `npm run workflow:state:validate`
 
-Verification snapshot:
-
-- `./bin/vibe task workflow:audit` → pass
-- `./bin/vibe parity-check` → pass
-- `npm run check-types` → pass
-- `npm run lint` → pass
-- `npm test` → pass
-
-### Aligned Improvements Already Applied
-
-- Hook config generation is now automatic during Copilot sync.
-  - bin/cli/commands/sync-copilot.ts:16
-  - bin/cli/commands/sync-copilot.ts:358
-  - bin/cli/commands/sync-copilot.ts:359
+These checks protect the enforced baseline, but they are not a guarantee that every downstream prompt, skill example, or workflow doc is already perfectly aligned. Periodic governance audits are still part of keeping the template honest.
 
 ## Acceptance Standard for Future Changes
 
@@ -91,11 +83,12 @@ If a change makes routine usage more manual, it is considered a regression.
 
 ## Implementation Direction
 
-All short-term automation gaps have been closed. Ongoing direction:
+The latest template workflow/convention slice is closed. Ongoing direction:
 
 - Keep scaffolding batteries-included so users spend time shipping features, not bootstrapping tools
 - Extend `workflow:audit` rules as new patterns are adopted
-- Keep Claude↔Copilot parity automatic — avoid manual sync steps
+- Keep Claude↔Copilot parity as automatic as the host tool allows — avoid unnecessary manual sync steps
+- Widen staged convention rules only after cleaning debt on the next target surfaces
 - Platform limitation: GitHub Copilot agent mode cannot be switched programmatically; the one remaining manual step is intentional
 
 See [Commands Reference](./COMMANDS.md) for all available CLI and AI toolchain commands.

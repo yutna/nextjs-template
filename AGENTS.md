@@ -702,3 +702,12 @@ For DB-related changes, planning and verification must explicitly include:
 3. seed impact and determinism expectations
 4. post-change gate run including tests that depend on DB state
 5. test DB isolation strategy (transaction rollback, truncate/reset, or per-run isolated DB)
+
+### Environment Variable Convention
+
+When adding or renaming any environment variable:
+
+1. Add it to **every** `.env.*` file at repo root (currently: `.env.example`, `.env.local`)
+2. `.env.example` must use a placeholder or safe default — never a real secret
+3. `.env.local` must have the actual working value for local development
+4. Block delivery if any `.env.*` file is missing the new variable

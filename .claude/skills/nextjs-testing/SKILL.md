@@ -10,41 +10,52 @@ Use this skill when writing tests with Vitest and Testing Library.
 ## Reference
 
 - .claude/workflow-profile.json (stack.testing)
-- vitest.config.ts (Vitest configuration)
+- vitest.config.mts (Vitest configuration)
+- src/test/setup.ts
+- src/test/storybook-setup.ts
+- src/test/render-with-providers.tsx
 
 ## Vitest Setup
 
 ### Configuration
 
 ```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import tsconfigPaths from 'vite-tsconfig-paths';
+// vitest.config.mts
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.d.ts',
-        '**/*.config.*',
-      ],
-      thresholds: {
-        global: {
-          statements: 80,
-          branches: 80,
-          functions: 80,
-          lines: 80,
+    projects: [
+      {
+        test: {
+          include: ["src/**/*.test.{ts,tsx}", "eslint/**/*.test.ts"],
+          name: "unit",
+          setupFiles: ["./src/test/setup.ts"],
         },
+      },
+      {
+        test: {
+          include: ["src/test/stories-smoke.test.tsx"],
+          name: "storybook",
+          setupFiles: ["./src/test/storybook-setup.ts"],
+        },
+      },
+    ],
+    setupFiles: ["./src/test/setup.ts"],
+    coverage: {
+      provider: "v8",
+      thresholds: {
+        statements: 80,
+        branches: 75,
+        functions: 80,
+        lines: 80,
       },
     },
   },
@@ -55,35 +66,33 @@ export default defineConfig({
 
 ```typescript
 // src/test/setup.ts
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { beforeEach, vi } from "vitest";
 
-// Cleanup after each test
-afterEach(() => {
-  cleanup();
+import "./setup-db";
+
+class IntersectionObserverStub {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+vi.stubGlobal("IntersectionObserver", IntersectionObserverStub);
+
+const originalError = console.error.bind(console);
+const originalWarn = console.warn.bind(console);
+
+beforeEach(() => {
+  console.error = (...args: Parameters<typeof console.error>) => {
+    originalError(...args);
+    throw new Error(`Unexpected console.error in test.\n\n${String(args[0])}`);
+  };
+
+  console.warn = (...args: Parameters<typeof console.warn>) => {
+    originalWarn(...args);
+    throw new Error(`Unexpected console.warn in test.\n\n${String(args[0])}`);
+  };
 });
-
-// Mock Next.js router
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-    prefetch: vi.fn(),
-  }),
-  usePathname: () => '/',
-  useSearchParams: () => new URLSearchParams(),
-  useParams: () => ({}),
-}));
-
-// Mock next-intl
-vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
-  useLocale: () => 'en',
-}));
 ```
 
 ## Component Testing
@@ -91,12 +100,12 @@ vi.mock('next-intl', () => ({
 ### Testing Server Components
 
 ```tsx
-// src/modules/users/components/UserCard.test.tsx
+// src/modules/users/components/card-user/card-user.test.tsx
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { UserCard } from './UserCard';
+import { CardUser } from './card-user';
 
-describe('UserCard', () => {
+describe('CardUser', () => {
   const mockUser = {
     id: '1',
     name: 'John Doe',
@@ -104,14 +113,14 @@ describe('UserCard', () => {
   };
 
   it('renders user information', () => {
-    render(<UserCard user={mockUser} />);
+    render(<CardUser user={mockUser} />);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
   });
 
   it('displays avatar with user initials', () => {
-    render(<UserCard user={mockUser} />);
+    render(<CardUser user={mockUser} />);
 
     expect(screen.getByText('JD')).toBeInTheDocument();
   });
@@ -121,26 +130,26 @@ describe('UserCard', () => {
 ### Testing Client Components
 
 ```tsx
-// src/modules/users/containers/UserFormContainer.test.tsx
+// src/modules/users/containers/container-user-form/container-user-form.test.tsx
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
-import { UserFormContainer } from './UserFormContainer';
+
+import { createUserAction } from '@/modules/users/actions/create-user-action/create-user-action';
+import { ContainerUserForm } from './container-user-form';
 
 // Mock the server action
-vi.mock('../actions/createUser', () => ({
-  createUser: vi.fn(),
+vi.mock('@/modules/users/actions/create-user-action/create-user-action', () => ({
+  createUserAction: vi.fn(),
 }));
 
-import { createUser } from '../actions/createUser';
-
-describe('UserFormContainer', () => {
+describe('ContainerUserForm', () => {
   it('submits form with user data', async () => {
     const user = userEvent.setup();
-    const mockCreateUser = vi.mocked(createUser);
+    const mockCreateUser = vi.mocked(createUserAction);
     mockCreateUser.mockResolvedValue({ data: { success: true } });
 
-    render(<UserFormContainer />);
+    render(<ContainerUserForm />);
 
     await user.type(screen.getByLabelText(/name/i), 'John Doe');
     await user.type(screen.getByLabelText(/email/i), 'john@example.com');
@@ -156,14 +165,14 @@ describe('UserFormContainer', () => {
 
   it('displays validation errors', async () => {
     const user = userEvent.setup();
-    const mockCreateUser = vi.mocked(createUser);
+    const mockCreateUser = vi.mocked(createUserAction);
     mockCreateUser.mockResolvedValue({
       validationErrors: {
         email: { _errors: ['Invalid email'] },
       },
     });
 
-    render(<UserFormContainer />);
+    render(<ContainerUserForm />);
 
     await user.click(screen.getByRole('button', { name: /submit/i }));
 
@@ -177,10 +186,10 @@ describe('UserFormContainer', () => {
 ### Testing Hooks
 
 ```tsx
-// src/modules/users/hooks/useUserFilters.test.ts
+// src/modules/users/hooks/use-user-filters/use-user-filters.test.ts
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { useUserFilters } from './useUserFilters';
+import { useUserFilters } from './use-user-filters';
 
 describe('useUserFilters', () => {
   it('initializes with default values', () => {
@@ -205,58 +214,38 @@ describe('useUserFilters', () => {
 ## Testing Server Actions
 
 ```typescript
-// src/modules/users/actions/createUser.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createUser } from './createUser';
+// src/modules/users/actions/create-user-action/create-user-action.test.ts
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock database
-vi.mock('@/shared/lib/db', () => ({
-  db: {
-    user: {
-      create: vi.fn(),
-      findUnique: vi.fn(),
-    },
-  },
-}));
+import { createUserAction } from "./create-user-action";
 
-import { db } from '@/shared/lib/db';
+vi.mock(
+  "@/modules/users/services/create-user-service/create-user-service",
+  () => ({
+    createUserService: vi.fn(),
+  }),
+);
 
-describe('createUser action', () => {
+import { createUserService } from "@/modules/users/services/create-user-service/create-user-service";
+
+describe("createUserAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('creates user with valid data', async () => {
-    const mockUser = { id: '1', name: 'John', email: 'john@example.com' };
-    vi.mocked(db.user.create).mockResolvedValue(mockUser);
+  it("returns success data when the service resolves", async () => {
+    vi.mocked(createUserService).mockResolvedValue({
+      email: "john@example.com",
+      id: "1",
+      name: "John",
+    });
 
-    const result = await createUser({
-      name: 'John',
-      email: 'john@example.com',
+    const result = await createUserAction({
+      email: "john@example.com",
+      name: "John",
     });
 
     expect(result.data?.success).toBe(true);
-    expect(result.data?.user).toEqual(mockUser);
-  });
-
-  it('returns validation error for invalid email', async () => {
-    const result = await createUser({
-      name: 'John',
-      email: 'invalid-email',
-    });
-
-    expect(result.validationErrors?.email).toBeDefined();
-  });
-
-  it('handles duplicate email error', async () => {
-    vi.mocked(db.user.create).mockRejectedValue({ code: 'P2002' });
-
-    const result = await createUser({
-      name: 'John',
-      email: 'existing@example.com',
-    });
-
-    expect(result.serverError).toContain('already exists');
   });
 });
 ```
@@ -266,207 +255,42 @@ describe('createUser action', () => {
 ### Custom Render
 
 ```tsx
-// src/test/utils.tsx
-import { render, RenderOptions } from '@testing-library/react';
-import { ChakraProvider } from '@/shared/providers/ChakraProvider';
-import { NextIntlClientProvider } from 'next-intl';
+// src/test/render-with-providers.tsx
+import { ChakraProvider } from "@chakra-ui/react";
+import { render } from "@testing-library/react";
 
-const messages = {
-  common: { submit: 'Submit' },
-  // Add more messages as needed
-};
+import { system } from "@/shared/vendor/chakra-ui/system";
 
-function AllProviders({ children }: { children: React.ReactNode }) {
-  return (
-    <NextIntlClientProvider locale="en" messages={messages}>
-      <ChakraProvider>
-        {children}
-      </ChakraProvider>
-    </NextIntlClientProvider>
-  );
+import type { RenderOptions } from "@testing-library/react";
+import type { ReactNode } from "react";
+
+function Wrapper({ children }: { children: ReactNode }) {
+  return <ChakraProvider value={system}>{children}</ChakraProvider>;
 }
 
 export function renderWithProviders(
-  ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
+  ui: ReactNode,
+  options?: Omit<RenderOptions, "wrapper">,
 ) {
-  return render(ui, { wrapper: AllProviders, ...options });
-}
-
-export * from '@testing-library/react';
-export { renderWithProviders as render };
-```
-
-## Factories
-
-Factories live in `shared/factories/` and generate test/seed data.
-
-### Factory Structure
-
-```
-shared/factories/
-├── index.ts                # Barrel export
-├── user-factory/
-│   ├── index.ts
-│   ├── user-factory.ts
-│   └── types.ts
-└── post-factory/
-    ├── index.ts
-    ├── post-factory.ts
-    └── types.ts
-```
-
-### Factory Pattern
-
-```typescript
-// shared/factories/user-factory/user-factory.ts
-import { faker } from "@faker-js/faker";
-
-import type { NewUser, User } from "@/shared/entities/user";
-
-export const UserFactory = {
-  /**
-   * Build a user object (not persisted)
-   */
-  build(overrides: Partial<NewUser> = {}): NewUser {
-    return {
-      email: faker.internet.email(),
-      name: faker.person.fullName(),
-      avatarUrl: faker.image.avatar(),
-      isActive: true,
-      ...overrides,
-    };
-  },
-
-  /**
-   * Build multiple user objects
-   */
-  buildList(count: number, overrides: Partial<NewUser> = {}): NewUser[] {
-    return Array.from({ length: count }, () => this.build(overrides));
-  },
-
-  /**
-   * Build a complete user with ID (for mocking)
-   */
-  buildComplete(overrides: Partial<User> = {}): User {
-    return {
-      id: faker.string.uuid(),
-      createdAt: faker.date.past(),
-      updatedAt: faker.date.recent(),
-      ...this.build(),
-      ...overrides,
-    };
-  },
-
-  /**
-   * Build multiple complete users
-   */
-  buildCompleteList(count: number, overrides: Partial<User> = []): User[] {
-    return Array.from({ length: count }, () => this.buildComplete(overrides));
-  },
-};
-```
-
-### Factory Index
-
-```typescript
-// shared/factories/user-factory/index.ts
-export { UserFactory } from "./user-factory";
-```
-
-```typescript
-// shared/factories/index.ts
-export { UserFactory } from "./user-factory";
-export { PostFactory } from "./post-factory";
-```
-
-### Using Factories in Tests
-
-```typescript
-// user-card.test.tsx
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-
-import { UserFactory } from "@/shared/factories";
-
-import { UserCard } from "./user-card";
-
-describe("UserCard", () => {
-  it("renders user information", () => {
-    const user = UserFactory.buildComplete({ name: "John Doe" });
-
-    render(<UserCard user={user} />);
-
-    expect(screen.getByText("John Doe")).toBeInTheDocument();
-  });
-
-  it("renders multiple users", () => {
-    const users = UserFactory.buildCompleteList(3);
-
-    render(<UserList users={users} />);
-
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
-  });
-});
-```
-
-### Using Factories in Seeds
-
-```typescript
-// shared/db/seeds/users.seed.ts
-import { db } from "@/shared/db";
-import { users } from "@/shared/entities/user";
-import { UserFactory } from "@/shared/factories";
-
-export async function seedUsers() {
-  // Create specific users
-  await db.insert(users).values({
-    email: "admin@example.com",
-    name: "Admin User",
-  });
-
-  // Create random users using factory
-  const randomUsers = UserFactory.buildList(50);
-  await db.insert(users).values(randomUsers);
+  return render(ui, { wrapper: Wrapper, ...options });
 }
 ```
 
-### Factory with Associations
+## Test Data Helpers
+
+This repo does not currently ship a canonical `shared/factories/` layer.
+Prefer the smallest fixture seam that matches the test:
+
+1. Inline fixtures for one-off tests
+2. A colocated `fixtures.ts` next to the test seam when reused across files
+3. Mock data shaped to the public contract under test, not the whole database row
 
 ```typescript
-// shared/factories/post-factory/post-factory.ts
-import { faker } from "@faker-js/faker";
-
-import { UserFactory } from "@/shared/factories/user-factory";
-
-import type { NewPost, Post } from "@/shared/entities/post";
-import type { User } from "@/shared/entities/user";
-
-export const PostFactory = {
-  build(overrides: Partial<NewPost> = {}): NewPost {
-    return {
-      title: faker.lorem.sentence(),
-      content: faker.lorem.paragraphs(3),
-      authorId: faker.string.uuid(),
-      publishedAt: null,
-      ...overrides,
-    };
-  },
-
-  /**
-   * Build post with associated author
-   */
-  buildWithAuthor(overrides: Partial<Post> = {}): Post & { author: User } {
-    const author = UserFactory.buildComplete();
-    return {
-      id: faker.string.uuid(),
-      createdAt: faker.date.past(),
-      updatedAt: faker.date.recent(),
-      ...this.build({ authorId: author.id }),
-      ...overrides,
-      author,
-    };
-  },
+// src/modules/users/components/card-user/fixtures.ts
+export const sampleUser = {
+  email: "john@example.com",
+  id: "user-1",
+  name: "John Doe",
 };
 ```
 
@@ -483,7 +307,7 @@ npm run test:watch
 npm run test:coverage
 
 # Run specific test file
-npm run test src/modules/users/components/UserCard.test.tsx
+npm run test -- src/modules/users/components/card-user/card-user.test.tsx
 ```
 
 ## Do Not

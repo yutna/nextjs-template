@@ -6,10 +6,11 @@ Review the implemented work before final quality gates and delivery.
 
 Behavioral mode: Review only. Do not edit implementation files. Findings only.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [convention-tiering skill](../skills/convention-tiering/)
+- Invoke the [convention-tiering skill](../skills/convention-tiering/) first before
+  reviewing so material findings are classified by convention tier.
 
 Required output:
 

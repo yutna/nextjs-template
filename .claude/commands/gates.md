@@ -6,10 +6,11 @@ Run every applicable gate and report the results honestly.
 
 Behavioral mode: Quality Gates. Run checks, report honestly, do not hide failures.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/quality-gates/SKILL.md
+- Invoke `.claude/skills/quality-gates/SKILL.md` first before running or
+  interpreting checks.
 
 Required output:
 

@@ -1,4 +1,9 @@
-import type { DurationPreset, EasingPreset, StaggerPreset } from "./types";
+import type {
+  DurationPreset,
+  EasingPreset,
+  MotionBaseProps,
+  StaggerPreset,
+} from "./types";
 
 /**
  * Animation duration values in seconds.
@@ -61,9 +66,7 @@ export function getDuration(duration: DurationPreset | number): number {
  * Get easing value from preset name.
  * Returns the raw easing definition for use with motion/react.
  */
-export function getEasing(
-  easing: EasingPreset,
-): (typeof EASING)[EasingPreset] {
+export function getEasing(easing: EasingPreset): (typeof EASING)[EasingPreset] {
   return EASING[easing];
 }
 
@@ -89,11 +92,7 @@ export function isSpringEasing(
 /**
  * Create a transition object from timing presets.
  */
-export function createTransition(options: {
-  delay?: number;
-  duration?: DurationPreset | number;
-  easing?: EasingPreset;
-}) {
+export function createTransition(options: MotionBaseProps) {
   const { delay = 0, duration = "normal", easing = "easeOut" } = options;
   const easingValue = getEasing(easing);
 

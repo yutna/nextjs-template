@@ -5,9 +5,12 @@
  * - enforce-event-prop-naming: Enforce on* prefix for event callback props
  * - enforce-handler-naming: Enforce handle* prefix for event handler identifiers in JSX
  * - enforce-file-naming-pattern: Enforce naming patterns for files in specific folders
+ * - no-inline-param-type-literals: Forbid inline TypeScript object literals in function params
+ * - no-local-type-declarations: Forbid type/interface declarations in implementation files
  * - no-cross-module-import: Forbid imports between feature modules
  * - no-hook-spread: Forbid spreading hook return values in JSX
  * - sort-imports: Enforce repository import ordering
+ * - no-root-grab-bag-files: Forbid root-level helpers.ts/utils.ts/common.ts grab-bags
  * - no-inline-style: Forbid inline style attribute in JSX
  */
 
@@ -57,6 +60,73 @@ function getParamNames(param) {
   return names;
 }
 
+function containsTypeLiteral(typeNode) {
+  if (!typeNode) return false;
+
+  if (typeNode.type === "TSTypeLiteral") return true;
+
+  if (typeNode.type === "TSParenthesizedType") {
+    return containsTypeLiteral(typeNode.typeAnnotation);
+  }
+
+  if (
+    typeNode.type === "TSUnionType" ||
+    typeNode.type === "TSIntersectionType"
+  ) {
+    return typeNode.types.some((node) => containsTypeLiteral(node));
+  }
+
+  if (typeNode.type === "TSArrayType") {
+    return containsTypeLiteral(typeNode.elementType);
+  }
+
+  if (typeNode.type === "TSOptionalType" || typeNode.type === "TSRestType") {
+    return containsTypeLiteral(typeNode.typeAnnotation);
+  }
+
+  return false;
+}
+
+function getParamTypeAnnotation(param) {
+  if (!param) return null;
+
+  if (param.type === "AssignmentPattern") {
+    return getParamTypeAnnotation(param.left);
+  }
+
+  if (param.type === "RestElement") {
+    return getParamTypeAnnotation(param.argument);
+  }
+
+  return param.typeAnnotation?.typeAnnotation ?? null;
+}
+
+function getParamDisplayName(param) {
+  if (!param) return "parameter";
+
+  if (param.type === "Identifier") return param.name;
+
+  if (param.type === "AssignmentPattern") {
+    return getParamDisplayName(param.left);
+  }
+
+  if (param.type === "RestElement") {
+    return getParamDisplayName(param.argument);
+  }
+
+  if (param.type === "ArrayPattern" || param.type === "ObjectPattern") {
+    return "destructured parameter";
+  }
+
+  return "parameter";
+}
+
+function isTypeDefinitionFile(filename) {
+  return (
+    filename.endsWith(".d.ts") || /(?:^|\/)types\.[cm]?[jt]sx?$/.test(filename)
+  );
+}
+
 // -------------------------------------------------------------------
 // enforce-event-prop-naming
 // -------------------------------------------------------------------
@@ -69,7 +139,10 @@ const ALLOWED_FN_PROP_NAMES = new Set(["children", "ref"]);
 function isFunctionType(typeNode) {
   if (!typeNode) return false;
   if (typeNode.type === "TSFunctionType") return true;
-  if (typeNode.type === "TSUnionType" || typeNode.type === "TSIntersectionType") {
+  if (
+    typeNode.type === "TSUnionType" ||
+    typeNode.type === "TSIntersectionType"
+  ) {
     return typeNode.types.some((t) => isFunctionType(t));
   }
   if (typeNode.type === "TSParenthesizedType") {
@@ -209,8 +282,7 @@ const enforceEventPropNaming = {
         if (ALLOWED_FN_PROP_NAMES.has(propName)) return;
         if (ALLOWED_FN_PROP_PREFIXES.test(propName)) return;
 
-        const suggested =
-          propName.charAt(0).toUpperCase() + propName.slice(1);
+        const suggested = propName.charAt(0).toUpperCase() + propName.slice(1);
         context.report({
           data: { name: propName, suggested, typeName },
           messageId: "missingOnPrefix",
@@ -370,6 +442,102 @@ const noHookSpread = {
     messages: {
       hookSpread:
         'Do not spread hook result "{{name}}" into JSX. Use explicit prop binding instead.',
+    },
+    schema: [],
+    type: "problem",
+  },
+};
+
+// -------------------------------------------------------------------
+// no-inline-param-type-literals
+// -------------------------------------------------------------------
+
+function reportInlineParamTypeLiteral(context, param) {
+  const typeAnnotation = getParamTypeAnnotation(param);
+
+  if (!containsTypeLiteral(typeAnnotation)) return;
+
+  context.report({
+    data: { name: getParamDisplayName(param) },
+    messageId: "inlineParamTypeLiteral",
+    node: typeAnnotation,
+  });
+}
+
+const noInlineParamTypeLiterals = {
+  create(context) {
+    function checkParams(params) {
+      for (const param of params) {
+        reportInlineParamTypeLiteral(context, param);
+      }
+    }
+
+    return {
+      ArrowFunctionExpression(node) {
+        checkParams(node.params);
+      },
+      FunctionDeclaration(node) {
+        checkParams(node.params);
+      },
+      FunctionExpression(node) {
+        checkParams(node.params);
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Disallow inline TypeScript object literal annotations in function parameters",
+    },
+    messages: {
+      inlineParamTypeLiteral:
+        "Inline type literal for '{{name}}' is forbidden. Extract the parameter type to types.ts and import it.",
+    },
+    schema: [],
+    type: "problem",
+  },
+};
+
+// -------------------------------------------------------------------
+// no-local-type-declarations
+// -------------------------------------------------------------------
+
+function reportLocalTypeDeclaration(context, node) {
+  context.report({
+    data: { name: node.id?.name ?? "type" },
+    messageId: "localTypeDeclaration",
+    node,
+  });
+}
+
+const noLocalTypeDeclarations = {
+  create(context) {
+    const filename = (context.filename ?? context.getFilename()).replace(
+      /\\/g,
+      "/",
+    );
+
+    if (isTypeDefinitionFile(filename)) {
+      return {};
+    }
+
+    return {
+      TSInterfaceDeclaration(node) {
+        reportLocalTypeDeclaration(context, node);
+      },
+      TSTypeAliasDeclaration(node) {
+        reportLocalTypeDeclaration(context, node);
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Disallow local type and interface declarations in implementation files",
+    },
+    messages: {
+      localTypeDeclaration:
+        "Local type declaration '{{name}}' is forbidden in implementation files. Move it to types.ts and import it.",
     },
     schema: [],
     type: "problem",
@@ -588,7 +756,10 @@ const enforceFileNamingPattern = {
     if (!normalizedPath.includes("/src/")) return {};
 
     // Get the parent folder path (ending with /)
-    const parentFolder = normalizedPath.substring(0, normalizedPath.lastIndexOf("/") + 1);
+    const parentFolder = normalizedPath.substring(
+      0,
+      normalizedPath.lastIndexOf("/") + 1,
+    );
 
     // Get the immediate parent folder name
     const pathParts = normalizedPath.split("/");
@@ -628,9 +799,12 @@ const enforceFileNamingPattern = {
 
     // Check components folder for semantic type prefix
     // Only check .tsx files that are not the main component file
-    if (/\/components\/[^/]+\/$/.test(parentFolder) && basename.endsWith(".tsx")) {
+    if (
+      /\/components\/[^/]+\/$/.test(parentFolder) &&
+      basename.endsWith(".tsx")
+    ) {
       const hasSemanticPrefix = COMPONENT_SEMANTIC_TYPES.some((type) =>
-        basename.startsWith(`${type}-`)
+        basename.startsWith(`${type}-`),
       );
 
       if (!hasSemanticPrefix) {
@@ -639,7 +813,8 @@ const enforceFileNamingPattern = {
             context.report({
               data: {
                 basename,
-                types: COMPONENT_SEMANTIC_TYPES.slice(0, 5).join(", ") + ", ...",
+                types:
+                  COMPONENT_SEMANTIC_TYPES.slice(0, 5).join(", ") + ", ...",
               },
               messageId: "missingSemanticPrefix",
               node,
@@ -724,6 +899,50 @@ const noUpwardLayerImport = {
 };
 
 // -------------------------------------------------------------------
+// no-root-grab-bag-files
+// -------------------------------------------------------------------
+
+const ROOT_GRAB_BAG_FILE_PATTERN =
+  /\/src\/(?:modules\/[^/]+|shared)\/(?:common|helpers|utils)\.[cm]?[jt]sx?$/;
+
+const noRootGrabBagFiles = {
+  create(context) {
+    const filename = (context.filename ?? context.getFilename()).replace(
+      /\\/g,
+      "/",
+    );
+
+    if (!ROOT_GRAB_BAG_FILE_PATTERN.test(filename)) {
+      return {};
+    }
+
+    const basename = filename.split("/").pop() ?? "file";
+
+    return {
+      Program(node) {
+        context.report({
+          data: { basename },
+          messageId: "rootGrabBagFile",
+          node,
+        });
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Disallow root-level helpers.ts, utils.ts, and common.ts grab-bag files at module/shared root",
+    },
+    messages: {
+      rootGrabBagFile:
+        "Root-level '{{basename}}' is forbidden at module/shared root. Move the code into a dedicated file or a scoped sibling helpers.ts inside a domain folder.",
+    },
+    schema: [],
+    type: "problem",
+  },
+};
+
+// -------------------------------------------------------------------
 // Plugin export
 // -------------------------------------------------------------------
 
@@ -734,7 +953,10 @@ export default {
     "enforce-handler-naming": enforceHandlerNaming,
     "no-cross-module-import": noCrossModuleImport,
     "no-hook-spread": noHookSpread,
+    "no-inline-param-type-literals": noInlineParamTypeLiterals,
     "no-inline-style": noInlineStyle,
+    "no-local-type-declarations": noLocalTypeDeclarations,
+    "no-root-grab-bag-files": noRootGrabBagFiles,
     "no-upward-layer-import": noUpwardLayerImport,
     "sort-imports": sortImports,
   },

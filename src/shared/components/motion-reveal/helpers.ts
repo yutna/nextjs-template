@@ -1,8 +1,7 @@
 import {
   createTransition,
   getVariant,
-  type DurationPreset,
-  type EasingPreset,
+  type MotionBaseProps,
   type MotionPresetName,
 } from "@/shared/lib/motion";
 
@@ -13,11 +12,7 @@ import type { MotionVariants } from "@/shared/lib/motion";
  */
 export function buildVariants(
   variant: MotionPresetName | MotionVariants,
-  options: {
-    delay?: number;
-    duration?: DurationPreset | number;
-    easing?: EasingPreset;
-  },
+  options: MotionBaseProps,
 ): MotionVariants {
   const baseVariant = getVariant(variant);
   const { delay, duration, easing } = options;

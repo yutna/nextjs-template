@@ -49,9 +49,9 @@ For each directory in `src/modules/`:
 ### File Conventions
 - [ ] No generic root-level files (utils.ts, common.ts)
 - [ ] scoped helpers.ts files are internal and not exported broadly
-- [ ] Components use PascalCase
-- [ ] Actions use camelCase
-- [ ] Hooks use useX naming
+- [ ] concrete folders use approved prefixes like `screen-`, `container-`, `section-`, `form-`, and `use-`
+- [ ] main implementation files match their folder name in kebab-case
+- [ ] hooks live in `use-<name>/use-<name>.ts`
 
 ### Server/Client Boundaries
 - [ ] screens/ files are Server Components (no "use client")
@@ -120,9 +120,10 @@ For `src/messages/`:
 - [ ] Barrel exports include all modules
 
 ### File Structure
-- [ ] common.json exists
-- [ ] errors.json exists
-- [ ] modules/<name>/index.json for each module
+- [ ] locale root `index.ts` exists
+- [ ] `common/index.ts`, `modules/index.ts`, and `shared/index.ts` exist
+- [ ] module/shared folders compose with `index.ts` files plus leaf JSON files
+- [ ] mirrored locale folders keep the same composition shape in `en/` and `th/`
 ```
 
 ## Forbidden Patterns

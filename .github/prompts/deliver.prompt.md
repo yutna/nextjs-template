@@ -6,10 +6,11 @@ Verify the work and prepare the final handoff.
 
 Behavioral mode: Verification and Delivery. Report honestly, do not claim completion prematurely.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [delivery-validation skill](../skills/delivery-validation/)
+- Invoke the [delivery-validation skill](../skills/delivery-validation/) first before
+  preparing the handoff.
 
 Required output:
 

@@ -7,65 +7,69 @@ description: This skill should be used when working with Chakra UI, UI component
 
 Use this skill when building UI components with Chakra UI v3 and Ark UI.
 
+## Tooling Reminder
+
+Remember that this repo already has Chakra UI and Ark UI MCP servers available.
+Prefer those MCP tools for component props, examples, theme tokens, and API lookup.
+Use this skill for repo-specific structure, placement, and design-system conventions.
+
 ## Reference
 
 - .claude/workflow-profile.json (stack.ui)
 - src/shared/components/ (shared UI components)
+- src/shared/vendor/chakra-ui/provider.tsx
+- src/shared/providers/app-provider/app-provider.tsx
 
 ## Chakra UI v3 Setup
 
 ### Provider Configuration
 
 ```tsx
-// src/shared/providers/ChakraProvider.tsx
-'use client';
+// src/shared/vendor/chakra-ui/provider.tsx
+"use client";
 
-import { ChakraProvider as BaseChakraProvider, defaultSystem } from '@chakra-ui/react';
-import { ColorModeProvider } from './ColorModeProvider';
+import { ChakraProvider } from "@chakra-ui/react";
 
-export function ChakraProvider({ children }: { children: React.ReactNode }) {
+import { ColorModeProvider } from "./color-mode";
+import { system } from "./system";
+
+import type { ColorModeProviderProps } from "./color-mode";
+
+export function Provider(props: ColorModeProviderProps) {
   return (
-    <BaseChakraProvider value={defaultSystem}>
-      <ColorModeProvider>
-        {children}
-      </ColorModeProvider>
-    </BaseChakraProvider>
+    <ChakraProvider value={system}>
+      <ColorModeProvider {...props} />
+    </ChakraProvider>
   );
 }
 ```
 
+For app/layout composition, reuse `src/shared/providers/app-provider/app-provider.tsx`.
+
 ### Theme Configuration
 
 ```typescript
-// src/shared/config/theme.ts
-import { createSystem, defaultConfig, defineConfig } from '@chakra-ui/react';
+// src/shared/vendor/chakra-ui/system.ts
+import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
-const config = defineConfig({
+const customConfig = defineConfig({
+  globalCss: {
+    "html, body": {
+      fontFamily: "var(--font-noto-sans-thai), sans-serif",
+    },
+  },
   theme: {
     tokens: {
-      colors: {
-        brand: {
-          50: { value: '#e6f2ff' },
-          100: { value: '#b3d9ff' },
-          500: { value: '#0066cc' },
-          600: { value: '#0052a3' },
-          700: { value: '#003d7a' },
-        },
-      },
-    },
-    semanticTokens: {
-      colors: {
-        brand: {
-          solid: { value: '{colors.brand.500}' },
-          contrast: { value: 'white' },
-          fg: { value: '{colors.brand.700}' },
-        },
+      fonts: {
+        body: { value: "var(--font-noto-sans-thai), sans-serif" },
+        heading: { value: "var(--font-noto-sans-thai), sans-serif" },
+        mono: { value: "var(--font-jetbrains-mono), monospace" },
       },
     },
   },
 });
 
-export const system = createSystem(defaultConfig, config);
+export const system = createSystem(defaultConfig, customConfig);
 ```
 
 ## Component Patterns
@@ -73,7 +77,7 @@ export const system = createSystem(defaultConfig, config);
 ### Basic Component
 
 ```tsx
-// src/modules/users/components/UserCard.tsx
+// src/modules/users/components/card-user/card-user.tsx
 import { Box, Card, Text, Avatar, HStack, VStack } from '@chakra-ui/react';
 
 interface UserCardProps {
@@ -84,7 +88,7 @@ interface UserCardProps {
   };
 }
 
-export function UserCard({ user }: UserCardProps) {
+export function CardUser({ user }: UserCardProps) {
   return (
     <Card.Root>
       <Card.Body>
@@ -104,29 +108,38 @@ export function UserCard({ user }: UserCardProps) {
 ### Interactive Component (Client)
 
 ```tsx
-// src/modules/users/containers/UserCardContainer.tsx
-'use client';
+// src/modules/users/containers/container-user-card/container-user-card.tsx
+"use client";
 
-import { Card, Button, HStack } from '@chakra-ui/react';
-import { useState } from 'react';
-import { UserCard } from '../components/UserCard';
+import { Button, Card, HStack } from "@chakra-ui/react";
+import { useImmer } from "use-immer";
 
-export function UserCardContainer({ user }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+import { CardUser } from "@/modules/users/components/card-user/card-user";
+
+import type { ContainerUserCardProps } from "./types";
+
+export function ContainerUserCard({
+  user,
+}: Readonly<ContainerUserCardProps>) {
+  const [state, updateState] = useImmer({ isExpanded: false });
 
   return (
     <Card.Root>
       <Card.Body>
-        <UserCard user={user} />
-        {isExpanded && <UserDetails user={user} />}
+        <CardUser user={user} />
+        {state.isExpanded ? <UserDetails user={user} /> : null}
       </Card.Body>
       <Card.Footer>
         <HStack>
           <Button
+            onClick={() =>
+              updateState((draft) => {
+                draft.isExpanded = !draft.isExpanded;
+              })
+            }
             variant="ghost"
-            onClick={() => setIsExpanded(!isExpanded)}
           >
-            {isExpanded ? 'Show Less' : 'Show More'}
+            {state.isExpanded ? "Show Less" : "Show More"}
           </Button>
         </HStack>
       </Card.Footer>
@@ -304,22 +317,10 @@ export function ResponsiveComponent() {
 ## Color Mode
 
 ```tsx
-'use client';
+import { ColorModeButton } from "@/shared/vendor/chakra-ui/color-mode";
 
-import { useColorMode, IconButton } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from './icons';
-
-export function ColorModeToggle() {
-  const { colorMode, toggleColorMode } = useColorMode();
-
-  return (
-    <IconButton
-      aria-label="Toggle color mode"
-      onClick={toggleColorMode}
-    >
-      {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-    </IconButton>
-  );
+export function ThemeControls() {
+  return <ColorModeButton size="sm" variant="ghost" />;
 }
 ```
 

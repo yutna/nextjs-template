@@ -45,16 +45,19 @@ npm run dev
 
 ### AI Assistant Configuration
 
-Both AI assistants are supported out of the box. Pick your preferred tool and follow the onboarding guide:
+Supported AI surfaces are listed below. Pick the one you want to use and follow the
+onboarding guide:
 
-| AI Assistant | Onboarding Guide | Configuration |
-| ------------ | ---------------- | ------------- |
-| [GitHub Copilot][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB_COPILOT_WORKFLOW.md) | `AGENTS.md` + `.github/instructions/` |
-| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE_WORKFLOW.md) | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
+| AI Surface | Onboarding Guide | Configuration |
+| ---------- | ---------------- | ------------- |
+| [GitHub Copilot CLI][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB-COPILOT-WORKFLOW.md) | `AGENTS.md` + `CLAUDE.md` + `.github/instructions/` + `.github/copilot-instructions.md` |
+| [GitHub Copilot Chat][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB-COPILOT-WORKFLOW.md) | Shared Copilot instruction surfaces + `.github/prompts/` + `.vscode/mcp.json` |
+| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE-WORKFLOW.md) | `AGENTS.md` + `CLAUDE.md` + `.claude/settings.json` + `.claude/skills/` + `.claude/commands/` + `.mcp.json` |
 
 #### MCP Servers
 
-Both AI assistants support [MCP servers][mcp] for enhanced capabilities:
+All supported AI surfaces can use the same [MCP servers][mcp], but the
+configuration path depends on the tool:
 
 | MCP Server | Package | Purpose |
 | ---------- | ------- | ------- |
@@ -63,9 +66,10 @@ Both AI assistants support [MCP servers][mcp] for enhanced capabilities:
 | `next-devtools` | `next-devtools-mcp` | Next.js development tools |
 | `playwright` | `@playwright/mcp` | Browser automation and E2E testing |
 
-Configuration files:
+Configuration surfaces:
 
-- GitHub Copilot: `.vscode/mcp.json`
+- GitHub Copilot Chat (VS Code): `.vscode/mcp.json`
+- GitHub Copilot CLI: `~/.copilot/mcp-config.json`, `/mcp`, or `copilot --additional-mcp-config`
 - Claude Code: `.mcp.json`
 
 ### Prerequisites
@@ -168,35 +172,50 @@ Effect is required for all backend layers (services, repositories, jobs).
 
 ## AI Tools & Parity
 
-This template uses a **dual-toolchain workflow** supporting both Claude and GitHub Copilot with full parity.
+This template uses a **dual-toolchain workflow** supporting Claude Code plus GitHub
+Copilot surfaces (Copilot CLI and Copilot Chat), with a shared workflow contract and
+enforced parity on the primary mirrored **Claude command ↔ Copilot Chat prompt**
+surfaces.
 
 **Setup:**
 
-- **Claude Code:** See [`CLAUDE.md`](./CLAUDE.md) for Claude-specific configuration
+- **Claude Code:** See [`CLAUDE.md`](./CLAUDE.md) and
+  [Vibe Coding with Claude](./docs/ai/CLAUDE-WORKFLOW.md)
 - **GitHub Copilot:** See [`.github/copilot-instructions.md`](./.github/copilot-instructions.md)
+  and [Vibe Coding with Copilot](./docs/ai/GITHUB-COPILOT-WORKFLOW.md)
 - **Universal Workflow:** See [`AGENTS.md`](./AGENTS.md) for the 6-phase workflow contract (applies to all AI tools)
 
 **Key Locations:**
 
 - `.claude/commands/` — Claude slash commands (`/create-module`, `/gates`, etc.)
 - `.claude/skills/` — Canonical domain skills (architecture, patterns, conventions)
-- `.github/prompts/` — Copilot chat prompts (mirrored from Claude commands)
-- `.github/agents/` — Specialist agents for each workflow phase
-- `.agents/skills/` — Community-contributed skills (auto-loaded by both Copilot and Claude)
+- `.github/copilot-instructions.md` — Shared Copilot instructions for Chat and CLI
+- `.github/prompts/` — Copilot Chat prompts (mirrored from Claude commands)
+- `.github/agents/` — Specialist agents for Copilot surfaces that support custom agents
+- `.agents/skills/` — Community-contributed skills available to both Copilot and Claude
 
 **Parity Testing:**
 
-Parity is checked automatically in CI. To verify locally after editing a Claude command or Copilot prompt:
+Parity is checked automatically in CI. To verify locally after editing a Claude
+command or Copilot Chat prompt:
 
 ```bash
 ./bin/vibe parity-check
 ```
 
-This checks that both toolchains generate identical conventions. See [`.github/instructions/dual-toolchain-parity.instructions.md`](./.github/instructions/dual-toolchain-parity.instructions.md) for details.
+This checks the configured hard parity pairs for the mirrored Claude command ↔
+Copilot Chat prompt surfaces. See
+[`.github/instructions/dual-toolchain-parity.instructions.md`](./.github/instructions/dual-toolchain-parity.instructions.md)
+for details.
 
 **Shared Skills:**
 
-Copilot and Claude both automatically load community-contributed skills from [`.agents/skills/`](./.agents/skills/). See [`.agents/README.md`](./.agents/README.md) for the full list and usage guidance. Canonical skills in `.claude/skills/` and `.github/skills/` take organizational precedence for repo-specific standards.
+Copilot and Claude can use community-contributed skills from
+[`.agents/skills/`](./.agents/skills/), but reliable repo behavior should come from
+explicitly invoking the relevant canonical skill first when one exists. See
+[`.agents/README.md`](./.agents/README.md) for the full list and usage guidance.
+Canonical skills in `.claude/skills/` and `.github/skills/` take organizational
+precedence for repo-specific standards.
 
 ## Scripts
 

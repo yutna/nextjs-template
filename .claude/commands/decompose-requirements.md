@@ -7,17 +7,17 @@ argument-hint: "[requirements description or path to requirements document]"
 
 Decompose requirements into phased task files using Gherkin scenarios and state machines.
 
-**Output location:** `docs/tasks/`
+**Output location:** `docs/tasks/<feature>/`
 
 **Approach:** Gherkin-first + State Machine validation
 
 **Artifact boundary (MUST follow):**
 
-- `docs/tasks/*.md` = human-readable specification artifacts created by this command.
+- `docs/tasks/<feature>/*.md` = human-readable specification artifacts created by this command.
 - Session `plan.md` = runtime planning artifact (separate, not a substitute).
 - `.claude/workflow-state.json` = runtime phase state (separate, not a spec).
 
-**Execution requirement:** this command must create/update files under `docs/tasks/` explicitly. If file creation is unavailable, report `blocked` with reason.
+**Execution requirement:** this command must create/update files under `docs/tasks/<feature>/` (where `<feature>` is the kebab-case feature name). If file creation is unavailable, report `blocked` with reason.
 
 ---
 
@@ -201,14 +201,14 @@ Final Phase: Polish
 ## Output Structure
 
 ```txt
-docs/tasks/
+docs/tasks/<feature>/
 ├── 00-specifications.md       # State machines + Gherkin scenarios
 ├── 01-overview.md             # Summary, phases, priorities
 ├── e2e-scenarios.md           # E2E test specifications (from Gherkin)
 │
 ├── phase-01-foundation.md     # Entities, base setup
-├── phase-02-[feature].md      # @must scenarios
-├── phase-03-[feature].md      # @should scenarios
+├── phase-02-[sub-feature].md  # @must scenarios
+├── phase-03-[sub-feature].md  # @should scenarios
 └── ...
 ```
 
@@ -370,13 +370,13 @@ Feature: User Authentication
 **Output Files:**
 
 ```txt
-docs/tasks/
-├── 00-specifications.md    # State machine + all Gherkin
-├── 01-overview.md          # 4 phases, priority breakdown
-├── phase-01-foundation.md  # User entity, Session entity
+docs/tasks/auth/
+├── 00-specifications.md     # State machine + all Gherkin
+├── 01-overview.md           # 4 phases, priority breakdown
+├── phase-01-foundation.md   # User entity, Session entity
 ├── phase-02-registration.md # Register + verify scenarios
-├── phase-03-login.md       # Login + logout scenarios
-└── phase-04-security.md    # Lock/unlock scenarios
+├── phase-03-login.md        # Login + logout scenarios
+└── phase-04-security.md     # Lock/unlock scenarios
 ```
 
 ---

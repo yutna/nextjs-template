@@ -6,11 +6,15 @@ Implement the approved work and stay inside the agreed scope.
 
 Behavioral mode: Implementation. Stay in scope, preserve conventions, keep state current.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [convention-tiering skill](../skills/convention-tiering/)
-- [state-sync skill](../skills/state-sync/)
+- Invoke the [convention-tiering skill](../skills/convention-tiering/) first to keep
+  hard conventions explicit.
+- Then invoke the [code-conventions skill](../skills/code-conventions/) before
+  editing files or generating code.
+- Use the [state-sync skill](../skills/state-sync/) whenever phase, files touched,
+  blocked items, or gate status changes.
 
 Required output:
 
@@ -28,6 +32,10 @@ Rules:
 - if the plan becomes invalid, stop and return to Planning
 - update tests for changed behavior when the repository supports tests
 - you may run a narrow smoke test, but do not mark quality gates complete
+- use checkpoint-stop behavior for non-trivial work: pause after each major layer or batch instead of silently expanding scope
+- if implementation exceeds the approved slice, stop and return to Planning instead of continuing in one batch
+- keep one file focused on one primary responsibility; move non-primary helpers, constants, and internal functions to dedicated files or scoped `helpers.ts`
+- do not declare types inside implementation files; place them in `types.ts` or an appropriate `types/` folder
 - use only `implementation.status = "not-started" | "in-progress" | "completed" | "blocked"`
 - keep `.claude/workflow-state.json` current while implementing
 - when implementation stabilizes, use `/review` before final quality gates and delivery

@@ -3,10 +3,9 @@ import {
   createTransition,
   getStaggerDelay,
   getVariant,
-  type DurationPreset,
-  type EasingPreset,
+  type MotionBaseProps,
   type MotionPresetName,
-  type StaggerPreset,
+  type StaggerProps,
 } from "@/shared/lib/motion";
 
 import type { MotionVariants } from "@/shared/lib/motion";
@@ -14,11 +13,7 @@ import type { MotionVariants } from "@/shared/lib/motion";
 /**
  * Build container variants with stagger configuration.
  */
-export function buildContainerVariants(options: {
-  delayChildren?: number;
-  staggerDelay?: number | StaggerPreset;
-  staggerReverse?: boolean;
-}): MotionVariants {
+export function buildContainerVariants(options: StaggerProps): MotionVariants {
   const {
     delayChildren = 0,
     staggerDelay = "normal",
@@ -37,10 +32,7 @@ export function buildContainerVariants(options: {
  */
 export function buildItemVariants(
   variant: MotionPresetName | MotionVariants,
-  options: {
-    duration?: DurationPreset | number;
-    easing?: EasingPreset;
-  },
+  options: Pick<MotionBaseProps, "duration" | "easing">,
 ): MotionVariants {
   const baseVariant = getVariant(variant);
   const { duration, easing } = options;

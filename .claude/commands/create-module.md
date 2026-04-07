@@ -33,21 +33,21 @@ src/modules/<name>/
 ├── components/
 ├── containers/
 ├── hooks/
-├── screens/
-├── schemas/
-├── services/
 ├── repositories/
-└── types/
+├── schemas/
+├── screens/
+└── services/
 ```
 
 Create at least one concrete feature slice instead of empty barrels, for example:
 
 ```txt
-src/modules/<name>/screens/screen-<name>-index/index.tsx
-src/modules/<name>/containers/container-<name>-index/index.tsx
-src/modules/<name>/components/section-<name>-list/index.tsx
-src/modules/<name>/actions/get-<name>-list-action/index.ts
-src/modules/<name>/schemas/<name>-list-schema/index.ts
+src/modules/<name>/screens/screen-<name>-index/screen-<name>-index.tsx
+src/modules/<name>/screens/screen-<name>-index/types.ts
+src/modules/<name>/containers/container-<name>-index/container-<name>-index.tsx
+src/modules/<name>/components/section-<name>-list/section-<name>-list.tsx
+src/modules/<name>/actions/get-<name>-list-action/get-<name>-list-action.ts
+src/modules/<name>/schemas/<name>-list-schema/<name>-list-schema.ts
 ```
 
 Rules:
@@ -62,10 +62,16 @@ Also create translation files:
 
 ```txt
 src/messages/en/modules/<name>/
-└── index.json
+├── index.ts
+└── components/
+    ├── index.ts
+    └── section-<name>-list.json
 
 src/messages/th/modules/<name>/
-└── index.json
+├── index.ts
+└── components/
+    ├── index.ts
+    └── section-<name>-list.json
 ```
 
 ### Translation Template
@@ -79,7 +85,9 @@ src/messages/th/modules/<name>/
 
 ## Update Message Barrel Exports
 
-Update `src/messages/en/index.ts` and `src/messages/th/index.ts` to include the new module.
+Update `src/messages/en/modules/index.ts` and `src/messages/th/modules/index.ts` to
+include the new module. Also update the nested `components/index.ts` files to export
+the new leaf JSON file.
 
 ## Convention Checks
 

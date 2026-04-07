@@ -29,8 +29,8 @@
     "env": "@t3-oss/env-nextjs"
   },
   "locales": {
-    "supported": ["en", "th"],
-    "default": "en",
+    "supported": ["th", "en"],
+    "default": "th",
     "prefix": "always"
   },
   "commands": {
@@ -53,12 +53,12 @@
     "recommendedSharedRoot": "src/shared",
     "recommendedSourceRoots": ["src"],
     "recommendedModuleRoots": ["src/modules"],
-    "recommendedTestRoots": ["src/__tests__", "tests"]
+    "recommendedTestRoots": ["src/test", "eslint"]
   },
   "roots": {
     "sourceRoots": ["src"],
     "moduleRoots": ["src/modules"],
-    "testRoots": ["src/__tests__"]
+    "testRoots": ["src/test", "eslint"]
   },
   "conventions": {
     "model": "contract-driven",

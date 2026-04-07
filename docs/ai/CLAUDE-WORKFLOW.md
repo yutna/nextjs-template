@@ -11,6 +11,8 @@ Welcome to the team! This guide will teach you how to use Claude Code effectivel
 
 That's it. Claude Code reads `CLAUDE.md` and `AGENTS.md` automatically when you start a session. The workflow contract, commands, skills, and hooks are already configured in the repo.
 
+If you're starting a brand-new task and need to clear stale workflow state first, run `./bin/vibe task workflow:bootstrap` before beginning Discovery with `/discover`.
+
 ## How the Workflow Works
 
 Every non-trivial feature follows 6 phases. Claude tracks where you are through the repo workflow state and hooks.
@@ -93,9 +95,11 @@ npm run lint           →  ESLint + Stylelint + custom checks
 npm run test           →  Vitest test suite
 ```
 
+`npm run lint` is also the template's staged convention gate. On currently enforced surfaces it blocks root-level grab-bag files, inline parameter type literals, and local type declarations in implementation files. Broader rollout still happens slice by slice after debt cleanup.
+
 **If anything fails, Claude fixes it automatically.** This is the Self-Healing Contract. You should never see broken code.
 
-### Step 5: Review and Ship
+### Step 5: Verification and Delivery
 
 When quality gates and verification are green, Claude prepares a delivery handoff automatically.
 
@@ -135,11 +139,12 @@ These commands are available for any phase you want to drive directly. The defau
 
 ## Skills: Deep Knowledge On-Demand
 
-Skills are automatically loaded when Claude detects you're working in a specific area. You don't need to invoke them manually.
+Skills are available on demand. When a task crosses one of these seams, explicitly
+invoke the matching skill before acting.
 
 ```txt
-Working with...        Claude automatically loads...
------------------------------------------------------------
+Working with...        Invoke...
+----------------------------------------------
 Chakra UI components → nextjs-chakra-ui skill
 Server actions       → nextjs-server-actions skill
 Database queries     → drizzle-patterns skill
@@ -278,7 +283,7 @@ Claude enforces all of this automatically. If you see a delivery summary, it mea
 ```txt
 Start a session:     claude
 New feature:         Just describe it in plain English
-Flow execution:      Discovery → Planning → Implementation → Gates → Delivery (automatic)
+Flow execution:      Discovery → Planning → Implementation → Quality Gates → Verification → Delivery
 Big feature:         /decompose-requirements [description]
 ```
 

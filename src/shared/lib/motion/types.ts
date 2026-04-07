@@ -127,13 +127,17 @@ export interface StaggerProps {
   delayChildren?: number;
 }
 
+export interface CreateStaggerContainerOptions {
+  delayChildren?: number;
+  staggerDelay?: number;
+  staggerReverse?: boolean;
+}
+
 /**
  * Combined motion props for components with all features.
  */
 export interface FullMotionProps
-  extends MotionBaseProps,
-    MotionViewportProps,
-    StaggerProps {
+  extends MotionBaseProps, MotionViewportProps, StaggerProps {
   /**
    * Preset variant to use, or custom variants object.
    */
@@ -167,8 +171,7 @@ export type MotionElementType =
  * Props for polymorphic motion components.
  */
 export interface PolymorphicMotionProps<T extends MotionElementType = "div">
-  extends FullMotionProps,
-    Omit<HTMLAttributes<HTMLElement>, "style"> {
+  extends FullMotionProps, Omit<HTMLAttributes<HTMLElement>, "style"> {
   /**
    * HTML element type to render.
    * @default "div"

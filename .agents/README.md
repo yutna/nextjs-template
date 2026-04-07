@@ -1,8 +1,13 @@
 # Community Skills Reference
 
-This directory contains skills contributed by the community ([skills.sh](https://skills.sh/)) that are automatically loaded by both Copilot and Claude.
+This directory contains skills contributed by the community
+([skills.sh](https://skills.sh/)) that are available to both Copilot and Claude as
+reference surfaces.
 
-**How they work:** Both GitHub Copilot and Claude automatically load these skills when relevant to your task (no manual setup required). Canonical skills in `.claude/skills/` and `.github/skills/` take organizational priority by ownership, not by technical capability.
+**How they work:** These skills are available when relevant, but reliable usage still
+comes from explicitly invoking the skill you want to use. Canonical skills in
+`.claude/skills/` and `.github/skills/` take organizational priority by ownership, not
+by technical capability.
 
 ## Organization
 
@@ -21,7 +26,7 @@ This directory contains skills contributed by the community ([skills.sh](https:/
 
 ## Usage Guidelines
 
-### Community Skills (Auto-loaded by both tools)
+### Community Skills (Available to both tools)
 - **`agent-browser/`** - Browser automation for web testing and interaction
 - **`vitest/`** - Vitest testing framework patterns and examples
 - **`find-skills/`** - Meta-skill for discovering available skills
@@ -37,8 +42,7 @@ This directory contains skills contributed by the community ([skills.sh](https:/
 ## Integration
 
 Community skills are:
-- ✅ Automatically loaded by both Copilot and Claude
-- ✅ Available for learning and reference
+- ✅ Available for explicit invocation and reference by both Copilot and Claude
 - ✅ Independent versioning from canonical skills
 - ✅ Can be adopted into canonical skills for team consistency
 

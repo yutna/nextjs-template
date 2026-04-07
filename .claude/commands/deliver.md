@@ -6,10 +6,11 @@ Verify the work and prepare the final handoff.
 
 Behavioral mode: Verification and Delivery. Report honestly, do not claim completion prematurely.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/delivery-validation/SKILL.md
+- Invoke `.claude/skills/delivery-validation/SKILL.md` first before preparing the
+  handoff.
 
 Required output:
 

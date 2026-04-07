@@ -1,6 +1,10 @@
 import { DURATION, EASING, STAGGER } from "./timing";
 
-import type { MotionPresetName, MotionVariants } from "./types";
+import type {
+  CreateStaggerContainerOptions,
+  MotionPresetName,
+  MotionVariants,
+} from "./types";
 
 /**
  * Fade variants - simple opacity transitions.
@@ -338,11 +342,9 @@ export function getVariant(
 /**
  * Create stagger container variants with custom timing.
  */
-export function createStaggerContainer(options?: {
-  delayChildren?: number;
-  staggerDelay?: number;
-  staggerReverse?: boolean;
-}): MotionVariants {
+export function createStaggerContainer(
+  options?: CreateStaggerContainerOptions,
+): MotionVariants {
   const {
     delayChildren = 0,
     staggerDelay = STAGGER.normal,

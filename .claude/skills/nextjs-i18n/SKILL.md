@@ -10,32 +10,43 @@ Use this skill when implementing internationalization with next-intl.
 ## Reference
 
 - .claude/workflow-profile.json (locales configuration)
-- src/shared/config/i18n.ts (i18n configuration)
+- src/shared/config/i18n/routing.ts
+- src/shared/config/i18n/request.tsx
+- src/messages/
 
 ## Configuration
 
 ### Supported Locales
 
 ```typescript
-// src/shared/config/i18n.ts
-export const locales = ['en', 'th'] as const;
-export const defaultLocale = 'en' as const;
-export type Locale = (typeof locales)[number];
+// src/shared/constants/locale.ts
+export const LOCALES = ["th", "en"] as const;
 ```
 
 ### next-intl Setup
 
 ```typescript
-// src/i18n.ts
-import { getRequestConfig } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { locales } from '@/shared/config/i18n';
+// src/shared/config/i18n/request.tsx
+import { hasLocale } from "next-intl";
+import { getRequestConfig } from "next-intl/server";
 
-export default getRequestConfig(async ({ locale }) => {
-  if (!locales.includes(locale as any)) notFound();
+import { messages } from "@/messages";
+import { formats } from "@/shared/config/i18n/formats";
+import { routing } from "@/shared/config/i18n/routing";
+import { TIME_ZONE } from "@/shared/constants/timezone";
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   return {
-    messages: (await import(`./messages/${locale}`)).default,
+    formats,
+    locale,
+    messages: messages[locale],
+    now: new Date(),
+    timeZone: TIME_ZONE,
   };
 });
 ```
@@ -43,91 +54,94 @@ export default getRequestConfig(async ({ locale }) => {
 ### Middleware
 
 ```typescript
-// src/middleware.ts
-import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from '@/shared/config/i18n';
+// src/proxy.ts
+import createMiddleware from "next-intl/middleware";
 
-export default createMiddleware({
-  locales,
-  defaultLocale,
-  localePrefix: 'always',
-});
+import { routing } from "./shared/config/i18n/routing";
+
+export default createMiddleware(routing);
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)'],
+  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
 };
 ```
 
 ## Message Structure
 
+Translation structure is the one area where DRY can be relaxed deliberately because enterprise message catalogs become large and repetitive. Do not over-normalize messages at the cost of maintainability.
+
+Even with that exception, message layout must remain predictable:
+- locale root stays shallow
+- common/shared/module seams stay explicit
+- modules should own their own message trees
+- scaling a module should prefer deeper folders over dumping everything into one file
+
 ### Directory Layout
 
 ```
 src/messages/
+├── index.ts
 ├── en/
-│   ├── index.ts           # Barrel export
-│   ├── common.json        # Shared messages
-│   ├── errors.json        # Error messages
-│   └── modules/
-│       ├── users/
-│       │   └── index.json
-│       └── dashboard/
-│           └── index.json
+│   ├── index.ts
+│   ├── common/
+│   │   ├── index.ts
+│   │   ├── actions.json
+│   │   └── validation.json
+│   ├── modules/
+│   │   ├── index.ts
+│   │   └── static-pages/
+│   │       ├── index.ts
+│   │       ├── components/
+│   │       │   ├── index.ts
+│   │       │   └── landing-hero.json
+│   │       └── hooks/
+│   │           ├── index.ts
+│   │           └── use-copy-command.json
+│   └── shared/
+│       ├── index.ts
+│       └── components/
+│           ├── index.ts
+│           └── error.json
 └── th/
-    ├── index.ts
-    ├── common.json
-    ├── errors.json
-    └── modules/
-        ├── users/
-        │   └── index.json
-        └── dashboard/
-            └── index.json
+    └── ...mirror the same composition
 ```
 
-### Barrel Export
+### Composition Example
 
 ```typescript
-// src/messages/en/index.ts
-import common from './common.json';
-import errors from './errors.json';
-import users from './modules/users/index.json';
-import dashboard from './modules/dashboard/index.json';
+// src/messages/en/modules/static-pages/components/index.ts
+import landingHero from "./landing-hero.json";
 
-export default {
-  common,
-  errors,
-  modules: {
-    users,
-    dashboard,
-  },
-} as const;
+export const components = {
+  landingHero,
+};
+
+// src/messages/en/modules/static-pages/index.ts
+import { components } from "./components";
+import { hooks } from "./hooks";
+
+export const staticPages = {
+  components,
+  hooks,
+};
+
+// src/messages/en/modules/index.ts
+import { staticPages } from "./static-pages";
+
+export const modules = {
+  staticPages,
+};
 ```
 
-### Message File Format
+### Leaf Message File Format
 
 ```json
-// src/messages/en/modules/users/index.json
+// src/messages/en/modules/static-pages/components/landing-hero.json
 {
-  "title": "Users",
-  "list": {
-    "heading": "User List",
-    "empty": "No users found",
-    "loading": "Loading users..."
-  },
-  "form": {
-    "name": "Name",
-    "email": "Email",
-    "submit": "Create User",
-    "validation": {
-      "nameRequired": "Name is required",
-      "emailInvalid": "Please enter a valid email"
-    }
-  },
-  "actions": {
-    "edit": "Edit",
-    "delete": "Delete",
-    "confirmDelete": "Are you sure you want to delete {name}?"
-  }
+  "getStarted": "View on GitHub",
+  "installCommand": "git clone --depth 1 ...",
+  "subtitle": "A production-ready Next.js 16 template...",
+  "title": "Vibe Coding\nFrom Prompt to IPO"
 }
 ```
 
@@ -136,16 +150,16 @@ export default {
 ### In Server Components
 
 ```tsx
-// src/modules/users/screens/UserListScreen.tsx
+// src/modules/static-pages/screens/screen-welcome/screen-welcome.tsx
 import { getTranslations } from 'next-intl/server';
 
-export async function UserListScreen() {
-  const t = await getTranslations('modules.users');
+export async function ScreenWelcome() {
+  const t = await getTranslations('modules.staticPages.components.landingHero');
 
   return (
     <div>
       <h1>{t('title')}</h1>
-      <p>{t('list.heading')}</p>
+      <p>{t('subtitle')}</p>
     </div>
   );
 }
@@ -154,20 +168,16 @@ export async function UserListScreen() {
 ### In Client Components
 
 ```tsx
-// src/modules/users/containers/UserFormContainer.tsx
+// src/shared/components/error-banner/error-banner.tsx
 'use client';
 
 import { useTranslations } from 'next-intl';
 
-export function UserFormContainer() {
-  const t = useTranslations('modules.users.form');
+export function ErrorBanner() {
+  const t = useTranslations('shared.components.error');
 
   return (
-    <form>
-      <label>{t('name')}</label>
-      <input name="name" />
-      <button type="submit">{t('submit')}</button>
-    </form>
+    <button type="button">{t('tryAgain')}</button>
   );
 }
 ```
@@ -176,7 +186,7 @@ export function UserFormContainer() {
 
 ```tsx
 // Message: "Welcome, {name}!"
-const t = useTranslations('common');
+const t = useTranslations('common.actions');
 t('welcome', { name: user.name }); // "Welcome, John!"
 
 // Message: "You have {count, plural, =0 {no items} one {# item} other {# items}}"
@@ -197,13 +207,13 @@ t.rich('helpText', {
 ### Link Component
 
 ```tsx
-import { Link } from '@/shared/components/Link';
+import { Link } from '@/shared/lib/navigation';
 
 export function LocaleSwitcher() {
   return (
     <nav>
-      <Link href="/dashboard" locale="en">English</Link>
-      <Link href="/dashboard" locale="th">ไทย</Link>
+      <Link href="/" locale="en">English</Link>
+      <Link href="/" locale="th">ไทย</Link>
     </nav>
   );
 }
@@ -214,18 +224,27 @@ export function LocaleSwitcher() {
 ```tsx
 'use client';
 
-import { useRouter, usePathname } from '@/shared/lib/navigation';
+import { usePathname, useRouter } from '@/shared/lib/navigation';
+
+import type { Locale } from 'next-intl';
 
 export function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const switchLocale = (locale: string) => {
+  const switchLocale = (locale: Locale) => {
     router.replace(pathname, { locale });
   };
 
   return (
-    <select onChange={(e) => switchLocale(e.target.value)}>
+    <select
+      onChange={(event) => {
+        const next = event.currentTarget.value;
+        if (next === "en" || next === "th") {
+          switchLocale(next);
+        }
+      }}
+    >
       <option value="en">English</option>
       <option value="th">ไทย</option>
     </select>
@@ -237,36 +256,42 @@ export function LocaleSwitcher() {
 
 1. Create message files:
    ```bash
-   mkdir -p src/messages/en/modules/<module-name>
-   mkdir -p src/messages/th/modules/<module-name>
+   mkdir -p src/messages/en/modules/<module-name>/components
+   mkdir -p src/messages/th/modules/<module-name>/components
    ```
 
-2. Add JSON files:
+2. Add leaf JSON files:
    ```json
-   // src/messages/en/modules/<module-name>/index.json
+   // src/messages/en/modules/<module-name>/components/section-<module-name>.json
    {
-     "title": "Module Title",
-     "description": "Module description"
-   }
+      "title": "Module Title",
+      "subtitle": "Module description"
+    }
    ```
 
-3. Update barrel exports:
+3. Compose the folder:
    ```typescript
-   // src/messages/en/index.ts
-   import newModule from './modules/<module-name>/index.json';
+   // src/messages/en/modules/<module-name>/components/index.ts
+   import sectionModuleName from "./section-<module-name>.json";
 
-   export default {
-     // ...existing
-     modules: {
-       // ...existing
-       newModule,
-     },
+   export const components = {
+     sectionModuleName,
+   };
+
+   // src/messages/en/modules/<module-name>/index.ts
+   import { components } from "./components";
+
+   export const moduleMessages = {
+     components,
    };
    ```
 
-4. Use in components:
+4. Update `src/messages/en/modules/index.ts` and `src/messages/th/modules/index.ts`
+   to export the new module.
+
+5. Use in components:
    ```tsx
-   const t = await getTranslations('modules.newModule');
+   const t = await getTranslations('modules.<moduleNamespace>.components.<surfaceNamespace>');
    ```
 
 ## Type Safety
@@ -275,9 +300,9 @@ export function LocaleSwitcher() {
 
 ```typescript
 // src/types/i18n.d.ts
-import en from '@/messages/en';
+import { messages } from '@/messages';
 
-type Messages = typeof en;
+type Messages = typeof messages.en;
 
 declare global {
   interface IntlMessages extends Messages {}
@@ -288,5 +313,6 @@ declare global {
 
 - Hardcode user-facing strings — always use translations
 - Mix locales in the same file — keep en/ and th/ separate
-- Skip the barrel export — it ensures all messages are loaded
+- Skip the `index.ts` composition update — it ensures all messages are reachable
 - Use string concatenation for translations — use ICU message format
+- Collapse unrelated enterprise message groups into one oversized file when a deeper folder split would be clearer

@@ -29,7 +29,7 @@ describe("eslint config", () => {
         'import type { ReactNode } from "react";',
         "",
         "export function Example({ children }: { children: ReactNode }) {",
-        '  return <Box className={jetBrainsMono.className}>{children}</Box>;',
+        "  return <Box className={jetBrainsMono.className}>{children}</Box>;",
         "}",
       ].join("\n"),
       resolve(PROJECT_ROOT, "src/shared/components/example/example.tsx"),
@@ -49,7 +49,7 @@ describe("eslint config", () => {
         'import type { ReactNode } from "react";',
         "",
         "export function Example({ children }: { children: ReactNode }) {",
-        '  return <Box className={jetBrainsMono.className}>{children}</Box>;',
+        "  return <Box className={jetBrainsMono.className}>{children}</Box>;",
         "}",
       ].join("\n"),
     );
@@ -98,7 +98,145 @@ describe("eslint config", () => {
     );
 
     expect(
-      result.messages.filter(({ ruleId }) => ruleId === "project/no-inline-style"),
+      result.messages.filter(
+        ({ ruleId }) => ruleId === "project/no-inline-style",
+      ),
+    ).toHaveLength(0);
+  });
+
+  it("reports inline parameter type literals in implementation files", async () => {
+    const result = await lintText(
+      [
+        'import type { ReactNode } from "react";',
+        "",
+        "export function CardExample({ children }: { children: ReactNode }) {",
+        "  return <div>{children}</div>;",
+        "}",
+      ].join("\n"),
+      resolve(
+        PROJECT_ROOT,
+        "src/shared/components/card-example/card-example.tsx",
+      ),
+    );
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: "project/no-inline-param-type-literals",
+        }),
+      ]),
+    );
+  });
+
+  it("reports inline parameter type literals in staged shared lib implementation files", async () => {
+    const result = await lintText(
+      [
+        "export function run(options: { readonly count: number }) {",
+        "  return options.count;",
+        "}",
+      ].join("\n"),
+      resolve(PROJECT_ROOT, "src/shared/lib/example/example.ts"),
+    );
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: "project/no-inline-param-type-literals",
+        }),
+      ]),
+    );
+  });
+
+  it("allows inline parameter type literals in test files during staged rollout", async () => {
+    const result = await lintText(
+      [
+        'import type { ReactNode } from "react";',
+        "",
+        "export function CardExample({ children }: { children: ReactNode }) {",
+        "  return <div>{children}</div>;",
+        "}",
+      ].join("\n"),
+      resolve(
+        PROJECT_ROOT,
+        "src/shared/components/card-example/card-example.test.tsx",
+      ),
+    );
+
+    expect(
+      result.messages.filter(
+        ({ ruleId }) => ruleId === "project/no-inline-param-type-literals",
+      ),
+    ).toHaveLength(0);
+  });
+
+  it("reports local type declarations in staged shared lib implementation files", async () => {
+    const result = await lintText(
+      [
+        "type ExampleInput = { readonly count: number };",
+        "",
+        "export function run(input: ExampleInput) {",
+        "  return input.count;",
+        "}",
+      ].join("\n"),
+      resolve(PROJECT_ROOT, "src/shared/lib/example/example.ts"),
+    );
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: "project/no-local-type-declarations",
+        }),
+      ]),
+    );
+  });
+
+  it("allows local type declarations in types.ts files", async () => {
+    const result = await lintText(
+      [
+        "export type ExampleInput = { readonly count: number };",
+        "",
+        "export interface ExampleOutput {",
+        "  readonly count: number;",
+        "}",
+      ].join("\n"),
+      resolve(PROJECT_ROOT, "src/shared/lib/example/types.ts"),
+    );
+
+    expect(
+      result.messages.filter(
+        ({ ruleId }) => ruleId === "project/no-local-type-declarations",
+      ),
+    ).toHaveLength(0);
+  });
+
+  it("reports root-level grab-bag helper files at module root", async () => {
+    const result = await lintText(
+      ["export function helper() {", '  return "ok";', "}"].join("\n"),
+      resolve(PROJECT_ROOT, "src/modules/example/helpers.ts"),
+    );
+
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: "project/no-root-grab-bag-files",
+        }),
+      ]),
+    );
+  });
+
+  it("allows scoped helper files inside domain folders", async () => {
+    const result = await lintText(
+      ["export function helper() {", '  return "ok";', "}"].join("\n"),
+      resolve(
+        PROJECT_ROOT,
+        "src/modules/example/services/create-example-service/helpers.ts",
+      ),
+    );
+
+    expect(
+      result.messages.filter(
+        ({ ruleId }) => ruleId === "project/no-root-grab-bag-files",
+      ),
     ).toHaveLength(0);
   });
 });

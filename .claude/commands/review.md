@@ -6,10 +6,11 @@ Review the implemented work before final quality gates and delivery.
 
 Behavioral mode: Review only. Do not edit implementation files. Findings only.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/convention-tiering/SKILL.md
+- Invoke `.claude/skills/convention-tiering/SKILL.md` first before reviewing so
+  material findings are classified by convention tier.
 
 Required output:
 

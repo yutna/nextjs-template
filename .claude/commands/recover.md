@@ -6,10 +6,11 @@ Recover from a failure deliberately.
 
 Behavioral mode: Recovery. Diagnose before fixing. Roll back to the earliest valid phase.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/error-recovery/SKILL.md
+- Invoke `.claude/skills/error-recovery/SKILL.md` first before choosing fixes or
+  rollback phase.
 
 Required output:
 

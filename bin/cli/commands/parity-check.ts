@@ -10,12 +10,18 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import type {
+  ModDrift,
+  PairComparisonResult,
+  ParityPair,
+  ParityResult,
+  ParityRule,
+} from "./types/parity-check";
+
 const COMMAND_DIR = ".claude/commands";
 const PROMPT_DIR = ".github/prompts";
 
-const PARITY_PAIRS = [["create-module.md", "create-module.prompt.md"]];
-
-const SYNC_RULES = [
+const CREATE_MODULE_RULES: ParityRule[] = [
   {
     description: "Both must prohibit grouping-folder barrel re-exports",
     name: "barrel-export-prohibition",
@@ -34,6 +40,101 @@ const SYNC_RULES = [
     description: "Both must emphasize concrete examples over grouping folders",
     name: "concrete-slice-first",
     patterns: [/concrete.slice/i, /specific.*example/i],
+  },
+];
+
+const DISCOVERY_RULES: ParityRule[] = [
+  {
+    description: "Both must require explicit and testable acceptance criteria",
+    name: "explicit-testable-acceptance-criteria",
+    patterns: [/acceptance criteria must be explicit and testable/i],
+  },
+  {
+    description: "Both must recommend decomposition for large likely scope",
+    name: "large-scope-decomposition",
+    patterns: [/decompose-requirements[\s\S]*before planning/i],
+  },
+  {
+    description:
+      "Both must capture data or state expectations during Discovery",
+    name: "data-state-expectations",
+    patterns: [/data\/state expectations/i],
+  },
+];
+
+const PLAN_RULES: ParityRule[] = [
+  {
+    description: "Both must require exact file count in scope",
+    name: "exact-file-count",
+    patterns: [/exact file count in scope/i],
+  },
+  {
+    description: "Both must require predicted implementation complexity",
+    name: "predicted-implementation-complexity",
+    patterns: [/predicted implementation complexity/i],
+  },
+  {
+    description:
+      "Both must require a decomposition artifact path for large work",
+    name: "decomposition-artifact-path",
+    patterns: [/decomposition artifact path/i],
+  },
+  {
+    description:
+      "Both must require DB planning metadata when work touches the database",
+    name: "db-planning-metadata",
+    patterns: [
+      /target env[\s\S]*migration impact[\s\S]*rollback[\s\S]*seed determinism[\s\S]*test isolation/i,
+    ],
+  },
+];
+
+const IMPLEMENT_RULES: ParityRule[] = [
+  {
+    description:
+      "Both must require checkpoint-stop behavior for non-trivial implementation",
+    name: "checkpoint-stop",
+    patterns: [/checkpoint-stop behavior/i],
+  },
+  {
+    description:
+      "Both must stop when implementation exceeds the approved slice",
+    name: "approved-slice-boundary",
+    patterns: [/implementation exceeds the approved slice/i],
+  },
+  {
+    description: "Both must require one primary responsibility per file",
+    name: "one-primary-responsibility",
+    patterns: [/one primary responsibility/i],
+  },
+  {
+    description:
+      "Both must forbid local type declarations in implementation files",
+    name: "no-local-implementation-types",
+    patterns: [/do not declare types inside implementation files/i],
+  },
+];
+
+const PARITY_PAIRS: ParityPair[] = [
+  {
+    commandFile: "create-module.md",
+    promptFile: "create-module.prompt.md",
+    rules: CREATE_MODULE_RULES,
+  },
+  {
+    commandFile: "discover.md",
+    promptFile: "discover.prompt.md",
+    rules: DISCOVERY_RULES,
+  },
+  {
+    commandFile: "plan-work.md",
+    promptFile: "plan-work.prompt.md",
+    rules: PLAN_RULES,
+  },
+  {
+    commandFile: "implement.md",
+    promptFile: "implement.prompt.md",
+    rules: IMPLEMENT_RULES,
   },
 ];
 
@@ -63,21 +164,9 @@ function hasPattern(content: string, patterns: RegExp[]): boolean {
   return patterns.some((pattern) => pattern.test(text));
 }
 
-interface ParityResult {
-  commandHas: boolean;
-  description: string;
-  promptHas: boolean;
-  rule: string;
-}
-
-function comparePairParity(
-  commandPath: string,
-  promptPath: string,
-): {
-  issues: ParityResult[];
-  message: string;
-  ok: boolean;
-} {
+function comparePairParity(pair: ParityPair): PairComparisonResult {
+  const commandPath = path.join(COMMAND_DIR, pair.commandFile);
+  const promptPath = path.join(PROMPT_DIR, pair.promptFile);
   const commandContent = readFile(commandPath);
   const promptContent = readFile(promptPath);
 
@@ -91,7 +180,7 @@ function comparePairParity(
 
   const issues: ParityResult[] = [];
 
-  for (const rule of SYNC_RULES) {
+  for (const rule of pair.rules) {
     const commandHasRule = hasPattern(commandContent, rule.patterns);
     const promptHasRule = hasPattern(promptContent, rule.patterns);
 
@@ -115,18 +204,12 @@ function comparePairParity(
   };
 }
 
-interface ModDrift {
-  commandModified: boolean;
-  pair: [string, string];
-  promptModified: boolean;
-}
-
 function checkModificationParity(stagedFiles: string[]): ModDrift[] {
   const issues: ModDrift[] = [];
 
-  for (const [cmdFile, promptFile] of PARITY_PAIRS) {
-    const cmdPath = path.join(COMMAND_DIR, cmdFile);
-    const promptPath = path.join(PROMPT_DIR, promptFile);
+  for (const pair of PARITY_PAIRS) {
+    const cmdPath = path.join(COMMAND_DIR, pair.commandFile);
+    const promptPath = path.join(PROMPT_DIR, pair.promptFile);
 
     const cmdModified = stagedFiles.includes(cmdPath);
     const promptModified = stagedFiles.includes(promptPath);
@@ -134,7 +217,7 @@ function checkModificationParity(stagedFiles: string[]): ModDrift[] {
     if (cmdModified !== promptModified) {
       issues.push({
         commandModified: cmdModified,
-        pair: [cmdFile, promptFile],
+        pair: [pair.commandFile, pair.promptFile],
         promptModified: promptModified,
       });
     }
@@ -143,39 +226,25 @@ function checkModificationParity(stagedFiles: string[]): ModDrift[] {
   return issues;
 }
 
-const DETECT_PATTERNS = [
-  /barrel.*export/i,
-  /scoped.*helpers/i,
-  /concrete.*slice/i,
-];
-
 function detectParity(): void {
   console.log("\n🔍 Checking Claude/Copilot command-prompt parity...\n");
 
   let hasWarnings = false;
 
-  for (const [cmdFile, promptFile] of PARITY_PAIRS) {
-    const cmdPath = path.join(COMMAND_DIR, cmdFile);
-    const promptPath = path.join(PROMPT_DIR, promptFile);
+  for (const pair of PARITY_PAIRS) {
+    const cmdPath = path.join(COMMAND_DIR, pair.commandFile);
+    const promptPath = path.join(PROMPT_DIR, pair.promptFile);
 
     if (!fs.existsSync(cmdPath) || !fs.existsSync(promptPath)) continue;
 
     try {
-      const cmdContent = fs.readFileSync(cmdPath, "utf-8");
-      const promptContent = fs.readFileSync(promptPath, "utf-8");
+      const result = comparePairParity(pair);
 
-      let mismatchCount = 0;
-      for (const pattern of DETECT_PATTERNS) {
-        const cmdHas = pattern.test(extractRuleText(cmdContent));
-        const promptHas = pattern.test(extractRuleText(promptContent));
-        if (cmdHas !== promptHas) mismatchCount++;
-      }
-
-      if (mismatchCount > 0) {
+      if (!result.ok) {
         console.log(
           `⚠️  Parity Drift Detected in: ${path.basename(cmdPath)} ↔ ${path.basename(promptPath)}`,
         );
-        console.log(`   Found ${mismatchCount} content mismatch(es)\n`);
+        console.log(`   Found ${result.issues.length} content mismatch(es)\n`);
         hasWarnings = true;
       }
     } catch {
@@ -185,7 +254,7 @@ function detectParity(): void {
 
   if (hasWarnings) {
     console.log(
-      "💡 Reminder: Updated one toolchain file?\n   Run: ./bin/vibe parity-check\n",
+      "💡 Reminder: Updated one toolchain file?\n   Run: npm run parity:all\n",
     );
     console.log("   📖 See: CONTRIBUTING.md § Dual-Toolchain Parity\n");
   } else {
@@ -225,14 +294,11 @@ async function run(args?: string[]): Promise<void> {
   }
 
   // Check 2: Content parity
-  for (const [cmdFile, promptFile] of PARITY_PAIRS) {
-    const cmdPath = path.join(COMMAND_DIR, cmdFile);
-    const promptPath = path.join(PROMPT_DIR, promptFile);
-
-    const result = comparePairParity(cmdPath, promptPath);
+  for (const pair of PARITY_PAIRS) {
+    const result = comparePairParity(pair);
 
     if (!result.ok) {
-      console.log(`\n📋 Pair: ${cmdFile} ↔ ${promptFile}`);
+      console.log(`\n📋 Pair: ${pair.commandFile} ↔ ${pair.promptFile}`);
       console.log(`  ${result.message}`);
       result.issues.forEach((issue) => {
         console.log(`    • ${issue.rule}`);
@@ -243,7 +309,9 @@ async function run(args?: string[]): Promise<void> {
       });
       hasErrors = true;
     } else {
-      console.log(`\n✅ ${cmdFile} ↔ ${promptFile}: ${result.message}`);
+      console.log(
+        `\n✅ ${pair.commandFile} ↔ ${pair.promptFile}: ${result.message}`,
+      );
     }
   }
 

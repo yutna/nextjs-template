@@ -14,14 +14,16 @@ You are in **Review** phase. Analyze and report findings without making changes.
 ## Prerequisites
 
 - Check `.claude/workflow-profile.json` for structure conventions
-- Reference [AGENTS.md](../../AGENTS.md) for module structure rules
+- Reference `AGENTS.md` and `.github/instructions/nextjs-modules.instructions.md` for module structure rules
 
 ## Audit Scope
 
-### If argument is a path:
+### If argument is a path
+
 Audit only that path and its subdirectories.
 
-### If argument is 'all' or empty:
+### If argument is 'all' or empty
+
 Audit entire codebase structure.
 
 ## Audit Checks
@@ -30,50 +32,118 @@ Audit entire codebase structure.
 
 For each directory in `src/modules/`:
 
-- Present directories follow approved naming patterns
-- No grouping-folder barrels such as actions/index.ts or services/index.ts
-- Module index.ts is optional and narrow if present
-- No generic root-level files (utils.ts, common.ts)
-- Scoped helpers.ts files are allowed when kept internal to a concrete folder
-- Server/client boundaries respected
+```markdown
+## Module: <module-name>
+
+### Present Directories Follow Conventions
+- [ ] folder names follow approved patterns
+- [ ] no grouping-folder barrels such as actions/index.ts or services/index.ts
+- [ ] module index.ts is optional and narrow if present
+
+### Optional Directories (if present, should follow conventions)
+- [ ] contexts/ (React contexts)
+- [ ] lib/ (module utilities)
+- [ ] styles/ (module CSS)
+- [ ] constants/ (module constants)
+
+### File Conventions
+- [ ] No generic root-level files (utils.ts, common.ts)
+- [ ] scoped helpers.ts files are internal and not exported broadly
+- [ ] concrete folders use approved prefixes like `screen-`, `container-`, `section-`, `form-`, and `use-`
+- [ ] main implementation files match their folder name in kebab-case
+- [ ] hooks live in `use-<name>/use-<name>.ts`
+
+### Server/Client Boundaries
+- [ ] screens/ files are Server Components (no "use client")
+- [ ] components/ are mostly Server Components
+- [ ] containers/ use "use client" when needed
+- [ ] hooks/ use "use client"
+```
 
 ### 2. Shared Structure
 
 For `src/shared/`:
 
-- Required directories: lib/, config/, components/, providers/
-- Entities only in shared/entities/
-- No cross-module imports
+```markdown
+## Shared Structure
+
+### Required Directories
+- [ ] lib/ exists
+- [ ] config/ exists
+- [ ] components/ exists
+- [ ] providers/ exists
+
+### Optional Directories
+- [ ] hooks/
+- [ ] routes/
+- [ ] schemas/
+- [ ] types/
+- [ ] utils/ (named utilities, not generic)
+- [ ] vendor/
+
+### File Conventions
+- [ ] No generic catch-all files
+- [ ] Clear naming that indicates purpose
+```
 
 ### 3. App Router Structure
 
 For `src/app/`:
 
-- [locale]/ directory structure
-- Thin page.tsx files
-- Error and loading boundaries
+```markdown
+## App Router Structure
+
+### Locale Structure
+- [ ] [locale]/ directory exists
+- [ ] All routes under [locale]/
+
+### Route Conventions
+- [ ] page.tsx files are thin (delegate to modules)
+- [ ] layout.tsx files handle providers
+- [ ] error.tsx files exist for error boundaries
+- [ ] loading.tsx files exist for loading states
+```
 
 ### 4. Translation Structure
 
 For `src/messages/`:
 
-- en/ and th/ directories exist
-- Each module has translations in both locales
+```markdown
+## Translation Structure
+
+### Locale Directories
+- [ ] en/ exists
+- [ ] th/ exists
+
+### Module Translations
+- [ ] Each module has translations in both locales
+- [ ] Barrel exports include all modules
+
+### File Structure
+- [ ] locale root `index.ts` exists
+- [ ] `common/index.ts`, `modules/index.ts`, and `shared/index.ts` exist
+- [ ] module/shared folders compose with `index.ts` files plus leaf JSON files
+- [ ] mirrored locale folders keep the same composition shape in `en/` and `th/`
+```
 
 ## Forbidden Patterns
 
-| Pattern | Issue |
-|---------|-------|
-| `utils.ts` | Use named specific files |
-| root-level `helpers.ts` | Use a scoped helper file inside a concrete folder |
-| `"use client"` in screens/ | Screens should be Server Components |
-| grouping-folder barrels | Import concrete folders directly |
+Check for and report:
+
+| Pattern | Location | Issue |
+|---------|----------|-------|
+| `utils.ts` | Any | Use named specific files |
+| root-level `helpers.ts` | Any module/shared root | Use a scoped helper file inside a concrete folder |
+| `common.ts` | Any | Use named specific files |
+| `"use client"` | screens/ | Screens should be Server Components |
+| grouping-folder barrel | modules/*/actions, services, repositories | Import concrete folders directly |
 
 ## Output Format
 
 ```markdown
 # Structure Audit Report
 
+**Date:** [Date]
 **Scope:** [Path or 'all']
 
 ## Summary
@@ -81,20 +151,52 @@ For `src/messages/`:
 - Conventions followed: Y
 - Violations found: Z
 
-## Findings
+## Modules
+
+### ✅ users (compliant)
+All conventions followed.
+
+### ⚠️ orders (violations)
+- Missing hooks/ directory
+- utils.ts found (forbidden pattern)
+
+### ❌ dashboard (non-compliant)
+- root-level utils.ts found
+- "use client" in screens/DashboardScreen.tsx
+- actions/index.ts grouping barrel present
+
+## Shared
+[Findings for src/shared/]
+
+## App Router
+[Findings for src/app/]
+
+## Translations
+[Findings for src/messages/]
+
+## Recommendations
 
 ### Critical (must fix)
-- [Issue and location]
+1. [Issue and fix]
 
 ### Warnings (should fix)
-- [Issue and location]
+1. [Issue and fix]
 
-### Suggestions
-- [Improvement]
+### Suggestions (nice to have)
+1. [Suggestion]
 ```
+
+## Severity Levels
+
+| Level | Definition |
+|-------|------------|
+| Critical | Breaks conventions, causes issues |
+| Warning | Deviates from strong defaults |
+| Suggestion | Could improve consistency |
 
 ## Do Not
 
 - Make changes during audit (report only)
 - Skip any modules or directories
 - Ignore partial violations
+- Miss forbidden file patterns
