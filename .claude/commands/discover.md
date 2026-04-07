@@ -2,9 +2,12 @@
 description: Clarify a vague request into scope, constraints, and acceptance criteria.
 argument-hint: "[problem statement or feature idea]"
 ---
+
 Turn the request into a Discovery deliverable without planning or implementing.
 
 Use this as the default entrypoint for a fresh repository or any reset bootstrap state.
+
+If workflow state was reset intentionally, Discovery still begins with `/discover`; do not skip straight to Planning.
 
 Behavioral mode: Discovery only. Do not produce implementation plans or code. Do not create implementation files.
 

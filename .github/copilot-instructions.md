@@ -45,6 +45,8 @@ Workflow commands in `.github/prompts/`:
 
 **Note**: These prompts are designed for **GitHub Copilot Chat** (VS Code extension or web interface). Invoke them via the Copilot Chat interface in your IDE or on github.com. GitHub Copilot does not provide automated phase orchestration via CLI; the workflow is chat-driven.
 
+When you need to advance the phase explicitly, invoke the matching prompt in chat: `/discover` -> `/plan-work` -> `/implement` -> `/gates` -> `/deliver`. In orchestration agent mode, Copilot can help route these phases inside the chat, but it still does not auto-chain CLI workflow steps for you.
+
 **Parity Note**: GitHub Copilot does not have automatic stop-time workflow gates like Claude Code does. Follow [AGENTS.md](../AGENTS.md) phase rules, non-negotiable rules, and quality gates for manual gate discipline.
 
 ### Skills

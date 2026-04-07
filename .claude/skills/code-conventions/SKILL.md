@@ -26,10 +26,10 @@ This skill provides comprehensive code structure conventions to ensure correct c
 
 ## Import Conventions (MUST FOLLOW)
 
-- **Alias imports only** for cross-folder imports: `@shared/entities/user`, `@modules/users/schemas`, `@modules/orders/services`
+- **Alias imports only** for cross-folder imports: `@/shared/entities/user`, `@/modules/users/schemas/create-user-schema`, `@/shared/config/i18n/formats`
 - **Relative imports `./` only** for same-folder siblings: `./helpers`, `./constants`
 - **Never use relative upward imports** `../../...` — use alias instead
-- Path alias roots: `@shared/`, `@modules/<name>/`, `@app/` (mapped in `tsconfig.json`)
+- Path alias roots: only `@/` is mapped in `tsconfig.json` — do not invent `@shared/`, `@modules/`, or `@app/`
 
 ## Function and Typing Defaults (MUST FOLLOW)
 

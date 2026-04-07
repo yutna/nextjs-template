@@ -12,16 +12,18 @@ Welcome to the team! This guide covers the supported workflow for GitHub Copilot
 
 This repository provides Copilot-specific prompts, instructions, and agent docs. Use them through Copilot Chat in VS Code.
 
-The default model is orchestration-first automation: users should only manually do two things.
+GitHub Copilot follows the same six-phase contract as Claude Code, but the workflow is still chat-driven. In practice you still drive the conversation turn by turn:
 
-1. Run `/decompose-requirements` for large features.
-2. Switch Copilot to orchestration agent mode.
+1. Describe the task or invoke the right phase prompt.
+2. Approve the plan before implementation.
+3. Run `/decompose-requirements` for large features.
+4. Switch Copilot to orchestration agent mode when you want that workflow.
 
-Everything else should be automated by prompts, hooks, scripts, and CI.
+Prompts, instructions, scripts, and CI provide guardrails, but Copilot does not auto-chain every workflow phase for you.
 
 ## How the Workflow Works
 
-Every non-trivial feature follows 6 phases. Copilot's workflow docs and prompts map to those phases.
+Every non-trivial feature follows 6 phases. Copilot's workflow docs and prompts map to those phases, but you may need to invoke the next prompt explicitly when the chat does not advance on its own.
 
 ```txt
   You describe           Analyst clarifies      Planner designs        Implementer builds
@@ -48,7 +50,7 @@ Every non-trivial feature follows 6 phases. Copilot's workflow docs and prompts 
 
 ### The Agent Team
 
-Copilot uses specialized agents that work together:
+In orchestration agent mode, Copilot can use specialized agents that work together:
 
 ```txt
                     +----------------+
@@ -80,7 +82,7 @@ Open Copilot Chat in VS Code and describe your feature:
 I need a user profile page where users can update their name and avatar
 ```
 
-The Orchestrator routes this to the Requirements Analyst, who will:
+In orchestration agent mode, the Orchestrator can route this to the Requirements Analyst. Otherwise start with `/discover`. The Discovery step will:
 
 - Ask clarifying questions if anything is vague
 - Define acceptance criteria
@@ -88,7 +90,7 @@ The Orchestrator routes this to the Requirements Analyst, who will:
 
 ### Step 2: Plan the Work
 
-In orchestration mode, planning is routed automatically.
+In orchestration agent mode, planning may be routed automatically. Otherwise run `/plan-work` once requirements are clear.
 
 The Planner will:
 
@@ -101,7 +103,7 @@ The Planner will:
 
 ### Step 3: Approve and Build
 
-After the plan is accepted, orchestration routes implementation automatically.
+After the plan is accepted, run `/implement` if orchestration does not continue automatically.
 
 The Implementer writes code following all project conventions:
 
@@ -113,7 +115,7 @@ The Implementer writes code following all project conventions:
 
 ### Step 4: Quality Gates
 
-In orchestration mode, quality gates should be invoked automatically before delivery.
+Run `/gates` or ask the verifier agent to execute the quality gates. In orchestration agent mode, Copilot may suggest this step for you, but do not assume it has already happened.
 
 This runs:
 
@@ -131,15 +133,15 @@ If anything fails, ask Copilot to fix it:
 Fix the failing type check errors
 ```
 
-### Step 5: Review and Ship
+### Step 5: Verification and Delivery
 
-When quality gates and verification are green, orchestration prepares the delivery handoff.
+After review, quality gates, and verification are green, use `/deliver` or the delivery handoff path in orchestration mode.
 
 Copilot gives you a summary of everything that changed and why.
 
 ## Prompt Reference
 
-These prompts are mirrored from Claude commands and available in VS Code Copilot Chat. In orchestration mode they run automatically — you can also invoke any prompt directly when you want to drive a specific phase. Add `@workspace` for broader file context. See [Commands Reference](../general/COMMANDS.md) for the complete list.
+These prompts are mirrored from Claude commands and available in VS Code Copilot Chat. In orchestration agent mode, Copilot may suggest or route to them, but you can also invoke any prompt directly when you want to drive a specific phase yourself. Add `@workspace` for broader file context. See [Commands Reference](../general/COMMANDS.md) for the complete list.
 
 ### Workflow Prompts
 
@@ -227,7 +229,7 @@ This project has a zero-tolerance policy. Code is not done if ANY of these exist
   Present to you (production-ready)
 ```
 
-Orchestration mode should run this loop automatically.
+Orchestration agent mode can help route this loop, but you should still treat the gate run and verification step as explicit requirements.
 
 **Tip:** If you ever suspect drift, run `npm run check-types && npm run lint && npm run test`.
 
@@ -360,7 +362,7 @@ npm run check-types && npm run lint && npm run test
 ```txt
 Open chat:           Open Copilot Chat in VS Code
 New feature:         Describe feature in plain English (orchestration routes phases)
-Flow execution:      Discovery → Planning → Implementation → Gates → Delivery (automatic)
+Flow execution:      Discovery → Planning → Implementation → Quality Gates → Verification → Delivery (prompt-driven)
 Big feature:         @workspace /decompose-requirements [description]
 Agent mode:          Switch Copilot to orchestration agent mode
 ```

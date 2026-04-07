@@ -1,6 +1,6 @@
 # Commands Reference
 
-This project runs all scripts through a single CLI entrypoint (`./bin/vibe`) and mirrors slash commands between Claude Code and GitHub Copilot. The workflow is automated by default — these commands are here when you want to drive a step explicitly, run something in isolation, or just understand what's available.
+This project runs all scripts through a single CLI entrypoint (`./bin/vibe`) and mirrors slash commands between Claude Code and GitHub Copilot. The workflow is guardrailed by prompts, hooks, and CI by default — these commands are here when you want to drive a step explicitly, run something in isolation, or just understand what's available.
 
 Operational quick reference: [Workflow SOP (One Page)](./WORKFLOW-SOP.md)
 
@@ -86,7 +86,7 @@ A small set of commands run directly (not through `task`):
 ./bin/vibe parity-check --all     # check all paired command files
 ```
 
-CI runs `parity-check` automatically. Use it locally after editing a Claude command or Copilot prompt to verify parity before pushing.
+CI runs `parity-check` automatically. Use it locally after editing a Claude command or Copilot prompt to verify the configured hard parity pairs before pushing.
 
 ---
 

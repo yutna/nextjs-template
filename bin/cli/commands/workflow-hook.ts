@@ -1307,7 +1307,7 @@ function sessionContext(event: NormalizedEvent): number {
     (phase === "discovery" && !activeState.taskId && !activeState.taskSummary)
   ) {
     message +=
-      " Fresh bootstrap state detected. Start with the /discover command, then persist task details through the workflow state API.";
+      " Fresh bootstrap state detected. Start with the /discover command to clarify the task. Use './bin/vibe task workflow:bootstrap' when you need to reset stale task context before doing that.";
   }
 
   if (errors.length > 0) {

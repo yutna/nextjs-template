@@ -4,7 +4,7 @@ applyTo: ".claude/commands/**,  .github/prompts/**"
 
 # Dual-Toolchain Parity Check
 
-When modifying Claude commands or GitHub Copilot prompts, especially the parity-paired files below, **ensure both files are updated together**.
+When modifying Claude commands or GitHub Copilot prompts, especially the currently enforced parity-paired files below, **ensure both files are updated together**.
 
 ## Parity Pairs
 
@@ -15,6 +15,8 @@ When modifying Claude commands or GitHub Copilot prompts, especially the parity-
 | `.claude/commands/plan-work.md` | `.github/prompts/plan-work.prompt.md` |
 | `.claude/commands/implement.md` | `.github/prompts/implement.prompt.md` |
 
+These are the hard-enforced parity pairs today. Other mirrored command/prompt surfaces should stay semantically aligned, but this file only treats the pairs above as blocking parity contracts until enforcement expands.
+
 ## Workflow
 
 When you modify a file in a parity pair:
@@ -23,6 +25,7 @@ When you modify a file in a parity pair:
    - Same rules
    - Same examples (with tool-specific syntax adjustments if needed)
    - Same prohibitions (barrel exports, etc.)
+   - Tool-specific front matter and link syntax may differ, but behavioral rules must not drift
 
 2. **Verify parity before delivery**
    ```bash

@@ -27,6 +27,10 @@ Do not run decomposition again for normal defect fixes or iterative corrections 
 - `decompose-requirements` = requirement decomposition artifact creation
 - Workflow phases below = execution discipline for delivering decomposed work
 
+## Fresh-Task Bootstrap
+
+If you are starting a brand-new task and need to clear stale workflow state first, run `./bin/vibe task workflow:bootstrap` once and then begin Discovery with `/discover`.
+
 ## Required Inputs
 
 1. Approved or sufficiently clarified requirements
@@ -49,7 +53,7 @@ Approved plans should usually cover a small slice, roughly 12 or fewer non-gover
 
 ## Commands and Prompts
 
-Use either workflow prompts or CLI tasks depending on the tool context.
+Use either workflow prompts or CLI tasks depending on the tool context. Claude can enforce the workflow through hooks and the shared state file. GitHub Copilot follows the same contract through prompts and chat turns; it does not auto-chain CLI phases outside the chat.
 
 Core workflow prompts:
 

@@ -6,6 +6,8 @@ Turn the request into a Discovery deliverable without planning or implementing.
 
 Use this as the default entrypoint for a fresh repository or any reset bootstrap state.
 
+If workflow state was reset intentionally, Discovery still begins with `/discover`; do not skip straight to Planning.
+
 Behavioral mode: Discovery only. Do not produce implementation plans or code. Do not create implementation files.
 
 Follow:
@@ -39,5 +41,6 @@ Rules:
 - use only `requirements.status = "needs-clarification" | "clarified" | "approved"`
 - when the likely implementation scope is large, explicitly recommend `decompose-requirements` before Planning
 - do not allow aspirational acceptance criteria such as "works well" or "better UX" without measurable outcomes
+- prefer the workflow state API when command execution is available; use a direct state-file edit only as a fallback
 - update `.claude/workflow-state.json` to reflect the discovery outcome
 - stop after delivering the discovery result; do not continue into Planning or Implementation

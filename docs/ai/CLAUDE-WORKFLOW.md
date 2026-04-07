@@ -11,6 +11,8 @@ Welcome to the team! This guide will teach you how to use Claude Code effectivel
 
 That's it. Claude Code reads `CLAUDE.md` and `AGENTS.md` automatically when you start a session. The workflow contract, commands, skills, and hooks are already configured in the repo.
 
+If you're starting a brand-new task and need to clear stale workflow state first, run `./bin/vibe task workflow:bootstrap` before beginning Discovery with `/discover`.
+
 ## How the Workflow Works
 
 Every non-trivial feature follows 6 phases. Claude tracks where you are through the repo workflow state and hooks.
@@ -97,7 +99,7 @@ npm run test           →  Vitest test suite
 
 **If anything fails, Claude fixes it automatically.** This is the Self-Healing Contract. You should never see broken code.
 
-### Step 5: Review and Ship
+### Step 5: Verification and Delivery
 
 When quality gates and verification are green, Claude prepares a delivery handoff automatically.
 
@@ -280,7 +282,7 @@ Claude enforces all of this automatically. If you see a delivery summary, it mea
 ```txt
 Start a session:     claude
 New feature:         Just describe it in plain English
-Flow execution:      Discovery → Planning → Implementation → Gates → Delivery (automatic)
+Flow execution:      Discovery → Planning → Implementation → Quality Gates → Verification → Delivery
 Big feature:         /decompose-requirements [description]
 ```
 

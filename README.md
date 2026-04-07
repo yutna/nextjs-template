@@ -49,8 +49,8 @@ Both AI assistants are supported out of the box. Pick your preferred tool and fo
 
 | AI Assistant | Onboarding Guide | Configuration |
 | ------------ | ---------------- | ------------- |
-| [GitHub Copilot][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB_COPILOT_WORKFLOW.md) | `AGENTS.md` + `.github/instructions/` |
-| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE_WORKFLOW.md) | `CLAUDE.md` + `.claude/skills/`, `.claude/commands/`, `.claude/hooks/` |
+| [GitHub Copilot][copilot] | [Vibe Coding with Copilot](./docs/ai/GITHUB-COPILOT-WORKFLOW.md) | `AGENTS.md` + `.github/instructions/` |
+| [Claude Code][claude-code] | [Vibe Coding with Claude](./docs/ai/CLAUDE-WORKFLOW.md) | `CLAUDE.md` + `.claude/settings.json`, `.claude/skills/`, `.claude/commands/` |
 
 #### MCP Servers
 
@@ -168,7 +168,7 @@ Effect is required for all backend layers (services, repositories, jobs).
 
 ## AI Tools & Parity
 
-This template uses a **dual-toolchain workflow** supporting both Claude and GitHub Copilot with full parity.
+This template uses a **dual-toolchain workflow** supporting both Claude and GitHub Copilot with a shared workflow contract and enforced parity on the primary mirrored command/prompt surfaces.
 
 **Setup:**
 
@@ -192,7 +192,7 @@ Parity is checked automatically in CI. To verify locally after editing a Claude 
 ./bin/vibe parity-check
 ```
 
-This checks that both toolchains generate identical conventions. See [`.github/instructions/dual-toolchain-parity.instructions.md`](./.github/instructions/dual-toolchain-parity.instructions.md) for details.
+This checks the configured hard parity pairs for the mirrored Claude/Copilot command surfaces. See [`.github/instructions/dual-toolchain-parity.instructions.md`](./.github/instructions/dual-toolchain-parity.instructions.md) for details.
 
 **Shared Skills:**
 
