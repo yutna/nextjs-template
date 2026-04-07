@@ -19,6 +19,7 @@ You are in **Implementation** phase for module scaffolding.
 ## Input
 
 Module name should be provided as argument:
+
 - Use kebab-case: `user-management`, `order-processing`
 - Be specific: `auth`, `dashboard`, `settings`
 
@@ -93,6 +94,14 @@ the new leaf JSON file.
 - Module name: kebab-case
 - Follow existing module patterns in `src/modules/`
 - Server-first: start with server components, add "use client" only at leaves
+
+## Example Usage
+
+```txt
+/create-module users
+/create-module order-management
+/create-module auth
+```
 
 ## Do Not
 

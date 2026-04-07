@@ -9,8 +9,8 @@ Behavioral mode: Verification and Delivery. Report honestly, do not claim comple
 Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- Invoke the [delivery-validation skill](../skills/delivery-validation/) first before
-  preparing the handoff.
+- Invoke the [delivery-validation skill](../skills/delivery-validation/) first before preparing the
+  handoff.
 
 Required output:
 

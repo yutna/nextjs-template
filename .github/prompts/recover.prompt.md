@@ -9,8 +9,8 @@ Behavioral mode: Recovery. Diagnose before fixing. Roll back to the earliest val
 Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- Invoke the [error-recovery skill](../skills/error-recovery/) first before choosing
-  fixes or rollback phase.
+- Invoke the [error-recovery skill](../skills/error-recovery/) first before choosing fixes or
+  rollback phase.
 
 Required output:
 

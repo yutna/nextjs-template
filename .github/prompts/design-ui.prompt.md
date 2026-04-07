@@ -1,7 +1,6 @@
 ---
 name: design-ui
 description: Generate ASCII text wireframes for enterprise UI from a feature spec or state machine
-argument-hint: "[feature name or path to docs/tasks/*.md]"
 ---
 
 # /design-ui
@@ -17,6 +16,7 @@ Read existing task files. Output wireframes only.
 ## Prerequisites
 
 Check for existing task files first:
+
 - `docs/tasks/` — look for a relevant `*.md` spec file
 - If none exists, ask user to run `/decompose-requirements` first, or accept a direct feature description
 
@@ -31,6 +31,7 @@ Check for existing task files first:
 ### Step 1: Read the Feature Spec
 
 If a `docs/tasks/*.md` file is provided or found:
+
 - Extract: feature name, state machine states, transitions, acceptance criteria
 - Identify: entities, user roles, data surfaces
 
@@ -39,6 +40,7 @@ If no spec file — ask user to describe the feature, then infer the state machi
 ### Step 2: Select Recipe + Density
 
 Using `enterprise-ui-recipes` §1–§3:
+
 - Pick ONE recipe (R01–R10) that best fits the primary user action
 - Declare density: `compact` (scan-heavy) or `cozy` (form-heavy)
 - List which page anatomy regions are required for this feature
@@ -46,6 +48,7 @@ Using `enterprise-ui-recipes` §1–§3:
 ### Step 3: Design Route Map
 
 Using `nextjs-route-design` §7 planning checklist:
+
 - Map every URL: list, detail, modal (if applicable)
 - Identify `(public)` vs `(private)` placement
 - Identify any `@slot` parallel route needs (context panel, modal overlay)
@@ -53,6 +56,7 @@ Using `nextjs-route-design` §7 planning checklist:
 ### Step 4: Render Wireframes
 
 Using `ui-ascii-wireframe` §5 output format:
+
 - Render full app shell with active nav highlighted
 - Render **every state** from the state machine as a separate wireframe:
   - loading, empty, error, permission-denied, populated (mandatory 5)
@@ -62,7 +66,8 @@ Using `ui-ascii-wireframe` §5 output format:
 ### Step 5: Render Flow Diagram
 
 Show the complete user journey as ASCII flow:
-```
+
+```txt
 [Entry point] → [Action] → [State] → [Action] → [State]
                                   ↘ [Error path] → [Error state]
 ```
@@ -73,6 +78,7 @@ Persist results to markdown files under `docs/ui/<feature-slug>/`.
 Use deterministic, file-safe kebab-case slugs.
 
 Required files:
+
 - `docs/ui/<feature-slug>/README.md`
   - Feature summary (recipe, density, route map, state inventory)
   - Links to all flow/state markdown files
@@ -88,7 +94,8 @@ Where `nn` is a zero-padded sequence (`01`, `02`, ...).
 ### Step 7: Output Summary
 
 In chat, return only a concise summary block and created file list:
-```
+
+```txt
 Recipe:   R0X — name
 Density:  compact | cozy
 Route:    /[locale]/...

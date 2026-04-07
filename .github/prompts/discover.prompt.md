@@ -2,6 +2,7 @@
 name: discover
 description: Clarify a vague request into scope, constraints, and acceptance criteria.
 ---
+
 Turn the request into a Discovery deliverable without planning or implementing.
 
 Use this as the default entrypoint for a fresh repository or any reset bootstrap state.
@@ -13,8 +14,8 @@ Behavioral mode: Discovery only. Do not produce implementation plans or code. Do
 Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- Invoke the [requirements-clarification skill](../skills/requirements-clarification/)
-  first before doing Discovery work.
+- Invoke the [requirements-clarification skill](../skills/requirements-clarification/) first before doing
+  Discovery work.
 
 Required output:
 

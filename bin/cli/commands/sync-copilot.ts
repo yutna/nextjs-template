@@ -180,7 +180,18 @@ function syncSkillSymlinks(opts: SyncOptions): SyncResult {
 
 // ─── 2. Commands → Prompts ────────────────────────────────────────────────────
 
-function transformCommand(content: string, commandName: string): string {
+function transformSkillReference(match: string): string {
+  const skillMatch = match.match(/\.claude\/skills\/([^/]+)\/(?:SKILL\.md)?/);
+  const skillName = skillMatch?.[1];
+
+  if (!skillName) {
+    return match;
+  }
+
+  return `the [${skillName} skill](../skills/${skillName}/)`;
+}
+
+export function transformCommand(content: string, commandName: string): string {
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!frontmatterMatch) return content;
 
@@ -204,10 +215,9 @@ function transformCommand(content: string, commandName: string): string {
   const newBody = body
     .replace(/CLAUDE\.md/g, "[AGENTS.md](../../AGENTS.md)")
     .replace(
-      /\.claude\/skills\/([^/]+)\/SKILL\.md/g,
-      "[../skills/$1/](../skills/$1/)",
-    )
-    .replace(/\.claude\/skills\/([^/]+)\//g, "[../skills/$1/](../skills/$1/)");
+      /`?\.claude\/skills\/[^/]+\/(?:SKILL\.md)?`?/g,
+      transformSkillReference,
+    );
 
   return `${newFrontmatter}\n${newBody}`;
 }

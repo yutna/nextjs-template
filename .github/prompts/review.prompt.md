@@ -9,8 +9,8 @@ Behavioral mode: Review only. Do not edit implementation files. Findings only.
 Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- Invoke the [convention-tiering skill](../skills/convention-tiering/) first before
-  reviewing so material findings are classified by convention tier.
+- Invoke the [convention-tiering skill](../skills/convention-tiering/) first before reviewing so
+  material findings are classified by convention tier.
 
 Required output:
 

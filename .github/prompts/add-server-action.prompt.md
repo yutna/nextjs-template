@@ -20,7 +20,8 @@ You are in **Implementation** phase for adding server functionality.
 
 Argument format: `<module-name>/<action-name>`
 
-Examples:
+Examples
+
 - `users/create-user`
 - `orders/process-payment`
 - `auth/reset-password`
