@@ -6,11 +6,14 @@ Create a planning deliverable only. Do not implement.
 
 Behavioral mode: Planning only. Do not edit implementation files or create code.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [convention-tiering skill](../skills/convention-tiering/)
-- [implementation-planning skill](../skills/implementation-planning/)
+- Invoke the [convention-tiering skill](../skills/convention-tiering/) first to
+  classify hard conventions, strong defaults, and local freedom.
+- Then invoke the
+  [implementation-planning skill](../skills/implementation-planning/) to produce the
+  executable plan.
 
 Required output:
 

@@ -6,10 +6,11 @@ Recover from a failure deliberately.
 
 Behavioral mode: Recovery. Diagnose before fixing. Roll back to the earliest valid phase.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [error-recovery skill](../skills/error-recovery/)
+- Invoke the [error-recovery skill](../skills/error-recovery/) first before choosing
+  fixes or rollback phase.
 
 Required output:
 

@@ -10,10 +10,11 @@ If workflow state was reset intentionally, Discovery still begins with `/discove
 
 Behavioral mode: Discovery only. Do not produce implementation plans or code. Do not create implementation files.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [requirements-clarification skill](../skills/requirements-clarification/)
+- Invoke the [requirements-clarification skill](../skills/requirements-clarification/)
+  first before doing Discovery work.
 
 Required output:
 

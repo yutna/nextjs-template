@@ -15,6 +15,16 @@ Apply instructions in this order:
 
 If sources conflict, follow the highest-priority source.
 
+## Skill Invocation Contract
+
+Repo-specific skills live in `.claude/skills/` and are mirrored for Copilot via
+`.github/skills/`. Treat them as available guidance, not passive background context.
+
+When a relevant skill exists for the current task, invoke or read it before planning,
+implementation, review, recovery, or delivery work. If a Claude command names one or
+more skills, invoke them in the order stated there instead of assuming they were
+already loaded.
+
 ## Claude-Specific Tools
 
 ### Workflow State API

@@ -51,6 +51,9 @@ When you need to advance the phase explicitly, invoke the matching prompt in cha
 
 ### Skills
 Deep pattern documentation in `.github/skills/` (symlinked from `.claude/skills/`).
+Treat these skills as available repo context, not implicitly consumed context: when a
+canonical skill matches the task, explicitly invoke or follow that skill before you
+plan or implement.
 
 ### Instructions
 Path-specific guidance in `.github/instructions/`:

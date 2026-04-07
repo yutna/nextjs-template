@@ -6,11 +6,13 @@ Create a planning deliverable only. Do not implement.
 
 Behavioral mode: Planning only. Do not edit implementation files or create code.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/convention-tiering/SKILL.md
-- .claude/skills/implementation-planning/SKILL.md
+- Invoke `.claude/skills/convention-tiering/SKILL.md` first to classify hard
+  conventions, strong defaults, and local freedom.
+- Then invoke `.claude/skills/implementation-planning/SKILL.md` to produce the
+  executable plan.
 
 Required output:
 

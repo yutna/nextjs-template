@@ -6,10 +6,11 @@ Run every applicable gate and report the results honestly.
 
 Behavioral mode: Quality Gates. Run checks, report honestly, do not hide failures.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [quality-gates skill](../skills/quality-gates/)
+- Invoke the [quality-gates skill](../skills/quality-gates/) first before running or
+  interpreting checks.
 
 Required output:
 

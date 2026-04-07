@@ -182,7 +182,7 @@ This template uses a **dual-toolchain workflow** supporting both Claude and GitH
 - `.claude/skills/` — Canonical domain skills (architecture, patterns, conventions)
 - `.github/prompts/` — Copilot chat prompts (mirrored from Claude commands)
 - `.github/agents/` — Specialist agents for each workflow phase
-- `.agents/skills/` — Community-contributed skills (auto-loaded by both Copilot and Claude)
+- `.agents/skills/` — Community-contributed skills available to both Copilot and Claude
 
 **Parity Testing:**
 
@@ -196,7 +196,12 @@ This checks the configured hard parity pairs for the mirrored Claude/Copilot com
 
 **Shared Skills:**
 
-Copilot and Claude both automatically load community-contributed skills from [`.agents/skills/`](./.agents/skills/). See [`.agents/README.md`](./.agents/README.md) for the full list and usage guidance. Canonical skills in `.claude/skills/` and `.github/skills/` take organizational precedence for repo-specific standards.
+Copilot and Claude can use community-contributed skills from
+[`.agents/skills/`](./.agents/skills/), but reliable repo behavior should come from
+explicitly invoking the relevant canonical skill first when one exists. See
+[`.agents/README.md`](./.agents/README.md) for the full list and usage guidance.
+Canonical skills in `.claude/skills/` and `.github/skills/` take organizational
+precedence for repo-specific standards.
 
 ## Scripts
 

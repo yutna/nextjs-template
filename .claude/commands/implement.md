@@ -6,12 +6,15 @@ Implement the approved work and stay inside the agreed scope.
 
 Behavioral mode: Implementation. Stay in scope, preserve conventions, keep state current.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - CLAUDE.md (workflow contract)
-- .claude/skills/convention-tiering/SKILL.md
-- .github/skills/code-conventions/SKILL.md
-- .claude/skills/state-sync/SKILL.md
+- Invoke `.claude/skills/convention-tiering/SKILL.md` first to keep hard
+  conventions explicit.
+- Then invoke `.claude/skills/code-conventions/SKILL.md` before editing files or
+  generating code.
+- Use `.claude/skills/state-sync/SKILL.md` whenever phase, files touched, blocked
+  items, or gate status changes.
 
 Required output:
 

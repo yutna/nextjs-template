@@ -6,12 +6,15 @@ Implement the approved work and stay inside the agreed scope.
 
 Behavioral mode: Implementation. Stay in scope, preserve conventions, keep state current.
 
-Follow:
+Workflow contract and required skill invocation:
 
 - [AGENTS.md](../../AGENTS.md) (workflow contract)
-- [convention-tiering skill](../skills/convention-tiering/)
-- [code-conventions skill](../skills/code-conventions/)
-- [state-sync skill](../skills/state-sync/)
+- Invoke the [convention-tiering skill](../skills/convention-tiering/) first to keep
+  hard conventions explicit.
+- Then invoke the [code-conventions skill](../skills/code-conventions/) before
+  editing files or generating code.
+- Use the [state-sync skill](../skills/state-sync/) whenever phase, files touched,
+  blocked items, or gate status changes.
 
 Required output:
 

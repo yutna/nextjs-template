@@ -7,6 +7,13 @@ description: This skill should be used when performing browser testing, verifyin
 
 Use this skill when verifying features in the browser during the verification phase.
 
+## Tooling Reminder
+
+Remember that this repo already has Next.js DevTools and Playwright MCP servers, plus
+the `agent-browser` skill. Prefer Next.js DevTools for Next.js runtime diagnostics,
+and use Playwright or `agent-browser` for real browser interaction, screenshots, and
+flow verification. Use this skill for the verification checklist and QA strategy.
+
 ## Reference
 
 - CLAUDE.md (Verification phase)

@@ -24,6 +24,7 @@ You are in **Implementation** phase for adding translations.
 ## Input
 
 Target module or namespace, for example:
+
 - `static-pages/components/landing-hero`
 - `static-pages/hooks/use-copy-command`
 - `shared/components/error`
@@ -93,9 +94,37 @@ alongside `common`, `modules`, or `shared`.
 
 When creating Thai translations:
 
-1. Use formal language
+1. Use formal language (ภาษาเขียน)
 2. Keep technical terms in English when appropriate
 3. Use appropriate particles and polite forms
+
+Example:
+
+```json
+// English
+{
+  "title": "Users",
+  "actions": {
+    "create": "Create User",
+    "delete": "Delete"
+  },
+  "messages": {
+    "success": "User created successfully"
+  }
+}
+
+// Thai
+{
+  "title": "ผู้ใช้",
+  "actions": {
+    "create": "สร้างผู้ใช้",
+    "delete": "ลบ"
+  },
+  "messages": {
+    "success": "สร้างผู้ใช้สำเร็จ"
+  }
+}
+```
 
 ## Usage in Components
 
@@ -133,6 +162,26 @@ export function UserForm() {
   );
 }
 ```
+
+### With Variables
+
+```tsx
+// Message: "Welcome, {name}!"
+t('welcome', { name: user.name })
+
+// Message: "{count, plural, =0 {No items} one {# item} other {# items}}"
+t('itemCount', { count: items.length })
+```
+
+## Common Namespaces
+
+| Namespace | Purpose |
+|-----------|---------|
+| `common.actions` | Locale-wide action labels |
+| `common.validation` | Locale-wide validation strings |
+| `shared.components.error` | Shared component copy |
+| `modules.<module>.components.<surface>` | Module component strings |
+| `modules.<module>.hooks.<surface>` | Module hook/toast strings |
 
 ## Do Not
 

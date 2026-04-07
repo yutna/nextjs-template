@@ -187,7 +187,10 @@ services/, repositories/ → effect-backend.instructions.md
 *.test.ts, *.test.tsx    → tests.instructions.md
 ```
 
-Plus the shared skill set (symlinked from `.claude/skills/`) provides deeper pattern knowledge for topics like Chakra UI, state machines, Drizzle, and i18n.
+Plus the shared skill set (symlinked from `.claude/skills/`) provides deeper pattern
+knowledge for topics like Chakra UI, state machines, Drizzle, and i18n. When one of
+those topics applies, explicitly invoke the matching skill instead of assuming it has
+already been read.
 
 ## The Self-Healing Principle
 

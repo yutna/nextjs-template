@@ -7,6 +7,12 @@ description: This skill should be used when working with Chakra UI, UI component
 
 Use this skill when building UI components with Chakra UI v3 and Ark UI.
 
+## Tooling Reminder
+
+Remember that this repo already has Chakra UI and Ark UI MCP servers available.
+Prefer those MCP tools for component props, examples, theme tokens, and API lookup.
+Use this skill for repo-specific structure, placement, and design-system conventions.
+
 ## Reference
 
 - .claude/workflow-profile.json (stack.ui)

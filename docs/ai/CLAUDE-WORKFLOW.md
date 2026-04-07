@@ -139,11 +139,12 @@ These commands are available for any phase you want to drive directly. The defau
 
 ## Skills: Deep Knowledge On-Demand
 
-Skills are automatically loaded when Claude detects you're working in a specific area. You don't need to invoke them manually.
+Skills are available on demand. When a task crosses one of these seams, explicitly
+invoke the matching skill before acting.
 
 ```txt
-Working with...        Claude automatically loads...
------------------------------------------------------------
+Working with...        Invoke...
+----------------------------------------------
 Chakra UI components → nextjs-chakra-ui skill
 Server actions       → nextjs-server-actions skill
 Database queries     → drizzle-patterns skill
