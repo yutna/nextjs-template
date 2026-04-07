@@ -133,6 +133,9 @@ const eslintConfig = defineConfig([
       // Forbid inline style attribute in JSX (Styles)
       "project/no-inline-style": "error",
 
+      // Forbid root-level helpers.ts/utils.ts/common.ts grab-bags (File responsibility)
+      "project/no-root-grab-bag-files": "error",
+
       // Enforce naming patterns for files in specific folders (Architecture)
       "project/enforce-file-naming-pattern": "error",
 
@@ -247,6 +250,39 @@ const eslintConfig = defineConfig([
     },
   },
   // --------------------------------------------------
+  // Staged type-organization enforcement — high-signal implementation surfaces only
+  // --------------------------------------------------
+  {
+    files: [
+      "src/app/**/*.{ts,tsx}",
+      "src/modules/**/*.{ts,tsx}",
+      "src/shared/actions/**/*.{ts,tsx}",
+      "src/shared/api/**/*.{ts,tsx}",
+      "src/shared/components/**/*.tsx",
+      "src/shared/contexts/**/*.{ts,tsx}",
+      "src/shared/providers/**/*.{ts,tsx}",
+      "src/shared/routes/**/*.{ts,tsx}",
+      "src/shared/schemas/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "project/no-inline-param-type-literals": "error",
+    },
+  },
+  // --------------------------------------------------
+  // Shared lib/helper staged rollout — clean debt first, then enforce both rules
+  // --------------------------------------------------
+  {
+    files: [
+      "src/shared/components/**/helpers.ts",
+      "src/shared/components/**/helpers.tsx",
+      "src/shared/lib/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "project/no-inline-param-type-literals": "error",
+      "project/no-local-type-declarations": "error",
+    },
+  },
+  // --------------------------------------------------
   // Next.js convention files — allow default exports
   // --------------------------------------------------
   {
@@ -355,6 +391,16 @@ const eslintConfig = defineConfig([
     files: ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
     rules: {
       "no-console": "off",
+      "project/no-inline-param-type-literals": "off",
+    },
+  },
+  // --------------------------------------------------
+  // Story files — defer inline param literal cleanup for staged rollout
+  // --------------------------------------------------
+  {
+    files: ["**/*.stories.ts", "**/*.stories.tsx"],
+    rules: {
+      "project/no-inline-param-type-literals": "off",
     },
   },
   // --------------------------------------------------

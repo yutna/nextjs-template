@@ -2,7 +2,7 @@
 
 Status: Active
 Scope: Claude CLI and GitHub Copilot workflows
-Last Updated: 2026-04-04
+Last Updated: 2026-04-06
 
 ## Purpose
 
@@ -32,6 +32,7 @@ Do not run decomposition again for normal defect fixes or iterative corrections 
 1. Approved or sufficiently clarified requirements
 2. Active task scope (feature slice or defect slice)
 3. Current repository conventions from `AGENTS.md`
+4. A small approved implementation batch, not an open-ended multi-phase scope
 
 ## Default Execution Flow
 
@@ -43,6 +44,8 @@ Do not run decomposition again for normal defect fixes or iterative corrections 
 6. Delivery
 
 If any gate fails, return to Implementation, fix root cause, and rerun all gates from type check.
+
+Approved plans should usually cover a small slice, roughly 12 or fewer non-governance files or folders. If the work is clearly larger or multi-phase, decompose once and execute one approved phase at a time.
 
 ## Commands and Prompts
 
@@ -64,8 +67,17 @@ Core quality and parity checks:
 - `npm run lint`
 - `npm run test`
 - `npm run sync:copilot:check`
-- `./bin/vibe parity-check --all`
+- `npm run parity:all`
 - `./bin/vibe task workflow:audit`
+- `npm run workflow:state:validate`
+
+`npm run lint` is part of workflow enforcement, not just style hygiene. It includes staged custom convention rules on the template's currently enforced surfaces.
+
+## State Hygiene
+
+- Update `.claude/workflow-state.json` through the workflow API instead of ad hoc shell writes
+- Changing `taskId` starts a new task and should reset stale plan, implementation, and gate context
+- If implementation reaches files outside `plan.filesInScope`, stop and return to Planning before continuing
 
 ## Definition of Done
 
@@ -73,7 +85,7 @@ Work is done only when all are true:
 
 - Acceptance criteria are satisfied
 - Type check passes
-- Lint passes with zero warnings/errors
+- Lint passes with zero warnings/errors, including staged custom convention rules on currently enforced surfaces
 - Tests pass
 - Verification is complete
 - Relevant parity checks pass for workflow assets

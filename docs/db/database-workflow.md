@@ -38,6 +38,14 @@ npm run db:seed
 npm run db:prepare:test
 ```
 
+## Rails-Style Process Discipline
+
+- Keep entities in `src/shared/entities/`; feature modules do not own migrations or schema entrypoints
+- Commit ordered migrations instead of relying on local-only schema drift
+- Keep repositories responsible for Drizzle/data access and services responsible for orchestration
+- Keep seeds deterministic and safe to rerun
+- For every DB change, planning and verification must record target env, migration impact, rollback strategy, seed impact, and test isolation expectations
+
 ## Environment Defaults
 
 - development: `file:src/shared/db/local/development.sqlite`
@@ -65,6 +73,7 @@ Recommended sequence:
 2. update `src/shared/db/schema.ts`
 3. update `src/shared/db/seeds/index.ts`
 4. regenerate the migration with `npm run db:generate`
-5. run `npm run db:migrate && npm run db:seed`
-6. run `npm run db:prepare:test`
-7. run `npm run check-types && npm run lint && npm test`
+5. review migration impact and rollback before applying it
+6. run `npm run db:migrate && npm run db:seed`
+7. run `npm run db:prepare:test`
+8. run `npm run check-types && npm run lint && npm test`

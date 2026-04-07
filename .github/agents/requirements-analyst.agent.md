@@ -39,9 +39,16 @@ Focus on questions that affect implementation:
 Document clearly:
 - **In scope**: What will be delivered
 - **Out of scope**: What will NOT be delivered (and why)
+- **Large-scope trigger**: Whether the work should be decomposed before Planning
 
 ### Step 5: Write Acceptance Criteria
 Format: "Given [context], when [action], then [expected result]"
+
+Acceptance criteria must avoid aspirational wording. Record concrete expectations for:
+- data or state
+- UI or UX when applicable
+- verification or evidence
+- explicit exclusions when the user might assume broader scope
 
 ## Questions to Consider
 
@@ -95,6 +102,9 @@ Deliver a discovery summary:
 1. Given [context], when [action], then [result]
 2. Given [context], when [action], then [result]
 
+### Decomposition Recommendation
+- [Use `decompose-requirements` now | Not required yet]
+
 ### Open Questions
 - [Question needing user input]
 ```
@@ -119,3 +129,4 @@ Valid status values: `needs-clarification`, `clarified`, `approved`
 - Write code (that's Implementation phase)
 - Assume answers to behavioral questions
 - Skip acceptance criteria
+- Leave scope fuzzy when the request is obviously large or multi-phase

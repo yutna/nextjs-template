@@ -18,6 +18,7 @@ Follow the [AI Workflow Contract](../../AGENTS.md) for all development tasks.
 
 - No implementation before clarified requirements
 - No non-trivial code changes before a plan exists
+- No large multi-phase implementation batch without decomposition or an explicitly approved small slice
 - No delivery before gates and verification pass
 - No silent architecture or convention changes
 
@@ -51,6 +52,20 @@ HARD rules:
 
 ## Workflow Best Practices
 
+### Scope Control
+
+- Approved plans must stay within a small, reviewable batch of files or folders
+- If likely scope spans many files, layers, or phases, decompose before Implementation
+- If an edit reaches outside `plan.filesInScope`, stop and return to Planning
+- Changing `taskId` means a new task scope; reset stale plan, implementation, and gate context instead of carrying it forward
+
+### Code Organization
+
+- One file = one primary responsibility
+- Move non-primary helpers, constants, and internal functions to dedicated files or scoped `helpers.ts`
+- Keep types in `types.ts` or a `/types` folder, not in implementation files
+- Translation files are the only deliberate DRY-relaxed exception; keep them organized by domain and feature seam
+
 ### Database Changes
 
 For DB-related work, planning and verification must include:
@@ -58,6 +73,7 @@ For DB-related work, planning and verification must include:
 - migration impact + rollback strategy
 - seed impact + determinism expectations
 - post-change gates including tests that depend on DB state
+- repositories own data access, services own orchestration, migrations stay ordered/committed, and seeds stay deterministic
 
 ### Environment Variables
 

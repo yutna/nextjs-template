@@ -40,6 +40,16 @@ This skill provides comprehensive code structure conventions to ensure correct c
 5. Prefer direct React type imports, e.g. `import type { ChangeEvent } from "react"`
 6. Avoid deprecated APIs (especially Zod deprecations); replace immediately
 
+## File Responsibility Rules (MUST FOLLOW)
+
+1. One file = one primary responsibility
+2. One implementation file should have one primary function or component that matches the folder/file naming convention
+3. Non-primary internal helper functions must move to a dedicated sibling file or scoped `helpers.ts`
+4. Non-primary constants must move to `constants.ts` or a dedicated constants file
+5. Do not declare types inside implementation files; use `types.ts` or an appropriate `types/` folder
+6. Scoped `helpers.ts` remains the only allowed exception for colocated internal helpers
+7. Translation folders are the only deliberate DRY-relaxed area, but even there structure must remain scalable and easy to navigate
+
 ## Component State Rule (MUST FOLLOW)
 
 - No `useState`
@@ -282,6 +292,8 @@ Internal `helpers.ts` and `constants.ts` files do not require standalone tests w
 4. **helpers.ts is internal** → NOT exported via index.ts
 5. **No inline param type literals** → extract param/props types to `types.ts`
 6. **No React namespace event types** → use direct imported event types
+7. **Primary-file rule** → the main implementation file should reveal one clear responsibility immediately when opened
+8. **Do not create grab-bag implementation files** with unrelated helpers, constants, and types mixed into one long file
 
 ## Folder Placement Decision Tree
 

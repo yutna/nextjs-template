@@ -11,149 +11,29 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, posix, relative, resolve } from "node:path";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type Phase =
-  | "delivery"
-  | "discovery"
-  | "implementation"
-  | "planning"
-  | "quality-gates"
-  | "verification";
-
-type RequirementsStatus = "approved" | "clarified" | "needs-clarification";
-type PlanStatus = "approved" | "blocked" | "not-started" | "proposed";
-type ImplementationStatus =
-  | "blocked"
-  | "completed"
-  | "in-progress"
-  | "not-started";
-type GateStatus = "failed" | "not-applicable" | "passed" | "pending";
-type DeliveryStatus = "approved" | "blocked" | "ready-for-review";
-type HookDecision = "allow" | "ask" | "deny";
-type HookEventName =
-  | "PostToolUse"
-  | "PreToolUse"
-  | "SessionStart"
-  | "Stop"
-  | "UserPromptSubmit";
-
-interface WorkflowRequirements {
-  acceptanceCriteria: string[];
-  constraints: string[];
-  openQuestions: string[];
-  status: RequirementsStatus;
-}
-
-interface WorkflowPlan {
-  filesInScope: string[];
-  status: PlanStatus;
-  summary: string;
-}
-
-interface WorkflowImplementation {
-  blockedItems: string[];
-  filesTouched: string[];
-  retryCount: number;
-  status: ImplementationStatus;
-}
-
-interface WorkflowQualityGates {
-  lastRunSummary: string;
-  lint: GateStatus;
-  tests: GateStatus;
-  typecheck: GateStatus;
-  verification: GateStatus;
-}
-
-interface WorkflowDelivery {
-  notes: string;
-  status: DeliveryStatus;
-  userApproved: boolean;
-}
-
-export interface WorkflowState {
-  delivery: WorkflowDelivery;
-  implementation: WorkflowImplementation;
-  lastUpdated: string;
-  phase: Phase;
-  plan: WorkflowPlan;
-  qualityGates: WorkflowQualityGates;
-  requirements: WorkflowRequirements;
-  revision: number;
-  taskId: string;
-  taskSummary: string;
-  version: string;
-}
-
-interface NormalizedEvent {
-  cwd: string;
-  host: string;
-  mode: string;
-  rawEvent: RawEvent;
-  stopHookActive: boolean;
-  toolInput: ToolInput;
-  toolName: string;
-  toolUseId: string;
-}
-
-interface RawEvent {
-  [key: string]: unknown;
-  cwd?: string;
-  stop_hook_active?: boolean;
-  stopHookActive?: boolean;
-  tool_input?: ToolInput;
-  tool_name?: string;
-  tool_use_id?: string;
-  toolArgs?: string;
-  toolArgs_raw?: string;
-  toolInput?: ToolInput;
-  toolName?: string;
-  toolUseId?: string;
-}
-
-interface ToolInput {
-  [key: string]: unknown;
-  args?: unknown;
-  arguments?: unknown;
-  command?: unknown;
-  commands?: unknown;
-  destination?: string;
-  file?: string;
-  file_path?: string;
-  filePath?: string;
-  files?: unknown;
-  path?: string;
-  paths?: unknown;
-  source?: string;
-  target?: string;
-}
-
-interface HookResponse {
-  additionalContext?: string;
-  continue?: boolean;
-  decision?: string;
-  permissionDecision?: HookDecision;
-  permissionDecisionReason?: string;
-  reason?: string;
-}
-
-interface SaveStateOptions {
-  expectedRevision?: null | number;
-  forceWrite?: boolean;
-}
-
-interface SyncEditResult {
-  changed: boolean;
-  errors: string[];
-  message: string;
-  state: WorkflowState;
-}
+import type {
+  DeliveryStatus,
+  GateStatus,
+  HookDecision,
+  HookEventName,
+  HookResponse,
+  ImplementationStatus,
+  NormalizedEvent,
+  Phase,
+  PlanStatus,
+  RawEvent,
+  RequirementsStatus,
+  SaveStateOptions,
+  SyncEditResult,
+  ToolInput,
+  WorkflowState,
+} from "./types/workflow-hook";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 export const SCHEMA_VERSION = "1.0";
 const MAX_RETRY_COUNT = 3;
+const MAX_APPROVED_BATCH_SIZE = 12;
 
 export const PHASE_ORDER: Phase[] = [
   "discovery",
@@ -592,11 +472,24 @@ export function validateStateTransition(
     if (!["clarified", "approved"].includes(reqStatus)) {
       errors.push("planning or later requires clarified requirements");
     }
+    if (!newState.taskId.trim() || !newState.taskSummary.trim()) {
+      errors.push("planning or later requires taskId and taskSummary");
+    }
+    if ((newState.requirements?.acceptanceCriteria ?? []).length === 0) {
+      errors.push(
+        "planning or later requires at least one acceptance criterion",
+      );
+    }
   }
 
   if (newIndex >= phaseIndex("implementation")) {
     if (lower(newState.plan?.status) !== "approved") {
       errors.push("implementation or later requires plan.status = approved");
+    }
+    if ((newState.plan?.filesInScope ?? []).length === 0) {
+      errors.push(
+        "implementation or later requires plan.filesInScope to record the approved slice",
+      );
     }
   }
 
@@ -1082,7 +975,12 @@ function extractPaths(cwd: string, toolInput: ToolInput): string[] {
 }
 
 function isGovernancePath(filePath: string): boolean {
-  return filePath === "CLAUDE.md" || filePath.startsWith(".claude/");
+  return (
+    filePath === "AGENTS.md" ||
+    filePath === "CLAUDE.md" ||
+    filePath.startsWith(".claude/") ||
+    filePath.startsWith(".github/")
+  );
 }
 
 function isStatePath(filePath: string): boolean {
@@ -1091,6 +989,42 @@ function isStatePath(filePath: string): boolean {
 
 function onlyGovernancePaths(paths: string[]): boolean {
   return paths.length > 0 && paths.every((p) => isGovernancePath(p));
+}
+
+function normalizeScopePath(value: string): string {
+  return normalizePath(value).replace(/\/+$/, "");
+}
+
+function implementationPathsOnly(paths: string[]): string[] {
+  return paths.filter((path) => !isGovernancePath(path) && !isStatePath(path));
+}
+
+function isPathInPlannedScope(filePath: string, plannedScope: string): boolean {
+  const normalizedFilePath = normalizeScopePath(filePath);
+  const normalizedScope = normalizeScopePath(plannedScope);
+
+  if (!normalizedScope) return false;
+
+  return (
+    normalizedFilePath === normalizedScope ||
+    normalizedFilePath.startsWith(`${normalizedScope}/`)
+  );
+}
+
+function findOutOfScopePaths(
+  paths: string[],
+  plannedPaths: string[],
+): string[] {
+  if (plannedPaths.length === 0) return uniqueStrings(paths);
+
+  return uniqueStrings(
+    paths.filter(
+      (path) =>
+        !plannedPaths.some((plannedPath) =>
+          isPathInPlannedScope(path, plannedPath),
+        ),
+    ),
+  );
 }
 
 function commandReferencesStateFile(commandText: string): boolean {
@@ -1336,6 +1270,19 @@ function buildUpdateStatePatch(
   return parseCliPatchArgs(cliArgs);
 }
 
+function extractTaskIdFromPatch(patch: Record<string, unknown>): string {
+  const taskId = patch["taskId"];
+  return typeof taskId === "string" ? taskId.trim() : "";
+}
+
+function patchStartsNewTask(
+  currentState: WorkflowState,
+  patch: Record<string, unknown>,
+): boolean {
+  const nextTaskId = extractTaskIdFromPatch(patch);
+  return nextTaskId.length > 0 && nextTaskId !== currentState.taskId;
+}
+
 // ─── Hook Modes ───────────────────────────────────────────────────────────────
 
 function sessionContext(event: NormalizedEvent): number {
@@ -1351,6 +1298,7 @@ function sessionContext(event: NormalizedEvent): number {
     `Workflow state loaded: phase=${phase}, requirements=${reqStatus}, plan=${planStatus}, ` +
     `gates=(${formatGateSummary(activeState)}). ` +
     "Follow Discovery -> Planning -> Implementation -> Quality Gates -> Verification -> Delivery. " +
+    "Approved plans should stay within a small batch of files or folders; decompose large work before editing. " +
     "Use exact enums: requirements.status=needs-clarification|clarified|approved; " +
     "plan.status=not-started|proposed|approved|blocked.";
 
@@ -1472,6 +1420,13 @@ function workflowGuard(event: NormalizedEvent): number {
   const requirementsStatus = lower(activeState.requirements?.status);
   const planStatus = lower(activeState.plan?.status);
   const retryCount = activeState.implementation?.retryCount ?? 0;
+  const plannedImplementationPaths = implementationPathsOnly(
+    activeState.plan?.filesInScope ?? [],
+  );
+  const editedImplementationPaths = implementationPathsOnly(paths);
+  const touchedImplementationPaths = implementationPathsOnly(
+    activeState.implementation?.filesTouched ?? [],
+  );
 
   if (
     retryCount >= MAX_RETRY_COUNT &&
@@ -1543,6 +1498,77 @@ function workflowGuard(event: NormalizedEvent): number {
       "Plan approval is required before non-trivial implementation changes.",
       "Move through Planning first or limit edits to workflow/governance files only.",
     );
+  }
+
+  if (
+    (isEditTool(toolName) || riskyCommand) &&
+    editedImplementationPaths.length > 0 &&
+    planStatus === "approved" &&
+    plannedImplementationPaths.length > MAX_APPROVED_BATCH_SIZE
+  ) {
+    logEvent(
+      cwd,
+      "info",
+      "Asked for decomposition before large approved batch",
+      {
+        approvedScopeSize: plannedImplementationPaths.length,
+        tool: toolName,
+      },
+    );
+    return emitPreToolDecision(
+      "ask",
+      `Approved plan scope is too large for one implementation batch (${plannedImplementationPaths.length} paths). Narrow the slice or decompose before editing.`,
+      "Create a smaller approved plan.filesInScope batch or add a docs/tasks decomposition artifact before continuing.",
+    );
+  }
+
+  if (
+    (isEditTool(toolName) || riskyCommand) &&
+    editedImplementationPaths.length > 0 &&
+    planStatus === "approved"
+  ) {
+    const outOfScopePaths = findOutOfScopePaths(
+      editedImplementationPaths,
+      plannedImplementationPaths,
+    );
+
+    if (outOfScopePaths.length > 0) {
+      logEvent(cwd, "info", "Asked for replan due to out-of-scope edit", {
+        outOfScopePaths,
+        tool: toolName,
+      });
+      return emitPreToolDecision(
+        "ask",
+        "This edit reaches files outside the approved implementation slice.",
+        `Unplanned paths: ${outOfScopePaths.slice(0, 5).join(", ")}. Update plan.filesInScope or return to Planning before continuing.`,
+      );
+    }
+
+    const newlyTouchedPaths = findOutOfScopePaths(
+      editedImplementationPaths,
+      touchedImplementationPaths,
+    );
+
+    if (
+      touchedImplementationPaths.length >= MAX_APPROVED_BATCH_SIZE &&
+      newlyTouchedPaths.length > 0
+    ) {
+      logEvent(
+        cwd,
+        "info",
+        "Asked for implementation checkpoint after large touched batch",
+        {
+          newlyTouchedPaths,
+          tool: toolName,
+          touchedScopeSize: touchedImplementationPaths.length,
+        },
+      );
+      return emitPreToolDecision(
+        "ask",
+        `This implementation batch already touched ${touchedImplementationPaths.length} non-governance paths. Checkpoint before expanding scope.`,
+        "Stop for review, quality gates, or a new approved slice instead of silently growing the batch.",
+      );
+    }
   }
 
   return emitContinue("PreToolUse");
@@ -1706,9 +1732,12 @@ export function updateStateMode(
   for (let attempt = 1; attempt <= retryLimit; attempt++) {
     const currentState = loadState(cwd);
     const expectedRevision = Number(currentState.revision ?? 0);
+    const baseState = patchStartsNewTask(currentState, patch)
+      ? deepCopyDefaultState()
+      : currentState;
     const proposedState = mergeKnownSections(
       {},
-      deepMerge(currentState, patch) as Partial<WorkflowState>,
+      deepMerge(baseState, patch) as Partial<WorkflowState>,
     );
 
     const deliveryStatus = lower(proposedState.delivery?.status);
@@ -1799,6 +1828,7 @@ export function runWorkflowHook(args: string[]): number {
         "Notes:",
         "- Use dotted paths for nested fields such as requirements.status or qualityGates.tests.",
         "- Values are parsed as JSON when possible.",
+        "- Changing taskId starts a new task and resets derived workflow sections before applying the patch.",
       ].join("\n") + "\n",
     );
     return 0;

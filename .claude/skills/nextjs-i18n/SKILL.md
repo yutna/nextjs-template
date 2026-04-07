@@ -60,6 +60,14 @@ export const config = {
 
 ## Message Structure
 
+Translation structure is the one area where DRY can be relaxed deliberately because enterprise message catalogs become large and repetitive. Do not over-normalize messages at the cost of maintainability.
+
+Even with that exception, message layout must remain predictable:
+- locale root stays shallow
+- common/shared/module seams stay explicit
+- modules should own their own message trees
+- scaling a module should prefer deeper folders over dumping everything into one file
+
 ### Directory Layout
 
 ```
@@ -290,3 +298,4 @@ declare global {
 - Mix locales in the same file — keep en/ and th/ separate
 - Skip the barrel export — it ensures all messages are loaded
 - Use string concatenation for translations — use ICU message format
+- Collapse unrelated enterprise message groups into one oversized file when a deeper folder split would be clearer

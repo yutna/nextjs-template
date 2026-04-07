@@ -1,22 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type AuditStatus = "compliant" | "non-compliant" | "violations";
-
-interface AuditIssue {
-  message: string;
-  severity: "error" | "info" | "warning";
-  type: string;
-}
-
-interface AuditResult {
-  issues: AuditIssue[];
-  name: string;
-  path: string;
-  status: AuditStatus;
-}
+import type { AuditResult } from "./types/workflow-audit";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -46,6 +31,28 @@ const FORBIDDEN_FILES = [
   "helpers.tsx",
   "common.ts",
   "common.tsx",
+];
+
+const FORBIDDEN_GROUPING_BARREL_DIRS = [
+  "actions",
+  "api",
+  "components",
+  "constants",
+  "containers",
+  "contexts",
+  "forms",
+  "hooks",
+  "jobs",
+  "lib",
+  "policies",
+  "presenters",
+  "repositories",
+  "schemas",
+  "screens",
+  "services",
+  "styles",
+  "types",
+  "utils",
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -129,6 +136,22 @@ function checkForUseClientInScreens(modulePath: string): string[] {
   return violations;
 }
 
+function checkForGroupingFolderBarrels(modulePath: string): string[] {
+  const violations: string[] = [];
+
+  for (const dirName of FORBIDDEN_GROUPING_BARREL_DIRS) {
+    const dirPath = join(modulePath, dirName);
+    if (!existsSync(dirPath)) continue;
+
+    for (const fileName of ["index.ts", "index.tsx"]) {
+      const filePath = join(dirPath, fileName);
+      if (existsSync(filePath)) violations.push(filePath);
+    }
+  }
+
+  return violations;
+}
+
 // ─── Auditors ─────────────────────────────────────────────────────────────────
 
 function auditModule(modulePath: string, moduleName: string): AuditResult {
@@ -150,6 +173,15 @@ function auditModule(modulePath: string, moduleName: string): AuditResult {
       message: `Missing required directories: ${missingRequired.join(", ")}`,
       severity: "error",
       type: "missing-directory",
+    });
+  }
+
+  for (const file of checkForGroupingFolderBarrels(modulePath)) {
+    result.status = "non-compliant";
+    result.issues.push({
+      message: `Grouping-folder barrel export is forbidden: ${relative(modulePath, file)}`,
+      severity: "error",
+      type: "grouping-folder-barrel",
     });
   }
 
@@ -382,7 +414,7 @@ async function run(args?: string[]): Promise<void> {
 }
 
 export const command = {
-  description: "Audit module and shared directory structure",
+  description: "Audit module and shared directory structure conventions",
   name: "workflow-audit",
   run,
 };

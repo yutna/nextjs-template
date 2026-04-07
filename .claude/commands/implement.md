@@ -10,6 +10,7 @@ Follow:
 
 - CLAUDE.md (workflow contract)
 - .claude/skills/convention-tiering/SKILL.md
+- .github/skills/code-conventions/SKILL.md
 - .claude/skills/state-sync/SKILL.md
 
 Required output:
@@ -28,6 +29,10 @@ Rules:
 - if the plan becomes invalid, stop and return to Planning
 - update tests for changed behavior when the repository supports tests
 - you may run a narrow smoke test, but do not mark quality gates complete
+- use checkpoint-stop behavior for non-trivial work: pause after each major layer or batch instead of silently expanding scope
+- if implementation exceeds the approved slice, stop and return to Planning instead of continuing in one batch
+- keep one file focused on one primary responsibility; move non-primary helpers, constants, and internal functions to dedicated files or scoped `helpers.ts`
+- do not declare types inside implementation files; place them in `types.ts` or an appropriate `types/` folder
 - use only `implementation.status = "not-started" | "in-progress" | "completed" | "blocked"`
 - keep `.claude/workflow-state.json` current while implementing
 - when implementation stabilizes, use `/review` before final quality gates and delivery

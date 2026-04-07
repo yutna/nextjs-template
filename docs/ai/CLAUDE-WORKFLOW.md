@@ -93,6 +93,8 @@ npm run lint           →  ESLint + Stylelint + custom checks
 npm run test           →  Vitest test suite
 ```
 
+`npm run lint` is also the template's staged convention gate. On currently enforced surfaces it blocks root-level grab-bag files, inline parameter type literals, and local type declarations in implementation files. Broader rollout still happens slice by slice after debt cleanup.
+
 **If anything fails, Claude fixes it automatically.** This is the Self-Healing Contract. You should never see broken code.
 
 ### Step 5: Review and Ship

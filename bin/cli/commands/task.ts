@@ -1,3 +1,4 @@
+import nextEnv from "@next/env";
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,11 +13,15 @@ import { runWorkflowBootstrap } from "./workflow-bootstrap.ts";
 import { runWorkflowDoctor } from "./workflow-doctor.ts";
 import { runWorkflowHook } from "./workflow-hook.ts";
 
+const { loadEnvConfig } = nextEnv;
+
 interface TaskDefinition {
   command?: string;
   description: string;
   fn?: (args: string[]) => Promise<void>;
 }
+
+type TaskNodeEnv = "development" | "production" | "test";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -223,6 +228,30 @@ function splitForwardArgs(args: string[]): string[] {
   return args.slice(separatorIndex + 1);
 }
 
+function inferTaskNodeEnv(taskName: string): TaskNodeEnv {
+  if (taskName === "build" || taskName.startsWith("build:") || taskName === "start") {
+    return "production";
+  }
+
+  if (taskName === "test" || taskName.startsWith("test:") || taskName.includes(":test")) {
+    return "test";
+  }
+
+  return "development";
+}
+
+function prepareTaskEnvironment(taskName: string): NodeJS.ProcessEnv {
+  const nodeEnv = process.env.NODE_ENV ?? inferTaskNodeEnv(taskName);
+
+  Object.assign(process.env, { NODE_ENV: nodeEnv });
+  loadEnvConfig(PROJECT_ROOT, nodeEnv === "development");
+
+  return {
+    ...process.env,
+    NODE_ENV: nodeEnv,
+  };
+}
+
 async function runTask(
   taskName: string,
   forwardedArgs: string[],
@@ -234,6 +263,8 @@ async function runTask(
     listTasks();
     return 1;
   }
+
+  const taskEnv = prepareTaskEnvironment(taskName);
 
   if (def.fn) {
     await def.fn(forwardedArgs);
@@ -250,6 +281,7 @@ async function runTask(
 
   const result = spawnSync(command, {
     cwd: PROJECT_ROOT,
+    env: taskEnv,
     shell: true,
     stdio: "inherit",
   });

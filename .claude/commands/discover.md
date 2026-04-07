@@ -22,6 +22,14 @@ Required output:
 5. Open questions, if any
 6. Recommendation for whether the task can move to Planning
 
+Acceptance criteria must be explicit and testable. For each request, capture:
+
+- in scope
+- out of scope
+- data/state expectations
+- UI or UX expectations when applicable
+- verification expectations
+
 Rules:
 
 - use this command first when the workflow state is empty, missing, or intentionally reset
@@ -29,6 +37,8 @@ Rules:
 - do not produce an implementation plan yet
 - keep `phase = "discovery"`; signal readiness with `requirements.status`, not pseudo-phase labels
 - use only `requirements.status = "needs-clarification" | "clarified" | "approved"`
+- when the likely implementation scope is large, explicitly recommend `decompose-requirements` before Planning
+- do not allow aspirational acceptance criteria such as "works well" or "better UX" without measurable outcomes
 - prefer the workflow state API when command execution is available; use a direct state-file edit only as a fallback
 - update `.claude/workflow-state.json` to reflect the discovery outcome
 - stop after delivering the discovery result; do not continue into Planning or Implementation

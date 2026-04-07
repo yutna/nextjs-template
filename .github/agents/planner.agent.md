@@ -42,6 +42,7 @@ Document:
 - Module/folder placement
 - Dependencies between components
 - Data flow
+- Exact scope size and whether the work should be decomposed into smaller slices first
 
 ### Step 5: Sequence the Work
 Order tasks by dependency:
@@ -57,6 +58,13 @@ How will we verify:
 - Unit tests
 - Integration tests
 - Manual verification steps
+
+### Step 7: Validate Batch Size
+Before approving the plan, record:
+- exact file count in scope
+- predicted net-new complexity
+- whether decomposition is required before implementation
+- which phase from `docs/tasks/**` is in scope, if applicable
 
 ## Convention Tiers
 
@@ -83,6 +91,12 @@ Deliver an implementation plan:
 | UI binding | Container | Strong default | Client component |
 
 ### Files to Create/Modify
+
+### Scope Summary
+- File count: [exact number]
+- Predicted complexity: [small | medium | large] with brief reason
+- Decomposition artifact: [path or not required]
+- Phase in scope: [phase or not applicable]
 
 #### New Files
 | File | Purpose |
@@ -126,6 +140,10 @@ Deliver an implementation plan:
 - [ ] Lint passes
 - [ ] Tests pass
 - [ ] [Manual verification step]
+
+### Workflow Guard Notes
+- If this scope is too large for one implementation batch, stop at Planning and require decomposition.
+- If code-organization rules require extraction of constants, internal helpers, or types into dedicated files, note that explicitly.
 ```
 
 ## State Update
@@ -148,3 +166,4 @@ Valid status values: `not-started`, `proposed`, `approved`, `blocked`
 - Skip pattern selection decisions
 - Ignore existing conventions
 - Create vague, unactionable plans
+- Approve a large batch without stating why decomposition is or is not required

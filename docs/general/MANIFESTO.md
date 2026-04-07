@@ -2,7 +2,7 @@
 
 Status: Active
 Scope: Whole repository
-Last Updated: 2026-04-03
+Last Updated: 2026-04-06
 
 This template exists so users can ship features fast with Claude and GitHub Copilot without repetitive setup.
 
@@ -54,14 +54,17 @@ Users should not need manual maintenance commands for routine consistency tasks.
 - tests passing
 - no hidden manual setup needed to keep workflow healthy
 
-## Gap Status (as of 2026-04-03)
+## Gap Status (as of 2026-04-06)
 
-All previously logged high/medium gaps for this mindset pass have been addressed:
+All previously logged high/medium gaps for this mindset pass have been addressed, including the latest template workflow/convention rollout slice:
 
 1. Copilot workflow docs were reframed to orchestration-first and automation-first.
 2. Template structure baseline now passes workflow audit.
 3. Contributing parity section now states automation-by-default with optional local fallback checks.
 4. CI now enforces workflow structure baseline in the workflow-contract job.
+5. Template lint now enforces `project/no-root-grab-bag-files` on approved high-signal implementation surfaces.
+6. `project/no-inline-param-type-literals` now covers shared lib/helper rollout surfaces after local debt cleanup.
+7. A staged `project/no-local-type-declarations` rule now runs on the same shared lib/helper rollout surface.
 
 Verification snapshot:
 
@@ -70,6 +73,7 @@ Verification snapshot:
 - `npm run check-types` → pass
 - `npm run lint` → pass
 - `npm test` → pass
+- `npm run workflow:state:validate` → pass
 
 ### Aligned Improvements Already Applied
 
@@ -77,6 +81,11 @@ Verification snapshot:
   - bin/cli/commands/sync-copilot.ts:16
   - bin/cli/commands/sync-copilot.ts:358
   - bin/cli/commands/sync-copilot.ts:359
+- Template lint now includes staged custom convention enforcement for approved rollout surfaces.
+  - `project/no-root-grab-bag-files`
+  - `project/no-inline-param-type-literals`
+  - `project/no-local-type-declarations`
+- Shared lib/helper debt was cleaned before widening the staged lint rollout, so the template can claim completion for the latest slice without overstating repo-wide convention closure.
 
 ## Acceptance Standard for Future Changes
 
@@ -91,11 +100,12 @@ If a change makes routine usage more manual, it is considered a regression.
 
 ## Implementation Direction
 
-All short-term automation gaps have been closed. Ongoing direction:
+The latest template workflow/convention slice is closed. Ongoing direction:
 
 - Keep scaffolding batteries-included so users spend time shipping features, not bootstrapping tools
 - Extend `workflow:audit` rules as new patterns are adopted
 - Keep Claude↔Copilot parity automatic — avoid manual sync steps
+- Widen staged convention rules only after cleaning debt on the next target surfaces
 - Platform limitation: GitHub Copilot agent mode cannot be switched programmatically; the one remaining manual step is intentional
 
 See [Commands Reference](./COMMANDS.md) for all available CLI and AI toolchain commands.
