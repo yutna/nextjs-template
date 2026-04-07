@@ -49,33 +49,43 @@ This repository maintains Claude Code and GitHub Copilot as co-equal development
 
 ### Parity file pairs
 
-The following files **must be kept in sync**:
+The following files are the **currently hard-enforced parity pairs** and must be kept
+in sync:
 
 | File Pair | Purpose |
 |-----------|---------|
 | `.claude/commands/create-module.md` ↔ `.github/prompts/create-module.prompt.md` | Module scaffolding for both toolchains |
+| `.claude/commands/discover.md` ↔ `.github/prompts/discover.prompt.md` | Discovery phase entrypoint |
+| `.claude/commands/plan-work.md` ↔ `.github/prompts/plan-work.prompt.md` | Planning phase entrypoint |
+| `.claude/commands/implement.md` ↔ `.github/prompts/implement.prompt.md` | Implementation phase entrypoint |
 
 Whenever you modify one file in a pair, **you must also update the other** to ensure both toolchains generate equivalent code.
 
+Other mirrored command/prompt surfaces should still stay semantically aligned, but
+only the pairs above are blocking parity contracts today. See
+`.github/instructions/dual-toolchain-parity.instructions.md` for the current scope.
+
 ### Parity checks (automated by default)
 
-Parity is enforced automatically in workflow hooks and CI. Use manual checks only as a local verification fallback:
+Parity is enforced automatically in workflow hooks and CI. Use the canonical local
+check below when you want to verify the mirrored surfaces yourself:
 
 ```bash
-# Check all files for parity drift
-./bin/vibe parity-check
+# Canonical parity check
+npm run parity:all
 
-# Check with all files (not just staged)
-./bin/vibe parity-check --all
+# Optional staged-file check
+./bin/vibe parity-check
 ```
 
-The command checks for these parity rules:
+The hard-pair checks enforce these parity rules:
 
 - **barrel-export-prohibition**: Both must disallow grouping-folder barrel re-exports
 - **scoped-helpers-allowed**: Both must allow `helpers.ts` only inside concrete folders
 - **concrete-slice-first**: Both must prefer concrete examples over grouping-folder templates
 
-**AI Assistance**: Claude Code and GitHub Copilot hooks will auto-detect when you modify parity-paired files and remind you to keep them in sync.
+**AI Assistance**: Claude Code and GitHub Copilot hooks will auto-detect when you
+modify hard parity pairs and remind you to keep them in sync.
 
 ## Release flow
 

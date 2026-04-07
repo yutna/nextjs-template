@@ -29,8 +29,10 @@ If sources conflict, follow the highest-priority source.
 
 ## Skill Invocation Contract
 
-Repo-specific skills live in `.claude/skills/` and are mirrored for Copilot via
-`.github/skills/`. Treat them as available guidance, not passive background context.
+Repo-specific skills live in `.claude/skills/` and are mirrored into
+`.github/skills/` for Copilot Chat / workspace-aware surfaces. Copilot CLI can inspect
+the active skill set through `/skills`; do not assume browsing `.github/skills/` is
+how the CLI consumes skills.
 
 When a relevant skill exists for the current task, invoke or read it before planning,
 implementation, review, recovery, or delivery work. If the current tool's repo
@@ -47,7 +49,9 @@ When command execution is available, use the workflow state API:
 node --experimental-strip-types --no-warnings bin/vibe task workflow:hook -- update-state phase=planning plan.status=proposed
 ```
 
-Fallback: Direct file edits to `.claude/workflow-state.json` (only if API unavailable).
+Fallback: Edit `.claude/workflow-state.json` directly only if the workflow hook
+command itself cannot run locally (for example, a runtime or permission failure), then
+run `npm run workflow:state:validate`.
 
 ### MCP Servers
 
@@ -96,7 +100,10 @@ For the runnable template DB scaffold and command flow, see `docs/db/database-wo
 - `.claude/` → Claude Code config, commands, skills, hooks, state
 - `.github/` → GitHub Copilot config, prompts, agents, instructions, hooks
 
-For complete file structure and naming patterns, see [AGENTS.md § Rails to Next.js Pattern Mapping](./AGENTS.md#rails-to-nextjs-pattern-mapping).
+For workflow-oriented pattern mapping, see
+[AGENTS.md § Rails to Next.js Pattern Mapping](./AGENTS.md#rails-to-nextjs-pattern-mapping).
+For detailed naming grammar and file templates, see
+`.claude/skills/code-conventions/SKILL.md`.
 
 ## Where to Find What
 
@@ -105,15 +112,16 @@ For complete file structure and naming patterns, see [AGENTS.md § Rails to Next
 | Workflow phases + contract | [AGENTS.md](./AGENTS.md) |
 | Architecture rules (hard/strong/local) | [AGENTS.md](./AGENTS.md) |
 | Pattern selection flowcharts | [AGENTS.md](./AGENTS.md) |
-| Code conventions + naming | [AGENTS.md](./AGENTS.md) or `.claude/skills/code-conventions/SKILL.md` |
-| Module structure | [AGENTS.md](./AGENTS.md) or `.github/instructions/nextjs-modules.instructions.md` |
-| Shared structure | [AGENTS.md](./AGENTS.md) or `.github/instructions/nextjs-shared.instructions.md` |
+| Code conventions + naming | `.claude/skills/code-conventions/SKILL.md` (primary) |
+| Module structure | `.github/instructions/nextjs-modules.instructions.md` (primary), plus [AGENTS.md](./AGENTS.md) for module boundaries |
+| Shared structure | `.github/instructions/nextjs-shared.instructions.md` (primary), plus [AGENTS.md](./AGENTS.md) for entity and DB ownership |
 | Copilot instructions | `.github/copilot-instructions.md` |
 | Copilot Chat prompts | `.github/prompts/` |
 | Claude commands | `.claude/commands/` |
 | Effect patterns | `.claude/skills/effect-patterns/SKILL.md` |
 | Drizzle patterns | `.claude/skills/drizzle-patterns/SKILL.md` |
 | Testing setup | `.github/instructions/tests.instructions.md` |
+| E2E selectors + data-testid | `.github/instructions/e2e-testing.instructions.md` |
 | TypeScript rules | `.github/instructions/typescript.instructions.md` |
 | Backend patterns | `.github/instructions/effect-backend.instructions.md` |
 | App Router patterns | `.github/instructions/nextjs-app-router.instructions.md` |

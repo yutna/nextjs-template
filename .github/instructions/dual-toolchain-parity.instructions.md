@@ -15,7 +15,23 @@ When modifying Claude commands or GitHub Copilot prompts, especially the current
 | `.claude/commands/plan-work.md` | `.github/prompts/plan-work.prompt.md` |
 | `.claude/commands/implement.md` | `.github/prompts/implement.prompt.md` |
 
-These are the hard-enforced parity pairs today. Other mirrored command/prompt surfaces should stay semantically aligned, but this file only treats the pairs above as blocking parity contracts until enforcement expands.
+These are the hard-enforced parity pairs today.
+
+Other mirrored command/prompt surfaces should still stay semantically aligned, but
+they are reviewed manually until enforcement expands. That soft-alignment set currently
+includes:
+
+- `add-server-action`
+- `add-translation`
+- `audit-structure`
+- `decompose-requirements`
+- `deliver`
+- `design-ui`
+- `gates`
+- `implement-e2e`
+- `recover`
+- `review`
+- `verify-runtime`
 
 ## Workflow
 
@@ -57,4 +73,6 @@ If you find drift:
 2. Fix it immediately in the same commit
 3. Update both files in the same PR
 
-See the paired files above for the current canonical command/prompt surfaces.
+See the paired files above for the current hard parity contract. Treat the mirrored
+surfaces listed earlier as required semantic alignment, even though they are not yet
+blocking parity pairs.

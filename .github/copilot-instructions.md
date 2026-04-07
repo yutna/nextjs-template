@@ -65,10 +65,17 @@ same six-phase workflow in terminal sessions.
 GitHub Copilot CLI command equivalence.
 
 ### Skills
-Deep pattern documentation in `.github/skills/` (symlinked from `.claude/skills/`).
-Treat these skills as available repo context, not implicitly consumed context: when a
-canonical skill matches the task, explicitly invoke or follow that skill before you
-plan or implement.
+Repo skills are mirrored into `.github/skills/` (symlinked from `.claude/skills/`).
+
+- **Copilot Chat / workspace-aware surfaces**: these files are part of the repo
+  context.
+- **Copilot CLI**: use `/skills` to inspect the active skill set, then request the
+  relevant skill by name instead of assuming the CLI browses `.github/skills/`
+  directly.
+
+Treat skills as explicit guidance, not implicitly consumed context: when a canonical
+skill matches the task, explicitly invoke or follow that skill before you plan or
+implement.
 
 ### Instructions
 Path-specific guidance in `.github/instructions/`:
@@ -78,6 +85,7 @@ Path-specific guidance in `.github/instructions/`:
 - `nextjs-app-router.instructions.md` - Route conventions
 - `typescript.instructions.md` - TypeScript rules
 - `effect-backend.instructions.md` - Effect patterns
+- `e2e-testing.instructions.md` - data-testid and E2E selector conventions
 - `tests.instructions.md` - Testing conventions
 
 ## Stack Summary (Next.js Enterprise)
