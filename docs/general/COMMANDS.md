@@ -18,6 +18,11 @@ All project tasks run through this entrypoint:
 ./bin/vibe --help       # list all available commands
 ```
 
+**Convention:** Use `:` for user-facing namespaced task names such as
+`hooks:build`, `workflow:hook`, and `sync:copilot`. Use `-` for filenames and
+standalone direct commands such as `parity-check`, so `hooks:build` maps to
+`bin/cli/commands/hooks-build.ts`.
+
 ### Development
 
 | Task | Description |

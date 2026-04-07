@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { runCodebaseIndex } from "./codebase-index.ts";
 import { runDocsAutomationGuard } from "./docs-automation-guard.ts";
-import { runHooksBuilder } from "./hooks-builder.ts";
+import { runHooksBuilder } from "./hooks-build.ts";
 import { runNextjsPolicy } from "./nextjs-policy.ts";
 import { runSyncCopilot } from "./sync-copilot.ts";
 import { runWorkflowAudit } from "./workflow-audit.ts";
