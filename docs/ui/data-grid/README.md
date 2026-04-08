@@ -21,9 +21,10 @@ status patterns.
 - List with query state:
   `/[locale]/(private)/operations?page=1&pageSize=25&sort=createdAt.desc&density=compact`
 - Detail: `/[locale]/(private)/operations/[id]`
-- Optional overlay route:
-  `/[locale]/(private)/operations/(.)[id]` with planned
-  `@panel/default.tsx` fallback
+- Optional overlay implementation (App Router):
+  - File structure: `src/app/[locale]/(private)/operations/@panel/(.)[id]/page.tsx`
+  - Fallback: `src/app/[locale]/(private)/operations/@panel/default.tsx`
+  - Canonical URL preserved: `/[locale]/(private)/operations/[id]`
 
 ## Region inventory
 
